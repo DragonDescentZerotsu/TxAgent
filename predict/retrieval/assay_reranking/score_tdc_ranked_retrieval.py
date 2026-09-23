@@ -43,7 +43,7 @@ GOLD_PROFILE = "ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1"
 TDC_PROFILE = "ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1"
 GOLD_BASE_PROFILE = "ranked_level_retrieval_gold_v1_addon_v2"
 GOLD_TASKS = {"ames": "Ames", "dili": "DILI", "carcinogens": "Carcinogens"}
-TDC_TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
+TDC_TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction", "ames", "dili", "carcinogens")
 TASKS = (*TDC_TASKS, *GOLD_TASKS)
 SUBSETS = ("valid", "test")
 ASSET_ROOT = Path(__file__).with_name("prompts") / "direct_l1_task_best_v1"
@@ -58,6 +58,8 @@ def _profile(task: str, release: str = "legacy") -> str:
     if release == "gold-v1":
         return GOLD_PROFILE
     if release == "tdc-v1":
+        if task in GOLD_TASKS:
+            return f"flat_v5/tdc_v1/{task}/l1/assay_transfer/v10_3/tdc_pinned_v1"
         return TDC_PROFILE
     return SKIN_PROFILE if task == "skin_reaction" else PROFILE
 
@@ -67,6 +69,8 @@ def _base_profile(release: str) -> str:
 
 
 def _model_profile(task: str, release: str) -> dict[str, Any]:
+    if release == "tdc-v1" and task in GOLD_TASKS:
+        return runtime_model_profile(task, "direct_tdc_best")
     return (
         model_profile(task, _lineage(task))
         if release == "legacy"
@@ -196,7 +200,9 @@ def _provenance(task: str, release: str, profile: dict[str, Any]) -> dict[str, A
         "train_sha256": sha256_file(train_path),
         "model": profile,
         "prompt_contract": profile["prompt_profile"],
-        "dataset_revision": _json(CONFIG_PATH)["upstream"][task]["dataset_revision"],
+        "dataset_revision": _json(CONFIG_PATH)[
+            "tdc_upstream" if release == "tdc-v1" and task in GOLD_TASKS else "upstream"
+        ][task]["dataset_revision"],
     }
     if release == "gold-v1":
         value["gold_record_index_sha256"] = sha256_file(

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -19,6 +20,10 @@ PROJECTION_PATH = ASSET_ROOT / "prompt_projection.json"
 PROMPT_SHA256 = "b76517548cc5f432dacd2b15e46aef4035ccbe49a65961842b78c322ad45d21d"
 TRAINING_PROMPT_SHA256 = "435d70f963d9b55ac9b13da6f8c32af5414ee402d2af3af08fc5be01c4c7203d"
 PROJECTION_SHA256 = "404d75c26b9ebd228d6459f6c57621701645eb5aed89b6d94dd03f261c40eceb"
+INFERENCE_PROJECTION_SHA256 = hashlib.sha256(json.dumps({
+    "source_projection_sha256": PROJECTION_SHA256,
+    "contract": "skin_v27_candidate_context_copy.v1",
+}, sort_keys=True).encode()).hexdigest()
 MODEL = {
     "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v27-skin-reaction-combined-best",
     "revision": "398a41ccb38cadd120ee26b989bdbce5cab6c021",
@@ -35,6 +40,12 @@ MODEL = {
         "level_mapping": "5414abdbc607b9a3de25158f5aca075cf47b4e4d9d1c1987692df5c177598a65",
         "source_contract": "b283445be0b1ef5012fa07e135ee65cdce9597c02749eea5a66c12a9f34b3ff9",
     },
+}
+TRAINING_MODEL = {
+    **MODEL,
+    "prompt_profile": "v27_skin_training_prompt_candidate_copy_v1",
+    "prompt_sha256": TRAINING_PROMPT_SHA256,
+    "projection_sha256": INFERENCE_PROJECTION_SHA256,
 }
 EMPTY_TEXT = {"", "unknown", "__unknown__", "none", "not_applicable"}
 
@@ -53,18 +64,25 @@ def _clean(value: Any) -> str | None:
 class SkinV27PromptRenderer:
     task_id = TASK_ID
 
-    def __init__(self) -> None:
-        self.template_hash = runtime.file_sha256(ASSET_ROOT / "prompt.jinja")
-        self.projection_hash = runtime.file_sha256(PROJECTION_PATH)
-        if self.template_hash != PROMPT_SHA256 or self.projection_hash != PROJECTION_SHA256:
+    def __init__(self, *, training_template: bool = False) -> None:
+        self.training_template = training_template
+        self.template_name = "prompt_training.jinja" if training_template else "prompt.jinja"
+        expected_hash = TRAINING_PROMPT_SHA256 if training_template else PROMPT_SHA256
+        self.template_hash = runtime.file_sha256(ASSET_ROOT / self.template_name)
+        source_projection_hash = runtime.file_sha256(PROJECTION_PATH)
+        self.projection_hash = (
+            INFERENCE_PROJECTION_SHA256 if training_template else source_projection_hash
+        )
+        if self.template_hash != expected_hash or source_projection_hash != PROJECTION_SHA256:
             raise ValueError("Vendored Skin V27 prompt assets changed")
         self.projection = json.loads(PROJECTION_PATH.read_text(encoding="utf-8"))
         if self.projection.get("schema_version") != "assay_transfer_prompt_projection.v19":
             raise ValueError("Unexpected Skin V27 prompt-projection schema")
         self.environment = Environment(
             loader=FileSystemLoader(str(ASSET_ROOT)), undefined=StrictUndefined,
-            autoescape=False, keep_trailing_newline=False, trim_blocks=True,
-            lstrip_blocks=True, auto_reload=False,
+            autoescape=False, keep_trailing_newline=False,
+            trim_blocks=not training_template, lstrip_blocks=not training_template,
+            auto_reload=False,
         )
 
     def _fields(self, record: Mapping[str, Any], names: list[str]) -> list[tuple[str, str]]:
@@ -75,8 +93,12 @@ class SkinV27PromptRenderer:
             if (value := _clean(record.get(name))) is not None
         ]
 
-    def render(self, record: Mapping[str, Any], query_smiles: str) -> str:
-        if record.get("task_id") != TASK_ID or record.get("progressive_level") not in LEVELS:
+    def _prompt_fields(
+        self, record: Mapping[str, Any], *, known: bool,
+    ) -> list[tuple[str, str]]:
+        if record.get("task_id") != TASK_ID or (
+            not self.training_template and record.get("progressive_level") not in LEVELS
+        ):
             raise ValueError("Skin V27 prompt record has an incompatible task or level")
         source_id = str(record.get("source_id") or "")
         try:
@@ -84,24 +106,44 @@ class SkinV27PromptRenderer:
         except KeyError as exc:
             raise ValueError(f"Unknown Skin V27 source: {source_id}") from exc
         payload = dict(record.get("source_fields") or {})
+        if self.training_template:
+            endpoint = record.get("canonical_endpoint_name")
+            if not endpoint:
+                raise ValueError("Skin V27 training prompt requires the canonical endpoint")
+            payload["endpoint_name"] = endpoint
         payload["measurement_text"] = record.get("display_measurement_text")
         payload["unit_text"] = record.get("display_unit_text")
-        query_names = list(binding["query"])
-        known_only = list(binding["known_only"])
-        measurement = ["measurement_text"] if "measurement_text" in known_only else []
-        known_names = query_names[:1] + measurement + query_names[1:]
-        known_names += [name for name in known_only if name != "measurement_text"]
-        return self.environment.get_template("prompt.jinja").render(
-            known_smiles=str(record.get("canonical_smiles") or ""),
-            query_smiles=query_smiles,
-            known_fields=self._fields(payload, known_names),
-            query_fields=self._fields(payload, query_names),
+        names = list(binding["query"])
+        if known:
+            known_only = list(binding["known_only"])
+            measurement = ["measurement_text"] if "measurement_text" in known_only else []
+            names = names[:1] + measurement + names[1:]
+            names += [name for name in known_only if name != "measurement_text"]
+        return self._fields(payload, names)
+
+    def render_pair(self, known: Mapping[str, Any], query: Mapping[str, Any]) -> str:
+        return self.environment.get_template(self.template_name).render(
+            known_smiles=str(known.get("canonical_smiles") or ""),
+            query_smiles=str(query.get("canonical_smiles") or ""),
+            known_fields=self._prompt_fields(known, known=True),
+            query_fields=self._prompt_fields(query, known=False),
         ).strip()
 
+    def render(self, record: Mapping[str, Any], query_smiles: str) -> str:
+        if self.training_template:
+            return self.environment.get_template(self.template_name).render(
+                known_smiles=str(record.get("canonical_smiles") or ""),
+                query_smiles=query_smiles,
+                known_fields=self._prompt_fields(record, known=True),
+                query_fields=self._prompt_fields(record, known=False),
+            ).strip()
+        return self.render_pair(record, {**record, "canonical_smiles": query_smiles})
+
     def prompt_task(self, record: Mapping[str, Any], query_smiles: str) -> runtime.PromptTask:
+        model = TRAINING_MODEL if self.template_name == "prompt_training.jinja" else MODEL
         return runtime.build_prompt_task(
             self, record, query_smiles=query_smiles,
             group_id=str(record["progressive_level"]),
             molecule_id=str(record.get("parent_id") or ""),
-            model=MODEL["model"], model_revision=MODEL["revision"],
+            model=model["model"], model_revision=model["revision"],
         )

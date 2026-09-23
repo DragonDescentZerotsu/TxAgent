@@ -1,0 +1,56 @@
+{
+  "schema_version": "flat_v5_artifact_bundle.v1",
+  "status": "complete",
+  "bundle_id": "flat_v5/tdc_v1/ames",
+  "task": "ames",
+  "benchmark": "tdc_v1",
+  "harness_version": "full-flat-context-v5",
+  "max_level": 1,
+  "cache_config": {
+    "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v1_v27_successors_v1.yaml",
+    "sha256": "5ef033194e073375161595c9927d4c28084eaa852f8aa89008efd7edc8bf8525"
+  },
+  "artifacts": [
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/ames/l1/assay_transfer/v10_3/tdc_pinned_v1/ames/RELEASE_INDEX.json",
+      "size": 1935,
+      "sha256": "6eeec3fae6b38103a66ea9f17f2cde62a4e3264205ad333f42220a8ded10c7b5"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/ames/l1/assay_transfer/v10_3/tdc_pinned_v1/ames/evidence/VERSION.json",
+      "size": 612,
+      "sha256": "876369f9388d875da160a811c4eeece63a8f6d28a0385143f6127c945fd47d26"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/ames/l1/assay_transfer/v10_3/tdc_pinned_v1/ames/evidence/records.parquet",
+      "size": 361321,
+      "sha256": "36441e6b4f72a37da855e362c78c1c2d72499c732566183e9ca9b43479538c34"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/ames/l1/assay_transfer/v10_3/tdc_pinned_v1/ames/scaffold/test/L1/VERSION.json",
+      "size": 225773,
+      "sha256": "f5153f09ae46adcd52f7d08eb60d4f9b51d0302bda7aa1ec6c384ec3ef0c193a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/ames/l1/assay_transfer/v10_3/tdc_pinned_v1/ames/scaffold/test/L1/rankings.sqlite3",
+      "size": 70680576,
+      "sha256": "6cb3904f223aacfe5eb75d7253249e4a3ea85e730eaedeab688535c6795c3e43"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/ames/l1/assay_transfer/v10_3/tdc_pinned_v1/ames/scaffold/valid/L1/VERSION.json",
+      "size": 113505,
+      "sha256": "97743f0ed9c7aa13e75b06d34743c4a60871a0bad9cff7f5db9dee37e7febb30"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/ames/l1/assay_transfer/v10_3/tdc_pinned_v1/ames/scaffold/valid/L1/rankings.sqlite3",
+      "size": 35725312,
+      "sha256": "7cd3151d2add46459ea1445b11750c73ec327343c9935392be8f646b29c8b00e"
+    },
+    {
+      "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v1_v27_successors_v1.yaml",
+      "size": 1902,
+      "sha256": "5ef033194e073375161595c9927d4c28084eaa852f8aa89008efd7edc8bf8525"
+    }
+  ],
+  "missing": []
+}

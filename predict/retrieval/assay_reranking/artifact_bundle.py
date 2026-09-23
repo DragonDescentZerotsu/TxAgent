@@ -284,6 +284,7 @@ def build_bundle_manifest(
     task: str,
     benchmark: str,
     cache_config: Path,
+    max_level: int | None = None,
     output: Path | None = None,
     repo_root: Path = REPO_ROOT,
 ) -> dict[str, Any]:
@@ -295,7 +296,15 @@ def build_bundle_manifest(
         raise ArtifactBundleError(f"invalid cache configuration: {cache_config}")
     paths: dict[str, Path] = {}
     _add_path(paths, cache_config, repo_root)
-    for index_path in _release_indexes(config, task, cache_config, repo_root):
+    if max_level not in (None, 1):
+        raise ArtifactBundleError("artifact inventory supports full or L1-only scope")
+    indexes = _release_indexes(config, task, cache_config, repo_root)
+    if max_level == 1:
+        selected = config["caches"][task]
+        if not isinstance(selected, dict) or "L1" not in selected:
+            raise ArtifactBundleError("L1-only inventory requires a composite cache")
+        indexes = [_resolve_reference(selected["L1"], cache_config.parent, repo_root)]
+    for index_path in indexes:
         _collect_release_index(index_path, repo_root=repo_root, paths=paths)
     entries = []
     missing = []
@@ -317,6 +326,7 @@ def build_bundle_manifest(
         "task": task,
         "benchmark": benchmark,
         "harness_version": "full-flat-context-v5",
+        "max_level": max_level,
         "cache_config": {
             "path": _repo_relative(cache_config, repo_root),
             "sha256": sha256_file(cache_config),
@@ -414,10 +424,14 @@ def require_receipt(
     expected_cache_config: Path | None = None,
     expected_task: str | None = None,
     expected_benchmark: str | None = None,
+    expected_max_level: int | None = None,
 ) -> dict[str, Any]:
     """Perform the cheap launch check, or explicitly refresh the full receipt."""
     manifest_path = manifest_path.resolve()
     manifest = _load_manifest(manifest_path)
+    if (manifest.get("max_level") is not None
+            and (expected_max_level is None or expected_max_level > manifest["max_level"])):
+        raise ArtifactBundleError("artifact bundle does not cover the requested levels")
     if expected_task is not None and manifest.get("task") != expected_task:
         raise ArtifactBundleError(
             "artifact bundle task differs from the requested task: "
@@ -657,6 +671,7 @@ def _main(argv: list[str] | None = None) -> int:
     inventory.add_argument("--task", required=True)
     inventory.add_argument("--benchmark", choices=("gold_v1", "tdc_v1"), required=True)
     inventory.add_argument("--cache-config", type=Path, required=True)
+    inventory.add_argument("--max-level", type=int)
     inventory.add_argument("--output", type=Path)
     verify = subparsers.add_parser("verify")
     verify.add_argument("--manifest", type=Path, required=True)
@@ -673,6 +688,7 @@ def _main(argv: list[str] | None = None) -> int:
             task=args.task,
             benchmark=args.benchmark,
             cache_config=args.cache_config,
+            max_level=args.max_level,
             output=args.output,
         )
         print(json.dumps(manifest, indent=2, sort_keys=True))

@@ -6,49 +6,149 @@
   "benchmark": "tdc_v1",
   "harness_version": "full-flat-context-v5",
   "cache_config": {
-    "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v1.yaml",
-    "sha256": "3cf2908bdde7010e0f8d5106c07466896c3e420925bd5a5b8dab6cc5e80d0f9a"
+    "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v1_task_best_l1_v1.yaml",
+    "sha256": "098d87acbd46775813a690d27a65a2d34a6d9b9524b607fd849d61ed97d82235"
   },
   "artifacts": [
     {
-      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bbb_martins/RELEASE_INDEX.json",
-      "size": 1520,
-      "sha256": "de9b6f54353b264cc91228df8ad3011c03d1d4e4b83609e04d31edd95aeb9fca"
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/RELEASE_INDEX.json",
+      "size": 3295,
+      "sha256": "8c64a6ec3bb5651209e2268be51d940f0fc7b54a1cea2a28ca75f9d838f96b35"
     },
     {
-      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bbb_martins/evidence/VERSION.json",
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/test/L2/VERSION.json",
+      "size": 63487,
+      "sha256": "5e17fcfa26ae33c79af76e2dd632b681ac946bc838464cd49e94eee678b2ab57"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/test/L2/rankings.sqlite3",
+      "size": 433643520,
+      "sha256": "4170bc2e72ad14f96a1e1cd4709d8af2b5f8d6cb144956c96c46f3f57a78754d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/test/L3/VERSION.json",
+      "size": 63145,
+      "sha256": "38d24dcb9d4b063704b1f4f4e2ae80bc2900bbee141a168a01d92ea73c2119f6"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/test/L3/rankings.sqlite3",
+      "size": 83615744,
+      "sha256": "5175c7c384119530b0d41f4226511c4e9155c1a68785cbac9f22a3270863e641"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/test/L4/VERSION.json",
+      "size": 63497,
+      "sha256": "443b9716828c6b2074e63c05f610e989768f9bacc7fc76aa49fa43a105e5d0b3"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/test/L4/rankings.sqlite3",
+      "size": 423567360,
+      "sha256": "ce28646e0c7c9821ad8bf9f5ac3cca3f964eb50c597f64fb8ba5fe5d12b9b450"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/test/L5/VERSION.json",
+      "size": 63176,
+      "sha256": "55e41803e814da70826e2788c3aef54baa7b262e28898df5134135427859b2c3"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/test/L5/rankings.sqlite3",
+      "size": 459612160,
+      "sha256": "19f418ba06e97afd5ab0a390ffc0a541a22a5d64f5de3d22794234c36bc5d21a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/valid/L2/VERSION.json",
+      "size": 24641,
+      "sha256": "1013b77c8bfd647cc604f46c3bc0f166e6bb2f3f42c02d0378772de3be05f8c8"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/valid/L2/rankings.sqlite3",
+      "size": 158769152,
+      "sha256": "9f9c2a2731f16b2bcf6e0e0e6bb2bf3a605f8b7591808c475ee308ba21fcf075"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/valid/L3/VERSION.json",
+      "size": 24471,
+      "sha256": "f7f15c8456f9181ca7a04495512cfe7c94e1e821cd32a5e27271400dbbccde0b"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/valid/L3/rankings.sqlite3",
+      "size": 30347264,
+      "sha256": "162fb820b75694d63fc895ace6a669373f14bd9b4c6e300d25ad8b234c3bffd8"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/valid/L4/VERSION.json",
+      "size": 24670,
+      "sha256": "2d8e9011e38f5cb6570e7e8504559f6f480705918d119d1094102fb381d90df7"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/valid/L4/rankings.sqlite3",
+      "size": 202895360,
+      "sha256": "c6b3a0a773e2ec81f543427eccf2b4dfe8162d1489ac4b329d20d3bba42ed1d8"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/valid/L5/VERSION.json",
+      "size": 24224,
+      "sha256": "93dedd1087604b41fcb727ec20e28fced5506fb24a3db2731ffd540bd4cdbbbc"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/valid/L5/rankings.sqlite3",
+      "size": 113426432,
+      "sha256": "8b65bb3470c3b7002dce4fc423d230ffa90ab0cd3cfbd58b4f36d069f993fe12"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/bbb_martins/RELEASE_INDEX.json",
+      "size": 1993,
+      "sha256": "86662e2e4bdbfa5bfa6dc7ba1c09574fab1367f502cb9c362fdabdfbdb0d1345"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/bbb_martins/evidence/VERSION.json",
       "size": 626,
       "sha256": "69a16a01cb8f2560f5ffe6bccc534355fce14ce471486605e32c8fa62fa60f24"
     },
     {
-      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bbb_martins/evidence/records.parquet",
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/bbb_martins/evidence/records.parquet",
       "size": 102334,
       "sha256": "72877520bac669ed6dc71e1e5798e2dbc625720d7485e84b40c95dcc0da70186"
     },
     {
-      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bbb_martins/scaffold/test/L1/VERSION.json",
-      "size": 85450,
-      "sha256": "c2990a2acf52dc62c673b6c7b84dfa77c89327ca5516ced6fef7f57e637b1b27"
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/bbb_martins/scaffold/test/L1/VERSION.json",
+      "size": 88077,
+      "sha256": "da7f9fc22078056c8e0832d46c37c387328eb488ac3d94f5318bd5829f10cf9a"
     },
     {
-      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bbb_martins/scaffold/test/L1/rankings.sqlite3",
-      "size": 23220224,
-      "sha256": "26bd9baa1ebdd2cb1aade88581c285de6fe82f3cacda9cb5385c09a2691370da"
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/bbb_martins/scaffold/test/L1/rankings.sqlite3",
+      "size": 28741632,
+      "sha256": "b4078efccdbfa6eaf9ee7420476c12603eac62384a9b68590f194b5a2433f74f"
     },
     {
-      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bbb_martins/scaffold/valid/L1/VERSION.json",
-      "size": 32504,
-      "sha256": "15160a591aca8b781c3bd12136a873e8a1031be311ea1f249bc3e69bc0e19c09"
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/bbb_martins/scaffold/valid/L1/VERSION.json",
+      "size": 34465,
+      "sha256": "d6974316a74e8a2e07a763566ec4bffad6335f6d5d9d66dc4cf922312387e5b0"
     },
     {
-      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bbb_martins/scaffold/valid/L1/rankings.sqlite3",
-      "size": 8937472,
-      "sha256": "31b430293974961105767a90834268ae1a5aa3608fc492fd49e467a3b6a77e3c"
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/bbb_martins/scaffold/valid/L1/rankings.sqlite3",
+      "size": 11001856,
+      "sha256": "b3a5557f50404fbbdc4b270e168a17cbdfbd4cc54f4f0c3ef421bd84b9008c75"
     },
     {
-      "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v1.yaml",
-      "size": 730,
-      "sha256": "3cf2908bdde7010e0f8d5106c07466896c3e420925bd5a5b8dab6cc5e80d0f9a"
+      "path": "data/evidence_libraries/bbb_martins/v10_main_universe_v3/03_pair_buckets/records.parquet",
+      "size": 149054758,
+      "sha256": "c190d3d89db6aa6a5e9b71cacf11b7cc264976575f1d206b4d4f9ba83203500d"
+    },
+    {
+      "path": "data/evidence_libraries/bbb_martins/v10_main_universe_v3/retrieval_projection/ranked_evidence_v2/VERSION.json",
+      "size": 1812,
+      "sha256": "0481e9ab3dc262243cedc65dd76eb5828f22dc52195e9f586b1eb75665f1eb15"
+    },
+    {
+      "path": "data/evidence_libraries/bbb_martins/v10_main_universe_v3/retrieval_projection/ranked_evidence_v2/records.parquet",
+      "size": 216274416,
+      "sha256": "885206183b06909af58830e52c06443d01ede77144f5bc16f2e4d1a389838cb2"
+    },
+    {
+      "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v1_task_best_l1_v1.yaml",
+      "size": 878,
+      "sha256": "098d87acbd46775813a690d27a65a2d34a6d9b9524b607fd849d61ed97d82235"
     }
   ],
   "missing": []

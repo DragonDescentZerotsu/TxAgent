@@ -94,6 +94,28 @@ def test_inventory_and_receipt_are_reusable(tmp_path: Path) -> None:
         require_receipt(manifest_path, receipt_path=repo / "receipt.json", repo_root=repo)
 
 
+def test_direct_only_bundle_does_not_require_later_cache(tmp_path: Path) -> None:
+    repo, config = _fixture_repo(tmp_path)
+    config.write_text(
+        "version: 20\ncaches:\n  bbb_martins:\n"
+        "    L1: ../data/cache/bbb/RELEASE_INDEX.json\n"
+        "    later: ../data/cache/missing/RELEASE_INDEX.json\n",
+        encoding="utf-8",
+    )
+    manifest_path = repo / "direct.json"
+    manifest = build_bundle_manifest(
+        task="bbb_martins", benchmark="gold_v1", cache_config=config,
+        max_level=1, output=manifest_path, repo_root=repo,
+    )
+    assert manifest["status"] == "complete"
+    verify_bundle(manifest_path, repo_root=repo, receipt_path=repo / "receipt.json")
+    require_receipt(manifest_path, receipt_path=repo / "receipt.json",
+                    repo_root=repo, expected_max_level=1)
+    with pytest.raises(ArtifactBundleError, match="does not cover"):
+        require_receipt(manifest_path, receipt_path=repo / "receipt.json",
+                        repo_root=repo, expected_max_level=2)
+
+
 def test_canonical_cache_identity_and_legacy_alias() -> None:
     cache_id = canonical_cache_id(
         benchmark="gold_v1",

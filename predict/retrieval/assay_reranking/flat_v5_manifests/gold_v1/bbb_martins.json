@@ -6,8 +6,8 @@
   "benchmark": "gold_v1",
   "harness_version": "full-flat-context-v5",
   "cache_config": {
-    "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_v4.yaml",
-    "sha256": "3c0f37a91f9e245ade38d15a9faa887dfa82b9002cd75461e5dcdc5d381cf4d5"
+    "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_gold_v1_all_tasks_v1.yaml",
+    "sha256": "b1740ab83b6ec3b807700bc5172c22aafb67d45ce398c45ec5ee78e049d9fc61"
   },
   "artifacts": [
     {
@@ -131,9 +131,9 @@
       "sha256": "885206183b06909af58830e52c06443d01ede77144f5bc16f2e4d1a389838cb2"
     },
     {
-      "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_v4.yaml",
-      "size": 266,
-      "sha256": "3c0f37a91f9e245ade38d15a9faa887dfa82b9002cd75461e5dcdc5d381cf4d5"
+      "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_gold_v1_all_tasks_v1.yaml",
+      "size": 1606,
+      "sha256": "b1740ab83b6ec3b807700bc5172c22aafb67d45ce398c45ec5ee78e049d9fc61"
     }
   ],
   "missing": []

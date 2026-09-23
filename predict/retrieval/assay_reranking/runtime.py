@@ -46,6 +46,23 @@ ACTIVE_CACHE_PROFILES = frozenset(
         "v25/morgan75_l2_builder",
         "flat_v5/gold_v1/bioavailability_ma/l2plus/assay_transfer/"
         "v25/morgan75_l3_builder",
+        "flat_v5/gold_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2",
+        "flat_v5/tdc_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2",
+        "flat_v5/gold_v1/ames/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2",
+        "flat_v5/gold_v1/dili/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2",
+        "flat_v5/gold_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2",
+        "flat_v5/gold_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent50_v1",
+        "flat_v5/gold_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent40_v1",
+        "flat_v5/gold_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent40_partial_snapshot_v1",
+        "flat_v5/tdc_v1/ames/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2",
+        "flat_v5/tdc_v1/ames/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent50_v1",
+        "flat_v5/tdc_v1/ames/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent40_v1",
+        "flat_v5/tdc_v1/ames/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent40_partial_snapshot_v1",
+        "flat_v5/tdc_v1/dili/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2",
+        "flat_v5/tdc_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2",
+        "flat_v5/tdc_v1/ames/l1/assay_transfer/v10_3/tdc_pinned_v1",
+        "flat_v5/tdc_v1/dili/l1/assay_transfer/v10_3/tdc_pinned_v1",
+        "flat_v5/tdc_v1/carcinogens/l1/assay_transfer/v10_3/tdc_pinned_v1",
         "v10_3_direct_gold_morgan100_v1",
         "v10_3_best_scaffold_morgan100_v1",
         "v10_3_best_parent_morgan100_v1",
@@ -124,7 +141,7 @@ def canonical_cache_profile(profile: str, *, benchmark: str = "gold_v1") -> str 
     return canonical_cache_alias(profile, benchmark=benchmark)
 MODEL_ROLES = (
     "direct", "direct_v10_3", "direct_v10_3_0_2", "direct_v10_4",
-    "direct_task_best",
+    "direct_task_best", "direct_tdc_best",
     "indirect", "all_records",
 )
 MODEL_PROFILES = {
@@ -218,6 +235,11 @@ MODEL_PROFILES = {
         },
     },
     "ames": {
+        "direct_tdc_best": {
+            "model": "jiosephlee/intern-s1-mini-ames-v10-3-tdc-mixed-canonical-best",
+            "revision": "392dd01912090040cfc0427f9f680d16d47eb27b",
+            "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
+        },
         "direct_task_best": {
             "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-ames-best",
             "revision": "d27f5f44328a43ccfea650841dba9fcf4729ec69",
@@ -226,6 +248,11 @@ MODEL_PROFILES = {
         },
     },
     "dili": {
+        "direct_tdc_best": {
+            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-pinned-dili-xnkoqrux",
+            "revision": "bb5248609a729ac7dc6d6c9a3cccba1566a3d19e",
+            "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
+        },
         "direct_task_best": {
             "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-1-dili-best",
             "revision": "b594bd7be81d140a9ebdf137aea5b979359e0b7f",
@@ -234,6 +261,11 @@ MODEL_PROFILES = {
         },
     },
     "carcinogens": {
+        "direct_tdc_best": {
+            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-pinned-carcinogens-2xcwcpul",
+            "revision": "8be3376cd1d84e46c18b61617f63ad597aeaff52",
+            "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
+        },
         "direct_task_best": {
             "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-carcinogens-step160",
             "revision": "204d66ca9f7692ae76938ef6c5ebaa84737fd5f2",
@@ -601,12 +633,13 @@ def load_model(snapshot: str, *, device: int = 0) -> tuple[Any, Any]:
 
 
 def score_prompt_batch(
-    model: Any, tokenizer: Any, tasks: Sequence[PromptTask], *, device: int = 0
+    model: Any, tokenizer: Any, tasks: Sequence[PromptTask], *, device: int = 0,
+    tokenized: tuple[list[list[int]], list[int], list[int]] | None = None,
 ) -> list[PromptScore]:
     """Score the first token where the `(A)` and `(B)` answers diverge."""
     import torch
 
-    prefixes, a_tokens, b_tokens = _answer_prefixes(tokenizer, tasks)
+    prefixes, a_tokens, b_tokens = tokenized or _answer_prefixes(tokenizer, tasks)
     encoded = tokenizer.pad({"input_ids": prefixes}, padding=True, return_tensors="pt")
     encoded = {key: value.to(f"cuda:{device}") for key, value in encoded.items()}
     positions = torch.arange(

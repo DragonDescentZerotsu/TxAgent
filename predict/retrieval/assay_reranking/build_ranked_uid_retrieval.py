@@ -3,18 +3,23 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter, defaultdict
+from concurrent.futures import ProcessPoolExecutor
+from contextlib import ExitStack
 import hashlib
 import json
 import math
+from multiprocessing import get_context
 import os
 from pathlib import Path
 import shutil
 import sqlite3
 import tempfile
+from types import SimpleNamespace
 from typing import Any
 
 import numpy as np
 import pyarrow as pa
+import pyarrow.compute as pc
 import pyarrow.parquet as pq
 from rdkit import DataStructs
 
@@ -37,6 +42,10 @@ PROFILE = "ranked_level_retrieval_v4"
 EVIDENCE_RELEASE: str | None = None
 SCORE_REUSE_ROOTS: tuple[Path, ...] = ()
 TRUST_PREDECESSOR_ROWS = False
+SCORING_FAMILY = "default"
+BASE_RANKING_ROOT: Path | None = None
+SHARED_LATER_PARENT_UNIVERSE = False
+SOURCE_PARENT_OFFSET = 0
 TASK_LEVELS = {
     "bbb_martins": ("L1", "L2", "L3", "L4", "L5"),
     "bioavailability_ma": ("L1", "L2", "L3", "L4", "L5", "L6"),
@@ -98,10 +107,26 @@ def _source_fields(task: str) -> tuple[dict[str, list[str]], set[str]]:
 
 
 def _model_spec(task: str, level: str) -> dict[str, Any] | None:
+    if SCORING_FAMILY == "skin_training" and task == v27_skin.TASK_ID:
+        return v27_skin.TRAINING_MODEL if level in v27_skin.LEVELS else None
+    if SCORING_FAMILY == "safety_v27":
+        from . import v27_safety
+
+        return v27_safety.MODELS.get(task) if level in TASK_LEVELS[task] else None
     if task == v27_skin.TASK_ID:
         return v27_skin.MODEL if level in v27_skin.LEVELS else None
     module = three_pools.MODULES.get(task)
     return None if module is None else module.MODELS.get(level)
+
+
+def _renderer(task: str):
+    if SCORING_FAMILY == "safety_v27":
+        from .v27_safety import SafetyV27PromptRenderer
+
+        return SafetyV27PromptRenderer(task)
+    if task == v27_skin.TASK_ID:
+        return v27_skin.SkinV27PromptRenderer(training_template=SCORING_FAMILY == "skin_training")
+    return three_pools.Renderer(task)
 
 
 def build_evidence(task: str, output: Path) -> dict[str, Any]:
@@ -129,7 +154,7 @@ def build_evidence(task: str, output: Path) -> dict[str, Any]:
     core = {
         "source_row_uid", "canonical_record_id", "canonical_smiles", "source_id",
         "pair_bucket_key", "measurement_kind", "finite_scalar_value",
-        "canonical_pair_fields_json", "canonical_measurement_scale_id",
+        "canonical_pair_fields_json", "canonical_endpoint_name", "canonical_measurement_scale_id",
         "canonical_category_id", "canonical_measurement_text", "canonical_unit_text",
         "canonical_transporter_identifier",
     }
@@ -290,13 +315,35 @@ def _schema(connection: sqlite3.Connection, level: str) -> None:
     """)
 
 
-def _queries(task: str, subset: str) -> tuple[Path, list[dict[str, Any]], list[tuple[str, str, str, str]]]:
+def _queries(
+    task: str, subset: str, frozen_level: str | None = None,
+) -> tuple[Path, list[dict[str, Any]], list[tuple[str, str, str, str]]]:
     path = (
         tdc_task_root(task) / f"{subset}_molecule_condition_labels.jsonl"
         if QUERY_BENCHMARK == "tdc"
         else REPO_ROOT / "data/gold_labels" / GOLD_NAMES[task] / "v1/scaffold" / f"{subset}_molecule_condition_labels.jsonl"
     )
     rows = read_jsonl(path)
+    if frozen_level is not None and BASE_RANKING_ROOT is not None:
+        manifest_path = BASE_RANKING_ROOT / task / "scaffold" / subset / frozen_level / "VERSION.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if manifest["inputs"]["query_sha256"] != sha256_file(path):
+            raise ValueError(f"Frozen Morgan query input changed: {task}/{subset}/{frozen_level}")
+        database = manifest_path.with_name(str(manifest["database"]))
+        with sqlite3.connect(f"file:{database.resolve()}?mode=ro", uri=True) as connection:
+            frozen = {str(query_id): (str(drug), str(parent), str(smiles))
+                      for query_id, drug, parent, smiles in connection.execute(
+                          "SELECT benchmark_row_id,drug,query_parent_id,query_parent_smiles FROM queries"
+                      )}
+        if len(frozen) != len(rows):
+            raise ValueError(f"Frozen Morgan query count changed: {task}/{subset}")
+        output = []
+        for row in rows:
+            query_id, drug = str(row["benchmark_row_id"]), str(row["drug"])
+            if query_id not in frozen or frozen[query_id][0] != drug:
+                raise ValueError(f"Frozen Morgan query row changed: {query_id}")
+            output.append((query_id, *frozen[query_id]))
+        return path, rows, output
     output = []
     for row in rows:
         identity = row.get("molecule_identity") or {}
@@ -611,15 +658,20 @@ def _copy_addon_l1(
 
 def _records(
     evidence_manifest: Path, level: str | None = None,
+    selected_parents: set[str] | None = None,
 ) -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, list[str]]]]:
     manifest = json.loads(evidence_manifest.read_text(encoding="utf-8"))
     path = evidence_manifest.with_name(str(manifest["records"]))
     records = {}
     grouped: dict[str, dict[str, list[str]]] = defaultdict(lambda: defaultdict(list))
+    parent_values = pa.array(sorted(selected_parents)) if selected_parents is not None else None
     for batch in pq.ParquetFile(path).iter_batches(batch_size=10_000):
-        for row in batch.to_pylist():
-            if level is not None and str(row["level"]) != level:
-                continue
+        table = pa.Table.from_batches([batch])
+        if level is not None:
+            table = table.filter(pc.equal(table["level"], level))
+        if parent_values is not None:
+            table = table.filter(pc.is_in(table["parent_id"], value_set=parent_values))
+        for row in table.to_pylist():
             payload = json.loads(row["payload"])
             record = {
                 **payload,
@@ -659,21 +711,51 @@ def _reuse_scores(
         if not manifest_path.is_file():
             continue
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        database = manifest_path.with_name(str(manifest["database"]))
-        with sqlite3.connect(f"file:{database.resolve()}?mode=ro", uri=True) as connection:
-            for start in range(0, len(values), 900):
-                chunk = values[start:start + 900]
-                placeholders = ",".join("?" for _ in chunk)
-                for key, value in connection.execute(
-                    f"SELECT DISTINCT score_key,assay_transfer_score FROM rankings "
-                    f"WHERE score_key IN ({placeholders}) "
-                    "AND assay_transfer_score IS NOT NULL",
-                    chunk,
-                ):
-                    key, value = str(key), float(value)
-                    if key in output and output[key] != value:
-                        raise ValueError(f"Conflicting reusable score: {key}")
-                    output[key] = value
+        if manifest.get("model") != _model_spec(task, level):
+            raise ValueError(f"Reusable score model differs: {manifest_path}")
+        if manifest.get("status") == "complete":
+            database = manifest_path.with_name(str(manifest["database"]))
+            if sha256_file(database) != manifest["database_sha256"]:
+                raise ValueError(f"Reusable score database changed: {database}")
+            with sqlite3.connect(f"file:{database.resolve()}?mode=ro", uri=True) as connection:
+                for start in range(0, len(values), 900):
+                    chunk = values[start:start + 900]
+                    placeholders = ",".join("?" for _ in chunk)
+                    for key, value in connection.execute(
+                        f"SELECT DISTINCT score_key,assay_transfer_score FROM rankings "
+                        f"WHERE score_key IN ({placeholders}) "
+                        "AND assay_transfer_score IS NOT NULL",
+                        chunk,
+                    ):
+                        key, value = str(key), float(value)
+                        if key in output and output[key] != value:
+                            raise ValueError(f"Conflicting reusable score: {key}")
+                        output[key] = value
+        elif manifest.get("status") in {"prepared", "ready_to_finalize"}:
+            prompt_path = manifest_path.with_name(str(manifest["prompts"]))
+            prompts = sorted(
+                ((str(row["score_key"]), str(row["prompt"]))
+                 for row in pq.read_table(prompt_path, columns=["score_key", "prompt"]).to_pylist()),
+                key=lambda row: (len(row[1]), row[0]),
+            )
+            for journal in sorted((manifest_path.parent / ".scores").glob("*-of-*.jsonl")):
+                shard, _, count = journal.stem.partition("-of-")
+                if not shard.isdecimal() or not count.isdecimal() or int(count) < 1 or int(shard) >= int(count):
+                    raise ValueError(f"Invalid reusable score shard: {journal}")
+                expected = prompts[int(shard)::int(count)]
+                done = read_jsonl(journal)
+                if [str(row["score_key"]) for row in done] != [key for key, _ in expected[:len(done)]]:
+                    raise ValueError(f"Reusable score journal is not an exact shard prefix: {journal}")
+                for row in done:
+                    key, value = str(row["score_key"]), float(row["assay_transfer_score"])
+                    if not math.isfinite(value) or not 0 <= value <= 1:
+                        raise ValueError(f"Invalid reusable score: {journal}/{key}")
+                    if key in keys:
+                        if key in output and output[key] != value:
+                            raise ValueError(f"Conflicting reusable score: {key}")
+                        output[key] = value
+        else:
+            raise ValueError(f"Reusable score stage is not complete or prepared: {manifest_path}")
     return output
 
 
@@ -704,6 +786,104 @@ def _predecessor_rows(
     return output
 
 
+def prepare_shared_parent_universe(
+    task: str, subset: str, output_root: Path, evidence_manifest: Path,
+    source_universe: Path | None = None,
+) -> dict[str, Any]:
+    """Rank all L2+ parents once per query, before level-specific UID expansion."""
+    if not SHARED_LATER_PARENT_UNIVERSE:
+        raise ValueError("Shared L2+ parent selection is not configured")
+    target = output_root / task / "scaffold" / subset / "PARENT_UNIVERSE.json"
+    if target.exists():
+        raise FileExistsError(target)
+    query_path, query_rows, queries = _queries(task, subset, TASK_LEVELS[task][0] if BASE_RANKING_ROOT else None)
+    evidence = json.loads(evidence_manifest.read_text(encoding="utf-8"))
+    if source_universe is not None:
+        source = json.loads(source_universe.read_text(encoding="utf-8"))
+        if (
+            source.get("schema_version") != "shared_later_parent_universe.v1"
+            or source.get("task_id") != task or source.get("subset") != subset
+            or source.get("parent_capacity", 0) < SOURCE_PARENT_OFFSET + CAPACITY
+            or source.get("source_parent_rank_start", 1) != 1
+            or source.get("query_sha256") != sha256_file(query_path)
+            or source.get("evidence_manifest_sha256") != sha256_file(evidence_manifest)
+            or source.get("evidence_records_sha256") != evidence["records_sha256"]
+            or set(source.get("parents_by_query", {})) != {row[0] for row in queries}
+            or any(len(rows) != source["parent_capacity"] or
+                   len({row[0] for row in rows}) != len(rows)
+                   for rows in source["parents_by_query"].values())
+        ):
+            raise ValueError(f"Source parent universe is incompatible: {source_universe}")
+        selected = {
+            query_id: rows[SOURCE_PARENT_OFFSET:SOURCE_PARENT_OFFSET + CAPACITY]
+            for query_id, rows in source["parents_by_query"].items()
+        }
+        parent_count = source["evidence_parent_count"]
+        unrankable = source["unrankable_parent_ids"]
+    else:
+        if SOURCE_PARENT_OFFSET:
+            raise ValueError("A frozen source parent universe is required for a rank window")
+        records_path = evidence_manifest.with_name(str(evidence["records"]))
+        parent_smiles: dict[str, str] = {}
+        for batch in pq.ParquetFile(records_path).iter_batches(
+            batch_size=50_000, columns=["parent_id", "parent_smiles", "level"]
+        ):
+            for row in batch.to_pylist():
+                if str(row["level"]) not in TASK_LEVELS[task]:
+                    continue
+                parent, smiles = str(row["parent_id"]), str(row["parent_smiles"])
+                parent_smiles[parent] = min(smiles, parent_smiles.get(parent, smiles))
+        parents = sorted(parent_smiles)
+        fps = [standardize_smiles_and_fp(parent_smiles[parent])[2] for parent in parents]
+        unrankable = [parent for parent, fp in zip(parents, fps) if fp is None]
+        rankable = [(parent, fp) for parent, fp in zip(parents, fps) if fp is not None]
+        if len(rankable) <= CAPACITY:
+            raise ValueError(f"Insufficient rankable L2+ evidence parents: {task}")
+        parents = [parent for parent, _ in rankable]
+        fps = [fp for _, fp in rankable]
+        packed = np.stack([
+            np.frombuffer(DataStructs.BitVectToBinaryText(fp), dtype=np.uint8) for fp in fps
+        ])
+        popcount = three_pools.bbb.POPCOUNT[packed].sum(axis=1, dtype=np.uint16)
+        query_ids = {row[0]: (row[2], row[3]) for row in queries}
+        selected = {}
+        for row in query_rows:
+            query_id = str(row["benchmark_row_id"])
+            query_parent, query_smiles = query_ids[query_id]
+            qfp = standardize_smiles_and_fp(query_smiles or str(row["drug"]))[2]
+            similarities = three_pools.bbb._similarities(qfp, packed, popcount)
+            order = sorted(range(len(parents)), key=lambda i: (-float(similarities[i]), parents[i]))
+            selected[query_id] = [
+                [parents[i], parent_smiles[parents[i]], float(similarities[i])]
+                for i in order if parents[i] != query_parent
+            ][:CAPACITY]
+            if len(selected[query_id]) != CAPACITY:
+                raise ValueError(f"Insufficient L2+ Morgan parents: {query_id}")
+        parent_count = len(parent_smiles)
+    result = {
+        "schema_version": "shared_later_parent_universe.v1",
+        "task_id": task, "subset": subset, "parent_capacity": CAPACITY,
+        "query_sha256": sha256_file(query_path),
+        "evidence_manifest_sha256": sha256_file(evidence_manifest),
+        "evidence_records_sha256": evidence["records_sha256"],
+        "query_count": len(queries), "evidence_parent_count": parent_count,
+        "unrankable_parent_ids": unrankable,
+        "parents_by_query": selected,
+        **({"source_parent_rank_start": SOURCE_PARENT_OFFSET + 1}
+           if SOURCE_PARENT_OFFSET else {}),
+        **({"source_parent_universe_sha256": sha256_file(source_universe)}
+           if source_universe is not None else {}),
+    }
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(mode="w", prefix=".PARENT_UNIVERSE.", suffix=".json",
+                                     dir=target.parent, delete=False, encoding="utf-8") as handle:
+        json.dump(result, handle, sort_keys=True, separators=(",", ":"))
+        handle.write("\n")
+        temporary = Path(handle.name)
+    os.replace(temporary, target)
+    return {key: value for key, value in result.items() if key != "parents_by_query"}
+
+
 def prepare_level(
     task: str, subset: str, level: str, output_root: Path, evidence_manifest: Path,
 ) -> dict[str, Any]:
@@ -714,31 +894,64 @@ def prepare_level(
     target = output_root / task / "scaffold" / subset / level
     if target.exists():
         raise FileExistsError(f"Refusing to replace level cache: {target}")
-    query_path, query_rows, queries = _queries(task, subset)
-    records, grouped = _records(evidence_manifest, level)
+    query_path, query_rows, queries = _queries(task, subset, level)
+    if SHARED_LATER_PARENT_UNIVERSE and BASE_RANKING_ROOT is not None and level != TASK_LEVELS[task][0]:
+        _, _, first_level_queries = _queries(task, subset, TASK_LEVELS[task][0])
+        if queries != first_level_queries:
+            raise ValueError(f"Frozen L2+ query identities differ across levels: {task}/{subset}")
+    shared_path = output_root / task / "scaffold" / subset / "PARENT_UNIVERSE.json"
+    shared = json.loads(shared_path.read_text(encoding="utf-8")) if SHARED_LATER_PARENT_UNIVERSE else None
+    if shared is not None and (
+        shared.get("schema_version") != "shared_later_parent_universe.v1"
+        or shared.get("task_id") != task or shared.get("subset") != subset
+        or shared.get("parent_capacity") != CAPACITY
+        or shared.get("source_parent_rank_start", 1) != SOURCE_PARENT_OFFSET + 1
+        or shared.get("query_sha256") != sha256_file(query_path)
+        or shared.get("evidence_manifest_sha256") != sha256_file(evidence_manifest)
+        or set(shared["parents_by_query"]) != {row[0] for row in queries}
+    ):
+        raise ValueError(f"Shared L2+ parent universe changed: {shared_path}")
+    selected_parents = (
+        {parent for rows in shared["parents_by_query"].values() for parent, *_ in rows}
+        if shared else None
+    )
+    records, grouped = _records(evidence_manifest, level, selected_parents)
     level_parents = grouped.get(level, {})
-    parents = sorted(level_parents)
-    parent_smiles = {
-        parent: records[level_parents[parent][0]]["canonical_smiles"] for parent in parents
-    }
-    fps = [standardize_smiles_and_fp(parent_smiles[parent])[2] for parent in parents]
-    if any(fp is None for fp in fps):
-        raise ValueError("Evidence projection contains an invalid parent fingerprint")
-    packed = np.stack([
-        np.frombuffer(DataStructs.BitVectToBinaryText(fp), dtype=np.uint8) for fp in fps
-    ])
-    popcount = three_pools.bbb.POPCOUNT[packed].sum(axis=1, dtype=np.uint16)
+    parents = sorted(level_parents) if BASE_RANKING_ROOT is None and not SHARED_LATER_PARENT_UNIVERSE else []
+    if BASE_RANKING_ROOT is None and not SHARED_LATER_PARENT_UNIVERSE:
+        parent_smiles = {
+            parent: records[level_parents[parent][0]]["canonical_smiles"] for parent in parents
+        }
+        fps = [standardize_smiles_and_fp(parent_smiles[parent])[2] for parent in parents]
+        if any(fp is None for fp in fps):
+            raise ValueError("Evidence projection contains an invalid parent fingerprint")
+        packed = np.stack([
+            np.frombuffer(DataStructs.BitVectToBinaryText(fp), dtype=np.uint8) for fp in fps
+        ])
+        popcount = three_pools.bbb.POPCOUNT[packed].sum(axis=1, dtype=np.uint16)
     model_spec = _model_spec(task, level)
-    if task == v27_skin.TASK_ID:
-        renderer = v27_skin.SkinV27PromptRenderer()
-    else:
-        renderer = three_pools.Renderer(task) if model_spec is not None else None
+    renderer = _renderer(task) if model_spec is not None else None
     predecessor_rows = _predecessor_rows(task, subset, level)
     trusted_score_keys: set[str] = set()
     trusted_row_count = 0
 
     target.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix=f".{level}.", dir=target.parent) as temporary:
+    with tempfile.TemporaryDirectory(prefix=f".{level}.", dir=target.parent) as temporary, ExitStack() as stack:
+        base_manifest_path = None
+        base_connection = None
+        if BASE_RANKING_ROOT is not None and shared is None:
+            base_manifest_path = BASE_RANKING_ROOT / task / "scaffold" / subset / level / "VERSION.json"
+            base_manifest = json.loads(base_manifest_path.read_text(encoding="utf-8"))
+            if any(base_manifest.get(key) != value for key, value in {
+                "task_id": task, "subset": subset, "level": level, "status": "complete",
+                "parent_capacity": CAPACITY,
+            }.items()):
+                raise ValueError(f"Incompatible frozen Morgan ranking: {base_manifest_path}")
+            base_database = base_manifest_path.with_name(str(base_manifest["database"]))
+            if sha256_file(base_database) != base_manifest["database_sha256"]:
+                raise ValueError(f"Frozen Morgan ranking hash changed: {base_database}")
+            base_connection = sqlite3.connect(f"file:{base_database.resolve()}?mode=ro", uri=True)
+            stack.callback(base_connection.close)
         root = Path(temporary)
         database = root / "rankings.sqlite3"
         connection = sqlite3.connect(database)
@@ -747,45 +960,83 @@ def prepare_level(
         staged_rows = []
         prompt_rows: dict[str, tuple[str, str]] = {}
         query_identities = {row[0]: (row[2], row[3]) for row in queries}
+        source_smiles_fallbacks = 0
         for query in query_rows:
             benchmark_row_id = str(query["benchmark_row_id"])
             query_parent, query_smiles = query_identities[benchmark_row_id]
-            qfp = standardize_smiles_and_fp(query_smiles)[2]
-            similarities = three_pools.bbb._similarities(qfp, packed, popcount)
-            ordered = sorted(range(len(parents)), key=lambda index: (-float(similarities[index]), parents[index]))
-            selected_parents = []
-            for index in ordered:
-                parent = parents[index]
-                similarity = float(similarities[index])
-                if parent == query_parent:
-                    continue
-                selected_parents.append((parent, similarity))
-                if len(selected_parents) == CAPACITY:
-                    break
-            if len(selected_parents) != CAPACITY:
-                raise ValueError(f"Insufficient Morgan parents: {benchmark_row_id}/{level}")
+            prompt_query_smiles = query_smiles or str(query["drug"])
+            if not prompt_query_smiles:
+                raise ValueError(f"Frozen query has no SMILES: {benchmark_row_id}/{level}")
+            source_smiles_fallbacks += not bool(query_smiles)
+            if shared is not None:
+                selected_parents = shared["parents_by_query"][benchmark_row_id]
+                if len(selected_parents) != CAPACITY or len({row[0] for row in selected_parents}) != CAPACITY:
+                    raise ValueError(f"Shared L2+ parents are incomplete: {benchmark_row_id}")
+                candidates = []
+                for parent_rank, (parent, _, similarity) in enumerate(selected_parents, 1):
+                    for within_parent_rank, uid in enumerate(sorted(level_parents.get(parent, ())), 1):
+                        candidates.append((
+                            uid, parent, records[uid]["canonical_smiles"], similarity,
+                            parent_rank, within_parent_rank, len(candidates) + 1,
+                        ))
+            elif base_connection is None:
+                qfp = standardize_smiles_and_fp(query_smiles)[2]
+                similarities = three_pools.bbb._similarities(qfp, packed, popcount)
+                ordered = sorted(range(len(parents)), key=lambda index: (-float(similarities[index]), parents[index]))
+                selected_parents = [
+                    (parents[index], float(similarities[index]))
+                    for index in ordered if parents[index] != query_parent
+                ][:CAPACITY]
+                if len(selected_parents) != CAPACITY:
+                    raise ValueError(f"Insufficient Morgan parents: {benchmark_row_id}/{level}")
+                candidates = []
+                for parent_rank, (parent, similarity) in enumerate(selected_parents, 1):
+                    for within_parent_rank, uid in enumerate(sorted(level_parents[parent]), 1):
+                        candidates.append((
+                            uid, parent, records[uid]["canonical_smiles"], similarity,
+                            parent_rank, within_parent_rank, len(candidates) + 1,
+                        ))
+            else:
+                frozen_query = base_connection.execute(
+                    "SELECT query_parent_id,query_parent_smiles FROM queries WHERE benchmark_row_id=?",
+                    (benchmark_row_id,),
+                ).fetchone()
+                if frozen_query != (query_parent, query_smiles):
+                    raise ValueError(f"Frozen Morgan query changed: {benchmark_row_id}/{level}")
+                candidates = base_connection.execute(
+                    "SELECT item_id,parent_id,parent_smiles,morgan_similarity,"
+                    "parent_morgan_rank,within_parent_rank,morgan_rank FROM rankings "
+                    "WHERE benchmark_row_id=? ORDER BY morgan_rank", (benchmark_row_id,),
+                )
+            parent_ids = set()
             morgan_rank = 0
-            for parent_rank, (parent, similarity) in enumerate(selected_parents, 1):
-                for within_parent_rank, uid in enumerate(sorted(level_parents[parent]), 1):
-                    morgan_rank += 1
-                    record = records[uid]
-                    score_key = None
-                    score = None
-                    if renderer is not None:
-                        predecessor = predecessor_rows.get((benchmark_row_id, uid))
-                        if predecessor is not None:
-                            score_key, score = predecessor
-                            trusted_score_keys.add(score_key)
-                            trusted_row_count += 1
-                        else:
-                            prompt = renderer.prompt_task(record, query_smiles)
-                            score_key = prompt.cache_key
-                            prompt_rows.setdefault(score_key, (prompt.prompt, prompt.projection_hash))
-                    staged_rows.append([
-                        benchmark_row_id, uid, parent, record["canonical_smiles"], similarity,
-                        parent_rank, within_parent_rank, morgan_rank, score, None,
-                        None, None, None, None, score_key,
-                    ])
+            for uid, parent, candidate_smiles, similarity, parent_rank, within_parent_rank, rank in candidates:
+                morgan_rank += 1
+                if (rank != morgan_rank or uid not in records
+                        or records[uid]["parent_id"] != parent
+                        or records[uid]["canonical_smiles"] != candidate_smiles):
+                    raise ValueError(f"Frozen Morgan candidate changed: {benchmark_row_id}/{level}/{uid}")
+                parent_ids.add(parent)
+                record = records[uid]
+                score_key = None
+                score = None
+                if renderer is not None:
+                    predecessor = predecessor_rows.get((benchmark_row_id, uid))
+                    if predecessor is not None:
+                        score_key, score = predecessor
+                        trusted_score_keys.add(score_key)
+                        trusted_row_count += 1
+                    else:
+                        prompt = renderer.prompt_task(record, prompt_query_smiles)
+                        score_key = prompt.cache_key
+                        prompt_rows.setdefault(score_key, (prompt.prompt, prompt.projection_hash))
+                staged_rows.append([
+                    benchmark_row_id, uid, parent, candidate_smiles, similarity,
+                    parent_rank, within_parent_rank, morgan_rank, score, None,
+                    None, None, None, None, score_key,
+                ])
+            if (shared is None and len(parent_ids) != CAPACITY) or query_parent in parent_ids:
+                raise ValueError(f"Frozen Morgan parent universe changed: {benchmark_row_id}/{level}")
 
         reused = _reuse_scores(task, subset, level, set(prompt_rows))
         missing = set(prompt_rows) - set(reused)
@@ -808,6 +1059,9 @@ def prepare_level(
                 compression="zstd",
             )
         record_counts = Counter(row[0] for row in staged_rows)
+        parent_counts: dict[str, set[str]] = defaultdict(set)
+        for query_id, _, parent, *_ in staged_rows:
+            parent_counts[query_id].add(parent)
         identity = {
             "task_id": task, "subset": subset, "level": level, "pool": "all",
             "capacity": CAPACITY, "parent_capacity": CAPACITY,
@@ -815,10 +1069,17 @@ def prepare_level(
                else {"label_release": LABEL_RELEASE}),
             "neighbor_identity_policy": "parent_disjoint",
             "shared_candidate_universe": True,
+            "parent_universe_source": (
+                f"shared_l2plus_morgan_{CAPACITY}" if shared else f"level_morgan_{CAPACITY}"
+            ),
+            **({"source_parent_rank_start": shared["source_parent_rank_start"]}
+               if shared and shared.get("source_parent_rank_start") else {}),
+            "query_smiles_policy": "frozen_parent_else_source_smiles",
+            "source_smiles_fallback_queries": source_smiles_fallbacks,
             "query_count": len(queries), "stored_rows": len(staged_rows),
             "query_counts": {
                 query_id: {
-                    "candidate_parents": CAPACITY,
+                    "candidate_parents": len(parent_counts[query_id]),
                     "candidate_records": record_counts[query_id],
                 }
                 for query_id, *_ in queries
@@ -827,6 +1088,11 @@ def prepare_level(
             "inputs": {
                 "query_sha256": sha256_file(query_path),
                 "evidence_manifest_sha256": sha256_file(evidence_manifest),
+                **({"shared_parent_universe_sha256": sha256_file(shared_path)} if shared else {}),
+                **({"base_morgan_manifest_sha256": sha256_file(base_manifest_path)}
+                   if base_manifest_path is not None else {}),
+                **({"base_morgan_database_sha256": base_manifest["database_sha256"]}
+                   if base_manifest_path is not None else {}),
             },
             "score_counts": {
                 "exact_reuse": len(reused) + len(trusted_score_keys),
@@ -837,10 +1103,18 @@ def prepare_level(
             "score_reuse_sources": [
                 {
                     "path": str(root.resolve()),
-                    "release_index_sha256": sha256_file(root / task / "RELEASE_INDEX.json"),
+                    "stage_manifest_sha256": sha256_file(path),
+                    "prompts_sha256": (
+                        sha256_file(path.parent / "prompts.parquet")
+                        if (path.parent / "prompts.parquet").is_file() else None
+                    ),
+                    "score_files": {
+                        str(source.relative_to(path.parent)): sha256_file(source)
+                        for source in sorted((path.parent / ".scores").glob("*-of-*.jsonl"))
+                    },
                 }
                 for root in SCORE_REUSE_ROOTS
-                if (root / task / "RELEASE_INDEX.json").is_file()
+                if (path := root / task / "scaffold" / subset / level / "VERSION.json").is_file()
             ],
         }
         if renderer is None:
@@ -885,7 +1159,10 @@ def prepare_level(
 def score_level(
     task: str, subset: str, level: str, output_root: Path, device: int,
     num_shards: int, shard_index: int, batch_size: int,
+    tokenized_root: Path | None = None,
 ) -> dict[str, Any]:
+    if batch_size < 1 or num_shards < 1 or not 0 <= shard_index < num_shards:
+        raise ValueError("Score batch and shard parameters must be positive and in range")
     target = output_root / task / "scaffold" / subset / level
     manifest = json.loads((target / "VERSION.json").read_text(encoding="utf-8"))
     if manifest.get("status") not in {"prepared", "ready_to_finalize"}:
@@ -905,18 +1182,34 @@ def score_level(
     done = read_jsonl(journal) if journal.exists() else []
     if [row["score_key"] for row in done] != [row[0] for row in rows[:len(done)]]:
         raise ValueError("Score journal is not the exact completed shard prefix")
+    if len(done) == len(rows):
+        return {"status": "complete", "scores": len(rows), "journal": str(journal)}
     spec = _model_spec(task, level)
     if spec is None:
         raise ValueError(f"No assay-transfer model is configured for {task}/{level}")
-    renderer = (
-        v27_skin.SkinV27PromptRenderer()
-        if task == v27_skin.TASK_ID
-        else three_pools.Renderer(task)
-    )
+    tokenized_rows = None
+    if tokenized_root is not None:
+        token_dir = tokenized_root / task / "scaffold" / subset / level
+        token_manifest = json.loads((token_dir / "VERSION.json").read_text(encoding="utf-8"))
+        if (token_manifest["prompts_sha256"] != sha256_file(prompt_path)
+                or token_manifest["model"] != spec
+                or token_manifest["num_shards"] != num_shards):
+            raise ValueError("Pretokenized score inputs do not match the prepared level")
+        token_file = token_dir / f"{shard_index:02d}-of-{num_shards:02d}.parquet"
+        if sha256_file(token_file) != token_manifest["files"][token_file.name]:
+            raise ValueError("Pretokenized score shard changed")
+        tokenized_rows = pq.read_table(token_file).to_pylist()
+        if [row["score_key"] for row in tokenized_rows] != [row[0] for row in rows]:
+            raise ValueError("Pretokenized score shard is not the exact sorted prompt shard")
+    renderer = _renderer(task)
     snapshot = runtime.resolve_model_snapshot(spec["model"], spec["revision"], local_files_only=True)
     model, tokenizer = runtime.load_model(snapshot, device=device)
     with journal.open("a", encoding="utf-8") as handle:
-        for offset in range(len(done), len(rows), batch_size):
+        offset = len(done)
+        while offset < len(rows):
+            width = min(batch_size, len(rows) - offset)
+            while width > 1 and width * len(rows[offset + width - 1][1]) > 1_400_000:
+                width = (width + 1) // 2
             batch = [runtime.PromptTask(
                 cache_key=key, prompt=prompt,
                 prompt_hash=hashlib.sha256(prompt.encode()).hexdigest(),
@@ -924,8 +1217,18 @@ def score_level(
                 model=spec["model"], model_revision=spec["revision"],
                 scoring_contract_version=runtime.SCORING_CONTRACT_VERSION,
                 template_hash=renderer.template_hash, projection_hash=projection,
-            ) for key, prompt, projection in rows[offset:offset + batch_size]]
-            for result in runtime.score_prompt_batch(model, tokenizer, batch, device=device):
+            ) for key, prompt, projection in rows[offset:offset + width]]
+            tokenized = None
+            if tokenized_rows is not None:
+                selected = tokenized_rows[offset:offset + width]
+                tokenized = (
+                    [row["prefix_ids"] for row in selected],
+                    [row["a_token"] for row in selected],
+                    [row["b_token"] for row in selected],
+                )
+            for result in runtime.score_prompt_batch(
+                model, tokenizer, batch, device=device, tokenized=tokenized,
+            ):
                 handle.write(json.dumps({
                     "score_key": result.cache_key,
                     "assay_transfer_score": result.transfer_probability,
@@ -933,10 +1236,111 @@ def score_level(
             handle.flush()
             os.fsync(handle.fileno())
             print(f"{task}/{subset}/{level}/{shard_index}: {offset + len(batch)}/{len(rows)}", flush=True)
+            offset += len(batch)
     return {"status": "complete", "scores": len(rows), "journal": str(journal)}
 
 
-def finalize_level(task: str, subset: str, level: str, output_root: Path) -> dict[str, Any]:
+def _tokenize_shards(args: tuple) -> list[tuple[str, int]]:
+    prompt_path, snapshot, stage, shards, num_shards, batch_size, task, subset, level = args
+    from transformers import AutoTokenizer
+    tokenizer = AutoTokenizer.from_pretrained(snapshot, trust_remote_code=True, local_files_only=True)
+    rows = sorted(
+        ((str(row["score_key"]), str(row["prompt"]))
+         for row in pq.read_table(prompt_path, columns=["score_key", "prompt"]).to_pylist()),
+        key=lambda row: (len(row[1]), row[0]),
+    )
+    schema = pa.schema([
+        ("score_key", pa.string()), ("prefix_ids", pa.list_(pa.int32())),
+        ("a_token", pa.int32()), ("b_token", pa.int32()),
+    ])
+    completed = []
+    for shard in shards:
+        selected = rows[shard::num_shards]
+        name = f"{shard:02d}-of-{num_shards:02d}.parquet"
+        with pq.ParquetWriter(stage / name, schema, compression="zstd") as writer:
+            for offset in range(0, len(selected), batch_size):
+                chunk = selected[offset:offset + batch_size]
+                rendered = [tokenizer.apply_chat_template(
+                    [{"role": "user", "content": prompt}], tokenize=False,
+                    add_generation_prompt=True, enable_thinking=False,
+                ) for _, prompt in chunk]
+                answers_a = tokenizer([value + "(A)" for value in rendered], add_special_tokens=False)["input_ids"]
+                answers_b = tokenizer([value + "(B)" for value in rendered], add_special_tokens=False)["input_ids"]
+                encoded = []
+                for (key, _), a_ids, b_ids in zip(chunk, answers_a, answers_b, strict=True):
+                    divergent = next((i for i, pair in enumerate(zip(a_ids, b_ids)) if pair[0] != pair[1]), None)
+                    if divergent is None:
+                        raise ValueError(f"A/B answer tokenizations do not diverge: {key}")
+                    encoded.append({
+                        "score_key": key, "prefix_ids": a_ids[:divergent],
+                        "a_token": a_ids[divergent], "b_token": b_ids[divergent],
+                    })
+                if offset == 0 or offset + len(chunk) == len(selected):
+                    sample = chunk[:8]
+                    prefixes, a_tokens, b_tokens = runtime._answer_prefixes(
+                        tokenizer, [SimpleNamespace(prompt=prompt) for _, prompt in sample],
+                    )
+                    if [(row["prefix_ids"], row["a_token"], row["b_token"])
+                            for row in encoded[:len(sample)]] != list(zip(prefixes, a_tokens, b_tokens)):
+                        raise ValueError("Batched tokenization differs from the live scoring contract")
+                writer.write_table(pa.Table.from_pylist(encoded, schema=schema))
+                print(f"{task}/{subset}/{level}: {shard}/{num_shards} {offset + len(chunk)}/{len(selected)}", flush=True)
+        completed.append((name, len(selected)))
+    return completed
+
+
+def pretokenize_level(
+    task: str, subset: str, level: str, input_root: Path, tokenized_root: Path,
+    num_shards: int = 4, batch_size: int = 1024, workers: int = 1,
+) -> dict[str, Any]:
+    """Freeze exact A/B prefixes; independent shards can use separate CPU workers."""
+    if num_shards < 1 or batch_size < 1 or workers < 1:
+        raise ValueError("Shard, tokenization batch, and worker counts must be positive")
+    source = input_root / task / "scaffold" / subset / level
+    prepared = json.loads((source / "VERSION.json").read_text(encoding="utf-8"))
+    if prepared["status"] not in {"prepared", "ready_to_finalize"} or not prepared["prompts"]:
+        raise ValueError("Pretokenization requires a prepared level with prompts")
+    prompt_path = source / prepared["prompts"]
+    prompt_sha256 = sha256_file(prompt_path)
+    spec = _model_spec(task, level)
+    if spec is None or spec != prepared["model"]:
+        raise ValueError("Prepared level model differs from the pinned scoring model")
+    target = tokenized_root / task / "scaffold" / subset / level
+    if target.exists():
+        existing = json.loads((target / "VERSION.json").read_text(encoding="utf-8"))
+        if (existing["prompts_sha256"] != prompt_sha256 or existing["model"] != spec
+                or existing["num_shards"] != num_shards):
+            raise FileExistsError(f"Different tokenized level already exists: {target}")
+        return existing
+    snapshot = runtime.resolve_model_snapshot(spec["model"], spec["revision"], local_files_only=True)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=f".{level}.", dir=target.parent) as temporary:
+        stage = Path(temporary)
+        common = (prompt_path, snapshot, stage)
+        tail = (num_shards, batch_size, task, subset, level)
+        if workers == 1:
+            completed = _tokenize_shards((*common, tuple(range(num_shards)), *tail))
+        else:
+            jobs = [(*common, (shard,), *tail) for shard in range(num_shards)]
+            with ProcessPoolExecutor(max_workers=min(workers, num_shards), mp_context=get_context("fork")) as pool:
+                completed = [entry for batch in pool.map(_tokenize_shards, jobs) for entry in batch]
+        counts = dict(completed)
+        files = {name: sha256_file(stage / name) for name in counts}
+        result = {
+            "schema_version": "assay_score_prefixes.v1", "task_id": task,
+            "subset": subset, "level": level, "model": spec,
+            "prompts_sha256": prompt_sha256, "num_shards": num_shards,
+            "counts": counts, "files": files,
+        }
+        (stage / "VERSION.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
+        stage.rename(target)
+    return result
+
+
+def finalize_level(
+    task: str, subset: str, level: str, output_root: Path, *,
+    partial_snapshot: bool = False,
+) -> dict[str, Any]:
     target = output_root / task / "scaffold" / subset / level
     version_path = target / "VERSION.json"
     manifest = json.loads(version_path.read_text(encoding="utf-8"))
@@ -945,7 +1349,7 @@ def finalize_level(task: str, subset: str, level: str, output_root: Path) -> dic
     database = target / manifest["database"]
     connection = sqlite3.connect(database)
     try:
-        expected = {
+        expected_keys = {
             str(row[0]) for row in connection.execute(
                 "SELECT DISTINCT score_key FROM rankings "
                 "WHERE score_key IS NOT NULL AND assay_transfer_score IS NULL"
@@ -958,8 +1362,8 @@ def finalize_level(task: str, subset: str, level: str, output_root: Path) -> dic
                 if key in fresh or not math.isfinite(value) or not 0 <= value <= 1:
                     raise ValueError(f"Invalid or duplicate fresh score: {key}")
                 fresh[key] = value
-        if set(fresh) != expected:
-            raise ValueError(f"Incomplete fresh scores: missing={len(expected-set(fresh))} extra={len(set(fresh)-expected)}")
+        if not set(fresh).issubset(expected_keys) or (not partial_snapshot and set(fresh) != expected_keys):
+            raise ValueError(f"Incomplete fresh scores: missing={len(expected_keys-set(fresh))} extra={len(set(fresh)-expected_keys)}")
         connection.execute(
             "CREATE TEMP TABLE fresh_scores("
             "score_key TEXT PRIMARY KEY,assay_transfer_score REAL NOT NULL) WITHOUT ROWID"
@@ -976,21 +1380,28 @@ def finalize_level(task: str, subset: str, level: str, output_root: Path) -> dic
         for benchmark_row_id, in connection.execute("SELECT benchmark_row_id FROM queries"):
             rows = connection.execute(
                 "SELECT item_id FROM rankings WHERE benchmark_row_id=? "
+                "AND assay_transfer_score IS NOT NULL "
                 "ORDER BY assay_transfer_score DESC,item_id", (benchmark_row_id,),
             ).fetchall()
             expected = connection.execute(
                 "SELECT COUNT(*) FROM rankings WHERE benchmark_row_id=?", (benchmark_row_id,)
             ).fetchone()[0]
-            if len(rows) != expected:
+            if not partial_snapshot and len(rows) != expected:
                 raise ValueError(f"Incomplete assay ranking: {benchmark_row_id}/{level}")
             connection.executemany(
                 "UPDATE rankings SET assay_rank=? WHERE benchmark_row_id=? AND item_id=?",
                 [(rank, benchmark_row_id, row[0]) for rank, row in enumerate(rows, 1)],
             )
+            if partial_snapshot:
+                manifest["query_counts"][benchmark_row_id]["scored_records"] = len(rows)
+                manifest["query_counts"][benchmark_row_id]["missing_scores"] = expected - len(rows)
         manifest["score_counts"] = {
             "exact_reuse": manifest["score_counts"]["exact_reuse"],
             "fresh": len(fresh),
+            **({"pending": len(expected_keys - set(fresh))} if partial_snapshot else {}),
         }
+        if partial_snapshot:
+            manifest["score_coverage"] = "partial_snapshot"
         manifest = _write_complete(
             connection, database, task=task, subset=subset, level=level,
             identity={key: value for key, value in manifest.items() if key not in {
@@ -1009,7 +1420,10 @@ def finalize_level(task: str, subset: str, level: str, output_root: Path) -> dic
     return manifest
 
 
-def write_index(task: str, output_root: Path, evidence_manifest: Path) -> dict[str, Any]:
+def write_index(
+    task: str, output_root: Path, evidence_manifest: Path, *,
+    partial_snapshot: bool = False,
+) -> dict[str, Any]:
     task_root = output_root / task
     levels = {}
     complete = True
@@ -1029,6 +1443,15 @@ def write_index(task: str, output_root: Path, evidence_manifest: Path) -> dict[s
                 "content_id": manifest.get("content_id"),
             }
         levels[subset] = {"levels": split}
+        if SHARED_LATER_PARENT_UNIVERSE:
+            parent_path = task_root / "scaffold" / subset / "PARENT_UNIVERSE.json"
+            if parent_path.is_file():
+                levels[subset]["parent_universe"] = {
+                    "file": str(parent_path.relative_to(task_root)),
+                    "sha256": sha256_file(parent_path),
+                }
+            else:
+                complete = False
     evidence = json.loads(evidence_manifest.read_text(encoding="utf-8"))
     index = {
         "schema_version": "ranked_uid_task_release_index.v1",
@@ -1036,17 +1459,21 @@ def write_index(task: str, output_root: Path, evidence_manifest: Path) -> dict[s
         "profile": PROFILE,
         "task_id": task,
         "status": "complete" if complete else "partial",
+        **({"score_coverage": "partial_snapshot"} if partial_snapshot else {}),
         **({"gold_release": LABEL_RELEASE} if isinstance(LABEL_RELEASE, str)
            else {"label_release": LABEL_RELEASE}),
         "pool": "all",
         "parent_capacity": CAPACITY,
-        "levels_independent": True,
+        "levels_independent": not SHARED_LATER_PARENT_UNIVERSE,
         "ranking_modes": (
             ["morgan"]
             if all(_model_spec(task, level) is None for level in TASK_LEVELS[task])
             else ["morgan", "assay-transfer"]
         ),
-        "later_candidate_universe": "all_uids_under_morgan_top_100_parents",
+        "later_candidate_universe": (
+            f"all_uids_under_shared_l2plus_morgan_top_{CAPACITY}_parents"
+            if SHARED_LATER_PARENT_UNIVERSE else f"all_uids_under_morgan_top_{CAPACITY}_parents"
+        ),
         "neighbor_identity_policy_by_level": {
             level: "scaffold_disjoint" if level == "L1" else "parent_disjoint"
             for level in TASK_LEVELS[task]
@@ -1068,7 +1495,8 @@ def write_index(task: str, output_root: Path, evidence_manifest: Path) -> dict[s
 
 
 def validate_release(
-    task: str, output_root: Path, evidence_manifest: Path,
+    task: str, output_root: Path, evidence_manifest: Path, *,
+    allow_partial_snapshot: bool = False,
 ) -> dict[str, Any]:
     """Run expensive integrity checks once, before atomic publication."""
     task_root = output_root / task
@@ -1080,6 +1508,12 @@ def validate_release(
         or index.get("task_id") != task
     ):
         raise ValueError("Task release index is incomplete or incompatible")
+    partial_snapshot = index.get("score_coverage") == "partial_snapshot"
+    if partial_snapshot and (
+        not allow_partial_snapshot
+        or not str(index.get("profile", "")).endswith("_partial_snapshot_v1")
+    ):
+        raise ValueError("Partial score snapshot requires explicit validation")
 
     evidence = json.loads(evidence_manifest.read_text(encoding="utf-8"))
     indexed_evidence = (index_path.parent / index["evidence"]["manifest"]).resolve()
@@ -1106,7 +1540,9 @@ def validate_release(
         )
 
         task_adapter = Path(semantic_display.__file__)
-    if evidence["inputs"].get("display_adapter") != {
+    # Shared-parent successors reuse a frozen, hash-pinned evidence projection;
+    # its historical adapter hash is provenance, not a dependency on live code.
+    if not SHARED_LATER_PARENT_UNIVERSE and evidence["inputs"].get("display_adapter") != {
         "projection": sha256_file(projection_adapter),
         "task": sha256_file(task_adapter),
     }:
@@ -1159,10 +1595,28 @@ def validate_release(
     report: dict[str, Any] = {}
     evidence_hash = sha256_file(evidence_manifest)
     for subset in ("valid", "test"):
-        _, _, expected_queries = _queries(task, subset)
-        query_ledger = {row[0]: row for row in expected_queries}
         split_report = {}
+        shared_path = output_root / task / "scaffold" / subset / "PARENT_UNIVERSE.json"
+        shared = json.loads(shared_path.read_text(encoding="utf-8")) if SHARED_LATER_PARENT_UNIVERSE else None
+        if shared is not None and (
+            shared.get("schema_version") != "shared_later_parent_universe.v1"
+            or shared.get("task_id") != task or shared.get("subset") != subset
+            or shared.get("parent_capacity") != CAPACITY
+            or shared.get("evidence_manifest_sha256") != evidence_hash
+            or shared.get("query_count") != len(shared.get("parents_by_query", {}))
+            or index["splits"][subset].get("parent_universe") != {
+                "file": str(shared_path.relative_to(task_root)),
+                "sha256": sha256_file(shared_path),
+            }
+        ):
+            raise ValueError(f"Shared L2+ parent provenance changed: {shared_path}")
+        parent_ranks = {
+            query_id: {row[0]: rank for rank, row in enumerate(rows, 1)}
+            for query_id, rows in (shared["parents_by_query"].items() if shared else ())
+        }
         for level in TASK_LEVELS[task]:
+            _, _, expected_queries = _queries(task, subset, level)
+            query_ledger = {row[0]: row for row in expected_queries}
             entry = index["splits"][subset]["levels"][level]
             manifest_path = task_root / str(entry["manifest"])
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -1180,6 +1634,23 @@ def validate_release(
             }
             if any(manifest.get(key) != value for key, value in required.items()):
                 raise ValueError(f"Incompatible level manifest: {task}/{subset}/{level}")
+            partial_level = manifest.get("score_coverage") == "partial_snapshot"
+            if partial_level and (not partial_snapshot or not manifest.get("snapshot_source")):
+                raise ValueError(f"Unrecognized partial score provenance: {task}/{subset}/{level}")
+            if partial_snapshot:
+                source_hashes = index.get("source_stages", {}).get(f"{subset}/{level}")
+                if not source_hashes or (
+                    partial_level and any(
+                        manifest["snapshot_source"].get(key) != value
+                        for key, value in source_hashes.items()
+                    )
+                ) or (
+                    not partial_level and (
+                        source_hashes.get("manifest_sha256") != entry["manifest_sha256"]
+                        or source_hashes.get("database_sha256") != manifest["database_sha256"]
+                    )
+                ):
+                    raise ValueError(f"Partial snapshot source differs: {task}/{subset}/{level}")
             expected_model = _model_spec(task, level)
             if manifest.get("model") != expected_model:
                 raise ValueError(f"Level model provenance changed: {task}/{subset}/{level}")
@@ -1190,6 +1661,11 @@ def validate_release(
                 or manifest["inputs"]["evidence_manifest_sha256"] != evidence_hash
             ):
                 raise ValueError(f"Published hashes differ: {task}/{subset}/{level}")
+            if shared is not None and (
+                manifest.get("parent_universe_source") != f"shared_l2plus_morgan_{CAPACITY}"
+                or manifest["inputs"].get("shared_parent_universe_sha256") != sha256_file(shared_path)
+            ):
+                raise ValueError(f"Shared L2+ parent provenance changed: {task}/{subset}/{level}")
             if level == "L1":
                 source_manifest = (
                     ADDON_L1_ROOT / task / "scaffold" / subset / "L1/VERSION.json"
@@ -1230,6 +1706,13 @@ def validate_release(
                 metadata = dict(connection.execute("SELECT key,value FROM metadata"))
                 if metadata.get("content_id") != manifest["content_id"]:
                     raise ValueError(f"SQLite identity changed: {task}/{subset}/{level}")
+                if partial_level:
+                    pending_keys = connection.execute(
+                        "SELECT COUNT(DISTINCT score_key) FROM rankings "
+                        "WHERE score_key IS NOT NULL AND assay_transfer_score IS NULL"
+                    ).fetchone()[0]
+                    if manifest["score_counts"].get("pending") != pending_keys:
+                        raise ValueError(f"Partial pending score count changed: {task}/{subset}/{level}")
                 frozen_queries = {
                     str(row["benchmark_row_id"]): tuple(row)
                     for row in connection.execute("SELECT * FROM queries")
@@ -1285,13 +1768,28 @@ def validate_release(
                     if len(rows) != count:
                         raise ValueError(f"Candidate count changed: {query_id}/{level}")
                     parents = {str(row["parent_id"]) for row in rows}
-                    if len(parents) != CAPACITY or query_parent in parents:
+                    if query_parent in parents or (
+                        shared is None and len(parents) != CAPACITY
+                    ) or (
+                        shared is not None and (
+                            not parents.issubset(parent_ranks[query_id])
+                            or len(parents) != int(manifest["query_counts"][query_id]["candidate_parents"])
+                        )
+                    ):
                         raise ValueError(f"Parent capacity/disjointness failed: {query_id}/{level}")
                     if [int(row["morgan_rank"]) for row in rows] != list(range(1, count + 1)):
                         raise ValueError(f"Morgan ranks are not dense: {query_id}/{level}")
-                    if {int(row["parent_morgan_rank"]) for row in rows} != set(
-                        range(1, CAPACITY + 1)
-                    ):
+                    if shared is not None:
+                        ranks_match = all(
+                            int(row["parent_morgan_rank"])
+                            == parent_ranks[query_id][str(row["parent_id"])]
+                            for row in rows
+                        )
+                    else:
+                        ranks_match = {int(row["parent_morgan_rank"]) for row in rows} == set(
+                            range(1, CAPACITY + 1)
+                        )
+                    if not ranks_match:
                         raise ValueError(f"Parent ranks are not dense: {query_id}/{level}")
                     by_parent: dict[str, list[int]] = defaultdict(list)
                     for row in rows:
@@ -1340,12 +1838,26 @@ def validate_release(
                         if expected_model is None:
                             if any(value is not None for value in (*assay_ranks, *scores)):
                                 raise ValueError(f"Morgan-only level has assay values: {query_id}/{level}")
-                        elif (
-                            sorted(int(value) for value in assay_ranks if value is not None)
-                            != list(range(1, count + 1))
-                            or any(value is None or not 0 <= float(value) <= 1 for value in scores)
-                        ):
-                            raise ValueError(f"Assay ranks/scores are incomplete: {query_id}/{level}")
+                        else:
+                            scored = [value for value in scores if value is not None]
+                            if (
+                                sorted(int(value) for value in assay_ranks if value is not None)
+                                != list(range(1, len(scored) + 1))
+                                or any((rank is None) != (score is None)
+                                       for rank, score in zip(assay_ranks, scores))
+                                or any(not 0 <= float(value) <= 1 for value in scored)
+                                or (not partial_level and len(scored) != count)
+                            ):
+                                raise ValueError(f"Assay ranks/scores are incomplete: {query_id}/{level}")
+                            if partial_level and (
+                                manifest["query_counts"][query_id].get("scored_records") != len(scored)
+                                or manifest["query_counts"][query_id].get("missing_scores") != count - len(scored)
+                                or [int(row["assay_rank"]) for row in sorted(
+                                    (row for row in rows if row["assay_transfer_score"] is not None),
+                                    key=lambda row: (-float(row["assay_transfer_score"]), str(row["item_id"])),
+                                )] != list(range(1, len(scored) + 1))
+                            ):
+                                raise ValueError(f"Partial score count changed: {query_id}/{level}")
                 if stored_rows != manifest["stored_rows"]:
                     raise ValueError(f"Stored-row count changed: {task}/{subset}/{level}")
             split_report[level] = {

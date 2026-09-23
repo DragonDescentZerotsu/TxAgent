@@ -22,6 +22,71 @@ silently clamped. Levels are independent. Runtime reads only small manifests,
 indexed ranking rows, and selected projection rows; source equivalence, database
 hashes, integrity, and disjointness are publication checks.
 
+The V27 safety and Skin training-prompt successors are indexed in
+`MODEL_CONTRACTS.md`. Their indirect query side uses the query SMILES and the
+candidate record's training-visible query fields. Keep the original Starling
+visibility rules: known-only measurements, support text, and other hidden
+fields never appear on the query side. The training-pair renderer remains
+byte-exact to Starling; the candidate-context inference adapter has its own
+hash-pinned `candidate_copy_v1` cache identity because live queries lack their
+own assay record. Skin also uses the pinned
+canonical endpoint; preserve its older source-endpoint/whitespace cache unchanged.
+Direct TDC safety successors score only the existing frozen L1 Morgan-100 cards.
+For every safety or Skin V27 query, rank the distinct parents in the combined
+L2+ evidence pool once, then expand only the selected parents to unique physical
+L2+ UIDs. The default is the top 100; the opt-in Gold Carcinogens and TDC AMES
+successors take the first 40 from each query's frozen shared top-100 list under
+new `shared_parent40_v1` identities. Never choose a different parent set per level,
+recompute the frozen Morgan ordering for these successors, or score the full
+evidence library per query. Level directories are storage
+partitions for the existing harness, not independent parent selections; the
+general V27 tool is unchanged across those partitions. If one parent ID has
+multiple projected SMILES, use the lexicographically smallest one for its
+one-time Morgan comparison, while retaining every physical record. For these
+successor caches, full-flat displays every physical L2+ record under the shared
+selected parents, regardless of level; the legacy 50-per-level display limit does
+not apply. Preserve distinct source UIDs even when external record IDs repeat.
+Do not use prompt-size checks as cache-generation or ranking-validation gates.
+Use a new shared-parent cache identity and
+reuse finalized scores or stopped score journals only when the exact model and
+prompt-derived score key match. All seven model
+prompts must pass the sampled real-dataset audit before GPU scoring. On dgx027,
+use four distinct `srun` GPU ranks with device `0` inside each rank and shard
+index `SLURM_LOCALID`; publish only closed and validated local staging trees.
+For V27 safety successors, `build_safety_v27_ranked_retrieval tokenize` may
+precompute the exact A/B token prefixes on an EPYC allocation from closed
+`prompts.parquet` files. The optional `--tokenized-root` scoring path must
+match the prompt-file hash, model revision, shard order, and token-file hashes;
+it does not change score keys or existing score journals.
+For large prepared levels, `--tokenize-workers` may parallelize independent
+shards; keep `--num-shards` consistent between tokenization and GPU scoring.
+For Gold Carcinogens and TDC Ames, `--supplement-41-50` prepares a separate
+score-only rank window from each query's frozen top-50 parent list. It requires
+an explicit output root and source parent universe, and cannot write an active
+cache index. CPU-tokenize this supplement independently; do not auto-queue GPU
+scoring. Once its scores and the top-40 release are closed, a fresh top-50
+preparation may reuse both exact score-key sources. Never edit either source or
+silently activate the top-50 successor.
+
+The canonical `active/flat_v5/<benchmark>/<task>/<role>/<method>/<release>/<variant>`
+tree holds independent task releases; the Gold and TDC V27 successor YAMLs join
+their L1 and L2+ release indexes for the harness. In those YAMLs, Gold
+Carcinogens and TDC Ames L2+ select `general_candidate_copy_shared_parent40_v1`;
+other safety L2+ tasks select `general_candidate_copy_shared_parent100_v2`.
+Validated `staging/` trees are not published releases. Keep GPU writers
+separate from closed scored stages. Publish only a validated closed release to
+its unoccupied canonical path, then inventory and verify the matching bundle
+before inference. Gold Carcinogens and TDC Ames may also have opt-in
+`shared_parent40_partial_snapshot_v1` releases built from closed score journals.
+They retain the full Morgan-40 universe and original Morgan ranks, but only
+genuinely scored records receive assay-transfer ranks. Empty assay-ranked
+query/levels are valid. Never invent missing scores, call these fully scored,
+replace their resumable sources, or switch the default bundle to a snapshot.
+Use the dedicated YAML and verified receipt for inference.
+The upstream V5 harness may read DILI and Carcinogens through L7 from these
+releases. Its safety L5 method is assay-transfer; do not apply the legacy
+BBB/Oral Morgan-only L5 stage rule to a shared V27 safety index.
+
 ## Full-flat V5 artifact contract
 
 The full-flat-context-v5 family uses the tracked manifests in

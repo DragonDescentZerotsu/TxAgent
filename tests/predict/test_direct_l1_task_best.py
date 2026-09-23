@@ -10,6 +10,7 @@ from predict.retrieval.assay_reranking.score_tdc_ranked_retrieval import (
     DirectL1PromptRenderer,
     GOLD_PROFILE,
     TDC_PROFILE,
+    _profile,
     _rows,
 )
 
@@ -45,6 +46,17 @@ def test_task_best_models_and_profiles_are_explicitly_active() -> None:
         }
     for profile in (GOLD_PROFILE, TDC_PROFILE):
         assert "data/caches/assay_reranking/active" in str(cache_profile_root(profile))
+
+
+def test_tdc_safety_direct_models_reuse_frozen_l1_universe() -> None:
+    for task in ("ames", "dili", "carcinogens"):
+        model = model_profile(task, "direct_tdc_best")
+        assert model["revision"] and len(model["revision"]) == 40
+        assert model["prompt_profile"] == "tdc_binary_same_different_parent_smiles.v1"
+        assert _profile(task, "tdc-v1").startswith(f"flat_v5/tdc_v1/{task}/l1/")
+        assert DirectL1PromptRenderer(task, "tdc-v1").render(
+            {"drug": "CCO", "Y": 1}, {"drug": "CCN"}
+        )
 
 
 def test_task_best_bundles_route_l1_to_published_profiles() -> None:

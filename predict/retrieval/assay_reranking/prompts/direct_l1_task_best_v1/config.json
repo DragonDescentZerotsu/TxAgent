@@ -35,7 +35,30 @@
       "positive": "skin-reaction positive",
       "negative": "skin-reaction negative",
       "property_name": "skin-reaction"
+    },
+    "ames": {
+      "benchmark_name": "Ames-mutagenicity",
+      "positive": "Ames mutagenic",
+      "negative": "not Ames mutagenic",
+      "property_name": "Ames-mutagenicity"
+    },
+    "dili": {
+      "benchmark_name": "drug-induced-liver-injury",
+      "positive": "associated with drug-induced liver injury",
+      "negative": "not associated with drug-induced liver injury",
+      "property_name": "drug-induced-liver-injury"
+    },
+    "carcinogens": {
+      "benchmark_name": "carcinogenicity",
+      "positive": "carcinogenic",
+      "negative": "not carcinogenic",
+      "property_name": "carcinogenicity"
     }
+  },
+  "tdc_upstream": {
+    "ames": {"dataset_revision": "3bd32bf7c6eba916cdcc358425cf61ebb5e6ae7e"},
+    "dili": {"dataset_revision": "401d41b27d87d608ce03a45fed7d43d081229007"},
+    "carcinogens": {"dataset_revision": "c21748b1dcb036082014ac51f3bbcbd20872e5c2"}
   },
   "upstream": {
     "ames": {"dataset_revision": "409b47f25713dd1d8059909f40a3568948d3e0de"},

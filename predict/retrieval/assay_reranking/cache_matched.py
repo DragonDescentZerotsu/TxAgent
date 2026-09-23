@@ -104,8 +104,10 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
             })):
         raise ValueError('L1 context cache and contrastive reranking must be selected together')
     last = max_level or TASKS[task][1]
-    if not 1 <= last <= TASKS[task][1]:
-        raise ValueError(f'{task} ends at L{TASKS[task][1]}')
+    supported_last = (7 if document['version'] == 20 and task in {'dili', 'carcinogens'}
+                      else TASKS[task][1])
+    if not 1 <= last <= supported_last:
+        raise ValueError(f'{task} ends at L{supported_last}')
     stages = {f'L{i}': 'morgan' if reranking == 'morgan' or i == 5 else 'assay_transfer'
               for i in range(1, last + 1)}
     if reranking == 'assay-transfer-contrastive':
@@ -122,11 +124,22 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
         sources = document['caches'][task]
         if not isinstance(sources, dict) or set(sources) != {'L1', 'later'}:
             raise ValueError(f'{task}: composite cache requires L1 and later indexes')
+        later_index = (
+            json.loads((path.parent / sources['later']).resolve().read_text())
+            if last > 1 else None
+        )
+        if (later_index is not None and reranking != 'morgan' and 'L5' in stages
+                and task in {'ames', 'dili', 'carcinogens'}
+                and str(later_index.get('later_candidate_universe', '')).startswith(
+                    'all_uids_under_shared_l2plus_morgan_top_')):
+            stages['L5'] = 'assay_transfer'
         cache_manifests, cache_indexes, inputs = {}, {}, {str(path): sha256_file(path)}
+        all_later_records = False
         for level in stages:
             source = 'L1' if level == 'L1' else 'later'
             index_path = (path.parent / sources[source]).resolve()
-            index = json.loads(index_path.read_text())
+            index = (later_index if source == 'later'
+                     else json.loads(index_path.read_text()))
             if (index.get('schema_version') != 'ranked_uid_task_release_index.v1'
                     or index.get('status') != 'complete'
                     or index.get('task_id') != task
@@ -141,10 +154,16 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
             )
             cache_indexes[level] = str(index_path)
             inputs[str(index_path)] = sha256_file(index_path)
+            if level != 'L1' and index.get('later_candidate_universe') in {
+                    'all_uids_under_shared_l2plus_morgan_top_100_parents',
+                    'all_uids_under_shared_l2plus_morgan_top_50_parents',
+                    'all_uids_under_shared_l2plus_morgan_top_40_parents'}:
+                all_later_records = True
         return dict(
             selection_contract='ranked_uid_retrieval.v1', reranking=reranking,
             stages=stages, cache_indexes=cache_indexes,
             cache_manifests=cache_manifests, inputs=inputs,
+            all_later_records=all_later_records,
         )
     if document['version'] in {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19}:
         if document['version'] in {18, 19}:
@@ -801,7 +820,8 @@ def load_candidates(queries, *, task, subset, library=None, mapper=None, policy,
                     gold_context_mapping=None, allow_frozen_l1_vote_scores=False,
                     cache_pool='tool-accepted', joint_panel_sizes=None,
                     min_contrast=3, morgan_primary_parent_width=100,
-                    preselected_uids=None, preselected_contexts=None):
+                    preselected_uids=None, preselected_contexts=None,
+                    preselected_uid_budget=None):
     """Load a complete v2 cache directly, or explicitly replay a legacy bundle."""
     if policy.get('selection_contract') in {
         'ranked_level_retrieval.v2', 'ranked_uid_retrieval.v1'
@@ -809,6 +829,8 @@ def load_candidates(queries, *, task, subset, library=None, mapper=None, policy,
         if (preselected_uids is not None
                 and policy['selection_contract'] != 'ranked_uid_retrieval.v1'):
             raise ValueError('Preselected UIDs require ranked_uid_retrieval.v1')
+        if preselected_uid_budget is not None and policy['selection_contract'] != 'ranked_uid_retrieval.v1':
+            raise ValueError('Joint UID budgets require ranked_uid_retrieval.v1')
         if policy['selection_contract'] == 'ranked_uid_retrieval.v1':
             from .ranked_uid_retrieval import load_candidates as load_level_candidates
         else:
@@ -829,8 +851,14 @@ def load_candidates(queries, *, task, subset, library=None, mapper=None, policy,
                 if policy['selection_contract'] == 'ranked_uid_retrieval.v1'
                 else {}
             ),
+            **(
+                {'preselected_uid_budget': preselected_uid_budget}
+                if policy['selection_contract'] == 'ranked_uid_retrieval.v1'
+                else {}
+            ),
         )
-    if preselected_uids is not None or preselected_contexts is not None:
+    if (preselected_uids is not None or preselected_contexts is not None
+            or preselected_uid_budget is not None):
         raise ValueError('Preselected UIDs and contexts require ranked_uid_retrieval.v1')
     if policy.get('selection_contract') == 'cache_matched_retrieval.v2':
         from .cache_matched_v2 import load_candidates as load_v2_candidates

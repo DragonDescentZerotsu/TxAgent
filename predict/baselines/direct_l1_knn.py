@@ -22,7 +22,7 @@ GOLD_TASKS = (
     "bbb_martins", "bioavailability_ma", "skin_reaction",
     "ames", "dili", "carcinogens",
 )
-TDC_TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
+TDC_TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction", "ames", "dili", "carcinogens")
 SPLITS = ("valid", "test")
 METHODS = ("morgan", "assay_transfer")
 EXPECTED_QUERIES = {
@@ -38,6 +38,9 @@ EXPECTED_QUERIES = {
         "bbb_martins": {"valid": 197, "test": 530},
         "bioavailability_ma": {"valid": 64, "test": 128},
         "skin_reaction": {"valid": 40, "test": 82},
+        "ames": {"valid": 720, "test": 1449},
+        "dili": {"valid": 47, "test": 96},
+        "carcinogens": {"valid": 27, "test": 56},
     },
 }
 GOLD_PROFILES = {
@@ -48,7 +51,14 @@ GOLD_PROFILES = {
     "dili": "ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1",
     "carcinogens": "ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1",
 }
-TDC_PROFILE = "ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1"
+TDC_PROFILES = {
+    task: (
+        f"flat_v5/tdc_v1/{task}/l1/assay_transfer/v10_3/tdc_pinned_v1"
+        if task in {"ames", "dili", "carcinogens"}
+        else "ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1"
+    )
+    for task in TDC_TASKS
+}
 
 
 def _write_tsv(path: Path, rows: list[dict[str, Any]]) -> None:
@@ -70,7 +80,7 @@ def _vote(labels: Iterable[int]) -> tuple[int, float]:
 def _neighbors(
     benchmark: str, task: str, split: str, method: str, k: int,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    profile = GOLD_PROFILES[task] if benchmark == "gold_v1" else TDC_PROFILE
+    profile = GOLD_PROFILES[task] if benchmark == "gold_v1" else TDC_PROFILES[task]
     root = cache_profile_root(profile) / task
     index_path = root / "RELEASE_INDEX.json"
     index = json.loads(index_path.read_text(encoding="utf-8"))
@@ -128,8 +138,8 @@ def _neighbors(
 
 
 def run(output_dir: Path, *, k: int = 3, width: int = 100) -> dict[str, Any]:
-    if k != 3 or width != 100:
-        raise ValueError("This frozen study requires K=3 and W=100")
+    if k not in {3, 5} or width != 100:
+        raise ValueError("This study supports K=3 or K=5 with W=100")
     metrics, predictions, neighbors, inputs = [], [], [], {}
     tasks_by_benchmark = {"gold_v1": GOLD_TASKS, "tdc_v1": TDC_TASKS}
     for benchmark, tasks in tasks_by_benchmark.items():
@@ -195,13 +205,13 @@ def run(output_dir: Path, *, k: int = 3, width: int = 100) -> dict[str, Any]:
     _write_tsv(output_dir / "predictions.tsv", predictions)
     _write_tsv(output_dir / "neighbors.tsv", neighbors)
     write_json_atomic(output_dir / "manifest.json", {
-        "status": "complete", "study": "direct_l1_knn_gold6_tdc3_k3_w100_v2",
+        "status": "complete", "study": f"direct_l1_knn_gold6_tdc6_k{k}_w100_v3",
         "k": k, "width": width, "vote": "unweighted_context_card_majority",
         "neighbor_identity_policy": "scaffold_disjoint", "inputs": inputs,
         "code_sha256": sha256_file(Path(__file__)),
     })
     lines = ["# Direct L1 KNN: assay transfer versus Morgan", "",
-             "All L1 candidate universes are scaffold-disjoint; K=3 and W=100.", "",
+             f"All L1 candidate universes are scaffold-disjoint; K={k} and W=100.", "",
              "| Benchmark | Task | Split | N | Morgan F1 | Assay F1 | Delta |",
              "|---|---|---:|---:|---:|---:|---:|"]
     for row in comparison:

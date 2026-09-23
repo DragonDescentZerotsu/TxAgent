@@ -46,10 +46,11 @@ def _manifest(path: Path, task: str, subset: str, level: str) -> dict[str, Any]:
         "task_id": task,
         "subset": subset,
         "level": level,
-        "parent_capacity": CAPACITY,
         "pool": "fixed" if level == "L1" else "all",
     }
-    if any(document.get(key) != value for key, value in required.items()):
+    capacities = {CAPACITY} if level == "L1" else {40, 50, CAPACITY}
+    if (any(document.get(key) != value for key, value in required.items())
+            or document.get("parent_capacity") not in capacities):
         raise ValueError(f"Incompatible ranked UID cache: {path}")
     return document
 
@@ -92,29 +93,33 @@ def _ranked_rows(
             )
             if selected_uids is not None:
                 ordered_uids = [str(uid) for uid in selected_uids[str(query_id)]]
-                if not ordered_uids or len(set(ordered_uids)) != len(ordered_uids):
-                    raise ValueError(f"Preselected UIDs must be nonempty and unique: {query_id}/{level}")
-                placeholders = ",".join("?" for _ in ordered_uids)
-                rows = connection.execute(
-                    f"SELECT * FROM rankings WHERE benchmark_row_id=? "
-                    f"AND {rank_column} IS NOT NULL AND item_id IN ({placeholders})",
-                    (str(query_id), *ordered_uids),
-                ).fetchall()
-                by_uid = {str(row["item_id"]): row for row in rows}
-                missing = [uid for uid in ordered_uids if uid not in by_uid]
-                if missing:
-                    raise ValueError(
-                        f"Preselected UIDs are absent from {query_id}/{level}/{method}: "
-                        f"{missing[:5]}"
-                    )
-                rows = [by_uid[uid] for uid in ordered_uids]
+                if len(set(ordered_uids)) != len(ordered_uids):
+                    raise ValueError(f"Preselected UIDs must be unique: {query_id}/{level}")
+                rows = []
+                if ordered_uids:
+                    placeholders = ",".join("?" for _ in ordered_uids)
+                    selected_rows = connection.execute(
+                        f"SELECT * FROM rankings WHERE benchmark_row_id=? "
+                        f"AND {rank_column} IS NOT NULL AND item_id IN ({placeholders})",
+                        (str(query_id), *ordered_uids),
+                    ).fetchall()
+                    by_uid = {str(row["item_id"]): row for row in selected_rows}
+                    missing = [uid for uid in ordered_uids if uid not in by_uid]
+                    if missing:
+                        raise ValueError(
+                            f"Preselected UIDs are absent from {query_id}/{level}/{method}: "
+                            f"{missing[:5]}"
+                        )
+                    rows = [by_uid[uid] for uid in ordered_uids]
             else:
                 rows = connection.execute(
                     f"{sql} LIMIT ?", (*parameters, limit),
                 ).fetchall() if limit is not None else connection.execute(
                     sql, parameters,
                 ).fetchall()
-            if limit is not None and len(rows) != limit:
+            if (limit is not None and len(rows) != limit
+                    and not (method == "assay_transfer"
+                             and manifest.get("score_coverage") == "partial_snapshot")):
                 available = connection.execute(
                     f"SELECT COUNT(*) FROM rankings WHERE benchmark_row_id=? "
                     f"AND {rank_column} IS NOT NULL{width_clause}", parameters,
@@ -143,8 +148,12 @@ def load_ranked_universe(
         or index.get("status") != "complete"
         or index.get("task_id") != task
         or index.get("pool") != "all"
-        or index.get("later_candidate_universe")
-        != "all_uids_under_morgan_top_100_parents"
+        or index.get("later_candidate_universe") not in {
+            "all_uids_under_morgan_top_100_parents",
+            "all_uids_under_shared_l2plus_morgan_top_100_parents",
+            "all_uids_under_shared_l2plus_morgan_top_50_parents",
+            "all_uids_under_shared_l2plus_morgan_top_40_parents",
+        }
     ):
         raise ValueError(f"Incompatible ranked UID task release index: {index_path}")
     if not queries or not levels or len(set(levels)) != len(levels) or "L1" in levels:
@@ -168,6 +177,7 @@ def load_ranked_universe(
         if (
             sha256_file(manifest_path) != entry["manifest_sha256"]
             or document["content_id"] != entry["content_id"]
+            or document["parent_capacity"] != index["parent_capacity"]
             or index["neighbor_identity_policy_by_level"].get(level) != "parent_disjoint"
         ):
             raise ValueError(f"{level} cache differs from the task release index")
@@ -439,6 +449,7 @@ def load_candidates(
     morgan_primary_parent_width: int = CAPACITY,
     preselected_uids: Mapping[str, Mapping[str, Sequence[str]]] | None = None,
     preselected_contexts: Mapping[str, Sequence[str]] | None = None,
+    preselected_uid_budget: int | None = None,
     **_: Any,
 ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     """Select ranks first, hydrate their UIDs once, and return prompt-ready rows."""
@@ -451,19 +462,24 @@ def load_candidates(
     if l1_selection not in {"morgan", "assay_transfer", "assay_transfer_contrastive"}:
         raise ValueError("ranked_uid_retrieval.v1 does not support this L1 selection")
     limits = _limits(stages, later_limit)
+    all_later_records = policy.get("all_later_records") is True and preselected_uids is None
     later_levels = {level for level in stages if level != "L1"}
+    if preselected_uid_budget is not None and (preselected_uid_budget < 1 or preselected_uids is None):
+        raise ValueError("Joint UID budget requires a positive budget and preselected UIDs")
     if preselected_uids is not None:
         if set(preselected_uids) != {str(query_id) for query_id in queries}:
             raise ValueError("Preselected UID queries must match requested queries exactly")
         for query_id, levels in preselected_uids.items():
             if set(levels) != later_levels:
                 raise ValueError(f"Preselected UID levels differ for {query_id}")
-            for level, uids in levels.items():
-                if len(uids) != limits[level] or len(set(map(str, uids))) != len(uids):
-                    raise ValueError(
-                        f"Preselected UIDs must contain exactly {limits[level]} unique "
-                        f"records for {query_id}/{level}"
-                    )
+            uids = [str(uid) for rows in levels.values() for uid in rows]
+            if len(uids) != len(set(uids)) or any(not uid for uid in uids):
+                raise ValueError(f"Preselected UIDs must be nonempty and globally unique: {query_id}")
+            if preselected_uid_budget is not None:
+                if len(uids) != preselected_uid_budget:
+                    raise ValueError(f"Preselected UID budget differs for {query_id}")
+            elif any(len(rows) != limits[level] for level, rows in levels.items()):
+                raise ValueError(f"Preselected UID level limits differ for {query_id}")
     if preselected_contexts is not None:
         if set(preselected_contexts) != {str(query_id) for query_id in queries}:
             raise ValueError("Preselected context queries must match requested queries exactly")
@@ -492,12 +508,12 @@ def load_candidates(
                 CAPACITY
                 if level == "L1" and method == "assay_transfer_contrastive"
                 else molecule_limit if level == "L1"
-                else None if preselected_uids is not None else limits[level]
+                else None if all_later_records or preselected_uids is not None else limits[level]
             ),
             parent_morgan_width=(
                 morgan_primary_parent_width
                 if level != "L1" and method == "assay_transfer"
-                and preselected_uids is None else None
+                and preselected_uids is None and not all_later_records else None
             ),
             selected_uids=(
                 {
@@ -507,8 +523,19 @@ def load_candidates(
                 if level != "L1" and preselected_uids is not None else None
             ),
         )
-        if identities is not None and current != identities:
+        if identities is not None and (
+            current.keys() != identities.keys()
+            or any(
+                current[query_id][1] != parent_smiles
+                or (current[query_id][0] and parent_id
+                    and current[query_id][0] != parent_id)
+                for query_id, (parent_id, parent_smiles) in identities.items()
+            )
+        ):
             raise ValueError("Independent level caches disagree on query identity")
+        if (all_later_records and level != "L1" and document.get("parent_universe_source")
+                != f"shared_l2plus_morgan_{document['parent_capacity']}"):
+            raise ValueError(f"All-record L2+ selection requires a shared-parent cache: {level}")
         ranked[level], identities, documents[level] = rows, current, document
 
     if preselected_contexts is not None:
@@ -561,14 +588,18 @@ def load_candidates(
         if (
             sha256_file(manifests[level]) != entry["manifest_sha256"]
             or document["content_id"] != entry["content_id"]
+            or document["parent_capacity"] != indexes[index_paths[level]]["parent_capacity"]
         ):
             raise ValueError(f"{level} cache differs from the task release index")
     evidence_entries: dict[Path, Mapping[str, Any]] = {}
+    evidence_paths_by_index: dict[Path, list[Path]] = {}
     for index_path, index in indexes.items():
         entries = index.get("evidence_sources") or [index["evidence"]]
+        evidence_paths_by_index[index_path] = []
         for entry in entries:
             manifest_path = (index_path.parent / entry["manifest"]).resolve()
             evidence_entries[manifest_path] = entry
+            evidence_paths_by_index[index_path].append(manifest_path)
     evidence_manifests = {}
     for manifest_path, entry in evidence_entries.items():
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -647,24 +678,36 @@ def load_candidates(
     if chosen_contexts != set(contexts) or chosen_contexts != set(context_uids):
         raise ValueError("Selected L1 contexts do not resolve to frozen physical members")
 
-    all_uids = {uid for rows in context_uids.values() for uid in rows}
+    uids_by_index: dict[Path, set[str]] = defaultdict(set)
+    uids_by_index[index_paths["L1"]].update(
+        uid for rows in context_uids.values() for uid in rows
+    )
     for level in stages:
         if level != "L1":
-            all_uids.update(str(row["item_id"]) for rows in ranked[level].values() for row in rows)
-    evidence: dict[str, dict[str, Any]] = {}
-    for manifest_path, manifest in evidence_manifests.items():
-        rows = _hydrate(
-            manifest_path.with_name(str(manifest["records"])),
-            all_uids,
-            require_complete=False,
-        )
-        duplicates = set(evidence) & set(rows)
-        if duplicates:
-            raise ValueError(f"Selected evidence UIDs resolve from multiple sources: {sorted(duplicates)[:5]}")
-        evidence.update(rows)
-    missing_uids = all_uids - set(evidence)
-    if missing_uids:
-        raise ValueError(f"Selected evidence UIDs are absent: {sorted(missing_uids)[:5]}")
+            uids_by_index[index_paths[level]].update(
+                str(row["item_id"]) for rows in ranked[level].values() for row in rows
+            )
+    evidence_by_index: dict[Path, dict[str, dict[str, Any]]] = {}
+    for index_path, selected_uids in uids_by_index.items():
+        evidence: dict[str, dict[str, Any]] = {}
+        for manifest_path in evidence_paths_by_index[index_path]:
+            manifest = evidence_manifests[manifest_path]
+            rows = _hydrate(
+                manifest_path.with_name(str(manifest["records"])),
+                selected_uids,
+                require_complete=False,
+            )
+            duplicates = set(evidence) & set(rows)
+            if duplicates:
+                raise ValueError(
+                    f"Selected evidence UIDs resolve from multiple sources in {index_path}: "
+                    f"{sorted(duplicates)[:5]}"
+                )
+            evidence.update(rows)
+        missing_uids = selected_uids - set(evidence)
+        if missing_uids:
+            raise ValueError(f"Selected evidence UIDs are absent from {index_path}: {sorted(missing_uids)[:5]}")
+        evidence_by_index[index_path] = evidence
 
     molecules_by_query: dict[str, list[dict[str, Any]]] = {}
     later_by_query: dict[str, dict[str, Any]] = {}
@@ -678,7 +721,10 @@ def load_candidates(
             context = contexts.get(context_id)
             if context is None or str(context["parent_id"]) != str(row["parent_id"]):
                 raise ValueError(f"Frozen L1 context identity mismatch: {context_id}")
-            records = [_payload(evidence[uid], row, method) for uid in context_uids[context_id]]
+            records = [
+                _payload(evidence_by_index[index_paths["L1"]][uid], row, method)
+                for uid in context_uids[context_id]
+            ]
             molecule = {
                 "reference_molecule_id": str(row["parent_id"]),
                 "canonical_smiles": str(row["parent_smiles"]),
@@ -727,17 +773,26 @@ def load_candidates(
                 continue
             records = []
             for row in ranked[level][str(query_id)]:
-                record = _payload(evidence[str(row["item_id"])], row, level_method)
+                record = _payload(
+                    evidence_by_index[index_paths[level]][str(row["item_id"])],
+                    row, level_method,
+                )
                 records.append(record)
             counts = documents[level]["query_counts"][str(query_id)]
+            partial_level = documents[level].get("score_coverage") == "partial_snapshot"
             later[level] = {
                 "records": records,
                 "ranking_method": level_method,
-                "available_record_count": int(counts["candidate_records"]),
-                "allow_shortfall": False,
+                "available_record_count": int(
+                    counts["scored_records"] if partial_level and level_method == "assay_transfer"
+                    else counts["candidate_records"]
+                ),
+                "allow_shortfall": partial_level and level_method == "assay_transfer",
             }
             level_audits[level] = {
                 "candidate_records": int(counts["candidate_records"]),
+                **({"scored_records": int(counts["scored_records"]),
+                    "missing_scores": int(counts["missing_scores"])} if partial_level else {}),
                 "candidate_molecules": int(counts["candidate_parents"]),
                 "selected_records": len(records),
                 "selected_molecules": len({row["parent_id"] for row in ranked[level][str(query_id)]}),
@@ -754,7 +809,12 @@ def load_candidates(
             CAPACITY
             if level == "L1"
             else min(
-                int(counts["candidate_records"])
+                int(
+                    counts["scored_records"]
+                    if document.get("score_coverage") == "partial_snapshot"
+                    and stages[level] == "assay_transfer"
+                    else counts["candidate_records"]
+                )
                 for counts in document["query_counts"].values()
             )
         )
@@ -769,6 +829,8 @@ def load_candidates(
             "molecule_limit": molecule_limit,
             "l1_limit": l1_limit,
             "later_limits": limits,
+            "preselected_uid_budget": preselected_uid_budget,
+            "all_later_records": all_later_records,
             "min_contrast": min_contrast if l1_selection == "assay_transfer_contrastive" else 0,
             "morgan_primary_parent_width": (
                 morgan_primary_parent_width
@@ -796,8 +858,12 @@ def load_candidates(
         "cache_indexes": {level: str(path) for level, path in index_paths.items()},
         "cache_capacities": capacities,
         "cache_content_ids": content_ids,
-        "evidence_manifest": str(next(iter(evidence_manifests))),
-        "evidence_manifests": [str(path) for path in evidence_manifests],
+        "evidence_manifest": str(evidence_paths_by_index[index_paths["L1"]][0]),
+        "evidence_manifests": sorted(str(path) for path in evidence_manifests),
+        "evidence_manifests_by_level": {
+            level: [str(path) for path in evidence_paths_by_index[index_paths[level]]]
+            for level in stages
+        },
         "neighbor_identity_policy_by_level": {
             level: indexes[index_paths[level]]["neighbor_identity_policy_by_level"][level]
             for level in stages

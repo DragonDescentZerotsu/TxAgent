@@ -6,49 +6,169 @@
   "benchmark": "tdc_v1",
   "harness_version": "full-flat-context-v5",
   "cache_config": {
-    "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v1.yaml",
-    "sha256": "3cf2908bdde7010e0f8d5106c07466896c3e420925bd5a5b8dab6cc5e80d0f9a"
+    "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v1_task_best_l1_v1.yaml",
+    "sha256": "098d87acbd46775813a690d27a65a2d34a6d9b9524b607fd849d61ed97d82235"
   },
   "artifacts": [
     {
-      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bioavailability_ma/RELEASE_INDEX.json",
-      "size": 1526,
-      "sha256": "164ef69b6f2360fe8c981365b3540afe72b7460df3742c1f48fb35cb067e6bb7"
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/RELEASE_INDEX.json",
+      "size": 3879,
+      "sha256": "cc7f47fc42f7c492c9da147e797444a8b2532b5dad40e9e11dcc028408b1dc74"
     },
     {
-      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bioavailability_ma/evidence/VERSION.json",
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/test/L2/VERSION.json",
+      "size": 17514,
+      "sha256": "0a101408b1adc7436a17bf3fe86178b8a2a96c11507df5d17b3941ae3bd29665"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/test/L2/rankings.sqlite3",
+      "size": 111976448,
+      "sha256": "532d7a52996c87b2f46b100d826af0ad898086cf900f898f6433e4bcea8d5793"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/test/L3/VERSION.json",
+      "size": 17551,
+      "sha256": "670ff4b453c0a608b4b14930b534cf832af78e33d9d7058d6e41a5ac7c9f4e13"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/test/L3/rankings.sqlite3",
+      "size": 249012224,
+      "sha256": "8c21f368a4a256c83967487876df6f2a7f1aa9841fe670695e2e27c1dfce361c"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/test/L4/VERSION.json",
+      "size": 17532,
+      "sha256": "a9c580f0a0e15a86e0490a7ee07866798d210b4680171d17eb362f58096c6b1b"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/test/L4/rankings.sqlite3",
+      "size": 118714368,
+      "sha256": "18921459b76d6b07f6abd3d6f2dfd910a7f5190997828622d530a591f1d3e91e"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/test/L5/VERSION.json",
+      "size": 17181,
+      "sha256": "4b6a95a6001e48876102b487e83888630253a79ee0e762dfd2b5ce0b75cce495"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/test/L5/rankings.sqlite3",
+      "size": 59031552,
+      "sha256": "09c392c664f9ff8d2455cb9eae683dc48ec2eb1ea86b19ed1ff7fbf2da146216"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/test/L6/VERSION.json",
+      "size": 17508,
+      "sha256": "f177039ddd2f546b11c84465cf8dd06fb806293eee7c1ee145f60302bc064211"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/test/L6/rankings.sqlite3",
+      "size": 88113152,
+      "sha256": "b319a9ac3d972caa0790cfe3846b208b187ff37f00825bd3ce5f6e1de5e2097d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/valid/L2/VERSION.json",
+      "size": 9541,
+      "sha256": "9563b40e4aea02978f9b20c18e637bad98ab8a381131bd2b5bc457d2cf07642a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/valid/L2/rankings.sqlite3",
+      "size": 46223360,
+      "sha256": "0d627fefeb84412f08223b20e1cc3676492c1a38175cb600bdbc7e7a9b5e7600"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/valid/L3/VERSION.json",
+      "size": 9615,
+      "sha256": "869f461f82b88a6178d593a87ff187e90fc07265d07886b7d044b3ca374032c1"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/valid/L3/rankings.sqlite3",
+      "size": 113958912,
+      "sha256": "b056c73b4d2417e9fc0bfb7c4c7ee62bf5fdbacf44bae87fd50de9ae764b6884"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/valid/L4/VERSION.json",
+      "size": 9606,
+      "sha256": "b90f90555057134986483831d775dd33118984dd267901e03dac0233fe69d5af"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/valid/L4/rankings.sqlite3",
+      "size": 58662912,
+      "sha256": "0f42b860bb3f18799cb572b5717f2354b70ddb0095927170277b47a8cafeaf8d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/valid/L5/VERSION.json",
+      "size": 9280,
+      "sha256": "dcd4aa61d53a192eb940e32bbca5cb91a54812d8b4210641ccc2972e3120554c"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/valid/L5/rankings.sqlite3",
+      "size": 24641536,
+      "sha256": "c821ab50bf405430ad86b0b7c6b1c4c254465e60f9a9c93378eb04375942a7d2"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/valid/L6/VERSION.json",
+      "size": 9579,
+      "sha256": "8f8aa23f51af6068f8a6b1100f5f3c1286143c4f84c10ef7549282398cc72c09"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bioavailability_ma/scaffold/valid/L6/rankings.sqlite3",
+      "size": 37163008,
+      "sha256": "22e3951d977a75f1ea0e16e24e98040b4c0056a41c42a2971529794fad17c41d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/bioavailability_ma/RELEASE_INDEX.json",
+      "size": 2011,
+      "sha256": "b8f10ba50bb1e2c4e4e73ee699c923f03d4abd8e0ff216d72d27ce758cfda3bc"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/bioavailability_ma/evidence/VERSION.json",
       "size": 639,
       "sha256": "cb757afa1215c9fd28a8e21c1569e8cc78f77520482f9983a5b0fc981e2ae0f9"
     },
     {
-      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bioavailability_ma/evidence/records.parquet",
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/bioavailability_ma/evidence/records.parquet",
       "size": 41170,
       "sha256": "a1d9bb7c59e8357985fcaafb342d1b0aa3721bcc0975fdcdacc482a926b13eca"
     },
     {
-      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bioavailability_ma/scaffold/test/L1/VERSION.json",
-      "size": 22435,
-      "sha256": "a93c286ab8ae2751b25f453653ec1995003d00a9623bafcb490cc384c0f27ea5"
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/bioavailability_ma/scaffold/test/L1/VERSION.json",
+      "size": 24282,
+      "sha256": "f200e01005feb148e3c4576562dc174cd0f1322d1c97c5ba6e4c0c81441ea0d4"
     },
     {
-      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bioavailability_ma/scaffold/test/L1/rankings.sqlite3",
-      "size": 6184960,
-      "sha256": "e5e45075755fdddf776420ea1874b9c02611aae7455ba481a63acb981b952f12"
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/bioavailability_ma/scaffold/test/L1/rankings.sqlite3",
+      "size": 7618560,
+      "sha256": "93ad92a68c838a262a3d537487ef36745d2f3a742f0a39a03f10330726616613"
     },
     {
-      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bioavailability_ma/scaffold/valid/L1/VERSION.json",
-      "size": 11810,
-      "sha256": "1abdcc0328b46e33b65884d7ff62280c07f7abdc40cbd0de3fbd7c4a8e6209fc"
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/bioavailability_ma/scaffold/valid/L1/VERSION.json",
+      "size": 13528,
+      "sha256": "be63a37d86e525073449e286f2648357337eccfef6844098515746c1ee88e479"
     },
     {
-      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bioavailability_ma/scaffold/valid/L1/rankings.sqlite3",
-      "size": 3162112,
-      "sha256": "f7f72d405830908f126d0698dcf2f6547853339c0907230731cfeb68343d5e2a"
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/bioavailability_ma/scaffold/valid/L1/rankings.sqlite3",
+      "size": 3903488,
+      "sha256": "b71a0d563bdb5d35e5cc0b033e2bbaf66427e27a188abdfe3e4627cc6cb35390"
     },
     {
-      "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v1.yaml",
-      "size": 730,
-      "sha256": "3cf2908bdde7010e0f8d5106c07466896c3e420925bd5a5b8dab6cc5e80d0f9a"
+      "path": "data/evidence_libraries/bioavailability_ma/v10_main_universe_v3/03_pair_buckets/records.parquet",
+      "size": 128229348,
+      "sha256": "141ce62150a576a3f072f592ccc25371697d2b5cb947ce43af8b5e84f1bd1f6a"
+    },
+    {
+      "path": "data/evidence_libraries/bioavailability_ma/v10_main_universe_v3/retrieval_projection/ranked_evidence_v2/VERSION.json",
+      "size": 1848,
+      "sha256": "762e0a12de27425a597260817990494e7ec78f6e12dea09a2d69f4f289c82461"
+    },
+    {
+      "path": "data/evidence_libraries/bioavailability_ma/v10_main_universe_v3/retrieval_projection/ranked_evidence_v2/records.parquet",
+      "size": 188451377,
+      "sha256": "03df7a952ab877b21adf7833b1e8657a834ce9c58d5083c008ebce15d7a9e6b1"
+    },
+    {
+      "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v1_task_best_l1_v1.yaml",
+      "size": 878,
+      "sha256": "098d87acbd46775813a690d27a65a2d34a6d9b9524b607fd849d61ed97d82235"
     }
   ],
   "missing": []
