@@ -1,6 +1,6 @@
 # Semantic buckets
 
-This directory is the single owner of the BBB, Oral, and Skin semantic-bucket lifecycle:
+This directory is the single owner of the BBB, Oral, Skin, DILI, and Carcinogens semantic-bucket lifecycle:
 generation code, prompts, policies, selected releases, review provenance, retired
 generations, audits, and tests.
 
@@ -10,7 +10,8 @@ generations, audits, and tests.
 evidence-library `CURRENT` pointer and
 `releases/<task>/<evidence-release>/manifest.json`. BBB and Oral currently use
 their `v10_main_universe_v3` semantic successors; Skin uses
-`v10_main_universe_v6`.
+`v10_main_universe_v6`. DILI and Carcinogens select bucket-only maps for
+`v10_main_universe_v3`; weights and rankings are not yet published for them.
 
 The V2 policy is `policies/semantic_weighted_top10_v2.json`; V1 remains frozen
 for historical reproduction.
@@ -18,7 +19,7 @@ for historical reproduction.
 ## Lifecycle
 
 - `prompts/`: pairwise ranking, grouping, readout, and eligibility templates.
-- `releases/`: active manifest-selected BBB and Oral artifacts.
+- `releases/`: active manifest-selected semantic artifacts.
 - `provenance/`: complete incremental request schedules, prompts, responses, and ledgers.
 - `history/`: physically relocated pre-Gold-v2 semantic generations.
 - `policies/`: immutable expert-weight policies and pinned ranking hashes.
@@ -175,3 +176,26 @@ python -m semantic_buckets.official_two_pass_weights prepare
 DEEPSEEK_API_KEY=EMPTY python -m semantic_buckets.official_two_pass_weights run \
   --approved-review-sha256 <prompt-review-manifest-sha256>
 ```
+
+Selected DILI and Carcinogens V10 bucket-only releases use the same V6 scientific
+cards, but their L2–L7 worlds come from the Gold-v1 addon-v2 Morgan caches.
+Their successor Pass 2 uses three high-reasoning OpenRouter GPT-6 Luna Flex
+responses per batch. The two longest levels per task use four chains, with the
+next wave released after two chains finish; all chains remain required for final
+publication. Run each task independently:
+
+```bash
+python -m semantic_buckets.build_retrieval_bucket_world --task dili
+python -m semantic_buckets.official_two_pass_weights prepare --task dili
+DEEPSEEK_API_KEY=EMPTY python -m semantic_buckets.official_two_pass_weights run-pass1 \
+  --task dili --approved-review-sha256 <pass1-review-manifest-sha256>
+python -m semantic_buckets.official_two_pass_weights run-pass2 \
+  --task dili --approved-review-sha256 <pass2-review-manifest-sha256>
+```
+
+Replace `dili` with `carcinogens` for the second release. Pass 2 is blocked
+until its rendered prompts have been explicitly approved; neither candidate
+ranking updates the selected semantic release or `CURRENT`.
+For a stopped Pass-1 launcher, `run-pass1 --max-inflight-per-endpoint N` resumes
+incomplete batches at a recorded launcher-local capacity; do not start a second
+writer against the same run while the original launcher is active.

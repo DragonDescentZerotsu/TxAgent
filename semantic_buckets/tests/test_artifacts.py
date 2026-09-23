@@ -96,6 +96,38 @@ def test_current_pointer_is_owned_by_evidence_library(tmp_path, monkeypatch) -> 
     assert artifacts.resolve_release("bbb", "CURRENT") == "v10_main_universe_v1"
 
 
+def test_unweighted_semantic_release_resolves_without_rankings(tmp_path, monkeypatch) -> None:
+    root = tmp_path / "releases/dili/v10_main_universe_v3"
+    generation = root / "generation"
+    generation.mkdir(parents=True)
+    selected = {
+        "semantic_map": "generation/semantic.parquet",
+        "semantic_map_manifest": "generation/semantic.json",
+        "record_semantic_bucket_map": "generation/records.parquet",
+    }
+    (generation / "semantic.json").write_text("{}", encoding="utf-8")
+    pd.DataFrame({"atom_id": ["a"], "semantic_bucket_id": ["b"]}).to_parquet(
+        generation / "semantic.parquet", index=False
+    )
+    pd.DataFrame({"source_row_uid": ["u"], "semantic_bucket_id": ["b"]}).to_parquet(
+        generation / "records.parquet", index=False
+    )
+    (root / "manifest.json").write_text(json.dumps({
+        "schema_version": "semantic_buckets.release.v1", "task": "dili",
+        "evidence_library_version": "v10_main_universe_v3", "selected": selected,
+    }), encoding="utf-8")
+    current = tmp_path / "data/evidence_libraries/dili/CURRENT"
+    current.parent.mkdir(parents=True)
+    current.write_text("v10_main_universe_v3\n", encoding="utf-8")
+    monkeypatch.setattr(artifacts, "RELEASE_ROOT", tmp_path / "releases")
+    monkeypatch.setattr(artifacts, "REPOSITORY_ROOT", tmp_path)
+
+    release = artifacts.resolve_semantic_bucket_artifacts("dili")
+    assert release.semantic_bucket_rankings is None
+    assert release.record_relevance_rankings is None
+    assert len(artifacts.load_record_bucket_map("dili")) == 1
+
+
 def test_semantic_only_release_resolves_skin_record_map(tmp_path, monkeypatch) -> None:
     release_root = tmp_path / "releases"
     root = release_root / "skin_reaction" / "v10_main_universe_v6"

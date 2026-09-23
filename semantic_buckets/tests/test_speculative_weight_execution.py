@@ -27,6 +27,18 @@ def _valid_receipt(replica_id: int, weight: float) -> dict:
     }
 
 
+def test_medium_reasoning_is_limited_to_approved_standard_luna() -> None:
+    row = {"reasoning_effort": "medium", "prompt": "score", "max_tokens": 100,
+           "validation_json": json.dumps({"execution_backend": "luna_standard"})}
+    request = speculative._request_payload(row, "openai/gpt-6-luna")
+    assert request["reasoning_effort"] == "medium"
+    with pytest.raises(ValueError, match="approved medium Luna"):
+        speculative._request_payload(row, "deepseek-ai/DeepSeek-V4-Flash-0731")
+    row["validation_json"] = "{}"
+    with pytest.raises(ValueError, match="approved medium Luna"):
+        speculative._request_payload(row, "openai/gpt-6-luna")
+
+
 def test_first_eight_mean_uses_half_up_rounding_and_closest_rationale() -> None:
     receipts = [_valid_receipt(index, 0.50 if index < 4 else 0.51)
                 for index in range(8)]

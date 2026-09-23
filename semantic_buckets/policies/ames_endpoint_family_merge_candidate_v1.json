@@ -1,0 +1,22 @@
+{
+  "version": "ames_endpoint_family_merge_candidate.v1",
+  "status": "candidate_unreviewed",
+  "scope": "Within an existing AMES source- and level-local semantic parent only",
+  "groups": [
+    {
+      "family": "dna_adduct_detection",
+      "endpoint_concepts": ["32p_postlabelling", "targeted_dna_adduct_measurement"],
+      "rationale": "32P postlabelling is a DNA-adduct detection method; both concepts report adduct evidence."
+    },
+    {
+      "family": "physical_strand_break_detection",
+      "endpoint_concepts": ["comet_assay", "strand_break_physical_assay"],
+      "rationale": "Comet assays are physical DNA-strand-break or alkali-labile-site readouts."
+    },
+    {
+      "family": "chromosome_segregation_machinery",
+      "endpoint_concepts": ["kinetochore_or_chromosome_segregation_assay", "spindle_or_centrosome_assay"],
+      "rationale": "Both interrogate the chromosome-segregation apparatus, while remaining within one original parent."
+    }
+  ]
+}

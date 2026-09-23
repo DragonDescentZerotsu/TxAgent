@@ -36,11 +36,14 @@ FROZEN_SEMANTIC_ROOTS = {
         "ames/semantic_run"
     ),
 }
+SELECTED_BUCKET_ONLY_TASKS = {"dili", "carcinogens"}
 TASK_LEVELS = {
     "bbb_martins": ("L2", "L3", "L4", "L5"),
     "bioavailability_ma": ("L2", "L3", "L4", "L5", "L6"),
     "skin_reaction": ("L2", "L3"),
     "ames": ("L2", "L3", "L4", "L5"),
+    "dili": ("L2", "L3", "L4", "L5", "L6", "L7"),
+    "carcinogens": ("L2", "L3", "L4", "L5", "L6", "L7"),
 }
 DEFAULT_TASK_LEVELS = {
     task: TASK_LEVELS[task] for task in ("bbb_martins", "bioavailability_ma")
@@ -68,6 +71,8 @@ def _mapping(release_root: Path, task: str) -> tuple[
         return _reviewed_skin_mapping()
     if task in FROZEN_SEMANTIC_ROOTS:
         return _frozen_semantic_mapping(task)
+    if task in SELECTED_BUCKET_ONLY_TASKS:
+        return _selected_bucket_only_mapping(release_root, task)
     release = (
         REPOSITORY_ROOT / "data/evidence_libraries" / task / "CURRENT"
     ).read_text(encoding="utf-8").strip()
@@ -91,6 +96,36 @@ def _mapping(release_root: Path, task: str) -> tuple[
         "release_manifest_sha256": sha256_file(manifest_path),
         "record_map": str(path),
         "record_map_sha256": sha256_file(path),
+    }
+
+
+def _selected_bucket_only_mapping(release_root: Path, task: str) -> tuple[
+    dict[str, tuple[str, str]], set[tuple[str, str]], dict[str, Any]
+]:
+    release = (REPOSITORY_ROOT / "data/evidence_libraries" / task / "CURRENT").read_text().strip()
+    root = release_root / task / release
+    manifest_path = root / "manifest.json"
+    manifest = _read_json(manifest_path)
+    if manifest.get("status") != "complete_approved_unweighted" or manifest.get("task") != task:
+        raise ValueError(f"{task} has no selected bucket-only release")
+    record_path = root / manifest["selected"]["record_semantic_bucket_map"]
+    semantic_path = root / manifest["selected"]["semantic_map"]
+    for name, path in (("record_semantic_bucket_map", record_path), ("semantic_map", semantic_path)):
+        if sha256_file(path) != manifest["files"][name]["sha256"]:
+            raise ValueError(f"selected {task} {name} changed")
+    frame = pd.read_parquet(record_path, columns=["source_row_uid", "level", "semantic_bucket_id"])
+    frame = frame.drop_duplicates()
+    conflicts = frame.groupby("source_row_uid")[["level", "semantic_bucket_id"]].nunique()
+    if conflicts.gt(1).any().any():
+        raise ValueError(f"record has conflicting semantic assignments: {task}")
+    mapping = {str(row.source_row_uid): (str(row.level), str(row.semantic_bucket_id))
+               for row in frame.drop_duplicates("source_row_uid").itertuples(index=False)}
+    semantic = pd.read_parquet(semantic_path, columns=["level", "semantic_bucket_id"])
+    buckets = set(zip(semantic.level.astype(str), semantic.semantic_bucket_id.astype(str)))
+    return mapping, buckets, {
+        "release_manifest": str(manifest_path), "release_manifest_sha256": sha256_file(manifest_path),
+        "record_map": str(record_path), "record_map_sha256": sha256_file(record_path),
+        "semantic_map": str(semantic_path), "semantic_map_sha256": sha256_file(semantic_path),
     }
 
 
@@ -216,6 +251,9 @@ def _bucket_rows(task: str, level: str, valid: set[str], test: set[str],
 def build(output: Path | None = None, *, cache_root: Path = CACHE_ROOT,
           release_root: Path = RELEASE_ROOT, expected: Mapping[str, Any] | None = EXPECTED,
           task_levels: Mapping[str, tuple[str, ...]] = DEFAULT_TASK_LEVELS) -> dict[str, Any]:
+    if task_levels and cache_root == CACHE_ROOT and set(task_levels) <= SELECTED_BUCKET_ONLY_TASKS:
+        cache_root = (REPOSITORY_ROOT / "data/caches/assay_reranking/active/"
+                      "ranked_level_retrieval_gold_v1_addon_v2")
     destination = output or OUTPUT_ROOT / WORLD_ID
     if destination.exists():
         raise FileExistsError(destination)
@@ -238,7 +276,9 @@ def build(output: Path | None = None, *, cache_root: Path = CACHE_ROOT,
             rows.extend(_bucket_rows(task, level, valid, test, mapping))
             task_inputs["levels"][level] = {"valid": valid_input, "test": test_input}
         inputs[task] = task_inputs
-    scoped_expected = None if expected is None else {task: expected[task] for task in task_levels}
+    scoped_expected = None if expected is None or any(task not in expected for task in task_levels) else {
+        task: expected[task] for task in task_levels
+    }
     return _write(destination, pd.DataFrame(rows), inputs, all_buckets, scoped_expected)
 
 
@@ -298,6 +338,8 @@ def main() -> None:
     default = WORLD_ID if args.task is None else (
         SKIN_WORLD_ID if args.task == "skin_reaction" else f"{args.task}_{WORLD_ID}"
     )
+    if args.task in SELECTED_BUCKET_ONLY_TASKS:
+        default = f"{args.task}_morgan_top100_valid_test_l2_l7_selected_v1_20260923"
     result = build(
         args.output or OUTPUT_ROOT / default,
         cache_root=args.cache_root,

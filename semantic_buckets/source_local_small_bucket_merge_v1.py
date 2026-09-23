@@ -55,10 +55,12 @@ def _endpoint(values_json: str) -> str:
     return str(value or "__unknown__")
 
 
-def _load_task(input_root: Path, task: str) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
-    run = input_root / task / "semantic_run"
+def _load_task(input_root: Path, task: str, *, successor: bool = False) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
+    run = input_root / "inputs" / task if successor else input_root / task / "semantic_run"
+    mapping_path = (input_root / task / "source_semantic_bucket_map.parquet"
+                    if successor else run / "source_semantic_bucket_map.parquet")
     atoms = pd.read_parquet(run / "input_atoms.parquet")
-    mapping = pd.read_parquet(run / "source_semantic_bucket_map.parquet")
+    mapping = pd.read_parquet(mapping_path)
     with gzip.open(run / "sample_cards.json.gz", "rt", encoding="utf-8") as handle:
         samples = json.load(handle)
     for column in ("atom_id", "level", "source_id", "values_json"):
@@ -315,6 +317,33 @@ def _write_manifest(output: Path, input_root: Path, receipts: Sequence[Mapping[s
     })
 
 
+def _write_successor_manifest(output: Path, predecessor: Path,
+                              receipts: Sequence[Mapping[str, Any]], capacity: int,
+                              inventory_hash: str, state: str, counts: Mapping[str, Any]) -> None:
+    inputs = {}
+    for task in TASKS:
+        paths = {
+            "input_atoms.parquet": predecessor / "inputs" / task / "input_atoms.parquet",
+            "sample_cards.json.gz": predecessor / "inputs" / task / "sample_cards.json.gz",
+            "source_semantic_bucket_map.parquet": predecessor / task / "source_semantic_bucket_map.parquet",
+        }
+        inputs[task] = {name: {"path": str(path), "sha256": _sha256(path)}
+                        for name, path in paths.items()}
+    write_json_atomic(output / "manifest.json", {
+        "version": VERSION, "state": state,
+        "predecessor": {"path": str(predecessor / "manifest.json"),
+                        "sha256": _sha256(predecessor / "manifest.json")},
+        "inputs": inputs,
+        "selection": {"pass_3": "record_count <= 5",
+                      "scope": ["task", "level", "source_id", "canonical_endpoint_concept"],
+                      "batch_size": BATCH_SIZE, "representative_records": SAMPLE_SIZE},
+        "inference": {"model": MODEL, "reasoning_effort": "high", "max_tokens": MAX_TOKENS,
+                      "per_endpoint_max_inflight": ENDPOINT_INFLIGHT,
+                      "aggregate_capacity": capacity, "inventory_sha256": inventory_hash,
+                      "endpoints": list(receipts)}, "counts": dict(counts),
+    })
+
+
 def run(input_root: Path, output: Path) -> None:
     output.mkdir(parents=True, exist_ok=True)
     client, receipts, capacity, inventory_hash = _build_pool()
@@ -348,12 +377,42 @@ def run(input_root: Path, output: Path) -> None:
     _write_manifest(output, input_root, receipts, capacity, inventory_hash, "complete", counts)
 
 
+def run_successor(predecessor: Path, output: Path) -> None:
+    output.mkdir(parents=True, exist_ok=True)
+    client, receipts, capacity, inventory_hash = _build_pool()
+    connection = _database(output / "requests.sqlite3")
+    task_data, maps, schedule = {}, {}, []
+    for task in TASKS:
+        atoms, mapping, samples = _load_task(predecessor, task, successor=True)
+        task_data[task], maps[task] = (atoms, samples), mapping
+        schedule.extend(_schedule(task, 3, 5, True, atoms, mapping, samples))
+    counts: dict[str, Any] = {"pass_3_requests": len(schedule)}
+    _write_successor_manifest(output, predecessor, receipts, capacity, inventory_hash,
+                              "running_pass_3", counts)
+    _insert(connection, schedule)
+    _execute(connection, client, capacity, 3)
+    for task in TASKS:
+        maps[task], merged = _apply(connection, task, 3, maps[task])
+        target = output / task / "source_semantic_bucket_map.parquet"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        maps[task].to_parquet(target, index=False)
+        counts[f"{task}_pass_3_merge_groups"] = merged
+        counts[f"{task}_final_buckets"] = int(maps[task].source_semantic_bucket_id.nunique())
+        counts[f"{task}_output_sha256"] = _sha256(target)
+    _write_successor_manifest(output, predecessor, receipts, capacity, inventory_hash,
+                              "complete", counts)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input-root", type=Path, default=DEFAULT_INPUT)
+    parser.add_argument("--successor-from", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    run(args.input_root.resolve(), args.output.resolve())
+    if args.successor_from:
+        run_successor(args.successor_from.resolve(), args.output.resolve())
+    else:
+        run(args.input_root.resolve(), args.output.resolve())
 
 
 if __name__ == "__main__":

@@ -79,15 +79,20 @@ def ensure_tables(connection: sqlite3.Connection) -> None:
 
 
 def _request_payload(row: Mapping[str, Any], model: str) -> dict[str, Any]:
-    if row["reasoning_effort"] != "high":
-        raise ValueError("speculative requests require reasoning_effort=high")
+    effort = row["reasoning_effort"]
+    approved_medium_luna = (
+        effort == "medium" and model == "openai/gpt-6-luna"
+        and json.loads(row["validation_json"]).get("execution_backend") == "luna_standard"
+    )
+    if effort != "high" and not approved_medium_luna:
+        raise ValueError("speculative requests require high reasoning or approved medium Luna")
     request = {
         "model": model,
         "messages": [
             {"role": "system", "content": "Return valid JSON."},
             {"role": "user", "content": row["prompt"]},
         ],
-        "reasoning_effort": "high",
+        "reasoning_effort": effort,
         "response_format": {"type": "json_object"},
         "max_tokens": int(row["max_tokens"]),
         "extra_body": {"chat_template_kwargs": {"enable_thinking": True}},

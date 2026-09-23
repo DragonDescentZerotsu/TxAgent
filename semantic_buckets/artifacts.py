@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 import json
+import math
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
+
+from predict.utils.json import sha256_file
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
@@ -19,6 +23,9 @@ TASK_ALIASES = {
     "bioavailability_ma": "bioavailability_ma",
     "skin": "skin_reaction",
     "skin_reaction": "skin_reaction",
+    "ames": "ames",
+    "dili": "dili",
+    "carcinogens": "carcinogens",
 }
 
 
@@ -35,8 +42,8 @@ class SemanticBucketArtifacts:
     readout_bucket_map: Path | None
     record_readout_bucket_map: Path | None
     record_semantic_bucket_map: Path | None
-    semantic_bucket_rankings: Path
-    record_relevance_rankings: Path
+    semantic_bucket_rankings: Path | None
+    record_relevance_rankings: Path | None
     retrieval_eligibility: Path | None
     semantic_bucket_weights: Path | None
 
@@ -128,11 +135,59 @@ def resolve_semantic_bucket_artifacts(
             _selected_path(root, selected, "record_semantic_bucket_map")
             if record_semantic else None
         ),
-        semantic_bucket_rankings=_selected_path(root, selected, "semantic_bucket_rankings"),
-        record_relevance_rankings=_selected_path(root, selected, "record_relevance_rankings"),
+        semantic_bucket_rankings=(
+            _selected_path(root, selected, "semantic_bucket_rankings")
+            if selected.get("semantic_bucket_rankings") else None
+        ),
+        record_relevance_rankings=(
+            _selected_path(root, selected, "record_relevance_rankings")
+            if selected.get("record_relevance_rankings") else None
+        ),
         retrieval_eligibility=eligibility_path,
         semantic_bucket_weights=weights_path,
     )
+
+
+def load_reviewed_record_weights(
+    task: str, release: str = "CURRENT",
+) -> tuple[dict[tuple[str, str], dict[str, Any]], dict[str, Any]]:
+    """Load selected record weights once per release-manifest hash."""
+    task = normalize_task(task)
+    release = resolve_release(task, release)
+    manifest = semantic_bucket_root(task, release) / "manifest.json"
+    return _cached_record_weights(task, release, sha256_file(manifest))
+
+
+@lru_cache(maxsize=1)
+def _cached_record_weights(
+    task: str, release: str, manifest_sha256: str,
+) -> tuple[dict[tuple[str, str], dict[str, Any]], dict[str, Any]]:
+    artifacts = resolve_semantic_bucket_artifacts(task, release)
+    document = json.loads(artifacts.manifest.read_text(encoding="utf-8"))
+    rankings = artifacts.record_relevance_rankings
+    if document.get("status") != "complete_reviewed" or rankings is None:
+        raise ValueError(f"No reviewed semantic weights selected for {task}/{release}")
+    entry = document.get("files", {}).get("record_relevance_rankings", {})
+    if (sha256_file(artifacts.manifest) != manifest_sha256
+            or entry.get("sha256") != sha256_file(rankings)):
+        raise ValueError(f"Selected semantic rankings changed for {task}/{release}")
+    rows = {}
+    for row in pd.read_parquet(rankings, columns=[
+        "source_row_uid", "level", "semantic_bucket_id", "weight",
+    ]).itertuples(index=False):
+        key = (str(row.source_row_uid), str(row.level))
+        weight = float(row.weight)
+        if key in rows or not math.isfinite(weight) or not 0 <= weight <= 1:
+            raise ValueError(f"Invalid reviewed semantic assignment: {task}/{release}/{key}")
+        rows[key] = {"semantic_bucket_id": str(row.semantic_bucket_id),
+                     "semantic_weight": weight}
+    return rows, {
+        "release": release, "release_manifest": str(artifacts.manifest),
+        "release_manifest_sha256": manifest_sha256,
+        "record_relevance_rankings": str(rankings),
+        "record_relevance_rankings_sha256": entry["sha256"],
+        "weighted_record_count": len(rows),
+    }
 
 
 def load_record_bucket_map(
