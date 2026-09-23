@@ -10,8 +10,8 @@ CONFIG = BatchConfig(
     pipeline_module="predict.harnesses.branches.tasks.carcinogens.pipeline",
     log_prefix="carcinogens_reasoning_batch", report_title="Carcinogens Batch Report",
     prediction_field="final_prediction", canonical_positive="positive",
-    canonical_negative="negative", positive_predictions=frozenset({"positive", "1"}),
-    negative_predictions=frozenset({"negative", "0"}), supports_retrieval_strategy=True,
+    canonical_negative="negative", positive_predictions=frozenset({"positive", "1", "pass"}),
+    negative_predictions=frozenset({"negative", "0", "fail"}), supports_retrieval_strategy=True,
     group_prompt_formats=("legacy",), default_group_prompt_format="legacy",
     prompt_profile_option="--carcinogens-prompt-profile",
     prompt_profile_choices=(

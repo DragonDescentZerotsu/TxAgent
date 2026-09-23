@@ -24,6 +24,7 @@ from predict.harnesses.branches.flat import (
     CONTEXT_V5_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
     CONTEXT_V6_PROMPT_VERSION,
     CONTEXT_V7_HARNESS_VERSION,
     CONTEXT_V7_PROMPT_VERSION,
@@ -278,6 +279,27 @@ def test_flat_context_layouts_keep_global_ids_and_change_only_grouping() -> None
         row["visible_id"] for row in level_metadata["reasoning_reference_index"]
         if row["unit_kind"] == "molecule"
     ] == ["Molecule 1", "Molecule 2"]
+
+
+def test_upstream_v5_renders_l7_safety_records() -> None:
+    retrieval = _flat_context_retrieval()
+    retrieval["groups"][0]["neighbors"][0]["evidence_rows"].append({
+        "evidence_id": "uid-7",
+        "prompt_evidence": {"card_id": "C07", "endpoint": "indirect"},
+        "selection_provenance": {
+            "level": "L7", "evidence_family": "Mechanism.seven",
+            "morgan_similarity": 0.8,
+        },
+    })
+    messages, metadata = build_flat_context_request(
+        retrieval, task_id="dili",
+        task_prompt_profile="dili_conditioned_or_source_molecule_outcome.v1",
+        layout="level-grouped", reranking="morgan",
+        prompt_version=CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+        query_prior=None,
+    )
+    assert "uid-7" in metadata["card_alias_map"].values()
+    assert "L7" in messages[1]["content"]
 
 
 def test_flat_context_schema_has_only_summary_and_final_prediction() -> None:
@@ -871,6 +893,102 @@ def test_cached_query_identity_allows_missing_inchi_key() -> None:
     assert retrieval["query"]["standard_inchi_key"] == ""
 
 
+def test_flat_shared_parent_selection_preserves_distinct_physical_uids() -> None:
+    first = _selected_payload("duplicate", "L2", "passive")
+    second = _selected_payload("duplicate", "L2", "passive")
+    first["source_row_uid"] = "uid-one"
+    second["source_row_uid"] = "uid-two"
+    rows = [
+        {
+            "record_id": "duplicate", "reference_molecule_id": "REF",
+            "morgan_similarity": 0.7, "ranking_method": "assay_transfer",
+            "transfer_likelihood": 0.8, "payload": payload,
+        }
+        for payload in (first, second)
+    ]
+
+    retrieval = cache_matched_flat_retrieval(
+        "q", "CCO", [], {"L2": {"records": rows}}, task="bbb_martins",
+        reranking="assay-transfer", query_audit={},
+        preserve_physical_records=True,
+    )
+
+    assert [row["evidence_id"] for row in retrieval["groups"][0]["neighbors"][0]["evidence_rows"]] == [
+        "uid-one", "uid-two",
+    ]
+
+
+def test_flat_shared_parent_policy_does_not_apply_level_record_limit() -> None:
+    rows = [
+        {"record_id": f"r{i}", "reference_molecule_id": "REF", "payload": _selected_payload(f"r{i}", "L2", "passive")}
+        for i in range(3)
+    ]
+    args = SimpleNamespace(
+        assay_transfer_cache=Path("cache.yaml"), task="bbb_martins",
+        evaluation_subset="valid", reranking="assay-transfer", max_level=2,
+        prompt_version=CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+        l1_molecules=1, l1_records_per_molecule=1,
+        record_limits_by_level={"L2": 1}, ranking_tie_seed=0,
+        l1_min_contrast=0, morgan_primary_parent_width=100,
+    )
+    policy = {"stages": {"L1": "morgan", "L2": "assay_transfer"}, "all_later_records": True}
+    audit = {
+        "query_audits": {"q": {"L1": {"selected_records": 0}}},
+        "query_identities": {}, "neighbor_identity_policy": "parent_disjoint",
+        "neighbor_identity_policy_by_level": {"L2": "parent_disjoint"},
+        "selection_policy": "ranked_uid_retrieval.v1", "cache_content_ids": {},
+    }
+
+    _, later, receipt = flat._load_flat_context_candidates(
+        args, {"q": "CCO"}, load_cache_policy=lambda *args: policy,
+        load_candidates=lambda *args, **kwargs: ({"q": []}, {"q": {"L2": {"records": rows}}}, audit),
+    )
+
+    assert len(later["q"]["L2"]["records"]) == 3
+    assert receipt["contract"]["all_later_records"] is True
+
+
+@pytest.mark.parametrize("prompt_version", [
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+])
+def test_flat_partial_snapshot_accepts_empty_assay_level(prompt_version: str) -> None:
+    args = SimpleNamespace(
+        assay_transfer_cache=Path("cache.yaml"), task="ames",
+        evaluation_subset="valid", reranking="assay-transfer", max_level=2,
+        prompt_version=prompt_version,
+        l1_molecules=1, l1_records_per_molecule=1,
+        record_limits_by_level={"L2": 3}, ranking_tie_seed=0,
+        l1_min_contrast=0, morgan_primary_parent_width=100,
+    )
+    policy = {"stages": {"L1": "morgan", "L2": "assay_transfer"}}
+    audit = {
+        "query_audits": {"q": {"L1": {"selected_records": 0}}},
+        "query_identities": {}, "neighbor_identity_policy": "parent_disjoint",
+        "neighbor_identity_policy_by_level": {"L2": "parent_disjoint"},
+        "selection_policy": "ranked_uid_retrieval.v1", "cache_content_ids": {},
+    }
+    _, later, _ = flat._load_flat_context_candidates(
+        args, {"q": "CCO"}, load_cache_policy=lambda *args: policy,
+        load_candidates=lambda *args, **kwargs: (
+            {"q": []}, {"q": {"L2": {"records": [], "allow_shortfall": True}}}, audit
+        ),
+    )
+    assert later["q"]["L2"]["records"] == []
+    assert later["q"]["L2"]["shortfall"] == 3
+
+
+@pytest.mark.parametrize("prompt_version", [
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+])
+def test_partial_snapshot_bundle_keeps_safety_l7_visible(prompt_version: str) -> None:
+    assert flat.prompt_task_max_level(
+        "carcinogens", prompt_version,
+        Path("ranked_level_retrieval_gold_v1_v27_partial_snapshot_v1.yaml"),
+    ) == 7
+
+
 def test_flat_v2_renders_complete_source_semantics_without_molecule_name() -> None:
     source = _selected_payload("r1", "L1", "direct_oral")
     source["task_id"] = "bioavailability_ma"
@@ -1222,6 +1340,24 @@ def test_joseph_flat_prompt_rejects_skin() -> None:
         _validate_flat_prompt(SKIN_CONFIG, args)
 
 
+def test_score_only_upstream_flat_prompt_accepts_skin() -> None:
+    args = _parse_args(
+        SKIN_CONFIG,
+        [
+            "--experiment-mode", "full_flat",
+            "--flat-prompt-version", flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
+            "--flat-reranking", "assay-transfer-contrastive",
+            "--retrieval-replay-source-batch", "/tmp/frozen",
+            "--flat-selection-manifest", "/tmp/selection.json",
+            "--disable-flat-tools",
+            "--reasoning-effort", "high",
+            "--flat-query-prior", "none",
+            SKIN_CONFIG.prompt_profile_option, "skin_sensitization_contact_allergy.v2",
+        ],
+    )
+    _validate_flat_prompt(SKIN_CONFIG, args)
+
+
 @pytest.mark.parametrize(
     ("flag", "public", "stored"),
     [
@@ -1322,3 +1458,35 @@ def test_no_tool_provider_pool_uses_plain_group_call(monkeypatch) -> None:
         Client(), messages, group={"neighbors": []}, tools=[]
     )
     assert result["messages"] == messages
+
+
+def test_score_only_successor_exposes_cached_morgan_similarity() -> None:
+    group = {"neighbors": [{
+        "canonical_smiles": "CCN", "standard_inchi_key": "parent",
+        "similarity": 0.712345,
+        "similarity_metric": "Morgan radius=2 bits=2048 Tanimoto",
+        "evidence_rows": [{
+            "evidence_id": "uid", "prompt_evidence": {"card_id": "C01"},
+            "selection_provenance": {
+                "level": "L1", "evidence_family": "direct_brain_exposure",
+                "assay_transfer_score": 0.8235,
+            },
+        }],
+    }]}
+    old, _, _ = flat._flat_context_sections(
+        group, layout="level-grouped",
+        prompt_version=flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+    )
+    new, _, _ = flat._flat_context_sections(
+        group, layout="level-grouped",
+        prompt_version=flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
+    )
+    assert "morgan_similarity" not in old[0]["molecules"][0]
+    assert new[0]["molecules"][0]["morgan_similarity"] == 0.7123
+    assert new[0]["molecules"][0]["transfer_likelihood"] == 0.8235
+    group["neighbors"][0]["similarity_metric"] = "unknown"
+    with pytest.raises(ValueError, match="requires Morgan"):
+        flat._flat_context_sections(
+            group, layout="level-grouped",
+            prompt_version=flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
+        )

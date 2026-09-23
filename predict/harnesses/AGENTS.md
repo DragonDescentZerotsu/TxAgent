@@ -114,6 +114,33 @@ their task-specific cache bundles while honoring an explicit
 do not add symlinks or silently substitute another cache when a requested bundle
 is incomplete.
 
+`full_flat_context_v5_six_tasks_upstream_v1` contains task wording and rendering
+assets, not cache paths. Its opt-in V27 Gold/TDC cache YAMLs point new releases
+to canonical `data/caches/assay_reranking/active/flat_v5/` paths while keeping
+preserved BBB/Oral and Gold L1 indexes at their existing paths. Gold Carcinogens
+and TDC Ames L2+ use shared-parent-40, while the other safety tasks use
+shared-parent-100. A staged validated cache is not wired into inference until
+published at its canonical path and covered by the matching task/benchmark
+artifact manifest and verification receipt. Do not change prompt assets or
+the default cache selection to make an incomplete successor appear runnable.
+The opt-in successor manifests live under
+`flat_v5_manifests/v27_successors/<benchmark>/<task>.json`; their ignored
+receipts live under `data/caches/assay_reranking/active/flat_v5/receipts/v27_successors/`.
+Pass both explicit paths with the matching successor YAML, preserving the
+historical default manifest and receipt.
+The upstream V5 prompt covers DILI and Carcinogens L1-L7; older prompt
+versions keep their prior L1-L2 coverage. Safety L5 in the shared V27 bundle
+uses assay-transfer ranks, while BBB/Oral retain their historical L5 rule.
+The upstream V5 level assets changed for this extension; keep existing runs
+immutable and use a fresh run identity for the new prompt hash.
+
+For the Gold-v1 six-task upstream full-flat prompt, cached query priors resolve
+through `outputs/paper/assay_transfer_harness/joseph/query_priors/CURRENT.json`.
+Use its split-matched, hash-pinned `valid_small`, `valid`, or `test` batch root;
+never substitute an older prompt-profile batch. The direct flat and matrix
+launchers honor explicit `--prior-root` for pinned historical reproduction.
+This pointer does not authorize Gold priors for TDC; pass a reviewed TDC overlay.
+
 ## Full-batch execution contract
 
 Direct, flat, full, and progressive full batches default to uninterrupted

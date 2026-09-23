@@ -2,13 +2,79 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 from predict.harnesses.branches import flat, matrix, runtime
+from predict.harnesses.branches.tdc_query_priors import _matching_source
+from predict.harnesses.branches.six_task_query_priors import _inputs as query_prior_inputs
 from predict.retrieval.assay_reranking import build_tdc_indirect_ranked_retrieval
 from predict.retrieval.assay_reranking.ranked_uid_retrieval import _payload
 from predict.retrieval.assay_reranking.runtime import cache_profile_root
 from predict.tasks.prompt_profiles import require_matching_prompt_profiles
 from predict.utils.json import sha256_file
+
+
+def test_upstream_v2_safety_final_writes_shared_trace(tmp_path: Path, monkeypatch) -> None:
+    args = SimpleNamespace(
+        flat_prompt_version=flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+        flat_query_prior="cached", task_prompt_profile="test", flat_layout="grouped",
+        flat_reranking="assay-transfer", save_trace=True, smiles_field="drug",
+        identity_blind=False,
+    )
+    prepared = SimpleNamespace(
+        args=args,
+        config=SimpleNamespace(pipeline_module="predict.harnesses.branches.tasks.ames.pipeline"),
+    )
+    state = SimpleNamespace(
+        prepared=prepared, item=SimpleNamespace(record={"drug": "CC", "Y": 1}, index=0),
+        run_dir=tmp_path, retrieval={},
+    )
+    (tmp_path / "single_molecule_reasoning_output.json").write_text(
+        json.dumps({"status": "ok", "llm": {"content": {}}})
+    )
+    monkeypatch.setattr(runtime, "attach_external_condition", lambda value, row: value)
+    monkeypatch.setattr(runtime, "validated_branch_content", lambda value: {})
+    monkeypatch.setattr(runtime, "build_flat_context_request", lambda *a, **k: (
+        [{"role": "user", "content": "query"}], {"reasoning_reference_index": {}}
+    ))
+    monkeypatch.setattr(runtime, "flat_context_validation", lambda *a, **k: {})
+    monkeypatch.setattr(runtime, "call_with_json_validation", lambda *a, **k: {
+        "content": {"final_prediction": "pass"}, "messages": [],
+    })
+    monkeypatch.setattr(runtime, "structured_response_is_valid", lambda value: True)
+    monkeypatch.setattr(runtime, "derive_flat_claim_evidence", lambda value: {})
+    monkeypatch.setattr(runtime, "_record_stage_event", lambda *a: None)
+    monkeypatch.setattr(runtime, "_write_stage_trace", lambda *a: None)
+
+    runtime._execute_flat_context_final(state, SimpleNamespace(chat_json=lambda messages: {}))
+    output = json.loads((tmp_path / "final_reasoning_output.json").read_text())
+    assert output["status"] == "ok"
+    assert output["prediction_mapping"]["native_prediction"] == "positive"
+    trace = [json.loads(line) for line in (tmp_path / "trace_messages.jsonl").read_text().splitlines()]
+    assert trace[-1]["prediction"] == "positive"
+
+
+def test_upstream_v2_saved_safety_labels_remain_scorable() -> None:
+    from predict.harnesses.branches.runner import prediction_to_label
+    from predict.harnesses.branches.tasks.ames.contract import CONFIG as ames
+    from predict.harnesses.branches.tasks.dili.contract import CONFIG as dili
+    from predict.harnesses.branches.tasks.carcinogens.contract import CONFIG as carcinogens
+
+    for config in (ames, dili, carcinogens):
+        assert prediction_to_label(config, "pass") == 1
+        assert prediction_to_label(config, "fail") == 0
+
+
+def test_tdc_prior_reuse_requires_exact_query_smiles(tmp_path: Path) -> None:
+    old = tmp_path / "old"
+    old.mkdir()
+    (old / "retrieval.json").write_text(json.dumps({
+        "query": {"input_smiles": "N=CNC"}
+    }))
+    row = {"drug": "NC=NC", "molecule_identity_key": "K", "condition_group": ""}
+    assert _matching_source(row, {}, {("K", ""): old}) is None
+    row["drug"] = "N=CNC"
+    assert _matching_source(row, {}, {("K", ""): old}) == ("tdc_existing", old)
 
 
 def test_tdc_matrix_uses_tdc_split() -> None:
@@ -21,6 +87,13 @@ def test_tdc_matrix_uses_tdc_split() -> None:
         "data/gold_labels/TDC/BBB_Martins/v1/scaffold/valid_molecule_condition_labels.jsonl"
     ).resolve()
     assert args.prompt_version == flat.CONTEXT_V5_PROMPT_VERSION
+
+
+def test_six_task_query_priors_accept_tdc_valid_splits() -> None:
+    for task, size in (("ames", 720), ("dili", 47), ("carcinogens", 27)):
+        path, rows = query_prior_inputs(task, "valid", "tdc")
+        assert "/gold_labels/TDC/" in str(path)
+        assert len(rows) == size
 
 
 def test_mixed_context_score_cache_is_active() -> None:

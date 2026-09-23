@@ -37,6 +37,12 @@ preparation failures. Explicit cache paths remain authoritative; task/benchmark
 defaults may select the Gold-v1 all-task or TDC bundle as documented by the flat
 harness.
 
+The six-task upstream Gold-v1 query-prior default is
+`outputs/paper/assay_transfer_harness/joseph/query_priors/CURRENT.json`, with
+hash-pinned `valid_small`, `valid`, and `test` batch roots. It applies only to
+`full_flat_context_v5_six_tasks_upstream_v1`; explicit `--prior-root` remains
+authoritative. TDC requires its own reviewed overlay, not a Gold prior default.
+
 ## Testing discipline
 
 Do not add circular tests that merely assert newly written prompt prose or copy

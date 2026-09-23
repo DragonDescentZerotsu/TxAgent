@@ -80,6 +80,8 @@ from predict.harnesses.branches.flat import (
     CONTEXT_V4_VARIANTS,
     CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
     CONTEXT_PROMPT_VERSIONS,
     EVIDENCE_PROJECTION,
     EXTRA_DETAILS_POLICY,
@@ -1665,7 +1667,10 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     parser.add_argument("--timeout-s", type=int, default=300)
     parser.add_argument("--transport-max-retries", type=int, default=2)
     parser.add_argument("--max-tokens", type=int, default=20480)
-    parser.add_argument("--temperature", type=float, default=0.0)
+    parser.add_argument(
+        "--temperature", type=lambda value: None if value == "none" else float(value),
+        default=0.0,
+    )
     parser.add_argument("--max-tool-rounds", type=int, default=10)
     parser.add_argument(
         "--reasoning-effort",
@@ -1788,6 +1793,7 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         help=argparse.SUPPRESS,
     )
     parser.add_argument("--flat-selection-manifest", default="", help=argparse.SUPPRESS)
+    parser.add_argument("--flat-replay-subset", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--group-prompt-min-similarity", type=float, default=None)
     parser.add_argument(
         "--presentation-style",
@@ -2097,6 +2103,8 @@ def _validate_flat_prompt(config: BatchConfig, args: argparse.Namespace) -> None
             if args.flat_prompt_version in {
                 CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
                 CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+                CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
+                CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
             }
             else {"bbb_martins", "bioavailability_ma"}
         )
@@ -2104,6 +2112,8 @@ def _validate_flat_prompt(config: BatchConfig, args: argparse.Namespace) -> None
             if args.flat_prompt_version not in {
                 CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
                 CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+                CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
+                CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
             }:
                 raise SystemExit("Joseph flat is enabled only for BBB and oral")
             raise SystemExit(f"{args.flat_prompt_version} does not support {task_id}")
@@ -2172,10 +2182,24 @@ def _validated_flat_selection_manifest(
         "prompt_version": args.flat_prompt_version,
         "task": config.pipeline_module.split(".")[-2],
         "reranking": args.flat_reranking,
-        "indices": indices,
         "input_jsonl": str(Path(args.input_jsonl).resolve()),
         "input_sha256": sha256_file(Path(args.input_jsonl)),
     }
+    source_indices = manifest.get("indices")
+    if getattr(args, "flat_replay_subset", False):
+        if not isinstance(source_indices, list) or not set(indices).issubset(set(source_indices)):
+            raise SystemExit("flat replay indices are not a subset of the source manifest")
+        retrieval_hashes = manifest.get("retrieval_sha256_by_index") or {}
+        for index in indices:
+            expected_hash = retrieval_hashes.get(str(index))
+            retrieval_path = (
+                path.parent / "runs" / f"{path.parent.name}_idx{index:05d}"
+                / "retrieval.json"
+            )
+            if not expected_hash or not retrieval_path.is_file() or sha256_file(retrieval_path) != expected_hash:
+                raise SystemExit(f"flat replay retrieval changed or is missing: {retrieval_path}")
+    else:
+        expected["indices"] = indices
     if args.flat_prompt_version in CONTEXT_PROMPT_VERSIONS:
         expected.update(
             layout=args.flat_layout,

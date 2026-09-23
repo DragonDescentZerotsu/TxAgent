@@ -1,7 +1,8 @@
 """Generate missing TDC query priors and publish stable-identity overlays.
 
 Existing Gold-v1 valid/test priors are reused by molecule-condition identity.
-Only missing TDC identities are sent to the configured DGX provider pool. The
+Only TDC queries without an exact-identity, exact-SMILES prior are sent to the
+configured DeepSeek provider pool. The
 published overlay pins every source artifact by hash for positional consumers.
 """
 
@@ -15,8 +16,13 @@ import time
 from typing import Any
 
 from data.processing.gold_labels.conditioned_benchmark import tdc_split_path
+from data.processing.llm_api import provider_from_base_url
 from predict.api_client.pool import (
     load_provider_pool_config, primary_capacity, select_healthy_providers,
+)
+from predict.harnesses.branches.flat import (
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+    default_query_prior_root,
 )
 from predict.harnesses.branches.matrix import provider_client
 from predict.harnesses.branches.scheduler import (
@@ -27,21 +33,10 @@ from predict.utils.json import read_jsonl, sha256_file, write_json_atomic, write
 
 TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
 SUBSETS = ("valid", "test")
-MODEL = "deepseek-ai/DeepSeek-V4-Flash-0731"
 PROFILES = {
     "bbb_martins": ("--bbb-prompt-profile", "meaningful_cns_access_v1"),
     "bioavailability_ma": ("--bioavailability-prompt-profile", "f20_evidence_calibrated_v2"),
     "skin_reaction": ("--skin-prompt-profile", "skin_sensitization_contact_allergy.v2"),
-}
-GOLD_PRIORS = {
-    "valid": Path(
-        "outputs/paper/assay_transfer_harness/joseph/_batches/"
-        "six_task_valid_query_priors_upstream_v1_20260922_0810"
-    ),
-    "test": Path(
-        "outputs/paper/assay_transfer_harness/joseph/_batches/"
-        "six_task_test_query_priors_upstream_v1_20260922_0738"
-    ),
 }
 EXISTING_TDC_PRIORS = (
     Path(
@@ -79,7 +74,10 @@ def _source_prompt_profile(task: str, run: Path) -> tuple[Path, str]:
 
 def _gold_sources(task: str) -> dict[tuple[str, str], Path]:
     sources: dict[tuple[str, str], Path] = {}
-    for subset, root in GOLD_PRIORS.items():
+    for subset in SUBSETS:
+        root = default_query_prior_root(
+            CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION, "gold", subset
+        )
         batch = (root / task / f"{task}__none").resolve()
         manifest = json.loads((batch / "manifest.json").read_text(encoding="utf-8"))
         for row in manifest.get("sources") or []:
@@ -114,21 +112,35 @@ def _tdc_sources(task: str, subsets: tuple[str, ...]) -> dict[tuple[str, str], P
     return sources
 
 
+def _matching_source(
+    row: dict[str, Any], gold: dict[tuple[str, str], Path],
+    tdc: dict[tuple[str, str], Path],
+) -> tuple[str, Path] | None:
+    for source, candidates in (("tdc_existing", tdc), ("gold_v1", gold)):
+        run = candidates.get(_key(row))
+        if run is None:
+            continue
+        retrieval = json.loads((run / "retrieval.json").read_text(encoding="utf-8"))
+        if str((retrieval.get("query") or {}).get("input_smiles") or "") == str(row["drug"]):
+            return source, run
+    return None
+
+
 def prepare_inputs(
     output_root: Path, tasks: tuple[str, ...], subsets: tuple[str, ...],
 ) -> dict[str, Any]:
     output_root.mkdir(parents=True, exist_ok=False)
     summary = {}
     for task in tasks:
-        existing = {**_gold_sources(task), **_tdc_sources(task, subsets)}
-        missing: dict[tuple[str, str], dict[str, Any]] = {}
+        gold, tdc = _gold_sources(task), _tdc_sources(task, subsets)
+        missing: dict[tuple[tuple[str, str], str], dict[str, Any]] = {}
         reused = 0
         for subset in subsets:
             for row in read_jsonl(tdc_split_path(task, subset)):
-                if _key(row) in existing:
+                if _matching_source(row, gold, tdc):
                     reused += 1
                 else:
-                    missing.setdefault(_key(row), row)
+                    missing.setdefault((_key(row), str(row["drug"])), row)
         input_path = output_root / "fresh_inputs" / f"{task}.jsonl"
         write_jsonl_atomic(input_path, list(missing.values()))
         summary[task] = {
@@ -146,6 +158,8 @@ def build_commands(
     output_root: Path, provider_config: Path, tasks: tuple[str, ...],
 ) -> list[BatchCommand]:
     prepared = json.loads((output_root / "prepared.json").read_text())
+    provider = load_provider_pool_config(provider_config).providers[0]
+    local = provider_from_base_url(provider.base_url) == "local"
     commands = []
     for task in tasks:
         if not int(prepared["tasks"][task]["fresh"]):
@@ -158,9 +172,11 @@ def build_commands(
             "--batch-id", f"{task}__none", "--experiment-mode", "none",
             "--neighbor-identity-policy", "parent_disjoint", "--harness-prefetch-tools",
             "--provider-pool-config", str(provider_config.resolve()),
-            "--tool-service-url", "http://127.0.0.1:8765", "--model", MODEL,
-            "--reasoning-effort", "high", "--enable-thinking", "--temperature", "0",
-            "--max-tokens", "20480", "--timeout-s", "900", "--max-tool-rounds", "3",
+            "--tool-service-url", "http://127.0.0.1:8765", "--model", provider.model,
+            "--reasoning-effort", "high",
+            "--enable-thinking" if local else "--disable-thinking", "--temperature", "0",
+            "--max-tokens", "20480", "--timeout-s", str(provider.timeout_s or 900),
+            "--max-tool-rounds", "3",
             "--execution-mode", "throughput", "--skip-existing", "--no-stream-logs",
             "--no-combine-traces", option, profile,
         ]
@@ -176,10 +192,10 @@ def publish_overlays(
     for task in tasks:
         gold = _gold_sources(task)
         tdc = _tdc_sources(task, subsets)
-        existing = {**gold, **tdc}
         fresh_rows = read_jsonl(Path(prepared["tasks"][task]["input_jsonl"]))
         fresh_batch = output_root / "fresh" / task / f"{task}__none"
-        fresh = {_key(row): _run(fresh_batch, index) for index, row in enumerate(fresh_rows)}
+        fresh = {(_key(row), str(row["drug"])): _run(fresh_batch, index)
+                 for index, row in enumerate(fresh_rows)}
         for key, run in fresh.items():
             if json.loads((run / "single_molecule_reasoning_output.json").read_text()).get("status") != "ok":
                 raise ValueError(f"Fresh query prior is incomplete: {run}")
@@ -191,10 +207,13 @@ def publish_overlays(
             reused = 0
             for index, row in enumerate(read_jsonl(input_path)):
                 key = _key(row)
-                run = existing.get(key) or fresh.get(key)
+                matching = _matching_source(row, gold, tdc)
+                source, run = matching if matching else (
+                    "tdc_fresh", fresh.get((key, str(row["drug"])))
+                )
                 if run is None:
                     raise ValueError(f"No query prior for {task}/{subset}/{key}")
-                reused += int(key in existing)
+                reused += int(matching is not None)
                 files = {
                     name: sha256_file(run / name)
                     for name in ("retrieval.json", "single_molecule_reasoning_output.json")
@@ -203,10 +222,7 @@ def publish_overlays(
                 sources.append({
                     "target_index": index, "molecule_identity_key": key[0],
                     "condition_group": key[1], "run_dir": str(run),
-                    "source": (
-                        "tdc_existing" if key in tdc else
-                        "gold_v1" if key in gold else "tdc_fresh"
-                    ),
+                    "source": source,
                     "files_sha256": files,
                     "task_prompt_profile": profile,
                     "prompt_profile_manifest": str(profile_manifest),
@@ -234,10 +250,13 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--parallelism", type=int)
     parser.add_argument("--preparation-workers", type=int, default=64)
+    parser.add_argument("--max-stage-requeues", type=int, default=0)
     parser.add_argument("--tasks", nargs="+", choices=TASKS, default=list(TASKS))
     parser.add_argument("--subsets", nargs="+", choices=SUBSETS, default=list(SUBSETS))
     parser.add_argument("--publish-only", action="store_true")
     args = parser.parse_args(argv)
+    if args.max_stage_requeues < 0:
+        parser.error("--max-stage-requeues must be non-negative")
     output_root = (args.output_root or Path(
         "outputs/paper/assay_transfer_harness/joseph/query_priors"
     ) / time.strftime("tdc_v1_deepseek_v4_flash_0731_high_%Y%m%d_%H%M%S")).resolve()
@@ -258,11 +277,16 @@ def main(argv: list[str] | None = None) -> int:
     requested = args.parallelism or primary_capacity(candidate)
     selection = select_healthy_providers(candidate, requested)
     commands = build_commands(output_root, config_path, tasks)
-    prepared = prepare_batch_commands(commands, max_workers=args.preparation_workers, max_stage_requeues=0)
+    prepared = prepare_batch_commands(
+        commands, max_workers=args.preparation_workers,
+        max_stage_requeues=args.max_stage_requeues,
+    )
     receipt = {
         "schema_version": "tdc_query_prior_execution.v1", "status": "running",
-        "model": MODEL, "reasoning_effort": "high", "thinking": True,
+        "model": selection.config.providers[0].model, "reasoning_effort": "high",
+        "thinking": provider_from_base_url(selection.config.providers[0].base_url) == "local",
         "max_tokens": 20480, "timeout_s": 900, "transport_max_retries": 0,
+        "max_stage_requeues": args.max_stage_requeues,
         "requested_parallelism": requested,
         "effective_parallelism": selection.effective_parallelism,
         "provider_pool": selection.public_dict(),
@@ -274,7 +298,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     failed = run_prepared_prompt_pool(
         prepared, max_workers=selection.effective_parallelism,
-        max_stage_requeues=0, preparation_workers=args.preparation_workers,
+        max_stage_requeues=args.max_stage_requeues,
+        preparation_workers=args.preparation_workers,
         stage_client=client,
     )
     receipt["status"] = "complete" if not failed else "incomplete"

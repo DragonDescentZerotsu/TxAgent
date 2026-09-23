@@ -481,7 +481,10 @@ def _submit_stage_job(
     call = (
         executor.submit(execute_stage, job)
         if stage_client is None
-        else executor.submit(execute_stage, job, stage_client)
+        else executor.submit(
+            execute_stage, job,
+            stage_client(job) if callable(stage_client) else stage_client,
+        )
     )
     futures[call] = ActiveJob("stage", job)
 

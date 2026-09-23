@@ -16,12 +16,13 @@ import csv
 from dataclasses import replace
 import fcntl
 import hashlib
+import importlib
 import json
 import os
 from pathlib import Path
 import sys
 import time
-from typing import Any
+from typing import Any, Mapping
 from urllib.request import urlopen
 
 from data.processing.gold_labels.conditioned_benchmark import split_path, tdc_split_path
@@ -30,7 +31,7 @@ from data.processing.llm_api import (
     provider_from_base_url,
 )
 from predict.harnesses.branches import flat
-from predict.harnesses.branches.runner import collect_completed_item
+from predict.harnesses.branches.runner import BatchItem, PreparedBatch, collect_completed_item
 from predict.harnesses.branches.scheduler import (
     BatchCommand,
     prepare_batch_commands,
@@ -66,6 +67,10 @@ from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
 
 MATRIX_VERSION = "joseph_flat_matrix.v4"
 MODEL = "deepseek-ai/DeepSeek-V4-Flash-0731"
+DEEPSEEK_V4_ALIASES = {
+    "deepseek-ai/DeepSeek-V4-Flash-0731",
+    "deepseek/deepseek-v4-flash-0731",
+}
 DEFAULT_PROVIDER_CONFIG = DEFAULT_PROVIDER_POOL_CONFIG
 TASKS = (
     "bbb_martins", "bioavailability_ma", "skin_reaction",
@@ -124,7 +129,7 @@ def endpoint_allocations(
         )
         allocations[index] += 1
     return [
-        (spec.base_url, allocations[index])
+        (spec.name, allocations[index])
         for index, spec in enumerate(providers)
         if allocations[index]
     ]
@@ -236,8 +241,11 @@ def load_preselected_direct_grid(path: Path) -> list[dict[str, Any]]:
     if not tasks or len(tasks) != len(set(tasks)) or set(tasks) - set(TASKS):
         raise ValueError("Direct grid task list is invalid")
     for profile in profiles:
+        profile_tasks = tuple((profile.get("task_manifests") or {}).keys())
+        if not profile_tasks or set(profile_tasks) - set(tasks):
+            raise ValueError(f"Direct profile has invalid tasks: {profile.get('name')}")
         subsets = set()
-        for task in tasks:
+        for task in profile_tasks:
             entry = (profile.get("task_manifests") or {}).get(task) or {}
             manifest = Path(str(entry.get("path") or ""))
             if not manifest.is_absolute():
@@ -249,10 +257,169 @@ def load_preselected_direct_grid(path: Path) -> list[dict[str, Any]]:
         if len(subsets) != 1 or None in subsets:
             raise ValueError(f"Direct profile mixes evaluation subsets: {profile.get('name')}")
         profile["subset"] = subsets.pop()
-        profile["tasks"] = tasks
+        profile["tasks"] = profile_tasks
     if len({profile["subset"] for profile in profiles}) != 1:
         raise ValueError("Direct grid profiles mix evaluation subsets")
     return profiles
+
+
+def load_mixed_selection_grids(
+    paths: list[Path], *, benchmark: str, subset: str,
+) -> list[dict[str, Any]]:
+    """Collect per-task joint selections without copying immutable leaf manifests."""
+    combined: dict[str, dict[str, Any]] = {}
+    task_names: set[str] = set()
+    for path in paths:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        tasks = payload.get("tasks") or []
+        profiles = payload.get("profiles") or []
+        if (
+            payload.get("schema_version") != "gold_submodular_selection_grid.v1"
+            or payload.get("status") != "complete"
+            or payload.get("kind") != "indirect"
+            or payload.get("benchmark") != f"{benchmark}_v1"
+            or payload.get("subset") != (
+                "valid_small" if benchmark == "gold" and subset == "valid" else subset
+            )
+            or len(tasks) != 1 or tasks[0] not in TASKS or tasks[0] in task_names
+            or len(profiles) != payload.get("profile_count")
+        ):
+            raise ValueError(f"Incompatible mixed selection grid: {path}")
+        task = tasks[0]
+        task_names.add(task)
+        names = {profile.get("name") for profile in profiles}
+        if len(names) != len(profiles):
+            raise ValueError("Mixed selection grid repeats a profile name")
+        for profile in profiles:
+            name = profile["name"]
+            source = (profile.get("task_manifests") or {}).get(task) or {}
+            indirect_path = (path.parent / str(source.get("path") or "")).resolve()
+            mixed_path = (path.parent / "mixed" / name / task / "manifest.json").resolve()
+            if (not indirect_path.is_file()
+                    or sha256_file(indirect_path) != source.get("sha256")
+                    or not mixed_path.is_file()):
+                raise ValueError(f"Mixed selection leaf is missing or changed: {name}/{task}")
+            mixed = json.loads(mixed_path.read_text(encoding="utf-8"))
+            if (mixed.get("schema_version") != "gold_mixed_selection.v1"
+                    or mixed.get("status") != "complete"
+                    or mixed.get("task_id") != task
+                    or mixed.get("benchmark") != payload["benchmark"]
+                    or mixed.get("subset") != payload["subset"]
+                    or (mixed.get("indirect") or {}).get("sha256") != source["sha256"]):
+                raise ValueError(f"Mixed selection leaf disagrees with grid: {name}/{task}")
+            combined.setdefault(name, {"name": name, "task_manifests": {}})[
+                "task_manifests"
+            ][task] = {"path": str(mixed_path), "sha256": sha256_file(mixed_path)}
+    return [combined[name] for name in sorted(combined)]
+
+
+def assign_provider_routes(prepared: Mapping[str, Any]) -> dict[tuple[str, int], str]:
+    """Keep a query on one upstream route across profiles and retries."""
+    return {
+        (str(batch.batch_dir.resolve()), item.index): (
+            "cohere" if ordinal % 4 == 3 else "together"
+        )
+        for batch in prepared.values()
+        for ordinal, item in enumerate(sorted(batch.items, key=lambda row: row.index))
+    }
+
+
+def _missing_from_previous_batch(
+    previous: Mapping[str, Any], selection_args: argparse.Namespace,
+    candidate_indices: list[int] | None = None,
+) -> tuple[list[int], int]:
+    """Reuse complete results when the frozen selection and prompt bundle match."""
+    path = Path(str(previous["path"])).resolve()
+    if sha256_file(path) != previous["sha256"]:
+        raise ValueError(f"Previous retrieval manifest changed: {path}")
+    source = json.loads(path.read_text(encoding="utf-8"))
+    prompt_assets_changed = (source.get("prompt_assets") or {}).get("sha256") != (
+        flat.prompt_asset_manifest(selection_args.prompt_version)["sha256"]
+    )
+    if (
+        source.get("task") != selection_args.task
+        or source.get("evaluation_subset") != selection_args.evaluation_subset
+        or source.get("input_jsonl") != str(selection_args.input_jsonl)
+        or source.get("input_sha256") != sha256_file(selection_args.input_jsonl)
+        or source.get("prompt_version") != selection_args.prompt_version
+        or source.get("flat_mixed_selection") != str(selection_args.flat_mixed_selection)
+        or source.get("flat_mixed_selection_sha256") != sha256_file(selection_args.flat_mixed_selection)
+        or source.get("assay_transfer_cache") != str(selection_args.assay_transfer_cache)
+        or previous.get("assay_transfer_cache_sha256") != sha256_file(selection_args.assay_transfer_cache)
+    ):
+        raise ValueError(f"Previous batch is incompatible with this selection: {path}")
+    full_indices = flat._preselected_query_indices(
+        selection_args.flat_mixed_selection,
+        read_jsonl(selection_args.input_jsonl),
+        task=selection_args.task,
+        subset=selection_args.evaluation_subset,
+    )
+    cohort_indices = full_indices if candidate_indices is None else candidate_indices
+    source_indices = source.get("indices")
+    if (
+        not isinstance(source_indices, list)
+        or (
+            source_indices != cohort_indices
+            and (
+                candidate_indices is None
+                or [index for index in source_indices if index in set(cohort_indices)]
+                != cohort_indices
+            )
+        )
+    ):
+        raise ValueError(f"Previous batch has a different query cohort: {path}")
+    config = importlib.import_module(
+        f"predict.harnesses.branches.tasks.{selection_args.task}.contract"
+    ).CONFIG
+    batch_dir = path.parent.parent
+    prepared = PreparedBatch(
+        config=config,
+        args=argparse.Namespace(skip_existing=True, label_field="Y", smiles_field="drug"),
+        batch_id=batch_dir.name,
+        batch_dir=batch_dir,
+        logs_dir=batch_dir / "logs",
+        batch_run_root=batch_dir / "runs",
+        items=[],
+        manifest={},
+    )
+    records = read_jsonl(selection_args.input_jsonl)
+    missing = []
+    for index in cohort_indices:
+        try:
+            complete = collect_completed_item(prepared, BatchItem(index, records[index]))
+        except (OSError, ValueError, TypeError, KeyError):
+            complete = None
+        if complete is not None and prompt_assets_changed:
+            run_dir = batch_dir / "runs" / f"{batch_dir.name}_idx{index:05d}"
+            retrieval_path = path.parent / "runs" / f"{path.parent.name}_idx{index:05d}" / "retrieval.json"
+            try:
+                batch_manifest = json.loads((batch_dir / "manifest.json").read_text(encoding="utf-8"))
+                retrieval = attach_external_condition(
+                    json.loads(retrieval_path.read_text(encoding="utf-8")), records[index]
+                )
+                prior = validated_branch_content(json.loads(
+                    (run_dir / "single_molecule_reasoning_output.json").read_text(encoding="utf-8")
+                ))
+                messages, metadata = flat.build_flat_context_request(
+                    retrieval, task_id=selection_args.task,
+                    task_prompt_profile=batch_manifest["task_prompt_profile"],
+                    layout=batch_manifest["flat_layout"],
+                    reranking=batch_manifest["flat_reranking"], query_prior=prior,
+                    prompt_version=selection_args.prompt_version,
+                )
+                expected_request = {
+                    "schema_version": "joseph_flat_context_request.v1",
+                    "messages": messages,
+                    "message_char_count": sum(len(message["content"]) for message in messages),
+                    **metadata,
+                }
+                if json.loads((run_dir / "request.json").read_text(encoding="utf-8")) != expected_request:
+                    complete = None
+            except (OSError, ValueError, TypeError, KeyError):
+                complete = None
+        if complete is None:
+            missing.append(index)
+    return missing, len(cohort_indices) - len(missing)
 
 
 def provider_client(
@@ -280,9 +447,9 @@ def provider_client(
         config = replace(
             config,
             providers=tuple(
-                replace(spec, max_inflight=allocations[spec.base_url])
+                replace(spec, max_inflight=allocations[spec.name])
                 for spec in config.providers
-                if spec.base_url in allocations
+                if spec.name in allocations
             ),
         )
     provider_kinds = {provider_from_base_url(spec.base_url) for spec in config.providers}
@@ -295,11 +462,11 @@ def provider_client(
         env_file=DEFAULT_ENV_FILE,
         timeout_s=timeout_s,
         max_tokens=max_tokens,
-        temperature=0.0,
+        temperature=_model_temperature(config.providers[0].model),
         tool_service_url="http://127.0.0.1:8765",
         enable_group_tools=False,
         max_tool_rounds=0,
-        reasoning_effort="high" if local else "",
+        reasoning_effort="high",
         enable_thinking=local,
         transport_max_retries=0,
     )
@@ -307,6 +474,10 @@ def provider_client(
 
 def _single_batch(task: str) -> Path:
     return (SINGLE_ROOT / task / f"{task}__none").resolve()
+
+
+def _model_temperature(model: str) -> float | None:
+    return None if model.rsplit("/", 1)[-1].startswith(("gpt-5", "gpt-6")) else 0.0
 
 
 def verify_single_reuse(task: str, detailed_input: Path) -> dict[str, Any]:
@@ -394,6 +565,7 @@ def _selection_args(
     all_levels: bool = False,
     flat_preselected_uids: Path | None = None,
     flat_preselected_contexts: Path | None = None,
+    flat_mixed_selection: Path | None = None,
     context_v5_six_tasks: bool = False,
     six_task_prompt_version: str = flat.CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
     batch_id: str | None = None,
@@ -413,6 +585,15 @@ def _selection_args(
         and not context_v5_six_tasks
     )
     context_prompt = context_v4 or context_v5 or context_v6 or context_v5_six_tasks
+    prompt_version = (
+        six_task_prompt_version if context_v5_six_tasks
+        else flat.CONTEXT_V6_PROMPT_VERSION if context_v6
+        else flat.CONTEXT_V5_PROMPT_VERSION if context_v5
+        else flat.CONTEXT_V4_PROMPT_VERSION if context_v4
+        else flat.JOSEPH_PROMPT_VERSION
+    )
+    cache_bundle = flat.resolve_default_cache_bundle(task, benchmark, assay_transfer_cache)
+    task_max_level = flat.prompt_task_max_level(task, prompt_version, cache_bundle)
     return argparse.Namespace(
         harness_version=(
             flat.JOSEPH_PROMPT_HARNESSES[six_task_prompt_version]
@@ -422,19 +603,11 @@ def _selection_args(
             else flat.CONTEXT_V4_HARNESS_VERSION if context_v4
             else flat.PUBLIC_HARNESS_VERSION
         ),
-        prompt_version=(
-            six_task_prompt_version if context_v5_six_tasks
-            else flat.CONTEXT_V6_PROMPT_VERSION if context_v6
-            else flat.CONTEXT_V5_PROMPT_VERSION if context_v5
-            else flat.CONTEXT_V4_PROMPT_VERSION if context_v4
-            else flat.JOSEPH_PROMPT_VERSION
-        ),
+        prompt_version=prompt_version,
         task=task,
         benchmark=benchmark,
         reranking=reranking,
-        assay_transfer_cache=flat.resolve_default_cache_bundle(
-            task, benchmark, assay_transfer_cache
-        ).resolve(),
+        assay_transfer_cache=cache_bundle.resolve(),
         record_pool=record_pool,
         evaluation_subset=evaluation_subset,
         input_jsonl=input_jsonl,
@@ -446,7 +619,7 @@ def _selection_args(
         l1_records_per_molecule=10,
         records_per_level=records_per_level,
         ranking_tie_seed=0,
-        max_level=flat.TASKS[task] if all_levels else 1 if context_prompt else 0,
+        max_level=task_max_level if all_levels else 1 if context_prompt else 0,
         layout="level-grouped" if context_v5 or context_v5_six_tasks else "global",
         query_prior="cached",
         prior_root=prior_root.resolve(),
@@ -456,9 +629,10 @@ def _selection_args(
         molecule_description_cache_version="v1",
         flat_preselected_uids=flat_preselected_uids,
         flat_preselected_contexts=flat_preselected_contexts,
+        flat_mixed_selection=flat_mixed_selection,
         record_limits_by_level={
             f"L{level}": records_per_level
-            for level in range(2, flat.TASKS[task] + 1)
+            for level in range(2, task_max_level + 1)
         },
         indices=None,
         start=0,
@@ -538,7 +712,7 @@ def _batch_command(
         "--max-tokens",
         str(max_tokens),
         "--temperature",
-        "0",
+        "none" if _model_temperature(model) is None else "0",
         "--reasoning-effort",
         reasoning_effort,
         "--enable-thinking" if enable_thinking else "--disable-thinking",
@@ -553,6 +727,8 @@ def _batch_command(
         command.extend(["--indices", *args.indices])
     else:
         command.extend(["--start", "0", "--limit", str(args.limit)])
+    if getattr(args, "flat_replay_subset", False):
+        command.append("--flat-replay-subset")
     if context_v4:
         command.extend([
             TASK_PROMPT_PROFILE_OPTIONS[task],
@@ -599,7 +775,7 @@ def _provider_execution(
             "base_url": first.base_url,
             "api_key_env": first.api_key_env,
             "timeout_s": first.timeout_s or timeout_s,
-            "reasoning_effort": "high" if local else "",
+            "reasoning_effort": "high",
             "enable_thinking": local,
         },
         receipts,
@@ -643,6 +819,8 @@ def _materialize_direct_request_review(
         if prepared.args.flat_prompt_version not in {
             flat.CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
             flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+            flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+            flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
         }:
             raise ValueError(f"Unexpected direct-grid prompt version for {batch_id}")
         retrieval_batch = Path(prepared.args.retrieval_replay_source_batch)
@@ -745,11 +923,26 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--context-v5-all-level", action="store_true")
     parser.add_argument("--preselected-grid-manifest", type=Path)
     parser.add_argument("--preselected-direct-grid-manifest", type=Path)
+    parser.add_argument("--mixed-selection-grid-manifest", action="append", type=Path, default=[])
+    parser.add_argument(
+        "--mixed-harness-version",
+        choices=(
+            flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_HARNESS_VERSION,
+            flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_HARNESS_VERSION,
+        ),
+        default=flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_HARNESS_VERSION,
+    )
+    parser.add_argument(
+        "--resume-missing-from", action="append", type=Path, default=[],
+        help="Run only queries without validated results in earlier matrices, oldest first.",
+    )
     parser.add_argument(
         "--preselected-direct-harness-version",
         choices=(
             flat.CONTEXT_V5_SIX_TASKS_HARNESS_VERSION,
             flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_HARNESS_VERSION,
+            flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_HARNESS_VERSION,
+            flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_HARNESS_VERSION,
         ),
         default=flat.CONTEXT_V5_SIX_TASKS_HARNESS_VERSION,
     )
@@ -761,15 +954,14 @@ def main(argv: list[str] | None = None) -> int:
         "--evaluation-subsets", nargs="+", choices=("valid", "test")
     )
     parser.add_argument("--benchmark", choices=("gold", "tdc"), default="gold")
-    parser.add_argument(
-        "--prior-root", type=Path, default=flat.DEFAULT_QUERY_PRIOR_ROOT
-    )
+    parser.add_argument("--prior-root", type=Path)
     parser.add_argument(
         "--prior-root-by-subset", action="append", default=[], metavar="SUBSET=PATH"
     )
     parser.add_argument(
         "--assay-transfer-cache", type=Path, default=DEFAULT_CACHE_BUNDLE
     )
+    parser.add_argument("--flat-artifact-bundle-root", type=Path)
     parser.add_argument(
         "--preselected-harness-version",
         choices=(flat.CONTEXT_V5_HARNESS_VERSION, flat.CONTEXT_V6_HARNESS_VERSION),
@@ -784,6 +976,8 @@ def main(argv: list[str] | None = None) -> int:
         "--l1-min-contrasts", nargs="+", type=int, default=(0, 1, 2),
     )
     parser.add_argument("--provider-pool-config", type=Path, default=DEFAULT_PROVIDER_CONFIG)
+    parser.add_argument("--per-task-provider-split", action="store_true")
+    parser.add_argument("--max-stage-requeues", type=int)
     parser.add_argument("--trace-root", type=Path, default=Path("outputs/paper/live"))
     parser.add_argument(
         "--execution-mode", choices=("live", "throughput"), default="throughput"
@@ -804,6 +998,7 @@ def main(argv: list[str] | None = None) -> int:
         args.context_v5_all_level,
         args.preselected_grid_manifest is not None,
         args.preselected_direct_grid_manifest is not None,
+        bool(args.mixed_selection_grid_manifest),
     )) > 1:
         parser.error("context matrix modes are mutually exclusive")
     if args.evaluation_subset and args.evaluation_subsets:
@@ -817,6 +1012,8 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("the preselected grid has fixed K10/W25/M0 settings")
     if args.preselected_direct_grid_manifest and len(evaluation_subsets) != 1:
         parser.error("a direct selection grid must target exactly one evaluation subset")
+    if args.mixed_selection_grid_manifest and len(evaluation_subsets) != 1:
+        parser.error("mixed selection grids must target exactly one evaluation subset")
     if "--preselected-harness-version" in raw_argv and not args.preselected_grid_manifest:
         parser.error("--preselected-harness-version requires --preselected-grid-manifest")
     if (
@@ -828,6 +1025,10 @@ def main(argv: list[str] | None = None) -> int:
         )
     if args.parallelism is not None and args.parallelism < 1:
         parser.error("--parallelism must be positive")
+    if args.max_stage_requeues is not None and args.max_stage_requeues < 0:
+        parser.error("--max-stage-requeues must be non-negative")
+    if args.max_stage_requeues is None:
+        args.max_stage_requeues = 1 if args.per_task_provider_split else 0
     if min(
         args.preparation_workers,
         args.records_per_level,
@@ -855,9 +1056,23 @@ def main(argv: list[str] | None = None) -> int:
     conditions = [tuple(value.split(":", 1)) for value in args.conditions]
     args.provider_pool_config = args.provider_pool_config.resolve()
     args.trace_root = args.trace_root.resolve()
-    args.prior_root = args.prior_root.resolve()
     args.assay_transfer_cache = args.assay_transfer_cache.resolve()
-    prior_roots = {subset: args.prior_root for subset in evaluation_subsets}
+    if args.mixed_selection_grid_manifest:
+        direct_prompt_version = flat.JOSEPH_HARNESS_PROMPTS[args.mixed_harness_version]
+    elif args.preselected_direct_grid_manifest:
+        direct_prompt_version = flat.JOSEPH_HARNESS_PROMPTS[
+            args.preselected_direct_harness_version
+        ]
+    else:
+        direct_prompt_version = ""
+    prior_roots = {
+        subset: (
+            args.prior_root or flat.default_query_prior_root(
+                direct_prompt_version, args.benchmark, subset
+            )
+        ).resolve()
+        for subset in evaluation_subsets
+    }
     for value in args.prior_root_by_subset:
         subset, separator, path = value.partition("=")
         if not separator or subset not in {"valid", "test"} or not path:
@@ -867,11 +1082,40 @@ def main(argv: list[str] | None = None) -> int:
         args.preselected_grid_manifest = args.preselected_grid_manifest.resolve()
     if args.preselected_direct_grid_manifest:
         args.preselected_direct_grid_manifest = args.preselected_direct_grid_manifest.resolve()
+    args.mixed_selection_grid_manifest = [path.resolve() for path in args.mixed_selection_grid_manifest]
+    if args.resume_missing_from and not args.mixed_selection_grid_manifest:
+        parser.error("--resume-missing-from requires a mixed-selection grid")
+    previous_matrices = []
+    for previous_path in args.resume_missing_from:
+        path = previous_path.resolve()
+        matrix = json.loads(path.read_text(encoding="utf-8"))
+        if (
+            matrix.get("benchmark") != args.benchmark
+            or matrix.get("evaluation_subsets") != list(evaluation_subsets)
+            or matrix.get("prompt_version") != direct_prompt_version
+        ):
+            parser.error("Previous matrix has a different benchmark, subset, or prompt version")
+        selections = {
+            (row["task"], row["evaluation_subset"], row["profile"]): row
+            for row in matrix.get("selections", [])
+        }
+        if len(selections) != len(matrix.get("selections", [])):
+            parser.error("Previous matrix repeats a task/profile selection")
+        previous_matrices.append((path, matrix, selections))
     declared_direct_tasks = (
         json.loads(args.preselected_direct_grid_manifest.read_text()).get("tasks") or []
         if args.preselected_direct_grid_manifest else []
     )
     candidate_config = load_provider_pool_config(args.provider_pool_config)
+    if args.per_task_provider_split:
+        specs = candidate_config.providers
+        if (
+            len(specs) != 2
+            or [spec.name for spec in specs] != ["together", "cohere"]
+            or specs[0].max_inflight != 3 * specs[1].max_inflight
+            or specs[0].base_url != specs[1].base_url
+        ):
+            parser.error("per-task split requires Together/Cohere at 3:1 capacity")
     args.requested_parallelism = args.parallelism
     args.endpoint_selection = None
     args.load_receipt = []
@@ -892,6 +1136,11 @@ def main(argv: list[str] | None = None) -> int:
             args.endpoint_selection = selection.public_dict()
             args.parallelism = selection.effective_parallelism
             provider_config = selection.config
+            if args.per_task_provider_split and (
+                [spec.name for spec in provider_config.providers] != ["together", "cohere"]
+                or args.parallelism != sum(spec.max_inflight for spec in candidate_config.providers)
+            ):
+                parser.error("both pinned providers must pass preflight at full capacity")
 
     root = args.output_root.resolve()
     args.results_root = args.results_root.resolve()
@@ -924,6 +1173,7 @@ def main(argv: list[str] | None = None) -> int:
             or args.context_v5_l1 or args.context_v5_all_level
             or args.preselected_grid_manifest
             or args.preselected_direct_grid_manifest
+            or args.mixed_selection_grid_manifest
         )
         single_receipts = [] if context_matrix else [
             verify_single_reuse(
@@ -935,6 +1185,7 @@ def main(argv: list[str] | None = None) -> int:
             for task in selected_tasks
         ]
         selection_receipts = []
+        resume_receipts = []
         variants = (
             [
                 ("assay-transfer-contrastive", "all", width, contrast, False)
@@ -962,6 +1213,19 @@ def main(argv: list[str] | None = None) -> int:
             load_preselected_direct_grid(args.preselected_direct_grid_manifest)
             if args.preselected_direct_grid_manifest else []
         )
+        mixed_grid_profiles = (
+            load_mixed_selection_grids(
+                args.mixed_selection_grid_manifest,
+                benchmark=args.benchmark, subset=evaluation_subsets[0],
+            ) if args.mixed_selection_grid_manifest else []
+        )
+        if args.mixed_selection_grid_manifest and (
+            not mixed_grid_profiles
+            or set(selected_tasks) != set().union(*(
+                set(profile["task_manifests"]) for profile in mixed_grid_profiles
+            ))
+        ):
+            parser.error("mixed launch must cover exactly the selected tasks")
         direct_grid_subset = (
             "valid" if direct_grid_profiles
             and direct_grid_profiles[0]["subset"] == "valid_small"
@@ -986,12 +1250,25 @@ def main(argv: list[str] | None = None) -> int:
                 {
                     "profile": profile["name"], "task": task,
                     "subset": evaluation_subsets[0],
+                    "manifest": Path(entry["path"]).resolve(),
+                    "direct": False, "mixed": True,
+                    "root": root / profile["name"] / "with_query_prior" / grid_run_id,
+                }
+                for profile in mixed_grid_profiles
+                for task, entry in profile["task_manifests"].items()
+            ]
+            if mixed_grid_profiles else
+            [
+                {
+                    "profile": profile["name"], "task": task,
+                    "subset": evaluation_subsets[0],
                     "manifest": Path(profile["task_manifests"][task]["path"]).resolve(),
                     "direct": True,
                     "root": root / profile["name"] / "with_query_prior" / grid_run_id,
                 }
                 for profile in direct_grid_profiles
-                for task in selected_tasks
+                for task in profile["tasks"]
+                if task in selected_tasks
             ]
             if direct_grid_profiles else
             [
@@ -1047,13 +1324,19 @@ def main(argv: list[str] | None = None) -> int:
                     or args.context_v5_all_level or preselected_v5
                 ),
                 context_v6=preselected_v6,
-                context_v5_six_tasks=item["direct"],
-                six_task_prompt_version=flat.JOSEPH_HARNESS_PROMPTS[
-                    args.preselected_direct_harness_version
-                ],
+                context_v5_six_tasks=item["direct"] or item.get("mixed", False),
+                six_task_prompt_version=(
+                    flat.JOSEPH_HARNESS_PROMPTS[args.mixed_harness_version]
+                    if item.get("mixed") else flat.JOSEPH_HARNESS_PROMPTS[
+                        args.preselected_direct_harness_version
+                    ]
+                ),
                 all_levels=all_levels and not item["direct"],
-                flat_preselected_uids=(None if item["direct"] else item["manifest"]),
+                flat_preselected_uids=(
+                    None if item["direct"] or item.get("mixed") else item["manifest"]
+                ),
                 flat_preselected_contexts=(item["manifest"] if item["direct"] else None),
+                flat_mixed_selection=(item["manifest"] if item.get("mixed") else None),
                 evaluation_subset=subset,
                 prior_root=prior_roots[subset],
                 assay_transfer_cache=args.assay_transfer_cache,
@@ -1062,14 +1345,95 @@ def main(argv: list[str] | None = None) -> int:
                     f"{task}__{item['profile']}" if item["profile"] else None
                 ),
             )
+            if (args.assay_transfer_cache.name.endswith("_v27_successors_v1.yaml")
+                    and task in {"ames", "dili", "carcinogens"}):
+                scope = (
+                    "direct_only/"
+                    if item["direct"] and (args.benchmark, task) in {
+                        ("gold", "carcinogens"), ("tdc", "ames")
+                    } else ""
+                )
+                selection_args.flat_artifact_manifest = (
+                    Path("predict/retrieval/assay_reranking/flat_v5_manifests/v27_successors")
+                    / scope / f"{args.benchmark}_v1" / f"{task}.json"
+                ).resolve()
+                selection_args.flat_artifact_receipt = (
+                    Path("data/caches/assay_reranking/active/flat_v5/receipts/v27_successors")
+                    / scope / f"{args.benchmark}_v1" / f"{task}.json"
+                ).resolve()
+            elif (args.assay_transfer_cache.name.endswith("_v27_partial_snapshot_v1.yaml")
+                  and (args.benchmark, task) in {("gold", "carcinogens"), ("tdc", "ames")}):
+                selection_args.flat_artifact_manifest = (
+                    Path("predict/retrieval/assay_reranking/flat_v5_manifests/v27_partial_snapshots")
+                    / f"{args.benchmark}_v1" / f"{task}.json"
+                ).resolve()
+                selection_args.flat_artifact_receipt = (
+                    Path("data/caches/assay_reranking/active/flat_v5/receipts/v27_partial_snapshots")
+                    / f"{args.benchmark}_v1" / f"{task}.json"
+                ).resolve()
+            if args.flat_artifact_bundle_root is not None:
+                bundle_root = args.flat_artifact_bundle_root.resolve()
+                selection_args.flat_artifact_manifest = bundle_root / "manifests" / f"{task}.json"
+                selection_args.flat_artifact_receipt = bundle_root / "receipts" / f"{task}.json"
             if len(evaluation_subsets) > 1:
                 prefix = f"{task}__"
                 selection_args.batch_id = (
                     f"{prefix}{subset}__{selection_args.batch_id.removeprefix(prefix)}"
                 )
-            source, selection = flat._materialize_cache_matched_retrievals(
-                selection_args
+            previous_source = None
+            if previous_matrices:
+                key = (task, subset, item["profile"])
+                missing = None
+                for previous_path, previous_matrix, previous_selections in previous_matrices:
+                    if key not in previous_selections:
+                        raise ValueError(f"Previous matrix lacks selection {key}: {previous_path}")
+                    if (
+                        previous_matrix.get("prior_roots", {}).get(subset)
+                        != str(selection_args.prior_root)
+                        or previous_matrix.get("assay_transfer_cache", {}).get("sha256")
+                        != sha256_file(selection_args.assay_transfer_cache)
+                        or (
+                            previous_matrix.get("model") != execution["model"]
+                            and {
+                                previous_matrix.get("model"), execution["model"]
+                            } != DEEPSEEK_V4_ALIASES
+                        )
+                        or previous_matrix.get("reasoning_effort") != execution["reasoning_effort"]
+                        or previous_matrix.get("max_tokens") != args.max_tokens
+                    ):
+                        raise ValueError(f"Previous matrix request configuration differs: {key}")
+                    missing, reused = _missing_from_previous_batch(
+                        previous_selections[key], selection_args, missing,
+                    )
+                    resume_receipts.append({
+                        "source": str(previous_path),
+                        "task": task, "evaluation_subset": subset,
+                        "profile": item["profile"], "reused": reused,
+                        "missing": len(missing), "missing_indices": missing,
+                    })
+                    previous_source = Path(previous_selections[key]["path"]).resolve().parent
+                    if not missing:
+                        break
+                if not missing:
+                    continue
+                selection_args.indices = [str(index) for index in missing]
+                selection_args.flat_mixed_selection_subset = True
+            current_source = (
+                selection_args.batch_root / selection_args.batch_id
+                / "cache_matched_retrieval"
             )
+            if (previous_source is not None
+                    and (json.loads((previous_source / "manifest.json").read_text(encoding="utf-8"))
+                         .get("prompt_assets") or {}).get("sha256")
+                    == flat.prompt_asset_manifest(selection_args.prompt_version)["sha256"]
+                    and not (current_source / "manifest.json").exists()):
+                source = previous_source
+                selection = json.loads((source / "manifest.json").read_text(encoding="utf-8"))
+                selection_args.flat_replay_subset = True
+            else:
+                source, selection = flat._materialize_cache_matched_retrievals(
+                    selection_args
+                )
             selection_receipts.append(
                 {
                     "task": task,
@@ -1080,11 +1444,12 @@ def main(argv: list[str] | None = None) -> int:
                     "l1_min_contrast": contrast,
                     "profile": item["profile"],
                     "preselected_uids": (
-                        "" if item["direct"] else str(item["manifest"] or "")
+                        "" if item["direct"] or item.get("mixed") else str(item["manifest"] or "")
                     ),
                     "preselected_contexts": (
                         str(item["manifest"] or "") if item["direct"] else ""
                     ),
+                    "mixed_selection": str(item["manifest"]) if item.get("mixed") else "",
                     "path": str(source / "manifest.json"),
                     "sha256": sha256_file(source / "manifest.json"),
                     "selection_contract_sha256": selection[
@@ -1115,17 +1480,28 @@ def main(argv: list[str] | None = None) -> int:
         prepared = prepare_batch_commands(
             commands,
             max_workers=args.preparation_workers,
-            max_stage_requeues=0,
+            max_stage_requeues=args.max_stage_requeues,
         )
+        provider_assignment = assign_provider_routes(prepared) if args.per_task_provider_split else {}
+        assignment_counts = {
+            batch.batch_id: {
+                name: sum(
+                    provider_assignment[(str(batch.batch_dir.resolve()), item.index)] == name
+                    for item in batch.items
+                )
+                for name in ("together", "cohere")
+            }
+            for batch in prepared.values()
+        } if args.per_task_provider_split else {}
         request_review = None
         if args.prepare_only and args.preselected_direct_grid_manifest:
             request_review = _materialize_direct_request_review(
                 prepared,
                 root=root,
-                model=MODEL,
+                model=execution["model"],
                 max_tokens=args.max_tokens,
             )
-            expected_batches = len(direct_grid_profiles) * len(selected_tasks)
+            expected_batches = len(work)
             expected_requests = sum(len(batch.items) for batch in prepared.values())
             if (
                 request_review["batch_count"] != expected_batches
@@ -1212,6 +1588,18 @@ def main(argv: list[str] | None = None) -> int:
             execution, endpoint_receipts = _provider_execution(
                 provider_config, args.request_timeout_s,
             )
+        selected_prompt_version = (
+            flat.JOSEPH_HARNESS_PROMPTS[args.mixed_harness_version]
+            if args.mixed_selection_grid_manifest else
+            flat.JOSEPH_HARNESS_PROMPTS[args.preselected_direct_harness_version]
+            if args.preselected_direct_grid_manifest else
+            flat.JOSEPH_HARNESS_PROMPTS[args.preselected_harness_version]
+            if args.preselected_grid_manifest else
+            flat.CONTEXT_V5_PROMPT_VERSION
+            if args.context_v5_grid or args.context_v5_l1 or args.context_v5_all_level else
+            flat.CONTEXT_V4_PROMPT_VERSION
+            if args.context_v4_grid else flat.JOSEPH_PROMPT_VERSION
+        )
         manifest = {
             "version": MATRIX_VERSION,
             "status": (
@@ -1223,6 +1611,8 @@ def main(argv: list[str] | None = None) -> int:
             "benchmark": args.benchmark,
             "evaluation_subsets": list(evaluation_subsets),
             "harness_version": (
+                args.mixed_harness_version
+                if args.mixed_selection_grid_manifest else
                 args.preselected_direct_harness_version
                 if args.preselected_direct_grid_manifest
                 else args.preselected_harness_version if args.preselected_grid_manifest
@@ -1231,16 +1621,7 @@ def main(argv: list[str] | None = None) -> int:
                 else flat.CONTEXT_V4_HARNESS_VERSION
                 if args.context_v4_grid else flat.PUBLIC_HARNESS_VERSION
             ),
-            "prompt_version": (
-                flat.JOSEPH_HARNESS_PROMPTS[args.preselected_direct_harness_version]
-                if args.preselected_direct_grid_manifest
-                else flat.JOSEPH_HARNESS_PROMPTS[args.preselected_harness_version]
-                if args.preselected_grid_manifest
-                else flat.CONTEXT_V5_PROMPT_VERSION
-                if args.context_v5_grid or args.context_v5_l1 or args.context_v5_all_level
-                else flat.CONTEXT_V4_PROMPT_VERSION
-                if args.context_v4_grid else flat.JOSEPH_PROMPT_VERSION
-            ),
+            "prompt_version": selected_prompt_version,
             "conditions": [
                 {"reranking": reranking, "record_pool": record_pool}
                 for reranking, record_pool in conditions
@@ -1268,6 +1649,10 @@ def main(argv: list[str] | None = None) -> int:
                 }
                 if args.preselected_direct_grid_manifest else None
             ),
+            "mixed_selection_grid_manifests": [
+                {"path": str(path), "sha256": sha256_file(path)}
+                for path in args.mixed_selection_grid_manifest
+            ],
             "morgan_primary_parent_widths": (
                 [25] if args.context_v5_l1 else args.morgan_primary_parent_widths
                 if args.context_v4_grid or args.context_v5_grid
@@ -1284,7 +1669,9 @@ def main(argv: list[str] | None = None) -> int:
             "max_level_by_task": (
                 {task: 1 for task in selected_tasks}
                 if args.context_v4_grid or args.context_v5_l1 else
-                {task: (1 if args.preselected_direct_grid_manifest else flat.TASKS[task])
+                {task: (1 if args.preselected_direct_grid_manifest else
+                        flat.prompt_task_max_level(
+                            task, selected_prompt_version, args.assay_transfer_cache))
                  for task in selected_tasks}
             ),
             "ranking_tie_seed": 0,
@@ -1313,17 +1700,25 @@ def main(argv: list[str] | None = None) -> int:
             "load_samples": args.load_receipt,
             "top_up_allocations": args.top_up_allocations,
             "max_tokens": args.max_tokens,
-            "temperature": 0.0,
+            "temperature": _model_temperature(execution["model"]),
             "reasoning_effort": execution["reasoning_effort"],
             "thinking": (
                 {"type": "enabled"} if execution["enable_thinking"] else None
             ),
             "request_timeout_s": execution["timeout_s"],
             "transport_max_retries": 0,
+            "max_stage_requeues": args.max_stage_requeues,
             "provider_failovers": provider_config.max_failovers,
+            "per_task_provider_split": args.per_task_provider_split,
+            "provider_assignment_counts": assignment_counts,
             "endpoint_preflight": endpoint_receipts,
             "single_reuse": single_receipts,
             "selections": selection_receipts,
+            "resume_missing_from": [
+                {"path": str(path), "sha256": sha256_file(path),
+                 "batches": [row for row in resume_receipts if row["source"] == str(path)]}
+                for path, _, _ in previous_matrices
+            ],
             "request_review": request_review,
             "limit": args.limit,
             "pilot_queries_per_batch": (
@@ -1340,7 +1735,7 @@ def main(argv: list[str] | None = None) -> int:
         }
         write_json_atomic(root / "matrix.json", manifest)
         organized_runs = {}
-        if args.study and direct_grid_profiles:
+        if args.study and (direct_grid_profiles or mixed_grid_profiles):
             for item in work:
                 organized_runs[item["profile"]] = item["root"]
             for profile, run_root in organized_runs.items():
@@ -1354,7 +1749,7 @@ def main(argv: list[str] | None = None) -> int:
                     "reranking": "assay-transfer-contrastive",
                     "query_prior": "with_query_prior", "l1_molecules": 10,
                     "l1_min_contrast": 0, "morgan_primary_parent_width": 25,
-                    "tasks": list(selected_tasks),
+                    "tasks": [item["task"] for item in work if item["profile"] == profile],
                     "evaluation_subset": list(evaluation_subsets),
                     "matrix_json": str(root / "matrix.json"),
                     "matrix_json_sha256": sha256_file(root / "matrix.json"),
@@ -1402,17 +1797,33 @@ def main(argv: list[str] | None = None) -> int:
                 manifest["status"] = "awaiting_review"
                 write_json_atomic(root / "matrix.json", manifest)
                 return 0
-        client = provider_client(
-            args.parallelism,
-            provider_pool_config=args.provider_pool_config,
-            config=provider_config,
-            max_tokens=args.max_tokens,
-            timeout_s=args.request_timeout_s,
-        )
+        if args.per_task_provider_split:
+            clients = {
+                spec.name: provider_client(
+                    spec.max_inflight,
+                    provider_pool_config=args.provider_pool_config,
+                    config=replace(
+                        provider_config, providers=(spec,), max_failovers=0,
+                        cooldown_seconds=0,
+                    ),
+                    max_tokens=args.max_tokens,
+                    timeout_s=args.request_timeout_s,
+                )
+                for spec in provider_config.providers
+            }
+            client = lambda job: clients[provider_assignment[job.state.key]]
+        else:
+            client = provider_client(
+                args.parallelism,
+                provider_pool_config=args.provider_pool_config,
+                config=provider_config,
+                max_tokens=args.max_tokens,
+                timeout_s=args.request_timeout_s,
+            )
         failed = run_prepared_prompt_pool(
             prepared,
             max_workers=args.parallelism,
-            max_stage_requeues=0,
+            max_stage_requeues=args.max_stage_requeues,
             preparation_workers=args.preparation_workers,
             stage_client=client,
         )
@@ -1422,7 +1833,10 @@ def main(argv: list[str] | None = None) -> int:
             "pilot_provider_pool": (
                 pilot_client.snapshot() if pilot_client is not None else None
             ),
-            "provider_pool": client.snapshot(),
+            "provider_pool": (
+                {name: pool.snapshot() for name, pool in clients.items()}
+                if args.per_task_provider_split else client.snapshot()
+            ),
         }
         write_json_atomic(root / "completion.json", completion)
         manifest["status"] = completion["status"]

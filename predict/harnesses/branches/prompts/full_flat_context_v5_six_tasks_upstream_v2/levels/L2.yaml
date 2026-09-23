@@ -1,0 +1,6 @@
+bbb_martins: {description: Near-direct systemic CNS functional evidence.}
+bioavailability_ma: {description: Nondirect oral-bioavailability evidence.}
+skin_reaction: {description: Measured nonvoter or predicted overall sensitization outcomes.}
+ames: {description: Nonvoter bacterial outcomes and qualified predictions.}
+dili: {description: Additional liver injury evidence, clinical signals, predictions, and mixed passages.}
+carcinogens: {description: Additional tumor outcomes, assertions, predictions, and mixed passages.}

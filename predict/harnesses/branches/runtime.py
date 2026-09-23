@@ -50,6 +50,7 @@ from predict.harnesses.branches.flat import (
     CONTEXT_CLAIMS_PROMPT_VERSIONS,
     CONTEXT_PROMPT_VERSIONS,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
     build_flat_context_request,
     derive_flat_claim_evidence,
     flat_context_validation,
@@ -887,8 +888,10 @@ def _execute_flat_context_final(
         "prompt": prompt_metadata,
     }
     if (
-        state.prepared.args.flat_prompt_version
-        == CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION
+        state.prepared.args.flat_prompt_version in {
+            CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+            CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+        }
         and final_output["status"] == "ok"
     ):
         portable = str(response["content"]["final_prediction"])
@@ -930,10 +933,10 @@ def _execute_flat_context_final(
                         "group_outputs": [],
                         "final_output": final_output,
                     }
-                    if (
-                        state.prepared.args.flat_prompt_version
-                        == CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION
-                    ):
+                    if state.prepared.args.flat_prompt_version in {
+                        CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+                        CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+                    }:
                         write_trace_jsonl(
                             trace_temp,
                             prediction_field="final_prediction",

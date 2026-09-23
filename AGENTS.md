@@ -129,6 +129,28 @@ inference path. Preserve old cache profile names as explicit aliases while new o
 restored caches use the semantic `flat_v5/<benchmark>/<task>/<role>/<method>/<release>/<variant>`
 identity. Do not move or overwrite an existing cache without a reviewed successor.
 
+The six-task upstream V5 prompt is a renderer, not a cache selector. Its
+successor cache bundles are
+`ranked_level_retrieval_gold_v1_v27_successors_v1.yaml` and
+`ranked_level_retrieval_tdc_v1_v27_successors_v1.yaml`; pass one explicitly with
+`--assay-transfer-cache` and a matching verified artifact manifest/receipt.
+New V27 releases live beneath `data/caches/assay_reranking/active/flat_v5/`,
+not a single combined payload directory; preserved BBB/Oral and Gold L1
+indexes retain their existing paths. Gold Carcinogens and TDC Ames L2+
+use the shared-parent-40 V27 successor; the other safety L2+ tasks use
+shared-parent-100. Scored or validated `staging/` trees are not active cache
+inputs. Do not switch a default bundle or tracked artifact manifest while a
+required successor is still scoring, absent, or unverified. The Gold joint
+optimizer's direct selector reads L1 only, and its indirect selector currently
+supports BBB, Oral, and Skin; it does not silently consume the new safety L2+
+caches.
+
+The upstream six-task V5 prompt uses DILI and Carcinogens through L7 when
+their shared V27 bundle is selected; historical prompt versions retain their
+earlier level limits. Every visible level needs its own prompt description,
+and safety L5 uses the cached V27 assay-transfer rank, not the historical
+BBB/Oral Morgan-only L5 rule. No prompt-size check gates cache publication.
+
 ## Rules
 
 Simplify code whenever possible. Before modifying or reviewing code, read and
@@ -469,6 +491,15 @@ existing immutable input with a recorded hash. If the new release introduces a
 query, generate only that missing prior under a fresh run identity and expose it
 through a hash-pinned overlay; never mutate the historical cache or silently map
 the new row by index.
+
+For Gold-v1 `full_flat_context_v5_six_tasks_upstream_v1`, the official
+`valid_small`, `valid`, and `test` query-prior roots are the hash-pinned entries
+in `outputs/paper/assay_transfer_harness/joseph/query_priors/CURRENT.json`.
+They locate complete immutable `_batches` artifacts; do not move those trees or
+use older six-task priors with mismatched task prompt profiles. The flat and
+matrix launchers resolve this pointer by default only for the matching Gold
+prompt; an explicit `--prior-root` overrides it for historical reproduction.
+TDC priors are not covered by this pointer and require a reviewed TDC overlay.
 
 Frozen V9 assay-transfer L1 caches and their original query priors use the V1
 gold-label release. Historical V9 matrices must pass `--gold-label-version v1`;

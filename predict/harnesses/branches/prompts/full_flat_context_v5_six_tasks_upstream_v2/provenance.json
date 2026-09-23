@@ -1,6 +1,6 @@
 {
-  "version": "full_flat_context_v5_six_tasks_upstream_v1",
-  "parent": "full_flat_context_v5_six_tasks_v1",
+  "version": "full_flat_context_v5_six_tasks_upstream_v2",
+  "parent": "full_flat_context_v5_six_tasks_upstream_v1",
   "status": "prepared_for_review",
   "supports_tasks": ["bbb_martins", "bioavailability_ma", "skin_reaction", "ames", "dili", "carcinogens"],
   "layouts": ["global", "level-grouped"],
@@ -27,7 +27,8 @@
     "omits_upstream_molecule_descriptions",
     "adopts_upstream_portable_json_output",
     "compacts_redundant_blank_lines",
-    "shows_reviewed_dili_and_carcinogens_levels_l3_through_l7"
+    "shows_reviewed_dili_and_carcinogens_levels_l3_through_l7",
+    "shows_reviewed_record_semantic_weights_without_changing_retrieval"
   ],
   "label_mapping": {
     "bbb_martins": {"pass": "pass", "fail": "fail"},
