@@ -75,6 +75,11 @@ class OpenAICompatibleClient:
         response = self._create_completion(messages, max_tokens=max_tokens)
         message = response.choices[0].message
         content = message.content or "{}"
+        metadata = (getattr(response, "openrouter_metadata", None)
+                    or (getattr(response, "model_extra", None) or {}).get("openrouter_metadata")
+                    or {})
+        selected = [row for row in metadata.get("endpoints", {}).get("available", [])
+                    if row.get("selected")]
         trace_messages = [_json_safe_message(item) for item in messages]
         trace_messages.append(_assistant_message_to_trace(message))
         return {
@@ -87,7 +92,7 @@ class OpenAICompatibleClient:
             "usage": _usage_dict(response),
             "model": response.model or self.model,
             "id": response.id or "",
-            "provider": getattr(response, "provider", None),
+            "provider": selected[0].get("provider") if len(selected) == 1 else getattr(response, "provider", None),
         }
 
     def _tokenized_completion_json(
@@ -290,12 +295,18 @@ class OpenAICompatibleClient:
         max_tokens: int | None = None,
     ) -> Any:
         extra_body = dict(getattr(self, "request_extra_body", {}) or {})
+        if extra_body.get("expected_upstream_provider"):
+            metadata_headers = {"X-OpenRouter-Metadata": "enabled"}
+        else:
+            metadata_headers = None
         omit_response_format = bool(extra_body.pop("omit_response_format", False))
         extra_body.pop("allowed_served_models", None)
         extra_body.pop("expected_upstream_provider", None)
         extra_body.pop("provider_pool_snapshot_sha256", None)
         extra_body.pop("max_request_cost_usd", None)
         kwargs: dict[str, Any] = {"model": self.model, "messages": messages}
+        if metadata_headers:
+            kwargs["extra_headers"] = metadata_headers
         if not omit_response_format:
             kwargs["response_format"] = getattr(
                 self, "response_format", {"type": "json_object"}
@@ -320,7 +331,7 @@ class OpenAICompatibleClient:
         if tool_choice is not None:
             kwargs["tool_choice"] = tool_choice
         try:
-            return self.client.chat.completions.create(**kwargs)
+            response = self.client.chat.completions.create(**kwargs)
         except Exception as exc:
             match = re.search(
                 r"maximum context length of (\d+) tokens.*?(\d+) tokens from the input messages",
@@ -328,13 +339,18 @@ class OpenAICompatibleClient:
             )
             if match:
                 kwargs[token_parameter] = max(1, int(match.group(1)) - int(match.group(2)))
-                return self.client.chat.completions.create(**kwargs)
-            if self.enable_thinking and tool_choice is not None and _is_tool_choice_thinking_error(exc):
+                response = self.client.chat.completions.create(**kwargs)
+            elif self.enable_thinking and tool_choice is not None and _is_tool_choice_thinking_error(exc):
                 fallback_kwargs = dict(kwargs)
                 fallback_kwargs.pop("extra_body", None)
                 fallback_kwargs.pop("reasoning_effort", None)
-                return self.client.chat.completions.create(**fallback_kwargs)
-            raise
+                response = self.client.chat.completions.create(**fallback_kwargs)
+            else:
+                raise
+        if not getattr(response, "choices", None):
+            details = getattr(response, "model_extra", None) or {}
+            raise ValueError(f"provider returned no completion choices: {str(details)[:500]}")
+        return response
 
 
 def _is_tool_choice_thinking_error(exc: Exception) -> bool:

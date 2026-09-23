@@ -111,6 +111,7 @@ class SpendBudgetSpec:
     epoch: str
     limit_usd: float
     credential_env: str
+    stop_on_exhaustion: bool = False
 
     @classmethod
     def from_mapping(cls, payload: Mapping[str, Any]) -> "SpendBudgetSpec":
@@ -124,6 +125,7 @@ class SpendBudgetSpec:
             epoch=str(payload.get("epoch") or "").strip(),
             limit_usd=float(payload.get("limit_usd") or 0),
             credential_env=str(payload.get("credential_env") or "").strip(),
+            stop_on_exhaustion=bool(payload.get("stop_on_exhaustion", False)),
         )
         spec.validate()
         return spec
@@ -145,6 +147,7 @@ class SpendBudgetSpec:
             "epoch": self.epoch,
             "limit_usd": self.limit_usd,
             "credential_env": self.credential_env,
+            "stop_on_exhaustion": self.stop_on_exhaustion,
         }
 
 
@@ -365,6 +368,7 @@ def select_healthy_providers(
         cooldown_seconds=config.cooldown_seconds,
         max_failovers=max(config.max_failovers, len(healthy) - 1),
         latency_ewma_alpha=config.latency_ewma_alpha,
+        spend_budget=config.spend_budget,
     )
     return ProviderSelection(
         config=active,
@@ -550,6 +554,13 @@ class ProviderPoolExhausted(RuntimeError):
         super().__init__(message)
         self.attempts = attempts
 
+    def __str__(self) -> str:
+        attempts = ", ".join(
+            f"{item['provider']}:{item['error_type']}:{item.get('status_code') or 'unknown'}"
+            for item in self.attempts
+        )
+        return f"{super().__str__()} [{attempts}]" if attempts else super().__str__()
+
 
 def _nanodollars(value: float) -> int:
     return math.ceil(float(value) * _NANODOLLARS)
@@ -637,6 +648,8 @@ class _SpendLedger:
                         required=reserved,
                     )
                     connection.rollback()
+                    if self.spec.stop_on_exhaustion:
+                        raise RuntimeError("OpenRouter spend budget exhausted")
                 elif fixed + inflight + reserved <= limit:
                     connection.execute(
                         "INSERT INTO reservations VALUES (?,?,?,?,?,?,?,?)",
@@ -863,6 +876,7 @@ class OpenAIProviderPool:
                     "status": "error",
                     "latency_seconds": latency_s,
                     "error_type": type(exc).__name__,
+                    "status_code": getattr(exc, "status_code", None),
                     "error": str(exc)[:500],
                     "circuit_failure": circuit_failure,
                 }

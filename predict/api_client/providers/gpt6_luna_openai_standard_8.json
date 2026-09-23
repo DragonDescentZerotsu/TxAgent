@@ -1,0 +1,17 @@
+{
+  "version": "openai_provider_pool.v1",
+  "providers": [
+    {
+      "name": "openai_standard_key_three",
+      "base_url": "https://api.openai.com/v1",
+      "model": "gpt-6-luna",
+      "api_key_env": "OPENAI_API_KEY_THREE",
+      "max_inflight": 8,
+      "initial_latency_s": 60,
+      "timeout_s": 3600
+    }
+  ],
+  "failure_threshold": 8,
+  "cooldown_seconds": 30,
+  "max_failovers": 0
+}

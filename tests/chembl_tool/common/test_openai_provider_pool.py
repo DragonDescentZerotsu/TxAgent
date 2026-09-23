@@ -1,4 +1,5 @@
 import concurrent.futures
+from dataclasses import replace
 import io
 import json
 import threading
@@ -15,6 +16,18 @@ from tools.chembl_tool.common.openai_provider_pool import (
     ProviderPoolConfig,
     ProviderSpec,
 )
+
+
+def test_pool_exhaustion_reports_status_without_response_body():
+    error = provider_pool.ProviderPoolExhausted(
+        "all attempted providers failed",
+        attempts=[{
+            "provider": "together", "error_type": "RateLimitError",
+            "status_code": 429, "error": "sensitive response body",
+        }],
+    )
+    assert "together:RateLimitError:429" in str(error)
+    assert "sensitive response body" not in str(error)
 
 
 class _BlockingClient:
@@ -39,6 +52,51 @@ def _spec(name, capacity, *, priority=0):
         initial_latency_s=1,
         priority=priority,
     )
+
+
+def test_openrouter_client_requests_and_reads_upstream_metadata():
+    calls = []
+    response = SimpleNamespace(
+        model="deepseek/deepseek-v4-flash-0731", id="response",
+        usage=None,
+        choices=[SimpleNamespace(message=SimpleNamespace(content='{"ok":true}'))],
+        model_extra={"openrouter_metadata": {"endpoints": {"available": [
+            {"provider": "Together", "selected": True},
+        ]}}},
+    )
+    def create(**kwargs):
+        calls.append(kwargs)
+        return response
+
+    client = OpenAICompatibleClient(
+        api_key="unused", base_url="https://openrouter.ai/api/v1",
+        model="deepseek/deepseek-v4-flash-0731", timeout_s=30,
+        max_tokens=1024, temperature=0, tool_service_url="http://unused",
+        enable_group_tools=False, max_tool_rounds=0,
+        reasoning_effort="high", enable_thinking=False,
+        request_extra_body={"expected_upstream_provider": "Together"},
+        openai_client=SimpleNamespace(chat=SimpleNamespace(
+            completions=SimpleNamespace(create=create))),
+    )
+    result = client.chat_json([{"role": "user", "content": "hello"}])
+
+    assert result["provider"] == "Together"
+    assert calls[0]["reasoning_effort"] == "high"
+    assert calls[0]["extra_headers"] == {"X-OpenRouter-Metadata": "enabled"}
+
+
+def test_client_reports_upstream_error_when_completion_has_no_choices():
+    response = SimpleNamespace(choices=None, model_extra={"error": {"message": "upstream unavailable"}})
+    client = OpenAICompatibleClient(
+        api_key="unused", base_url="https://openrouter.ai/api/v1",
+        model="openai/gpt-6-luna", timeout_s=30, max_tokens=65536,
+        temperature=None, tool_service_url="", enable_group_tools=False,
+        max_tool_rounds=0, reasoning_effort="high", enable_thinking=False,
+        openai_client=SimpleNamespace(chat=SimpleNamespace(
+            completions=SimpleNamespace(create=lambda **_: response))),
+    )
+    with pytest.raises(ValueError, match="upstream unavailable"):
+        client.chat_json([{"role": "user", "content": "hello"}])
 
 
 def test_pool_fills_provider_capacities_without_exceeding_them():
@@ -328,6 +386,19 @@ def test_spend_ledger_alerts_and_resumes_after_explicit_refresh(tmp_path):
     assert len(calls) == 2
 
 
+def test_spend_ledger_can_stop_at_an_explicit_hard_cap(tmp_path):
+    budget = provider_pool.SpendBudgetSpec(
+        ledger_path=str(tmp_path / "spend.sqlite3"), epoch="hard-cap",
+        limit_usd=0.5, credential_env="OPEN_ROUTER_KEY",
+        stop_on_exhaustion=True,
+    )
+    ledger = provider_pool._SpendLedger(budget)
+    ledger.settle(ledger.reserve("together", 0.4), 0.3)
+    with pytest.raises(RuntimeError, match="spend budget exhausted"):
+        ledger.reserve("cohere", 0.4)
+    assert ledger.status()["committed_usd"] == pytest.approx(0.3)
+
+
 def test_spend_budget_rejects_hidden_transport_retries(tmp_path):
     spec = ProviderSpec(
         name="openrouter", base_url="https://openrouter.ai/api/v1",
@@ -438,6 +509,27 @@ def test_endpoint_selection_skips_dead_and_wrong_model_candidates(monkeypatch):
         "model_mismatch",
         "unavailable",
     ]
+
+
+def test_endpoint_selection_preserves_spend_budget(monkeypatch, tmp_path):
+    budget = provider_pool.SpendBudgetSpec(
+        ledger_path=str(tmp_path / "spend.sqlite3"), epoch="test",
+        limit_usd=1, credential_env="OPEN_ROUTER_KEY", stop_on_exhaustion=True,
+    )
+    spec = replace(
+        _spec("healthy", 2), api_key_env="OPEN_ROUTER_KEY",
+        request_extra_body={"max_request_cost_usd": 0.1},
+    )
+    config = ProviderPoolConfig(providers=(spec,), spend_budget=budget)
+    monkeypatch.setattr(
+        provider_pool, "urlopen",
+        lambda *args, **kwargs: io.BytesIO(b'{"data":[{"id":"same-model"}]}'),
+    )
+
+    selected = provider_pool.select_healthy_providers(config, 2)
+
+    assert selected.config.spend_budget is budget
+    selected.config.validate()
 
 
 def test_endpoint_selection_fails_only_when_none_are_compatible(monkeypatch):

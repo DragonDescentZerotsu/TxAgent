@@ -524,12 +524,35 @@ def export_provider_pool(
     output: Path, capacity: int, *, allow_mixed_flash_models: bool = False,
     spend_budget: Mapping[str, Any] | None = None,
     credential_env: str | None = None,
+    route_tags: tuple[str, ...] = (), route_capacities: tuple[int, ...] = (),
 ) -> dict[str, Any]:
     """Freeze the ranked qualified routes as one bounded execution pool."""
     if capacity < 1:
         raise ValueError("provider-pool capacity must be positive")
-    snapshot = load_ranked_pool(allow_mixed_flash_models)
-    routes = snapshot["routes"]
+    if route_tags:
+        if (allow_mixed_flash_models or len(route_tags) != len(set(route_tags))
+                or len(route_tags) != len(route_capacities)
+                or sum(route_capacities) != capacity or min(route_capacities) < 1):
+            raise ValueError("Explicit OpenRouter routes require unique tags and matching capacities")
+        discovered, receipt = discover_routes(False)
+        by_tag = {route["route_tag"]: route for route in discovered}
+        routes = [by_tag[tag] for tag in route_tags]
+        if any(not route["healthy"] or not route["supports_reasoning_effort"]
+               or route["active_output_price"] >= PRICE_CAP for route in routes):
+            raise ValueError("Requested OpenRouter route lacks required capabilities or price")
+        snapshot = {
+            "profile": "explicit_requested_routes",
+            "snapshot_sha256": _sha256_bytes(_canonical_json({
+                "routes": routes, "inventory": receipt,
+            }).encode()),
+            "qualification": None,
+            "score": {"route_tags": list(route_tags)},
+        }
+    else:
+        if route_capacities:
+            raise ValueError("Route capacities require explicit route tags")
+        snapshot = load_ranked_pool(allow_mixed_flash_models)
+        routes = snapshot["routes"]
     selected_credential_env = str(
         credential_env
         or (spend_budget or {}).get("credential_env")
@@ -540,9 +563,9 @@ def export_provider_pool(
         raise ValueError("capacity must cover every selected route")
     providers = []
     for index, route in enumerate(routes):
-        route_capacity = base + (index < remainder)
+        route_capacity = route_capacities[index] if route_tags else base + (index < remainder)
         providers.append({
-            "name": (
+            "name": route["route_tag"] if route_tags else (
                 "openrouter_"
                 f"{route['model'].rsplit('/', 1)[-1].replace('.', '_')}_"
                 f"{route['route_tag'].replace('/', '_')}"
@@ -608,6 +631,8 @@ def _parser() -> argparse.ArgumentParser:
     export_parser.add_argument("--capacity", required=True, type=int)
     export_parser.add_argument("--allow-mixed-flash-models", action="store_true")
     export_parser.add_argument("--spend-budget-config", type=Path)
+    export_parser.add_argument("--route-tags", nargs="+", default=[])
+    export_parser.add_argument("--route-capacities", nargs="+", type=int, default=[])
     return parser
 
 
@@ -629,6 +654,8 @@ def main() -> None:
             args.capacity,
             allow_mixed_flash_models=args.allow_mixed_flash_models,
             spend_budget=spend_budget,
+            route_tags=tuple(args.route_tags),
+            route_capacities=tuple(args.route_capacities),
         )
     else:
         result = load_ranked_pool(args.allow_mixed_flash_models)

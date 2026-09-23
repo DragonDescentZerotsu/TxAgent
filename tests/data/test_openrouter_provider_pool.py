@@ -162,6 +162,24 @@ def test_exported_mixed_pool_has_one_shared_capacity_and_pinned_routes(
     assert payload["spend_budget"]["limit_usd"] == 25
 
 
+def test_explicit_route_without_json_mode_omits_response_format(tmp_path, monkeypatch) -> None:
+    route = {
+        "model": pool.DEFAULT_MODEL, "canonical_model": pool.DEFAULT_MODEL,
+        "route_tag": "relace/fp4", "provider_name": "Relace", "healthy": True,
+        "supports_reasoning_effort": True, "supports_response_format": False,
+        "active_input_price": 0.04, "active_output_price": 0.64,
+        "max_request_cost_usd": 0.5,
+    }
+    monkeypatch.setattr(pool, "discover_routes", lambda _mixed: ([route], {"data": []}))
+
+    config = pool.export_provider_pool(
+        tmp_path / "pool.json", 128,
+        route_tags=("relace/fp4",), route_capacities=(128,),
+    )
+
+    assert config["providers"][0]["request_extra_body"]["omit_response_format"] is True
+
+
 def test_qualification_uses_inline_openrouter_routing_metadata() -> None:
     route = {"model": "requested", "canonical_model": "canonical",
              "route_tag": "provider/fp8", "provider_name": "Provider",

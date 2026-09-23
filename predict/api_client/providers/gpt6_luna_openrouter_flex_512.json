@@ -1,0 +1,27 @@
+{
+  "version": "openai_provider_pool.v1",
+  "providers": [
+    {
+      "name": "openai_flex",
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "openai/gpt-6-luna",
+      "api_key_env": "OPEN_ROUTER_KEY",
+      "max_inflight": 512,
+      "initial_latency_s": 120,
+      "timeout_s": 3600,
+      "request_extra_body": {
+        "service_tier": "flex",
+        "allowed_served_models": ["openai/gpt-6-luna"],
+        "expected_upstream_provider": "OpenAI",
+        "provider": {
+          "order": ["openai"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      }
+    }
+  ],
+  "failure_threshold": 512,
+  "cooldown_seconds": 0,
+  "max_failovers": 0
+}
