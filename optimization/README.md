@@ -26,7 +26,7 @@ $OPT_PY -m optimization.gold_joint indirect --output-root "$OPT_STAGE"
 Direct mode accepts `--benchmark gold_v1|tdc_v1` and
 `--subset valid_small|valid|test`; `--profiles` restricts a held-out selection
 to an already frozen winner. Gold-v1 supports all six active tasks, while TDC-v1
-supports BBB, Oral Bioavailability, and Skin Reaction. Full-split evaluation
+supports all six active tasks. Full-split evaluation
 uses separate immutable grids, for example:
 
 ```bash
@@ -44,13 +44,54 @@ query-prior overlays. `--reuse-root` reuses compatible `valid_small` artifacts
 by `benchmark_row_id` and query SMILES while hash-pinning every source; it never
 uses positional fallback.
 
-The current direct grid has 12 profiles: the full cross of gated assay transfer
-`{.75,1,1.25}`, Morgan-bit coverage `{.1,.25}`, and label diversity
-`{.1,.25}`. The indirect grid retains 94 source aliases,
+The current direct grid has 39 profiles (the 27-profile grid plus 12 low-assay
+follow-ups). The historical indirect grid retains 94 source aliases,
 deduplicates them to 75 objectives, and crosses three level-diversity weights for
 225 profiles. `compose` requires a reviewed direct manifest and only writes a
 hash-pinned reference to that frozen panel; it never selects a winner. See the
 root `AGENTS.md` for validation and publication requirements.
+
+The `sqrt48` indirect successor selects 50 L2+ UIDs jointly for Gold-v1
+`valid_small` or TDC-v1 full `valid`. It also accepts `test` and `--profiles`
+to reproduce frozen validation winners on the held-out split without running
+the full grid. Its 48 profiles cross gated assay
+`{.75,1}`, semantic relevance `{.1,.25,.5}`, and molecular coverage, semantic
+diversity, and level diversity each `{.1,.25}`. The molecular term is the same
+linear normalized Morgan-bit coverage as direct selection; only semantic and
+level diversity change to capacity-normalized `sum(sqrt(n_group))`. The
+denominator is the maximum feasible value at budget 50 under the actual group
+capacities, fixed before greedy selection. Skin's semantic-relevance lambda is
+recorded but effectively zero because no reviewed weights exist.
+
+```bash
+$OPT_PY -m optimization.gold_joint indirect --grid sqrt48 \
+  --benchmark gold_v1 --subset valid_small --workers 8 \
+  --output-root /local/$USER/gold_sqrt48_v1
+$OPT_PY -m optimization.gold_joint indirect --grid sqrt48 \
+  --benchmark tdc_v1 --subset valid --workers 8 \
+  --output-root /local/$USER/tdc_sqrt48_v1
+```
+
+`compose` binds a selected indirect leaf to an already frozen, benchmark- and
+query-matched direct leaf; it never reselects the direct panel. These manifests
+are selection artifacts, not downstream prediction results. The full-flat
+matrix consumes one per-task grid through `--mixed-selection-grid-manifest`.
+
+The V27 safety/Skin shared-parent caches are separate candidate releases, not
+an automatic optimizer input. `gold_joint direct` reads frozen L1 indexes;
+`gold_joint indirect` still reads its reviewed BBB/Oral/Skin L2+ universes and
+does not include Ames, DILI, or Carcinogens. Do not substitute a new V27 safety
+index into that objective without reviewing semantic coverage and recording a
+new, hash-pinned optimizer run. The six-task upstream flat prompt likewise
+does not select an optimizer or cache by itself.
+
+For the reviewed Skin v6 semantic-only successor, rerun Skin in a new output
+root with `--skin-semantic-release v10_main_universe_v6`. The selector checks
+the v6 release hashes and its reviewed v5/v6 evidence binding, uses the v6
+record-level weights, and leaves any unweighted candidate eligible. If a query
+contains an unweighted candidate, its semantic-relevance term is inactive for
+that query rather than assigning an invented weight. The default remains v5
+for historical reproduction.
 
 This package selects ordered physical V10 evidence records from each query's
 active `ranked_level_retrieval_v4` universe: every physical UID beneath the

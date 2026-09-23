@@ -4,14 +4,18 @@ import json
 
 import pytest
 
+from optimization import gold_joint
 from optimization.gold_joint import (
     DIRECT_SCHEMA,
     INDIRECT_SCHEMA,
     DirectProfile,
     IndirectProfile,
     _log_ceiling,
+    _load_skin_semantics,
     direct_profiles,
     normalized_log_diversity,
+    normalized_sqrt_diversity,
+    sqrt_indirect_profiles,
     select_direct_contexts,
     select_joint_indirect,
     compose_mixed,
@@ -22,6 +26,7 @@ from optimization.select_records import (
     PROFILES,
     _default_release_index,
     _feature_coverage,
+    _fingerprint,
     _greedy_coverage_ceiling,
     select_records,
 )
@@ -235,6 +240,73 @@ def test_log_diversity_is_capacity_normalized_and_has_diminishing_returns() -> N
     assert first > second > 0
 
 
+def test_sqrt_grid_and_capacity_normalization() -> None:
+    profiles = sqrt_indirect_profiles()
+    assert len(profiles) == len({profile.name for profile in profiles}) == 48
+    assert {profile.gated_assay for profile in profiles} == {0.75, 1.0}
+    assert {profile.semantic_relevance for profile in profiles} == {0.1, 0.25, 0.5}
+    assert {profile.molecular for profile in profiles} == {0.1, 0.25}
+    assert {profile.semantic_diversity for profile in profiles} == {0.1, 0.25}
+    assert {profile.level_diversity for profile in profiles} == {0.1, 0.25}
+    capacities = {"a": 3, "b": 1}
+    assert normalized_sqrt_diversity(("a", "a", "b"), capacities, 3) == pytest.approx(1)
+    assert normalized_sqrt_diversity(("a",), capacities, 3) < 1
+    assert 1 > math.sqrt(2) - 1 > math.sqrt(3) - math.sqrt(2) > 0
+
+
+def test_sqrt_indirect_keeps_linear_morgan_coverage() -> None:
+    candidates = [
+        {"item_id": uid, "parent_smiles": smiles, "level": level,
+         "morgan_similarity": similarity, "assay_transfer_score": None,
+         "semantic_bucket_id": bucket, "semantic_weight": None}
+        for uid, smiles, level, similarity, bucket in (
+            ("u1", "CCO", "L2", 0.9, "a"),
+            ("u2", "CCN", "L2", 0.8, "a"),
+            ("u3", "c1ccccc1", "L3", 0.7, "b"),
+        )
+    ]
+    selected, summary = select_joint_indirect(
+        candidates, profile=IndirectProfile("test", 1, 0.25, 0.5, 0.25, 0.25, ()),
+        budget=2, diversity_function="sqrt",
+    )
+    assert len({row["item_id"] for row in selected}) == 2
+    assert summary["semantic_relevance_lambda_effective"] == 0
+    assert all(0 <= summary[key] <= 1 for key in (
+        "molecular_coverage_normalized", "semantic_diversity", "level_diversity",
+    ))
+    universe = set().union(*(
+        set(_fingerprint(row["parent_smiles"]).GetOnBits()) for row in candidates
+    ))
+    covered = set().union(*(
+        set(_fingerprint(row["parent_smiles"]).GetOnBits()) for row in selected
+    ))
+    assert summary["molecular_coverage_normalized"] == pytest.approx(len(covered) / len(universe))
+
+
+def test_skin_v6_weights_preserve_unweighted_candidates() -> None:
+    rows, audit = _load_skin_semantics("v10_main_universe_v6")
+    assert audit["release"] == "v10_main_universe_v6"
+    assert len(rows) == audit["weighted_records"] + audit["unweighted_records"]
+    assert audit["weighted_records"] > 0 and audit["unweighted_records"] > 0
+    assert any(row["semantic_weight"] is None for row in rows.values())
+    assert any(row["semantic_weight"] is not None for row in rows.values())
+
+    candidates = [
+        {"item_id": uid, "parent_smiles": smiles, "level": "L2",
+         "morgan_similarity": 0.5, "assay_transfer_score": None,
+         "semantic_bucket_id": bucket, "semantic_weight": weight}
+        for uid, smiles, bucket, weight in (
+            ("a", "CCO", "x", 0.8), ("b", "CCN", "y", None),
+        )
+    ]
+    _, summary = select_joint_indirect(
+        candidates, profile=IndirectProfile("test", 1, 0.1, 0.5, 0.1, 0.1, ()),
+        budget=2, diversity_function="sqrt",
+    )
+    assert not summary["semantic_relevance_available"]
+    assert summary["semantic_relevance_lambda_effective"] == 0
+
+
 def test_direct_selector_uses_cards_bit_coverage_and_log_labels() -> None:
     candidates = [
         {
@@ -289,13 +361,112 @@ def test_joint_indirect_selector_has_no_level_quota_and_normalized_log_terms() -
     assert 0 <= summary["level_diversity"] <= 1
 
 
-def test_direct_grid_has_requested_twenty_seven_crossed_profiles() -> None:
+def test_direct_grid_adds_only_the_twelve_low_assay_followups() -> None:
     profiles = direct_profiles()
+    expected = {
+        (ga, mc, label)
+        for ga in (0.75, 1.0, 1.25)
+        for mc in (0.0, 0.1, 0.25)
+        for label in (0.0, 0.1, 0.25)
+    } | {
+        (ga, mc, label)
+        for ga in (0.25, 0.5)
+        for mc in (0.0, 0.1)
+        for label in (0.1, 0.25, 0.35)
+    }
 
-    assert len(profiles) == len(set(profiles)) == 27
-    assert {profile.gated_assay for profile in profiles} == {0.75, 1.0, 1.25}
-    assert {profile.molecular for profile in profiles} == {0.0, 0.1, 0.25}
-    assert {profile.label for profile in profiles} == {0.0, 0.1, 0.25}
+    assert len(profiles) == len(set(profiles)) == 39
+    assert {(p.gated_assay, p.molecular, p.label) for p in profiles} == expected
+
+
+def test_direct_grid_accepts_explicit_zero_assay_profile(tmp_path, monkeypatch) -> None:
+    query_path = tmp_path / "test.jsonl"
+    query_path.write_text('{"benchmark_row_id":"q","drug":"CCO"}\n', encoding="utf-8")
+    rows = [{
+        "item_id": f"c{i}", "parent_id": f"p{i}", "parent_smiles": "CCO",
+        "morgan_similarity": 0.9 - i / 100,
+        "assay_transfer_score": 0.5, "gold_label": i % 2,
+    } for i in range(10)]
+    monkeypatch.setattr(gold_joint, "_direct_queries", lambda *args: ({"q": "CCO"}, query_path))
+    monkeypatch.setattr(gold_joint, "_load_ranked_direct", lambda *args: ({"q": rows}, {}))
+    monkeypatch.setattr(gold_joint, "cache_profile_root", lambda *args: tmp_path)
+    grid = gold_joint.build_direct(
+        tmp_path / "selection", ["bbb_martins"], benchmark="gold_v1", subset="test",
+        profile_names=["ga000_mc010_label010"],
+    )
+    document = json.loads(grid.read_text())
+    assert document["profile_count"] == 1
+    leaf = grid.parent / document["profiles"][0]["task_manifests"]["bbb_martins"]["path"]
+    assert validate_selection_manifest(leaf)["objective"]["gated_assay_lambda"] == 0
+
+
+@pytest.mark.parametrize("budget", (25, 50, 100))
+def test_sqrt_indirect_test_selects_only_requested_profile(tmp_path, monkeypatch, budget) -> None:
+    query_path = tmp_path / "test.jsonl"
+    query_path.write_text('{"benchmark_row_id":"q","drug":"CCO"}\n', encoding="utf-8")
+    selected_profile = "ga000_mc010_sr050_sd010_ld025"
+    seen = {}
+
+    monkeypatch.setattr(gold_joint, "_direct_queries", lambda *args: ({"q": "CCO"}, query_path))
+    def load(task, queries, **kwargs):
+        seen.update(kwargs)
+        return {"q": []}, {}
+    monkeypatch.setattr(gold_joint, "_load_indirect", load)
+    monkeypatch.setattr(gold_joint, "_select_indirect_query", lambda item: (
+        item[0], [(item[2][0].name, [
+            {"selection_rank": i, "level": "L2", "item_id": f"u{i}"}
+            for i in range(1, item[4] + 1)
+        ], {"level_counts": {"L2": item[4]}})],
+    ))
+
+    grid = gold_joint.build_indirect(
+        tmp_path / "selection", ["bbb_martins"], benchmark="gold_v1",
+        subset="test", grid="sqrt48", profile_names=[selected_profile], budget=budget,
+    )
+
+    document = json.loads(grid.read_text())
+    assert seen["subset"] == "test"
+    assert seen["budget"] == budget
+    assert document["profile_count"] == 1
+    assert document["subset"] == "test"
+    leaf = grid.parent / document["profiles"][0]["task_manifests"]["bbb_martins"]["path"]
+    assert validate_selection_manifest(leaf)["budget"] == budget
+
+
+def test_partial_indirect_cache_uses_only_scored_reviewed_records(tmp_path, monkeypatch) -> None:
+    bundle = tmp_path / "cache.yaml"
+    bundle.write_text("caches:\n  carcinogens:\n    later: RELEASE_INDEX.json\n")
+    (tmp_path / "RELEASE_INDEX.json").write_text(json.dumps({
+        "evidence": {"manifest": "evidence_libraries/carcinogens/v10_main_universe_v3/VERSION.json"},
+        "score_coverage": "partial_snapshot",
+    }))
+    rows = [{"item_id": f"u{i}", "assay_transfer_score": 0.5} for i in range(50)]
+    rows.append({"item_id": "unscored", "assay_transfer_score": None})
+    rows.append({"item_id": "unreviewed", "assay_transfer_score": 0.5})
+    ranked = {level: {"q": rows if level == "L2" else []}
+              for level in gold_joint.TASKS["carcinogens"]["levels"]}
+    monkeypatch.setattr(gold_joint, "load_ranked_universe", lambda *args, **kwargs: (
+        ranked, tmp_path / "evidence.json", {},
+    ))
+    monkeypatch.setattr(gold_joint, "_load_reviewed_semantics", lambda *args: (
+        {(f"u{i}", "L2"): {"semantic_bucket_id": "s", "semantic_weight": 0.5}
+         for i in range(50)}, {},
+    ))
+
+    selected, audit = gold_joint._load_indirect(
+        "carcinogens", {"q": "CCO"}, benchmark="gold_v1", subset="test",
+        cache_bundle=bundle,
+    )
+    assert len(selected["q"]) == 50
+    assert audit["cache_bundle_sha256"] == sha256_file(bundle)
+    assert audit["excluded_unscored_candidates"] == 1
+    assert audit["excluded_unreviewed_candidates"] == 1
+    rows.pop(0)
+    with pytest.raises(ValueError, match="only 49 eligible"):
+        gold_joint._load_indirect(
+            "carcinogens", {"q": "CCO"}, benchmark="gold_v1", subset="test",
+            cache_bundle=bundle,
+        )
 
 
 def _selection_manifest(tmp_path, schema: str) -> object:
@@ -334,3 +505,15 @@ def test_mixed_manifest_hash_pins_validated_direct_and_indirect(tmp_path) -> Non
     assert document["direct"]["sha256"] == sha256_file(direct)
     assert document["indirect"]["sha256"] == sha256_file(indirect)
     assert validate_selection_manifest(direct)["schema_version"] == DIRECT_SCHEMA
+    assert validate_selection_manifest(output)["schema_version"] == "gold_mixed_selection.v1"
+
+
+def test_mixed_manifest_rejects_cross_benchmark_panels(tmp_path) -> None:
+    direct = _selection_manifest(tmp_path, DIRECT_SCHEMA)
+    indirect = _selection_manifest(tmp_path, INDIRECT_SCHEMA)
+    for path, benchmark in ((direct, "gold_v1"), (indirect, "tdc_v1")):
+        document = json.loads(path.read_text())
+        document["benchmark"] = benchmark
+        path.write_text(json.dumps(document))
+    with pytest.raises(ValueError, match="benchmark"):
+        compose_mixed(direct, indirect, tmp_path / "mixed.json")

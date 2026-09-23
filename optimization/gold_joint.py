@@ -9,6 +9,7 @@ import itertools
 import json
 import math
 import platform
+import re
 import sqlite3
 from collections import Counter
 from concurrent.futures import ProcessPoolExecutor
@@ -17,6 +18,7 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
 import pyarrow.parquet as pq
+import yaml
 from rdkit import rdBase
 
 from data.processing.gold_labels.conditioned_benchmark import split_path, tdc_split_path
@@ -28,10 +30,12 @@ from optimization.select_records import (
 from predict.retrieval.assay_reranking.ranked_uid_retrieval import load_ranked_universe
 from predict.retrieval.assay_reranking.runtime import cache_profile_root
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
+from semantic_buckets.artifacts import load_reviewed_record_weights, resolve_semantic_bucket_artifacts
 
 
 DIRECT_OBJECTIVE_VERSION = "direct_normalized_gated_bit_log_label.v2"
 INDIRECT_OBJECTIVE_VERSION = "gold_joint_indirect_bit_log_semantic_level.v1"
+SQRT_INDIRECT_OBJECTIVE_VERSION = "gold_joint_indirect_bit_sqrt_semantic_level.v1"
 DIRECT_SCHEMA = "direct_context_selection.v2"
 LEGACY_DIRECT_SCHEMA = "gold_direct_context_selection.v1"
 INDIRECT_SCHEMA = "gold_joint_indirect_uid_selection.v1"
@@ -54,6 +58,9 @@ TASKS = {
         "gold": "Skin_Reaction",
         "levels": ("L2", "L3"),
     },
+    "ames": {"gold": "Ames", "levels": ("L2", "L3", "L4", "L5")},
+    "dili": {"gold": "DILI", "levels": ("L2", "L3", "L4", "L5", "L6", "L7")},
+    "carcinogens": {"gold": "Carcinogens", "levels": ("L2", "L3", "L4", "L5", "L6", "L7")},
 }
 DIRECT_TASKS = {
     "bbb_martins": "ranked_level_retrieval_v4",
@@ -67,6 +74,10 @@ TDC_DIRECT_TASKS = {
     task: "ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1"
     for task in ("bbb_martins", "bioavailability_ma", "skin_reaction")
 }
+TDC_DIRECT_TASKS.update({
+    task: f"flat_v5/tdc_v1/{task}/l1/assay_transfer/v10_3/tdc_pinned_v1"
+    for task in ("ames", "dili", "carcinogens")
+})
 PROFILE_SCREENS = (
     Path("outputs/analysis/record_selection/")
     / "morgan_normalized_gated_feature_semantic_completed_top75_top16_small_valid_v1/screen_manifest.json",
@@ -116,8 +127,11 @@ def direct_profiles() -> list[DirectProfile]:
         DirectProfile(
             f"ga{_code(ga)}_mc{_code(mc)}_label{_code(label)}", ga, mc, label
         )
-        for ga, mc, label in itertools.product(
-            (0.75, 1.0, 1.25), (0.0, 0.1, 0.25), (0.0, 0.1, 0.25)
+        for ga, mc, label in itertools.chain(
+            itertools.product(
+                (0.75, 1.0, 1.25), (0.0, 0.1, 0.25), (0.0, 0.1, 0.25)
+            ),
+            itertools.product((0.25, 0.5), (0.0, 0.1), (0.1, 0.25, 0.35)),
         )
     ]
 
@@ -157,6 +171,19 @@ def indirect_profiles(
     return profiles, source_entries
 
 
+def sqrt_indirect_profiles() -> list[IndirectProfile]:
+    return [
+        IndirectProfile(
+            f"ga{_code(ga)}_mc{_code(mc)}_sr{_code(sr)}_sd{_code(sd)}_ld{_code(ld)}",
+            ga, mc, sr, sd, ld, (),
+        )
+        for ga, sr, mc, sd, ld in itertools.product(
+            (0.75, 1.0), (0.1, 0.25, 0.5), (0.1, 0.25),
+            (0.1, 0.25), (0.1, 0.25),
+        )
+    ]
+
+
 def _write_tsv(path: Path, rows: Iterable[Mapping[str, Any]], fields: Sequence[str]) -> int:
     count = 0
     with path.open("w", encoding="utf-8", newline="") as handle:
@@ -184,10 +211,22 @@ def _direct_queries(
 
 
 def _log_ceiling(capacities: Mapping[str, int], budget: int) -> float:
+    return _group_ceiling(capacities, budget, "log")
+
+
+def _group_gain(count: int, function: str) -> float:
+    if function == "sqrt":
+        return math.sqrt(count + 1) - math.sqrt(count)
+    if function == "log":
+        return math.log(count + 2) - math.log(count + 1)
+    raise ValueError(f"Unknown diversity function: {function}")
+
+
+def _group_ceiling(capacities: Mapping[str, int], budget: int, function: str) -> float:
     if budget < 1 or sum(capacities.values()) < budget:
         raise ValueError("Group capacities cannot fill the requested budget")
     counts = {group: 0 for group in capacities}
-    heap = [(-math.log(2.0), group) for group, cap in capacities.items() if cap]
+    heap = [(-_group_gain(0, function), group) for group, cap in capacities.items() if cap]
     heapq.heapify(heap)
     total = 0.0
     for _ in range(budget):
@@ -197,7 +236,7 @@ def _log_ceiling(capacities: Mapping[str, int], budget: int) -> float:
         total -= negative_gain
         counts[group] += 1
         if counts[group] < capacities[group]:
-            gain = math.log(counts[group] + 2) - math.log(counts[group] + 1)
+            gain = _group_gain(counts[group], function)
             heapq.heappush(heap, (-gain, group))
     return total
 
@@ -212,6 +251,20 @@ def normalized_log_diversity(
     value = sum(math.log1p(count) for count in counts.values()) / denominator
     if not -1e-12 <= value <= 1 + 1e-12:
         raise AssertionError(f"Normalized log diversity escaped [0, 1]: {value}")
+    return min(1.0, max(0.0, value))
+
+
+def normalized_sqrt_diversity(
+    selected_groups: Iterable[str], capacities: Mapping[str, int], budget: int
+) -> float:
+    counts = Counter(map(str, selected_groups))
+    if any(counts[group] > capacities.get(group, 0) for group in counts):
+        raise ValueError("Selected group count exceeds candidate capacity")
+    value = sum(math.sqrt(count) for count in counts.values()) / _group_ceiling(
+        capacities, budget, "sqrt"
+    )
+    if not -1e-12 <= value <= 1 + 1e-12:
+        raise AssertionError(f"Normalized sqrt diversity escaped [0, 1]: {value}")
     return min(1.0, max(0.0, value))
 
 
@@ -257,6 +310,7 @@ def _prepare_candidates(
 def _lazy_select(
     prepared: PreparedCandidates, *, budget: int, base_scores: Sequence[float],
     molecular_lambda: float, group_terms: Sequence[tuple[float, Sequence[str], float]],
+    diversity_function: str = "log",
 ) -> tuple[list[int], list[float], float, float]:
     rows, bits, universe = prepared.rows, prepared.bits, prepared.universe
     raw_ceiling = prepared.molecular_coverage_ceiling
@@ -277,9 +331,7 @@ def _lazy_select(
         for term_index, (weight, groups, denominator) in enumerate(group_terms):
             if weight:
                 count = counts[term_index][groups[index]]
-                gain += weight * (
-                    math.log(count + 2) - math.log(count + 1)
-                ) / denominator
+                gain += weight * _group_gain(count, diversity_function) / denominator
         return gain
 
     heap = [(-marginal(index), str(rows[index]["item_id"]), index) for index in remaining]
@@ -346,14 +398,15 @@ def select_direct_contexts(
 def select_joint_indirect(
     candidates: Sequence[Mapping[str, Any]], *, profile: IndirectProfile,
     budget: int = INDIRECT_BUDGET, prepared: PreparedCandidates | None = None,
+    diversity_function: str = "log",
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     prepared = prepared or _prepare_candidates(candidates, direct=False, budget=budget)
     rows = prepared.rows
     levels = [str(row["level"]) for row in rows]
     semantics = [str(row["semantic_bucket_id"]) for row in rows]
     level_capacities, semantic_capacities = Counter(levels), Counter(semantics)
-    level_ceiling = _log_ceiling(level_capacities, budget)
-    semantic_ceiling = _log_ceiling(semantic_capacities, budget)
+    level_ceiling = _group_ceiling(level_capacities, budget, diversity_function)
+    semantic_ceiling = _group_ceiling(semantic_capacities, budget, diversity_function)
     base, semantic_weights = [], []
     for row in rows:
         similarity = float(row["morgan_similarity"])
@@ -377,12 +430,14 @@ def select_joint_indirect(
             (profile.semantic_diversity, semantics, semantic_ceiling),
             (profile.level_diversity, levels, level_ceiling),
         ),
+        diversity_function=diversity_function,
     )
     selected = [
         {**rows[index], "selection_rank": rank, "marginal_gain": gains[rank - 1]}
         for rank, index in enumerate(ranking, start=1)
     ]
     selected_levels = [levels[index] for index in ranking]
+    normalize = normalized_sqrt_diversity if diversity_function == "sqrt" else normalized_log_diversity
     return selected, {
         "normalized_relevance": sum(base[index] for index in ranking) / budget,
         "molecular_coverage_normalized": molecular,
@@ -390,10 +445,10 @@ def select_joint_indirect(
         "semantic_relevance": sum(semantic_weights[index] for index in ranking) / budget,
         "semantic_relevance_available": semantic_available,
         "semantic_relevance_lambda_effective": sr_effective,
-        "semantic_diversity": normalized_log_diversity(
+        "semantic_diversity": normalize(
             (semantics[index] for index in ranking), semantic_capacities, budget
         ),
-        "level_diversity": normalized_log_diversity(
+        "level_diversity": normalize(
             selected_levels, level_capacities, budget
         ),
         "level_counts": dict(sorted(Counter(selected_levels).items())),
@@ -455,7 +510,96 @@ def _load_ranked_direct(
     }
 
 
-def _load_skin_semantics() -> tuple[dict[tuple[str, str], dict[str, Any]], dict[str, Any]]:
+def _load_skin_semantics(
+    release: str = "v10_main_universe_v5",
+) -> tuple[dict[tuple[str, str], dict[str, Any]], dict[str, Any]]:
+    if release == "v10_main_universe_v6":
+        artifacts = resolve_semantic_bucket_artifacts("skin_reaction", release)
+        manifest = json.loads(artifacts.manifest.read_text(encoding="utf-8"))
+        if (
+            manifest.get("status") != "complete_reviewed"
+            or manifest.get("weight_scope") != "morgan_top100_valid_test_l2_l3"
+        ):
+            raise ValueError("Skin v6 semantic weights are not reviewed for this universe")
+        sources = {
+            key: getattr(artifacts, key) for key in (
+                "record_semantic_bucket_map", "record_relevance_rankings",
+                "semantic_bucket_weights", "semantic_bucket_rankings",
+            )
+        }
+        for key, path in sources.items():
+            if sha256_file(path) != manifest["files"][key]["sha256"]:
+                raise ValueError(f"Skin v6 {key} differs from reviewed release")
+        binding_path = artifacts.root / "provenance/evidence_input_binding.json"
+        binding = json.loads(binding_path.read_text(encoding="utf-8"))
+        evidence_root = Path("data/evidence_libraries/skin_reaction")
+        if (
+            binding.get("v5_release_manifest_sha256")
+            != sha256_file(evidence_root / "v10_main_universe_v5/manifest.json")
+            or binding.get("v6_release_manifest_sha256")
+            != sha256_file(evidence_root / "v10_main_universe_v6/manifest.json")
+            or any(pair["v5"] != pair["v6"] for pair in binding["scientific_inputs"].values())
+        ):
+            raise ValueError("Skin v6 weights are not bound to the v5 cache evidence")
+        weights = {}
+        for row in pq.read_table(
+            sources["semantic_bucket_weights"],
+            columns=["level", "semantic_bucket_id", "weight"],
+        ).to_pylist():
+            key = (str(row["level"]), str(row["semantic_bucket_id"]))
+            if key in weights or not 0 <= float(row["weight"]) <= 1:
+                raise ValueError(f"Invalid Skin v6 bucket weight: {key}")
+            weights[key] = float(row["weight"])
+        rankings = pq.read_table(
+            sources["semantic_bucket_rankings"],
+            columns=["level", "semantic_bucket_id", "weight"],
+        ).to_pylist()
+        if len(rankings) != len(weights) or any(
+            weights.get((str(row["level"]), str(row["semantic_bucket_id"])))
+            != float(row["weight"]) for row in rankings
+        ):
+            raise ValueError("Skin v6 bucket rankings disagree with reviewed weights")
+        rows = {}
+        for row in pq.read_table(
+            sources["record_semantic_bucket_map"],
+            columns=["source_row_uid", "level", "semantic_bucket_id"],
+        ).to_pylist():
+            key = (str(row["source_row_uid"]), str(row["level"]))
+            if key in rows:
+                raise ValueError(f"Skin v6 mapping repeats {key}")
+            rows[key] = {
+                "semantic_bucket_id": str(row["semantic_bucket_id"]),
+                "semantic_weight": None,
+            }
+        for row in pq.read_table(
+            sources["record_relevance_rankings"],
+            columns=["source_row_uid", "level", "semantic_bucket_id", "weight"],
+        ).to_pylist():
+            key = (str(row["source_row_uid"]), str(row["level"]))
+            bucket = (str(row["level"]), str(row["semantic_bucket_id"]))
+            if (
+                key not in rows
+                or rows[key]["semantic_bucket_id"] != bucket[1]
+                or rows[key]["semantic_weight"] is not None
+            ):
+                raise ValueError(f"Skin v6 ranked record has no matching bucket: {key}")
+            weight = weights.get(bucket)
+            if weight is None or weight != float(row["weight"]):
+                raise ValueError(f"Skin v6 ranked record disagrees with bucket weight: {key}")
+            rows[key]["semantic_weight"] = weight
+        return rows, {
+            "release": release,
+            "release_manifest": str(artifacts.manifest),
+            "release_manifest_sha256": sha256_file(artifacts.manifest),
+            "evidence_input_binding": str(binding_path),
+            "evidence_input_binding_sha256": sha256_file(binding_path),
+            **{key: str(path) for key, path in sources.items()},
+            **{f"{key}_sha256": manifest["files"][key]["sha256"] for key in sources},
+            "weighted_records": sum(row["semantic_weight"] is not None for row in rows.values()),
+            "unweighted_records": sum(row["semantic_weight"] is None for row in rows.values()),
+        }
+    if release != "v10_main_universe_v5":
+        raise ValueError(f"Unsupported Skin semantic release: {release}")
     manifest_path = (SKIN_SEMANTIC_ROOT / "manifest.json").resolve()
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     entry = manifest["outputs"]["record_readout_bucket_map"]
@@ -486,35 +630,85 @@ def _load_skin_semantics() -> tuple[dict[tuple[str, str], dict[str, Any]], dict[
     }
 
 
+def _load_reviewed_semantics(task: str, release: str) -> tuple[dict[tuple[str, str], dict[str, Any]], dict[str, Any]]:
+    return load_reviewed_record_weights(task, release)
 def _load_indirect(
-    task: str, queries: Mapping[str, str]
+    task: str, queries: Mapping[str, str], *, benchmark: str = "gold_v1",
+    subset: str = "valid_small", historical: bool = False,
+    skin_semantic_release: str = "v10_main_universe_v5",
+    cache_bundle: Path | None = None,
+    budget: int = INDIRECT_BUDGET,
 ) -> tuple[dict[str, list[dict[str, Any]]], dict[str, Any]]:
     levels = TASKS[task]["levels"]
-    release_index = _default_release_index(task)
+    if historical and cache_bundle is not None:
+        raise ValueError("Historical indirect selection cannot override its cache")
+    if historical:
+        release_index = _default_release_index(task)
+        config = None
+    elif cache_bundle is not None:
+        config = cache_bundle.resolve()
+    elif benchmark == "gold_v1":
+        config = Path("predict/retrieval/assay_reranking/ranked_level_retrieval_gold_v1_all_tasks_v1.yaml")
+    elif benchmark == "tdc_v1":
+        name = ("ranked_level_retrieval_tdc_v1_v27_successors_v1.yaml"
+                if task in {"ames", "dili", "carcinogens"}
+                else "ranked_level_retrieval_tdc_v1_task_best_l1_v1.yaml")
+        config = Path("predict/retrieval/assay_reranking") / name
+    else:
+        raise ValueError(f"Unsupported benchmark: {benchmark}")
+    if config is not None:
+        bundle = yaml.safe_load(config.read_text(encoding="utf-8"))
+        release_index = (config.parent / bundle["caches"][task]["later"]).resolve()
     ranked, _, cache_audit = load_ranked_universe(
-        release_index, task=task, subset="valid", levels=levels, queries=queries
+        release_index, task=task,
+        subset="valid" if subset == "valid_small" else subset,
+        levels=levels, queries=queries,
     )
-    semantics, semantic_audit = (
-        _load_skin_semantics() if task == "skin_reaction" else _semantic_rows(task)
-    )
+    partial_snapshot = False
+    if not historical:
+        index = json.loads(release_index.read_text(encoding="utf-8"))
+        evidence_manifest = str(index["evidence"]["manifest"])
+        expected_release = "v10_main_universe_v5" if task == "skin_reaction" else "v10_main_universe_v3"
+        if f"/{expected_release}/" not in evidence_manifest:
+            raise ValueError(f"Unexpected evidence release for semantic assignments: {evidence_manifest}")
+        partial_snapshot = index.get("score_coverage") == "partial_snapshot"
+    if task == "skin_reaction":
+        semantics, semantic_audit = _load_skin_semantics(skin_semantic_release)
+    elif historical:
+        semantics, semantic_audit = _semantic_rows(task)
+    else:
+        semantics, semantic_audit = _load_reviewed_semantics(task, "v10_main_universe_v3")
     output = {query_id: [] for query_id in queries}
-    missing = []
+    missing, unscored = [], 0
     for level in levels:
         for query_id, rows in ranked[level].items():
             for row in rows:
+                if partial_snapshot and row.get("assay_transfer_score") is None:
+                    unscored += 1
+                    continue
                 uid = str(row["item_id"])
                 semantic = semantics.get((uid, level))
                 if semantic is None:
                     missing.append((uid, level))
                     continue
                 output[query_id].append({**row, **semantic, "level": level})
-    if missing:
+    if missing and (cache_bundle is None or task not in {"ames", "dili", "carcinogens"}):
         raise ValueError(f"Semantic assignments omit indirect candidates: {missing[:5]}")
     for query_id, rows in output.items():
+        if len(rows) < budget:
+            raise ValueError(f"{query_id} has only {len(rows)} eligible L2+ records")
         uids = [str(row["item_id"]) for row in rows]
         if len(uids) != len(set(uids)):
             raise ValueError(f"Joint L2+ universe repeats UIDs: {query_id}")
-    return output, {"cache": cache_audit, "semantics": semantic_audit}
+    return output, {
+        **({"cache_bundle": str(config.resolve()), "cache_bundle_sha256": sha256_file(config)}
+           if config is not None else {}),
+        "later_release_index": str(release_index),
+        "later_release_index_sha256": sha256_file(release_index),
+        "excluded_unscored_candidates": unscored,
+        "excluded_unreviewed_candidates": len(missing),
+        "cache": cache_audit, "semantics": semantic_audit,
+    }
 
 
 def _profile_root(output_root: Path, kind: str, profile: str, task: str) -> Path:
@@ -529,11 +723,14 @@ def build_direct(
 ) -> Path:
     profiles = direct_profiles()
     if profile_names:
-        requested = set(profile_names)
-        profiles = [profile for profile in profiles if profile.name in requested]
-        missing = requested - {profile.name for profile in profiles}
-        if missing:
-            raise ValueError(f"Unknown direct profiles: {sorted(missing)}")
+        available = {profile.name: profile for profile in profiles}
+        for name in profile_names:
+            if name not in available:
+                match = re.fullmatch(r"ga(\d{3})_mc(\d{3})_label(\d{3})", name)
+                if match is None:
+                    raise ValueError(f"Unknown direct profile: {name}")
+                available[name] = DirectProfile(name, *(int(value) / 100 for value in match.groups()))
+        profiles = [available[name] for name in dict.fromkeys(profile_names)]
     manifests = {}
     profiles_by_task = DIRECT_TASKS if benchmark == "gold_v1" else TDC_DIRECT_TASKS
     for task in tasks:
@@ -629,32 +826,72 @@ def build_direct(
 
 
 def _select_indirect_query(
-    item: tuple[str, list[dict[str, Any]], list[IndirectProfile]],
+    item: tuple[str, list[dict[str, Any]], list[IndirectProfile], str, int],
 ) -> tuple[str, list[tuple[str, list[dict[str, Any]], dict[str, Any]]]]:
-    query_id, rows, profiles = item
-    prepared = _prepare_candidates(rows, direct=False, budget=INDIRECT_BUDGET)
+    query_id, rows, profiles, diversity_function, budget = item
+    prepared = _prepare_candidates(rows, direct=False, budget=budget)
     results = []
     for profile in profiles:
         selected, summary = select_joint_indirect(
-            rows, profile=profile, prepared=prepared
+            rows, profile=profile, budget=budget, prepared=prepared,
+            diversity_function=diversity_function,
         )
         results.append((profile.name, selected, summary))
     return query_id, results
 
 
 def build_indirect(
-    output_root: Path, tasks: Sequence[str], *, workers: int = 1
+    output_root: Path, tasks: Sequence[str], *, workers: int = 1,
+    benchmark: str = "gold_v1", subset: str = "valid_small", grid: str = "historical",
+    skin_semantic_release: str = "v10_main_universe_v5",
+    profile_names: Sequence[str] | None = None,
+    cache_bundle: Path | None = None,
+    budget: int = INDIRECT_BUDGET,
 ) -> Path:
-    if workers < 1:
-        raise ValueError("workers must be positive")
-    profiles, aliases = indirect_profiles()
+    if workers < 1 or budget < 1:
+        raise ValueError("Workers and budget must be positive")
+    if grid == "historical":
+        if (benchmark, subset) != ("gold_v1", "valid_small"):
+            raise ValueError("Historical grid is Gold valid_small only")
+        profiles, aliases = indirect_profiles()
+        function, objective_version = "log", INDIRECT_OBJECTIVE_VERSION
+    elif grid == "sqrt48":
+        if (benchmark, subset) not in {
+            ("gold_v1", "valid_small"), ("gold_v1", "test"),
+            ("tdc_v1", "valid"), ("tdc_v1", "test"),
+        }:
+            raise ValueError("Sqrt48 grid requires Gold valid_small/test or TDC valid/test")
+        profiles, aliases = sqrt_indirect_profiles(), []
+        function, objective_version = "sqrt", SQRT_INDIRECT_OBJECTIVE_VERSION
+    else:
+        raise ValueError(f"Unknown indirect grid: {grid}")
+    if profile_names:
+        available = {profile.name: profile for profile in profiles}
+        for name in profile_names:
+            if name not in available:
+                match = re.fullmatch(
+                    r"ga(\d{3})_mc(\d{3})_sr(\d{3})_sd(\d{3})_ld(\d{3})", name
+                ) if grid == "sqrt48" else None
+                if match is None:
+                    raise ValueError(f"Unknown indirect profile: {name}")
+                available[name] = IndirectProfile(
+                    name, *(int(value) / 100 for value in match.groups()), ()
+                )
+        profiles = [available[name] for name in dict.fromkeys(profile_names)]
+    if skin_semantic_release == "v10_main_universe_v6" and (grid != "sqrt48" or tuple(tasks) != ("skin_reaction",)):
+        raise ValueError("Skin v6 weights require the sqrt48 grid and Skin-only task")
     manifests = {}
     for task in tasks:
-        queries, query_path = _direct_queries("gold_v1", task, "valid_small")
-        universes, input_audit = _load_indirect(task, queries)
+        queries, query_path = _direct_queries(benchmark, task, subset)
+        universes, input_audit = _load_indirect(
+            task, queries, benchmark=benchmark, subset=subset,
+            historical=grid == "historical",
+            skin_semantic_release=skin_semantic_release,
+            cache_bundle=cache_bundle, budget=budget,
+        )
         selected_by_profile = {profile.name: [] for profile in profiles}
         diagnostics_by_profile = {profile.name: [] for profile in profiles}
-        work = ((query_id, universes[query_id], profiles) for query_id in queries)
+        work = ((query_id, universes[query_id], profiles, function, budget) for query_id in queries)
         if workers == 1:
             query_results = map(_select_indirect_query, work)
         else:
@@ -693,19 +930,21 @@ def build_indirect(
             manifest = {
                 "schema_version": INDIRECT_SCHEMA,
                 "status": "complete",
+                "benchmark": benchmark,
                 "task_id": task,
-                "subset": "valid_small",
+                "subset": subset,
                 "benchmark_row_ids": list(queries),
-                "budget": INDIRECT_BUDGET,
+                "budget": budget,
                 "profile": profile.name,
                 "objective": {
-                    "version": INDIRECT_OBJECTIVE_VERSION,
+                    "version": objective_version,
                     "gated_assay_lambda": profile.gated_assay,
                     "molecular_coverage_lambda": profile.molecular,
                     "semantic_relevance_lambda": profile.semantic_relevance,
                     "semantic_diversity_lambda": profile.semantic_diversity,
                     "level_diversity_lambda": profile.level_diversity,
-                    "diversity_function": "capacity_normalized_log1p.v1",
+                    "diversity_function": f"capacity_normalized_{function}.v1",
+                    "molecular_diversity_function": "linear_morgan_bit_coverage.v1",
                     "optimizer": "deterministic_lazy_greedy.v1",
                 },
                 "source_profile_aliases": list(profile.aliases),
@@ -733,10 +972,14 @@ def build_indirect(
         "schema_version": GRID_SCHEMA,
         "status": "complete",
         "kind": "indirect",
-        "objective_version": INDIRECT_OBJECTIVE_VERSION,
+        "benchmark": benchmark,
+        "subset": subset,
+        "grid": grid,
+        "skin_semantic_release": skin_semantic_release if "skin_reaction" in tasks else None,
+        "objective_version": objective_version,
         "source_profile_count": len(aliases),
-        "unique_source_profile_count": len(profiles) // len(LEVEL_DIVERSITY_VALUES),
-        "level_diversity_values": list(LEVEL_DIVERSITY_VALUES),
+        "unique_source_profile_count": len(profiles) // (len(LEVEL_DIVERSITY_VALUES) if grid == "historical" else 1),
+        "level_diversity_values": list(LEVEL_DIVERSITY_VALUES if grid == "historical" else (0.1, 0.25)),
         "profile_count": len(profiles),
         "workers": workers,
         "tasks": list(tasks),
@@ -756,12 +999,13 @@ def compose_mixed(direct_manifest: Path, indirect_manifest: Path, output: Path) 
     if direct["schema_version"] not in {DIRECT_SCHEMA, LEGACY_DIRECT_SCHEMA}:
         raise ValueError("Mixed selection requires a direct context manifest")
     indirect = validate_selection_manifest(indirect_manifest, INDIRECT_SCHEMA)
-    for field in ("task_id", "subset", "benchmark_row_ids"):
+    for field in ("benchmark", "task_id", "subset", "benchmark_row_ids"):
         if direct.get(field) != indirect.get(field):
             raise ValueError(f"Direct and indirect selections disagree on {field}")
     document = {
         "schema_version": MIXED_SCHEMA,
         "status": "complete",
+        "benchmark": direct.get("benchmark"),
         "task_id": direct["task_id"],
         "subset": direct["subset"],
         "benchmark_row_ids": direct["benchmark_row_ids"],
@@ -782,6 +1026,21 @@ def validate_selection_manifest(path: Path, expected_schema: str | None = None) 
     schema = document.get("schema_version")
     if expected_schema is not None and schema != expected_schema:
         raise ValueError(f"Expected {expected_schema}, found {schema}")
+    if schema == MIXED_SCHEMA:
+        if document.get("status") != "complete":
+            raise ValueError(f"Mixed selection is incomplete: {path}")
+        for kind in ("direct", "indirect"):
+            entry = document[kind]
+            source = Path(entry["path"])
+            if sha256_file(source) != entry["sha256"]:
+                raise ValueError(f"Mixed {kind} manifest hash mismatch")
+            child = validate_selection_manifest(source)
+            for field in ("benchmark", "task_id", "subset", "benchmark_row_ids"):
+                if child.get(field) != document.get(field):
+                    raise ValueError(f"Mixed {kind} disagrees on {field}")
+            if child["budget"] != document[f"{kind}_budget"]:
+                raise ValueError(f"Mixed {kind} budget mismatch")
+        return document
     direct_schemas = {DIRECT_SCHEMA, LEGACY_DIRECT_SCHEMA}
     if schema not in {*direct_schemas, INDIRECT_SCHEMA} or document.get("status") != "complete":
         raise ValueError(f"Selection manifest is not complete and compatible: {path}")
@@ -825,8 +1084,20 @@ def main(argv: Sequence[str] | None = None) -> int:
         subparser = subparsers.add_parser(command)
         subparser.add_argument("--output-root", type=Path, required=True)
         if command == "indirect":
-            subparser.add_argument("--tasks", nargs="+", choices=tuple(TASKS), default=list(TASKS))
+            subparser.add_argument("--tasks", nargs="+", choices=tuple(TASKS),
+                                   default=["bbb_martins", "bioavailability_ma", "skin_reaction"])
             subparser.add_argument("--workers", type=int, default=1)
+            subparser.add_argument("--benchmark", choices=("gold_v1", "tdc_v1"), default="gold_v1")
+            subparser.add_argument("--subset", choices=("valid_small", "valid", "test"), default="valid_small")
+            subparser.add_argument("--grid", choices=("historical", "sqrt48"), default="historical")
+            subparser.add_argument("--profiles", nargs="+")
+            subparser.add_argument("--budget", type=int, default=INDIRECT_BUDGET)
+            subparser.add_argument("--assay-transfer-cache", type=Path)
+            subparser.add_argument(
+                "--skin-semantic-release",
+                choices=("v10_main_universe_v5", "v10_main_universe_v6"),
+                default="v10_main_universe_v5",
+            )
         else:
             subparser.add_argument(
                 "--benchmark", choices=("gold_v1", "tdc_v1"), default="gold_v1",
@@ -855,7 +1126,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             subset=args.subset, profile_names=args.profiles,
         ))
     elif args.command == "indirect":
-        print(build_indirect(args.output_root.resolve(), args.tasks, workers=args.workers))
+        print(build_indirect(
+            args.output_root.resolve(), args.tasks, workers=args.workers,
+            benchmark=args.benchmark, subset=args.subset, grid=args.grid,
+            skin_semantic_release=args.skin_semantic_release,
+            profile_names=args.profiles,
+            cache_bundle=args.assay_transfer_cache,
+            budget=args.budget,
+        ))
     elif args.command == "compose":
         print(compose_mixed(args.direct_manifest, args.indirect_manifest, args.output))
     else:
