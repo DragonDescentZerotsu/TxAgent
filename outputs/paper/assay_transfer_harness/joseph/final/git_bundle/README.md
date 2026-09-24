@@ -5,10 +5,10 @@ including every result, per-query run artifact, and trace. The readable tree
 beside this directory is ignored by Git and is restored from these parts.
 The manifest pins the archive, parts, and collection index.
 
-After adding or changing a final trace, run bash build.sh in this directory.
-The parts are ordinary Git files, so git add picks up the refreshed bundle
-without force. Preserve published arms; add approved new arms through a
-collection-index update and a rebuilt bundle.
+Follow the [repository update procedure](../../../../../../finalize.md#updating-the-final-files)
+to add an approved arm and update the collection index. Then run `bash build.sh`
+in this directory. The parts are ordinary Git files, so `git add` picks up the
+refreshed bundle without force. Preserve published arms.
 
 To verify and restore from a clone:
 
