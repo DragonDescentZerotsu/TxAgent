@@ -81,11 +81,14 @@ Start here if integrating this change into Joseph's existing harness.
    dropped IDs. Rebuild visible aliases/citation indices after filtering, and use
    fresh outputs. This isolates filtering without changing the donor selection.
    Later candidate-pool filtering/refill is a separate selection change.
-4. The bundled 406-query inputs below are our official ADMET-group experiment.
-   Joseph's 530-query TDC-derived split is a different cohort; keep his own inputs
-   when testing his harness. His Direct has 10 labels, not our Direct 50. Compare
-   on identical successful query IDs and report missing/failed runs. The archived
-   Mixed r2 snapshot is incomplete, so do not compare partial and full metrics.
+4. Use the **official TDC ADMET-group BBB_Martins scaffold test set: 406 rows**,
+   replacing Joseph's previous 530-row custom split. The exact test rows and labels
+   are already included as `evaluation_rows` in
+   `artifacts/chembl_tool/bbb_indirect_20260924/inputs.json.gz` on this branch.
+   They match the upstream `admet_group/bbb_martins/test.csv` in row order,
+   SMILES and labels. Keep all 406 rows, including duplicates; the 375-molecule
+   overlap subset is not the full test set. This changes only which test set to
+   use; it does not prescribe changes to Joseph's harness or other run settings.
 5. Run the focused tests, then inspect the actual prepared requests before any
    provider run. At minimum, preserve the archived PAMPA classifications
    (#217 Record 22-1 and #472 Record 31-1), remove clearly computational-only

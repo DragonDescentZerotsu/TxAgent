@@ -2679,5 +2679,6 @@ For the collaborator Codex integration, start at
 `tools/chembl_tool/tasks/bbb_martins/INDIRECT_ABLATION.md#codex-handoff`.
 Only the current assay-aware prediction filter is maintained; no old-regex CLI
 mode remains. Historical scores predate this filter and are not new performance
-claims. Preserve the collaborator's own cohort and Direct/prior for the first
-filter-only comparison.
+claims. Use the official 406-row TDC ADMET-group BBB_Martins scaffold test set
+from the bundled `evaluation_rows`, replacing the collaborator's 530-row custom
+split; the handoff does not prescribe other run settings.
