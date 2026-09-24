@@ -463,6 +463,23 @@ refresh. If a launcher has materially fewer live endpoint connections than its
 configured capacity while pending requests remain, inspect shared-filesystem locks
 and catalog refreshes before increasing `max_inflight` or restarting the run.
 
+Preserve the interrupted 2026-09-23 Joseph upstream-V2 test batches under
+`outputs/paper/assay_transfer_harness/joseph/_batches/`: the BBB/Oral mixed
+recovery is `bbb_oral_direct_mixed_full_test_upstream_v2_20260923_v1/gold_mixed_r2/`,
+the safety direct/mixed work is `safety_direct_joint_full_test_upstream_v2_v27_20260923_v1/`,
+and the BBB/Oral ablations and budget variants are
+`bbb_oral_mixed_ablation_full_test_upstream_v2_20260923_v1/`. Do not delete their
+incomplete matrices, completion receipts, leaf metrics/predictions, or per-query
+`runs/` artifacts. The interruption audit found 4,132 valid completions out of
+7,652 planned queries across 13 matrices; this is a dated snapshot, not a live
+count. A `request.json` proves prompt rendering before an API call, not server
+acceptance. Count reusable successes with the harness completion validator, not
+request files, final-file presence, or provider counters alone. When an exact-model
+endpoint is healthy, resume only missing/invalid queries with the same frozen
+selection, prompt, model, and request configuration; the matrix uses per-query
+`--skip-existing`. Do not rerun successful queries or regenerate retrieval. If
+request bytes must change, use a fresh run identity and preserve the old batches.
+
 Do not silently accept the progressive matrix's 524,288-token default for these
 structured L1 prompts. Review token counts from the closest completed artifact
 and pass an explicit, justified `--max-tokens`; keep the required reasoning effort
