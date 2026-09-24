@@ -1,0 +1,27 @@
+{
+  "version": "openai_provider_pool.v1",
+  "providers": [
+    {
+      "name": "openrouter_streamlake",
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "deepseek/deepseek-v4-flash-0731",
+      "api_key_env": "OPEN_ROUTER_KEY_TWO",
+      "max_inflight": 10,
+      "initial_latency_s": 120,
+      "timeout_s": 3600,
+      "request_extra_body": {
+        "reasoning": {
+          "enabled": true
+        },
+        "provider": {
+          "order": ["streamlake"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        }
+      }
+    }
+  ],
+  "failure_threshold": 3,
+  "cooldown_seconds": 60,
+  "max_failovers": 0
+}
