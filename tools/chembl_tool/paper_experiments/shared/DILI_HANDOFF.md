@@ -5,7 +5,7 @@ follow-up on an inspected test set, not a new held-out evaluation.
 
 ## Fix the output labels first
 
-The prompt says `pass = dili_risk`, but the model sometimes reads `pass` as
+The archived prompt says `pass = dili_risk`, but the model sometimes reads `pass` as
 "safe". In the completed-v2 recovery, 13 new Mixed regressions and 4 new Direct
 errors had a final label inconsistent with their own reasoning. For example,
 Mixed query #97 says `fail (meaning it does cause DILI)`; #113 says
@@ -13,40 +13,16 @@ Mixed query #97 says `fail (meaning it does cause DILI)`; #113 says
 These indices are zero-based. This is a model encoding error, not a reversed
 Python mapping, and it affects both arms.
 
-The corrected [task configuration](joseph_full_flat_v5/tasks.yaml) and matching
-[provenance mapping](joseph_full_flat_v5/provenance.json) are supplied as
-`joseph_full_flat_v5_risk_native_labels.v1`. It includes this DILI fix and now
-also uses native labels for Ames, Carcinogens and Skin; see the
-[complete label table](README.md#task-prompts). The two templates, scientific
-evidence rules and `claims` + `final_prediction` shape stay the same. Offline
-rendering and existing parser-function checks passed; no LLM rerun yet.
+The [current prompt handoff](README.md#task-prompts) supplies the fix and its
+integration steps for all four risk tasks. DILI now outputs `dili_risk` or
+`no_dili_risk` in the existing `final_prediction` field, with an identity mapping.
+The task's exposure/population qualifications remain unchanged. The existing
+validator and mapper support these values; no new parser or runner is needed.
 
-Keep `claims` + `final_prediction`, but use native DILI labels:
-
-```text
-Use exactly one final_prediction:
-- dili_risk: predict clinically meaningful human DILI under the query condition.
-- no_dili_risk: predict no clinically meaningful human DILI under that condition.
-This does not imply safety under every exposure.
-Ensure final_prediction agrees with your overall evidence assessment.
-```
-
-In Joseph's existing prompt configuration:
-
-- Set DILI `positive_prediction: dili_risk` and
-  `negative_prediction: no_dili_risk`; remove the pass/fail instruction.
-- Let the existing schema/validator derive allowed values from that contract.
-  For this new version, reject `pass`/`fail` through the existing validation retry.
-- Change DILI's `provenance.json` label mapping to
-  `{"dili_risk": "dili_risk", "no_dili_risk": "no_dili_risk"}`.
-  Existing `flat.py::native_flat_prediction()` can use this identity mapping;
-  the final scorer already maps native labels to 1/0.
-
-Keep the other scientific instructions and retrieval unchanged for this check.
-Check both labels through rendering, validation and scoring. Use a fresh prompt
-version/output root and the same service configuration for both arms; recovery
-used different endpoints. Do not globally swap the old mapping or infer labels
-from reasoning with regex. No new runner, parser or inference stage is needed.
+Use the same service configuration for Direct and Mixed when rerunning;
+recovery used different endpoints. Do not globally swap the historical mapping
+or infer scored labels from reasoning with regex. The supplied fix has passed
+offline checks but has not been rerun with the model.
 
 ## Three separate follow-ups
 
@@ -74,15 +50,9 @@ progressive and aligned full-flat DILI runs use `dili_risk / no_dili_risk`.
 The DILI task configuration in the shared bundle at main `dbbede84` is identical
 after YAML parsing to Joseph's upstream-v2 configuration at `5c3a6ae2`; his
 system/user templates have other changes. This was not a byte-identical export
-of our local runtime prompt. Do not regenerate a new DILI bundle with the old
-portable exporter unchanged. The original shared assets remain available at commit
-`945380eb`; the current bundle contains the explicit four-task native-label revision.
-
-The [other-task trace check](LABEL_ENCODING_AUDIT.md) also confirms final label
-inversions in Ames and Carcinogens. Skin has a self-corrected intermediate
-inversion, but no final inversion was confirmed in this screening. The current
-bundle also removes pass/fail from Ames, Carcinogens and Skin; their native
-label values match our local runtime.
+of our local runtime prompt. Original assets and the current bundle's provenance
+are documented in the [bundle README](joseph_full_flat_v5/README.md).
+The [other-task trace audit](LABEL_ENCODING_AUDIT.md) records the related findings.
 
 Evidence: [completed trace archive](https://github.com/DragonDescentZerotsu/TxAgent/tree/4b4489c1598ba0fc428308b930d0ca71a90f2c84/outputs/paper/assay_transfer_harness/joseph/trace_archives/final_test_20260923_completed_v2).
 Both arms have 402 successful predictions; Macro-F1 is 0.6145 Direct versus
