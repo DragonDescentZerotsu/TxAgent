@@ -1,0 +1,19 @@
+{
+  "schema_version": "joseph_final_test_trace_snapshot.v1",
+  "started_utc": "2026-09-24T03:00:58+00:00",
+  "finished_utc": "2026-09-24T03:05:52+00:00",
+  "source_repository": "/vast/projects/myatskar/design-documents/joseph/TxAgent",
+  "source_branch_commit": "1f4946e2de44c29276ba0f91ee57e660a1e3ac91",
+  "file_count": 78674,
+  "source_bytes": 7341468433,
+  "families": [
+    "bbb_gold_direct_ga125_mc000_label025_test_v2_20260923_v1",
+    "bbb_oral_direct_mixed_full_test_upstream_v2_20260923_v1",
+    "skin_direct_vs_joint_full_test_upstream_v2_20260923_v1",
+    "safety_direct_full_test_upstream_v2_relaunch_20260923_v2",
+    "safety_direct_ga100_mc010_label025_full_test_v2_20260923_v1",
+    "safety_direct_joint_full_test_upstream_v2_v27_20260923_v1",
+    "nonablation_full_test_recovery_20260923_v1"
+  ],
+  "completion_policy": "current snapshot; incomplete runs retained with their original receipts"
+}
