@@ -1,0 +1,45 @@
+{
+  "schema_version": "joseph_final_tdc_skin_source.v1",
+  "collection": {
+    "path": "outputs/paper/assay_transfer_harness/joseph/final/collection.json",
+    "sha256": "471dab48b4e5af52e80d02d90a447bd37916e57b3d1d7e46415ce7eff24022bb"
+  },
+  "arms": [
+    {
+      "selection": "direct",
+      "source": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/skin_direct_vs_joint_full_test_upstream_v2_20260923_v1/tdc_direct/ga100_mc010_label025/with_query_prior/k10_m0_20260923_skin_tdc_direct_test_v2/skin_reaction/skin_reaction__ga100_mc010_label025",
+        "manifest_sha256": "af203cdcbd97521c9e9335c13e0b12795b8366740fe7f68faedb1ce24f00b7e8",
+        "predictions_sha256": "d3b73594e3c4c454f8502b9c3c371f3ed0862eaf01ad1132e8c21658ff34a1af",
+        "metrics_sha256": "20db48e5b3682d677890306a95817ba009642e2de56d185bc73a08ec305d4663",
+        "completion_sha256": "3f6b1429e9e060afaf980d9278fa3a8ce37ac52103e4c61aea98203adb0431b1"
+      },
+      "optimization_manifest": {
+        "path": "outputs/analysis/record_selection/skin_direct_joint_full_test_ga100_mc010_label025_20260923_v1/tdc_v1/direct/ga100_mc010_label025/skin_reaction/manifest.json",
+        "sha256": "2abc7632fc293af29c7827d365c83626e9b22c5a75700b685a2636db7b51ac9b"
+      },
+      "final_manifest": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/final/tdc_v1/skin_reaction/direct/manifest.json",
+        "sha256": "5bc6854d664f01e65f02b284c9c98220c3d50683f364ceacb59716defcb4c113"
+      }
+    },
+    {
+      "selection": "direct_plus_indirect",
+      "source": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/skin_direct_vs_joint_full_test_upstream_v2_20260923_v1/tdc_mixed/ga075_mc010_sr050_sd010_ld025/with_query_prior/k10_m0_20260923_skin_tdc_mixed_test_v2/skin_reaction/skin_reaction__ga075_mc010_sr050_sd010_ld025",
+        "manifest_sha256": "b304110f499574635dbf2cdbf9e610d26787b63b559289202ff12ece11bdd319",
+        "predictions_sha256": "60f11fe37c8f3c4696e3a0cfd41dd7c03e985e8bedddfd42b2897679d5025a56",
+        "metrics_sha256": "e8c1b2b19f14cc60403d8cc6b5db1c5e2ac438039ae38030c1f4cd4b074a914c",
+        "completion_sha256": "2b9511e06e28a45a21f94b9d80db44bfcf0e3cb1c943512e94f4ba6c37501357"
+      },
+      "optimization_manifest": {
+        "path": "outputs/analysis/record_selection/skin_direct_joint_full_test_ga100_mc010_label025_20260923_v1/tdc_v1/mixed/ga075_mc010_sr050_sd010_ld025/skin_reaction/manifest.json",
+        "sha256": "64849020e9f2f6c720904364286cbfc12e6327aa61383e3b75a73d7dd7068bb2"
+      },
+      "final_manifest": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/final/tdc_v1/skin_reaction/direct_plus_indirect/manifest.json",
+        "sha256": "6f863dc4bc961bc9372d818ec223f93ee9d114de0446288acebc11d45680fada"
+      }
+    }
+  ]
+}
