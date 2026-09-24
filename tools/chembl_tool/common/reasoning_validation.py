@@ -200,3 +200,22 @@ def response_validation_errors(
             if error not in errors:
                 errors.append(error)
     return errors
+
+
+def evidence_validation_kwargs(contract, aliases):
+    from .progressive_assay_reasoning import progressive_state_errors
+    fields = ('confidence', 'supportive_card_ids', 'contradictory_card_ids',
+              'prediction_basis_card_ids', 'claims', 'evidence_gaps', 'decision_summary')
+
+    def validate(content):
+        # Reuse citation validation, with no progressive fields in the schema.
+        errors = progressive_state_errors({**content, 'revision_action': 'initial', 'new_evidence_assessment': []},
+            contract=contract, visible_card_ids=set(aliases), new_card_ids=set(), prior_state=None)
+        if not isinstance(content.get('decision_summary'), str) or not content['decision_summary'].strip():
+            errors.append('decision_summary must be nonempty text')
+        if not isinstance(content.get('evidence_gaps'), list) or any(not isinstance(s, str) for s in content.get('evidence_gaps', [])):
+            errors.append('evidence_gaps must be a text array')
+        return errors
+    return {'required_fields': (contract.prediction_field, *fields),
+            'allowed_values': {contract.prediction_field: contract.prediction_values, 'confidence': {'high', 'moderate', 'low'}},
+            'content_validator': validate}

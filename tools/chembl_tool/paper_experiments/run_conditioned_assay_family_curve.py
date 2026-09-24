@@ -984,7 +984,17 @@ def main(argv: list[str] | None = None) -> int:
         "--python-executable",
         default="/data1/tianang/anaconda3/envs/vllm/bin/python",
     )
+    parser.add_argument("--run-prepared", action="store_true",
+                        help="Replay manifest-bound evidence requests without rebuilding retrieval.")
+    parser.add_argument("--benchmark-manifest", default="",
+                        help="Benchmark profile manifest for prepared evidence replay.")
+    parser.add_argument("--transport-max-retries", type=int, default=0)
     args = parser.parse_args(argv)
+    if args.run_prepared:
+        if Path(args.output_root) == OUTPUT_ROOT:
+            parser.error("--run-prepared requires an explicit --output-root")
+        from tools.chembl_tool.paper_experiments import prepared_evidence
+        return prepared_evidence.run(args)
     if args.retry_race_width is None:
         args.retry_race_width = (
             min(6, args.parallelism_per_task or args.parallelism)

@@ -547,3 +547,7 @@ Historical experiments that are not part of the paper scope must not be linked
 as active entrypoints from this page. Git history and explicitly retained
 receipts provide provenance for removed no-go launchers and transient smoke
 runs.
+
+## Portable TDC BBB indirect ablation
+
+Use [the task guide](../tasks/bbb_martins/INDIRECT_ABLATION.md) and `artifacts/chembl_tool/bbb_indirect_20260924/` for the verified 406-query one-pass controls. Offline preparation is task-specific; `--run-prepared` uses the existing family runtime. Records, messages, source hashes and compact results are portable; historical two-stage ablations are reported separately. Registry: `budgeted_evidence_protocol.tdc_bbb_indirect_test_iteration_20260924`.

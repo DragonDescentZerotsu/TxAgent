@@ -4762,5 +4762,197 @@
       "n_purposively_selected_paired_cases": 32,
       "interpretation": "Paired observations, not causal attribution or a primary-source re-audit. Fixed card budgets can replace strict-arm cards. Later Skin v7 repair and running matched full-flat are separate."
     }
+  },
+  "budgeted_evidence_protocol": {
+    "tdc_bbb_indirect_test_iteration_20260924": {
+      "status": "complete_verified",
+      "test_tuned": true,
+      "scope": "Explicitly authorized TDC BBB test development; not untouched-test validation",
+      "root": "outputs/paper/tdc_bbb_indirect_iteration_20260924",
+      "audit": "outputs/paper/tdc_bbb_indirect_trace_audit_20260924/REPORT.md",
+      "model": "deepseek/deepseek-v4-flash-0731",
+      "provider": "OpenRouter",
+      "api_key_env": "OPENROUTER_API_KEY_Mark_5",
+      "tasks": [
+        "bbb_martins"
+      ],
+      "n_queries": 406,
+      "direct_budget": 50,
+      "source_suite": "tdc_scaffold_baselines",
+      "arms": [
+        "direct_guard",
+        "guard50",
+        "balanced20",
+        "anchored0",
+        "anchored20",
+        "balanced50"
+      ],
+      "comparison": "outputs/paper/tdc_bbb_indirect_iteration_20260924/comparison.json",
+      "parallelism": 512,
+      "global_admission_capacity": 512,
+      "retry_race_width": 6,
+      "entrypoint": "tools.chembl_tool.paper_experiments.run_conditioned_assay_family_curve --run-prepared",
+      "scientific_changes": "Compact cards and applicability instructions; prediction-only exclusion; optional existing group_balanced selector with donor cap 3/B20; revisable Direct model assessment, with an assessment-only control.",
+      "gold_visible_to_model": false,
+      "baseline_replaced": false,
+      "updated_at": "2026-09-24T04:18:25.802921+00:00",
+      "n_predictions": 2436,
+      "n_failed": 0,
+      "observed_peak_concurrency": 512,
+      "verification": "outputs/paper/tdc_bbb_indirect_iteration_20260924/verification.json",
+      "report": "outputs/paper/tdc_bbb_indirect_iteration_20260924/RESULTS.md",
+      "preferred_simple_candidate": "balanced20",
+      "metrics": {
+        "direct_guard": {
+          "n": 406,
+          "macro_f1": 0.7620831103977171,
+          "accuracy": 0.8300492610837439,
+          "tn": 60,
+          "fp": 18,
+          "fn": 51,
+          "tp": 277
+        },
+        "guard50": {
+          "n": 406,
+          "macro_f1": 0.7827715355805243,
+          "accuracy": 0.8448275862068966,
+          "tn": 63,
+          "fp": 15,
+          "fn": 48,
+          "tp": 280
+        },
+        "balanced20": {
+          "n": 406,
+          "macro_f1": 0.7926958909154829,
+          "accuracy": 0.8497536945812808,
+          "tn": 66,
+          "fp": 12,
+          "fn": 49,
+          "tp": 279
+        },
+        "anchored0": {
+          "n": 406,
+          "macro_f1": 0.7985325913585936,
+          "accuracy": 0.8620689655172413,
+          "tn": 61,
+          "fp": 17,
+          "fn": 39,
+          "tp": 289
+        },
+        "anchored20": {
+          "n": 406,
+          "macro_f1": 0.8029247972322981,
+          "accuracy": 0.8645320197044335,
+          "tn": 62,
+          "fp": 16,
+          "fn": 39,
+          "tp": 289
+        },
+        "balanced50": {
+          "n": 406,
+          "macro_f1": 0.7950459893048127,
+          "accuracy": 0.854679802955665,
+          "tn": 64,
+          "fp": 14,
+          "fn": 45,
+          "tp": 283
+        }
+      },
+      "paired_balanced20_vs_direct": {
+        "corrected": 24,
+        "damaged": 16,
+        "delta_macro_f1": 0.030612780517765725,
+        "delta_accuracy": 0.019704433497536922
+      },
+      "paired_anchored20_vs_anchored0": {
+        "corrected": 19,
+        "damaged": 18,
+        "delta_macro_f1": 0.004392205873704591
+      },
+      "tests": {
+        "passed": 49,
+        "scope": "budgeted pipeline and baseline suite"
+      },
+      "balanced50_followup": {
+        "status": "complete_verified",
+        "n_queries": 406,
+        "root": "outputs/paper/tdc_bbb_indirect_iteration_20260924/balanced50",
+        "comparison_arm": "balanced20",
+        "only_budget_changed": true,
+        "input_verification": "outputs/paper/tdc_bbb_indirect_iteration_20260924/balanced50/input_comparison.json",
+        "n_failed": 0,
+        "metrics": {
+          "n": 406,
+          "macro_f1": 0.7950459893048127,
+          "accuracy": 0.854679802955665,
+          "tn": 64,
+          "fp": 14,
+          "fn": 45,
+          "tp": 283
+        },
+        "records": {
+          "queries": 406,
+          "only_budget_changed": true,
+          "selected20_is_prefix": true,
+          "record_counts": {
+            "44": 12,
+            "42": 17,
+            "40": 12,
+            "46": 25,
+            "48": 34,
+            "49": 20,
+            "47": 28,
+            "36": 8,
+            "50": 158,
+            "45": 18,
+            "31": 1,
+            "35": 6,
+            "43": 19,
+            "39": 7,
+            "41": 16,
+            "38": 6,
+            "29": 2,
+            "24": 1,
+            "37": 5,
+            "33": 1,
+            "28": 2,
+            "27": 1,
+            "30": 2,
+            "34": 2,
+            "26": 1,
+            "32": 2
+          },
+          "min": 24,
+          "median": 48.0,
+          "max": 50
+        },
+        "paired_vs_balanced20": {
+          "corrected": 20,
+          "damaged": 18,
+          "delta_macro_f1": 0.002350098389329869,
+          "delta_accuracy": 0.0049261083743842304
+        },
+        "paired_vs_direct": {
+          "n": 406,
+          "help": 28,
+          "harm": 18
+        },
+        "observed_peak_concurrency": 418,
+        "tail_timeout_s": 360,
+        "verification": "outputs/paper/tdc_bbb_indirect_iteration_20260924/verification.json",
+        "report": "outputs/paper/tdc_bbb_indirect_iteration_20260924/RESULTS.md"
+      },
+      "portable_release": {
+        "status": "complete_verified",
+        "artifacts": "artifacts/chembl_tool/bbb_indirect_20260924",
+        "guide": "tools/chembl_tool/tasks/bbb_martins/INDIRECT_ABLATION.md",
+        "prepare_module": "tools.chembl_tool.tasks.bbb_martins.indirect_ablation",
+        "inference_entrypoint": "tools.chembl_tool.paper_experiments.run_conditioned_assay_family_curve --run-prepared",
+        "one_pass_input_parity": 1624,
+        "historical_anchor_preparation_only": true,
+        "review": "artifacts/chembl_tool/bbb_indirect_20260924/review.json",
+        "branch": "codex/bbb-indirect-review-20260924"
+      }
+    }
   }
 }

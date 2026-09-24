@@ -1,0 +1,19 @@
+{
+  "status": "verified",
+  "scope": "BBB one-pass indirect ablation portability and shared prepared replay",
+  "tests": {
+    "local_relevant": 114,
+    "clean_checkout": 38
+  },
+  "one_pass_requests_byte_identical": 1624,
+  "paid_inference_during_cleanup": false,
+  "publication_base": "dbbede84",
+  "branch": "codex/bbb-indirect-review-20260924",
+  "fixes": [
+    "shared deterministic selector and prepared replay, without duplicate task-local inference",
+    "provider model/capacity/race and benchmark profile/input validation before API calls",
+    "portable frozen input bundle and one maintained reproduction guide",
+    "backward-compatible validator exports for the existing baseline suite"
+  ],
+  "historical_outputs_preserved": true
+}

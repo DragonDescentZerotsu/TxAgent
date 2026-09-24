@@ -177,3 +177,7 @@ not be paired across incompatible datasets.
   recursively clean `outputs/paper`, `data`, or the repository root.
 - Historical details belong in Git history or a compact receipt, not thousands
   of lines in active operating documentation.
+
+## BBB indirect ablation maintenance (2026-09-24)
+
+The portable test-tuned BBB experiment uses `tasks/bbb_martins/indirect_ablation.py` for offline preparation and the family runner `--run-prepared` for inference. Reuse `common/record_budget.py` and `prepared_evidence.py`; do not duplicate selectors, clients or retry loops in task code. The source bundle and 2,436 completed output bindings are in `artifacts/chembl_tool/bbb_indirect_20260924/`. All 1,624 maintained one-pass requests match their historical messages/IDs. Preserve original baselines and frozen local scripts; the two-stage anchor arms are historical ablations. See [usage and evidence boundaries](../tasks/bbb_martins/INDIRECT_ABLATION.md).

@@ -1,0 +1,22 @@
+{
+  "providers": [
+    {
+      "name": "openrouter",
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "deepseek/deepseek-v4-flash-0731",
+      "api_key_env": "OPENROUTER_API_KEY",
+      "max_inflight": 512,
+      "temperature": 1.0,
+      "reasoning_effort": "low",
+      "request_extra_body": {
+        "reasoning": {
+          "enabled": true
+        }
+      },
+      "timeout_s": 360,
+      "admission_socket": "/tmp/txagent-bbb-indirect.sock"
+    }
+  ],
+  "max_failovers": 0,
+  "version": "openai_provider_pool.v1"
+}

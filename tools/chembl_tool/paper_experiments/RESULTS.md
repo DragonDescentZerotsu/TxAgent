@@ -931,3 +931,14 @@ they were rejected.
 - Do not tune on formal test results or mix ClinTox source roles with assay votes.
 - Smokes, retries, router/RL no-go work, and source probes do not enter the
   current result registry.
+
+## TDC BBB test development, 2026-09-24
+
+Six completed arms, 406 queries each (2,436 new predictions), zero final failures.
+Matched compact-prompt Direct Macro-F1/accuracy: 0.762083/0.830049; balanced20:
+0.792696/0.849754; balanced50: 0.795046/0.854680. Budget 50 corrects 20 and damages
+18 versus 20, with 24–50 actual records (median 48). This is explicitly test-tuned;
+original Direct remains 0.772563/0.869458. Prompt plus compact rendering alone
+regresses; only the incremental indirect comparison is positive. Two-stage controls
+and all scores are retained. [Portable inputs, results and commands](../tasks/bbb_martins/INDIRECT_ABLATION.md).
+Registry: `budgeted_evidence_protocol.tdc_bbb_indirect_test_iteration_20260924`.

@@ -690,3 +690,7 @@ run_reasoning_pipeline.py
 
 ChEMBL neighbor retrieval 当前作为 pipeline 内部 evidence prefetch，不作为 LLM tool。
 后续新增其他 ChEMBL task 时，继续复用 `tools/chembl_tool/common/` 的通用工具。
+
+## TDC test-tuned indirect ablation (2026-09-24)
+
+`indirect_ablation.py` and `indirect_applicability_v1.txt` own this opt-in experiment only. Do not replace the conditioned BBB target or the original baseline prompt. The prediction-only filter is lexical and incomplete; balanced50 is a budget with 24–50 actual records, not uniformly 50. The [reproduction guide](INDIRECT_ABLATION.md) is the single maintained instruction source.

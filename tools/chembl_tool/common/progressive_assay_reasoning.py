@@ -51,6 +51,7 @@ class ProgressiveTaskContract:
     system_role: str
     task_instructions: tuple[str, ...]
     evidence_grounding_rules: tuple[tuple[str, str], ...] = ()
+    query_prior_instructions: tuple[str, ...] = ()
 
     @property
     def prediction_values(self) -> set[str]:

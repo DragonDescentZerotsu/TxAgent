@@ -50,3 +50,7 @@ do not choose inputs by the largest version number in a directory name.
 
 Use the manifests and linked receipts to establish reproducibility. Historical source
 reviews are provenance; obsolete materialized indices are not alternate defaults.
+
+### TDC BBB indirect ablation
+
+The [portable BBB ablation guide](tools/chembl_tool/tasks/bbb_martins/INDIRECT_ABLATION.md) provides frozen inputs, exact filtering/selection rules and the shared-runner commands. This test-tuned experiment compares Direct 50 with added balanced indirect budgets 20/50; original baselines remain unchanged.

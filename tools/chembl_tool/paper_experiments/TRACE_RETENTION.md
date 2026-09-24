@@ -311,3 +311,7 @@ experiment-local execution snapshots, valid source preflights, strict legacy
 reference repair for Skin #193/#206, unchanged-prefix receipts and fresh actual
 request traces. It completed after the registered test suite; both policy arms and
 their baseline-verified comparison figures remain retained.
+
+## BBB indirect test development (2026-09-24)
+
+Retain all six local arms, prepared inputs, source selections, cached priors, actual outputs, retries and verification under the registered `tdc_bbb_indirect_test_iteration_20260924` root. Its original preparation scripts are hash-bound historical provenance, not the maintained entrypoint. Share only the compact frozen input bundle, checksum/source manifest, per-query final labels, comparison and output-hash receipts in `artifacts/chembl_tool/bbb_indirect_20260924/`; raw reasoning and API traces remain local. Maintained preparation and usage: [BBB guide](../tasks/bbb_martins/INDIRECT_ABLATION.md).

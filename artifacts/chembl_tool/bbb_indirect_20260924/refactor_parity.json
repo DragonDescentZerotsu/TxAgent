@@ -1,0 +1,17 @@
+{
+  "status": "verified",
+  "queries_per_arm": 406,
+  "arms": {
+    "direct_guard": 406,
+    "guard50": 406,
+    "balanced20": 406,
+    "balanced50": 406
+  },
+  "model_messages_unchanged": true,
+  "direct_ids_unchanged": true,
+  "indirect_ids_unchanged": true,
+  "clean_checkout_queries": 1624,
+  "clean_checkout_base": "dbbede84",
+  "preparation_code_sha256": "15f48a11ff61deed3f83e1fbcc7f93460b9e01456c26c393ab69a43b101529f6",
+  "selector_code_sha256": "27945360adea12d2d086c455ed3e91c29340ded8e1634f075c848a3c630bbe2a"
+}
