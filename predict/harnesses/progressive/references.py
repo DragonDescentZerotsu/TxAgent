@@ -6,6 +6,13 @@ import re
 from collections import Counter
 from typing import Any, Mapping
 
+from predict.harnesses.reasoning_references import (
+    CARD_RE,
+    GROUP_RE,
+    MOLECULE_RE,
+    match_references,
+)
+
 
 SCHEMA_VERSION = "progressive_reasoning_references.v1"
 LAYOUTS = {
@@ -16,15 +23,6 @@ LAYOUTS = {
     "flat_global",
     "flat_level_grouped",
 }
-MOLECULE_RE = re.compile(r"\b(molecule\s+[1-9][0-9]*)\b", re.IGNORECASE)
-GROUP_RE = re.compile(
-    r"\b((?:evidence\s+group|semantic\s+bucket)\s+[1-9][0-9]*)\b",
-    re.IGNORECASE,
-)
-CARD_RE = re.compile(
-    r"\b(C[0-9]{2,}|Record\s+[1-9][0-9]*-[1-9][0-9]*)\b",
-    re.IGNORECASE,
-)
 HEADING_RE = re.compile(
     r"^(#{2,3})\s+(Molecule|Evidence group|Semantic bucket)\s+[1-9][0-9]*$"
 )
@@ -285,40 +283,3 @@ def validate_unique_visible_ids(index: list[Mapping[str, Any]]) -> None:
             "contracted prompt has ambiguous reasoning-reference identifiers: "
             + ", ".join(duplicates)
         )
-
-
-def match_references(
-    reasoning: str, index: list[Mapping[str, Any]],
-) -> tuple[set[str], int, list[str], list[str], int]:
-    """Match explicit references case-insensitively without resolving duplicates."""
-    occurrences = [match.group(1) for pattern in (MOLECULE_RE, GROUP_RE, CARD_RE)
-                   for match in pattern.finditer(reasoning)]
-    by_label: dict[str, list[str]] = {}
-    display: dict[str, str] = {}
-    for row in index:
-        key = str(row["visible_id"]).casefold()
-        by_label.setdefault(key, []).append(str(row["stable_id"]))
-        display[key] = str(row["visible_id"])
-    found: set[str] = set()
-    unknown: set[str] = set()
-    ambiguous: set[str] = set()
-    matched_occurrences = 0
-    ambiguous_occurrences = 0
-    for occurrence in occurrences:
-        key = occurrence.casefold()
-        matches = by_label.get(key, [])
-        if len(matches) == 1:
-            found.add(matches[0])
-            matched_occurrences += 1
-        elif len(matches) > 1:
-            ambiguous.add(display[key])
-            ambiguous_occurrences += 1
-        else:
-            unknown.add(occurrence)
-    return (
-        found,
-        matched_occurrences,
-        sorted(unknown),
-        sorted(ambiguous),
-        ambiguous_occurrences,
-    )
