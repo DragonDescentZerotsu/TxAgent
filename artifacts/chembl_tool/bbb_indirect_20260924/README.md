@@ -11,3 +11,8 @@ Use the [maintained reproduction guide](../../../tools/chembl_tool/tasks/bbb_mar
 - `export_inputs.py`: rebuild the bundle from the original local baseline selections.
 
 Historical two-stage ablations are reported, but not exposed as additional maintained preparation modes.
+
+These frozen scores and parity receipts predate the current filter. Only the
+assay-aware v2 implementation is maintained; the old code is available in Git
+history, not as a runtime option. `filter_review.json` records current offline
+verification. No new LLM score has been established for the current filter.

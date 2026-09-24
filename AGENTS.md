@@ -2672,3 +2672,12 @@ stage/message/tool contract。Viewer 会递归展示这些 JSON，不应新增 t
 3. 如果需要让其他系统复用 retrieval，再把 chembl_neighbors 包装为 service tool 或 task endpoint；当前 BBB pipeline 继续把它作为内部 evidence prefetch。
 4. 后续接入更多常驻 ML tools，例如更慢的 pKa/logD、solubility、PK 或 toxicity 模型。
 ```
+
+## BBB filter handoff (2026-09-24)
+
+For the collaborator Codex integration, start at
+`tools/chembl_tool/tasks/bbb_martins/INDIRECT_ABLATION.md#codex-handoff`.
+Only the current assay-aware prediction filter is maintained; no old-regex CLI
+mode remains. Historical scores predate this filter and are not new performance
+claims. Preserve the collaborator's own cohort and Direct/prior for the first
+filter-only comparison.

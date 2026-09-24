@@ -4950,6 +4950,10 @@
         "inference_entrypoint": "tools.chembl_tool.paper_experiments.run_conditioned_assay_family_curve --run-prepared",
         "one_pass_input_parity": 1624,
         "historical_anchor_preparation_only": true,
+        "historical_prediction_filter": "retired_v1_git_history_only",
+        "current_prediction_filter": "v2_only",
+        "prediction_filter_v2_status": "offline_verification_only_no_llm_scores",
+        "prediction_filter_v2_audit": "artifacts/chembl_tool/bbb_indirect_20260924/filter_review.json",
         "review": "artifacts/chembl_tool/bbb_indirect_20260924/review.json",
         "branch": "codex/bbb-indirect-review-20260924"
       }

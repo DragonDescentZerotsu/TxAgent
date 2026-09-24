@@ -693,4 +693,4 @@ ChEMBL neighbor retrieval 当前作为 pipeline 内部 evidence prefetch，不�
 
 ## TDC test-tuned indirect ablation (2026-09-24)
 
-`indirect_ablation.py` and `indirect_applicability_v1.txt` own this opt-in experiment only. Do not replace the conditioned BBB target or the original baseline prompt. The prediction-only filter is lexical and incomplete; balanced50 is a budget with 24–50 actual records, not uniformly 50. The [reproduction guide](INDIRECT_ABLATION.md) is the single maintained instruction source.
+`indirect_ablation.py` and `indirect_applicability_v1.txt` own this opt-in experiment only. Do not replace the conditioned BBB target or the original baseline prompt. Only the assay-aware lexical prediction filter v2 is maintained; the old implementation and CLI selector are removed. It is a heuristic, not a source audit. Historical v1 balanced50 returned 24–50 records; v2 budgets must be read from its preparation receipt. The [reproduction guide](INDIRECT_ABLATION.md) is the single maintained instruction source.
