@@ -3,6 +3,9 @@
 __pycache__/
 *.py[cod]
 outputs/
+build/
+dist/
+*.egg-info/
 
 # Conditioned-benchmark builders stage reproducible publication inputs here.
 # Current, reviewable outputs live under data/conditioned_benchmark/ instead.

@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "txagent-dili-score"
+version = "0.1.0"
+description = "Rule-based relevance and structured completeness for DILI evidence records"
+readme = "dili_score/README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.urls]
+Repository = "https://github.com/DragonDescentZerotsu/TxAgent"
+Documentation = "https://github.com/DragonDescentZerotsu/TxAgent/tree/main/dili_score"
+
+[tool.setuptools]
+packages = ["dili_score"]
+include-package-data = false
+
+[tool.setuptools.exclude-package-data]
+"*" = ["*.json", "*.md"]

@@ -4,6 +4,15 @@ Molecular evidence retrieval and reasoning over condition-aware benchmarks.
 Shared tools compute molecular properties and structural comparisons; task-specific
 experimental records provide evidence for the reasoning model.
 
+## Score a DILI evidence record
+
+[DILI record score](dili_score/README.md) is a lightweight Python package for
+rule-based relevance and structured completeness. It runs offline with no
+third-party runtime dependencies: `pip install .`, then
+`from dili_score import score_dili_record`. Pass one record dictionary and read
+`score_dili_record(record)["score"]`; the full response includes explanations and
+unresolved-result flags. See the guide for lightweight installation and limits.
+
 ## Find the current retrieval records
 
 Start with the **[current level-record dataset](artifacts/chembl_tool/starling/current_level_records/README.md)**.
