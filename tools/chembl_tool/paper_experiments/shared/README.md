@@ -21,12 +21,14 @@ portable exporter to recreate this bundle: it emits the superseded pass/fail
 contract. Copy the checked-in bundle or apply its task/mapping changes directly.
 
 Templates, scientific evidence rules and BBB/Bioavailability are unchanged.
-Offline rendering, validation, mapping and scoring checks passed; no model rerun
-or performance improvement is claimed. This is a compatible adapter, not a
+Offline rendering, validation, mapping and scoring checks passed. A small TDC DILI
+replay is summarized below; full-test prompt improvements remain unverified.
+This is a compatible adapter, not a
 byte-identical copy of our local runtime prompt. Version and file hashes live
 in `provenance.json`; [bundle provenance](joseph_full_flat_v5/README.md) explains
 its relationship to the collaborator's templates.
 
-- [DILI observations and retrieval suggestions](DILI_HANDOFF.md)
+- [TDC DILI: parent-disjoint diagnosis and scoped rerun](TDC_DILI_HANDOFF.md) — current request; TDC DILI only.
+- [Gold-v1 DILI observations and retrieval suggestions](DILI_HANDOFF.md) — separate benchmark; no rerun requested now.
 - [Ames, Carcinogens and Skin trace audit](LABEL_ENCODING_AUDIT.md)
 - [Historical baseline plotting instructions](baseline_curves/README.md) — separate from prompt setup.

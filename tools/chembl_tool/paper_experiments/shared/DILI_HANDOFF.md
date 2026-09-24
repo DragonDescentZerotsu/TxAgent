@@ -1,5 +1,8 @@
 # DILI: small changes to try
 
+For the current **TDC DILI-only** request, use [the scoped handoff](TDC_DILI_HANDOFF.md).
+The Gold-v1 suggestions below are background, not instructions to launch more runs.
+
 Use the existing harness and the same 402-row Gold-v1 scaffold test. This is a
 follow-up on an inspected test set, not a new held-out evaluation.
 
@@ -22,7 +25,7 @@ validator and mapper support these values; no new parser or runner is needed.
 Use the same service configuration for Direct and Mixed when rerunning;
 recovery used different endpoints. Do not globally swap the historical mapping
 or infer scored labels from reasoning with regex. The supplied fix has passed
-offline checks but has not been rerun with the model.
+offline checks but has not been rerun on the full Gold-v1 test.
 
 ## Three separate follow-ups
 
@@ -56,5 +59,5 @@ The [other-task trace audit](LABEL_ENCODING_AUDIT.md) records the related findin
 
 Evidence: [completed trace archive](https://github.com/DragonDescentZerotsu/TxAgent/tree/4b4489c1598ba0fc428308b930d0ca71a90f2c84/outputs/paper/assay_transfer_harness/joseph/trace_archives/final_test_20260923_completed_v2).
 Both arms have 402 successful predictions; Macro-F1 is 0.6145 Direct versus
-0.5705 Mixed. The label fix has not yet been rerun. L2 citations occur in 47
+0.5705 Mixed. The label fix has not yet been rerun on Gold-v1. L2 citations occur in 47
 improvements and 38 regressions; citation is not proof of L2-only causation.
