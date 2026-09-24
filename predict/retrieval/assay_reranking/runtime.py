@@ -58,6 +58,8 @@ ACTIVE_CACHE_PROFILES = frozenset(
         "flat_v5/tdc_v1/ames/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent50_v1",
         "flat_v5/tdc_v1/ames/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent40_v1",
         "flat_v5/tdc_v1/ames/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent40_partial_snapshot_v1",
+        "flat_v5/gold_v1/carcinogens/l2plus/hybrid/v27/assay_complete_or_hidden_morgan_tail_shared_parent40_v1",
+        "flat_v5/tdc_v1/ames/l2plus/hybrid/v27/assay_complete_or_hidden_morgan_tail_shared_parent40_v1",
         "flat_v5/tdc_v1/dili/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2",
         "flat_v5/tdc_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2",
         "flat_v5/tdc_v1/ames/l1/assay_transfer/v10_3/tdc_pinned_v1",

@@ -31,10 +31,15 @@ NARROW_PARENT_TASKS = frozenset({("gold", "carcinogens"), ("tdc", "ames")})
 
 def profile(
     task: str, benchmark: str, parent_capacity: int = 100, *,
-    supplement: bool = False, snapshot: bool = False,
+    supplement: bool = False, snapshot: bool = False, hybrid: bool = False,
 ) -> str:
     if supplement:
         variant = "shared_parent41to50_score_only_v1"
+    elif hybrid:
+        return (
+            f"flat_v5/{benchmark}_v1/{task}/l2plus/hybrid/v27/"
+            "assay_complete_or_hidden_morgan_tail_shared_parent40_v1"
+        )
     elif snapshot:
         variant = "shared_parent40_partial_snapshot_v1"
     else:
@@ -44,8 +49,11 @@ def profile(
 
 def _configure(
     task: str, benchmark: str, parent_capacity: int = 100, *,
-    supplement: bool = False, snapshot: bool = False,
+    supplement: bool = False, snapshot: bool = False, hybrid: bool = False,
 ) -> None:
+    if hybrid and (supplement or snapshot or parent_capacity != 40
+                   or (benchmark, task) not in NARROW_PARENT_TASKS):
+        raise ValueError("Hybrid releases require Gold Carcinogens or TDC AMES parent-40 inputs")
     if snapshot and (supplement or parent_capacity != 40 or (benchmark, task) not in NARROW_PARENT_TASKS):
         raise ValueError("Partial snapshots require Gold Carcinogens or TDC AMES parent-40 inputs")
     if supplement and (parent_capacity != 100 or (benchmark, task) not in NARROW_PARENT_TASKS):
@@ -55,7 +63,10 @@ def _configure(
         or (parent_capacity < 100 and (benchmark, task) not in NARROW_PARENT_TASKS)
     ):
         raise ValueError("Reduced-parent successors are limited to Gold Carcinogens and TDC AMES")
-    builder.PROFILE = profile(task, benchmark, parent_capacity, supplement=supplement, snapshot=snapshot)
+    builder.PROFILE = profile(
+        task, benchmark, parent_capacity,
+        supplement=supplement, snapshot=snapshot, hybrid=hybrid,
+    )
     builder.CAPACITY = 10 if supplement else parent_capacity
     builder.SOURCE_PARENT_OFFSET = 40 if supplement else 0
     builder.EVIDENCE_RELEASE = RELEASE
@@ -140,6 +151,54 @@ def snapshot_partial_release(
     return index
 
 
+HYBRID_POLICY = {
+    "schema_version": "assay_complete_or_hidden_morgan_tail.v1",
+    "scope": "query_level",
+    "complete_order": "assay_transfer",
+    "incomplete_order": "scored_assay_then_unscored_morgan",
+    "incomplete_prompt_scores": "hidden",
+}
+
+
+def snapshot_hybrid_release(
+    task: str, source_root: Path, output_root: Path, evidence_manifest: Path,
+) -> dict:
+    """Publish a complete-selection hybrid view of one validated partial snapshot."""
+    if output_root.exists() or source_root.resolve() == output_root.resolve():
+        raise FileExistsError(output_root)
+    source_index_path = source_root / task / "RELEASE_INDEX.json"
+    source_index = json.loads(source_index_path.read_text(encoding="utf-8"))
+    if (
+        source_index.get("status") != "complete"
+        or source_index.get("task_id") != task
+        or source_index.get("score_coverage") != "partial_snapshot"
+    ):
+        raise ValueError("Hybrid source must be a complete validated partial snapshot")
+    output_root.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=f".{output_root.name}.", dir=output_root.parent) as temporary:
+        stage = Path(temporary)
+        shutil.copytree(source_root / task, stage / task)
+        index_path = stage / task / "RELEASE_INDEX.json"
+        index = json.loads(index_path.read_text(encoding="utf-8"))
+        index.update(
+            profile=builder.PROFILE,
+            selection_coverage="complete",
+            hybrid_policy=HYBRID_POLICY,
+            hybrid_source={
+                "release_index": str(source_index_path.resolve()),
+                "release_index_sha256": sha256_file(source_index_path),
+            },
+        )
+        index_path.write_text(json.dumps(index, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        builder.validate_release(
+            task, stage, evidence_manifest,
+            allow_partial_snapshot=True, allow_hybrid=True,
+        )
+        stage.rename(output_root)
+        output_root.chmod(0o2775)
+    return index
+
+
 def _base_projection(task: str) -> Path:
     index = json.loads((GOLD_BASE / task / "RELEASE_INDEX.json").read_text(encoding="utf-8"))
     path = GOLD_BASE / task / index["evidence"]["manifest"]
@@ -214,7 +273,7 @@ def build_projection(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("build-projection", "prepare-universe", "prepare-level", "tokenize", "score", "finalize", "write-index", "validate", "snapshot-partial", "validate-partial"))
+    parser.add_argument("command", choices=("build-projection", "prepare-universe", "prepare-level", "tokenize", "score", "finalize", "write-index", "validate", "snapshot-partial", "validate-partial", "snapshot-hybrid", "validate-hybrid"))
     parser.add_argument("--task", choices=TASKS, required=True)
     parser.add_argument("--benchmark", choices=("gold", "tdc"), required=True)
     parser.add_argument("--subset", choices=("valid", "test"))
@@ -238,6 +297,10 @@ def main() -> None:
         parser.error("snapshot-partial requires --source-root and --parent-capacity 40")
     if args.command == "validate-partial" and args.parent_capacity != 40:
         parser.error("validate-partial requires --parent-capacity 40")
+    if args.command == "snapshot-hybrid" and (args.source_root is None or args.parent_capacity != 40):
+        parser.error("snapshot-hybrid requires --source-root and --parent-capacity 40")
+    if args.command == "validate-hybrid" and args.parent_capacity != 40:
+        parser.error("validate-hybrid requires --parent-capacity 40")
     if args.supplement_41_50 and (args.output_root is None or args.command in {"build-projection", "write-index", "validate"}):
         parser.error("The score-only supplement requires --output-root and cannot be published as a cache")
     if args.source_parent_universe is not None and args.command != "prepare-universe":
@@ -245,14 +308,15 @@ def main() -> None:
     if (args.parent_capacity < 100 or args.supplement_41_50) and args.command == "prepare-universe" and args.source_parent_universe is None:
         parser.error("Reduced-parent preparation requires a frozen --source-parent-universe")
     is_snapshot = args.command in {"snapshot-partial", "validate-partial"}
+    is_hybrid = args.command in {"snapshot-hybrid", "validate-hybrid"}
     _configure(
         args.task, args.benchmark, args.parent_capacity,
-        supplement=args.supplement_41_50, snapshot=is_snapshot,
+        supplement=args.supplement_41_50, snapshot=is_snapshot, hybrid=is_hybrid,
     )
     builder.SCORE_REUSE_ROOTS = tuple(args.score_reuse_root)
     output = args.output_root or cache_profile_root(
         profile(args.task, args.benchmark, args.parent_capacity,
-                supplement=args.supplement_41_50, snapshot=is_snapshot)
+                supplement=args.supplement_41_50, snapshot=is_snapshot, hybrid=is_hybrid)
     )
     if args.command == "build-projection":
         if args.projection_output is None:
@@ -282,7 +346,14 @@ def main() -> None:
             "validate-partial": lambda: builder.validate_release(
                 args.task, output, args.evidence_manifest, allow_partial_snapshot=True
             ),
+            "validate-hybrid": lambda: builder.validate_release(
+                args.task, output, args.evidence_manifest,
+                allow_partial_snapshot=True, allow_hybrid=True,
+            ),
             "snapshot-partial": lambda: snapshot_partial_release(
+                args.task, args.source_root, output, args.evidence_manifest
+            ),
+            "snapshot-hybrid": lambda: snapshot_hybrid_release(
                 args.task, args.source_root, output, args.evidence_manifest
             ),
         }[args.command]

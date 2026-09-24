@@ -1128,6 +1128,27 @@ def test_l1_context_cards_with_one_parent_remain_separate() -> None:
     assert len(retrieval["groups"][0]["neighbors"]) == 2
 
 
+def test_flat_hybrid_partial_level_hides_assay_score() -> None:
+    later = {"L2": {"records": [{
+        "record_id": "r2", "reference_molecule_id": "REF",
+        "morgan_similarity": 0.712345,
+        "ranking_method": "assay_transfer_partial_hidden",
+        "payload": _selected_payload("r2", "L2", "passive"),
+    }]}}
+
+    retrieval = cache_matched_flat_retrieval(
+        "q", "CCO", [], later, task="bbb_martins",
+        reranking="assay-transfer", query_audit={},
+        prompt_version=CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+    )
+
+    row = retrieval["groups"][0]["neighbors"][0]["evidence_rows"][0]
+    assert row["selection_provenance"]["ranking_method"] == "assay-transfer-partial-hidden"
+    assert row["selection_provenance"]["morgan_similarity"] == 0.7123
+    assert "assay_transfer_score" not in row["selection_provenance"]
+    assert "transfer_likelihood" not in row["prompt_evidence"]
+
+
 def test_flat_v2_places_later_assay_score_on_its_card() -> None:
     l1_payload = _selected_payload("r1", "L1", "direct")
     later_payload = _selected_payload("r2", "L2", "passive")

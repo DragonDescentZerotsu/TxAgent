@@ -1345,7 +1345,19 @@ def main(argv: list[str] | None = None) -> int:
                     f"{task}__{item['profile']}" if item["profile"] else None
                 ),
             )
-            if (args.assay_transfer_cache.name.endswith("_v27_successors_v1.yaml")
+            if args.assay_transfer_cache.name in {
+                "ranked_level_retrieval_gold_v1_v27_carcinogens_hybrid_v1.yaml",
+                "ranked_level_retrieval_tdc_v1_v27_ames_hybrid_v1.yaml",
+            }:
+                selection_args.flat_artifact_manifest = (
+                    Path("predict/retrieval/assay_reranking/flat_v5_manifests/v27_hybrid_successors")
+                    / f"{args.benchmark}_v1" / f"{task}.json"
+                ).resolve()
+                selection_args.flat_artifact_receipt = (
+                    Path("data/caches/assay_reranking/active/flat_v5/receipts/v27_hybrid_successors")
+                    / f"{args.benchmark}_v1" / f"{task}.json"
+                ).resolve()
+            elif (args.assay_transfer_cache.name.endswith("_v27_successors_v1.yaml")
                     and task in {"ames", "dili", "carcinogens"}):
                 scope = (
                     "direct_only/"

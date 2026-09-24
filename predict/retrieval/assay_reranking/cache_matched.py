@@ -104,7 +104,7 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
             })):
         raise ValueError('L1 context cache and contrastive reranking must be selected together')
     last = max_level or TASKS[task][1]
-    supported_last = (7 if document['version'] == 20 and task in {'dili', 'carcinogens'}
+    supported_last = (7 if document['version'] in {20, 21} and task in {'dili', 'carcinogens'}
                       else TASKS[task][1])
     if not 1 <= last <= supported_last:
         raise ValueError(f'{task} ends at L{supported_last}')
@@ -118,7 +118,7 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
         stages['L1'] = 'assay_transfer_within_morgan'
     if reranking == 'joint':
         stages['L1'] = 'joint'
-    if document['version'] == 20:
+    if document['version'] in {20, 21}:
         if reranking == 'joint':
             raise ValueError('composite ranked UID retrieval does not support joint mode')
         sources = document['caches'][task]
@@ -128,7 +128,25 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
             json.loads((path.parent / sources['later']).resolve().read_text())
             if last > 1 else None
         )
-        if (later_index is not None and reranking != 'morgan' and 'L5' in stages
+        if document['version'] == 21:
+            expected_hybrid = {
+                'schema_version': 'assay_complete_or_hidden_morgan_tail.v1',
+                'scope': 'query_level',
+                'complete_order': 'assay_transfer',
+                'incomplete_order': 'scored_assay_then_unscored_morgan',
+                'incomplete_prompt_scores': 'hidden',
+            }
+            if later_index is not None and (
+                later_index.get('hybrid_policy') != expected_hybrid
+                or later_index.get('selection_coverage') != 'complete'
+            ):
+                raise ValueError(f'{task}: version 21 requires the reviewed hybrid policy')
+            if reranking != 'morgan':
+                for level in stages:
+                    if level != 'L1':
+                        stages[level] = 'assay_transfer_complete_or_hidden'
+        if (document['version'] == 20 and later_index is not None
+                and reranking != 'morgan' and 'L5' in stages
                 and task in {'ames', 'dili', 'carcinogens'}
                 and str(later_index.get('later_candidate_universe', '')).startswith(
                     'all_uids_under_shared_l2plus_morgan_top_')):

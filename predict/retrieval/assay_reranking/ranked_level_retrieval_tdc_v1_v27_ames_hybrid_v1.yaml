@@ -1,0 +1,5 @@
+version: 21
+caches:
+  ames:
+    L1: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v1/ames/l1/assay_transfer/v10_3/tdc_pinned_v1/ames/RELEASE_INDEX.json
+    later: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v1/ames/l2plus/hybrid/v27/assay_complete_or_hidden_morgan_tail_shared_parent40_v1/ames/RELEASE_INDEX.json

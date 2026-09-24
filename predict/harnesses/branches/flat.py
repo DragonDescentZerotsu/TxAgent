@@ -265,6 +265,7 @@ def prompt_task_max_level(
                 "ranked_level_retrieval_tdc_v1_v27_successors_v1.yaml",
                 "ranked_level_retrieval_gold_v1_v27_partial_snapshot_v1.yaml",
                 "ranked_level_retrieval_tdc_v1_v27_partial_snapshot_v1.yaml",
+                "ranked_level_retrieval_gold_v1_v27_carcinogens_hybrid_v1.yaml",
             }):
         return 7
     return TASKS[task]
@@ -1211,6 +1212,8 @@ def cache_matched_flat_retrieval(
             "assay-transfer-contrastive",
             "assay-transfer-within-morgan",
         }
+        if method == "assay-transfer-partial-hidden":
+            morgan_method = True
         retrieval = {
             "record_id": record_id,
             "level": str(payload["progressive_level"]),

@@ -74,6 +74,14 @@ The Gold Carcinogens and TDC AMES top-40 successors use `--parent-capacity 40`
 and a hash-pinned `--source-parent-universe` from their frozen top-100 stages;
 their new release paths do not replace the top-100 stages or activate a bundle
 before validation and publication.
+
+The opt-in hybrid successors for Gold Carcinogens and TDC AMES preserve the
+verified parent-40 partial snapshots without claiming complete assay scoring.
+For each query and level, complete scores retain assay-transfer order and remain
+visible. Incomplete scores order scored rows first and append the unscored rows
+in Morgan order, while hiding every assay-transfer score for that query-level.
+The version-21 task-specific cache bundles are required; version-20 assay
+bundles never acquire this behavior implicitly.
 For an optional top-50 successor, use `--supplement-41-50` to prepare only
 parent ranks 41-50 from the frozen top-50 `PARENT_UNIVERSE.json` on each split.
 The supplement is score-only: `prepare-universe`, `prepare-level`, and `tokenize`

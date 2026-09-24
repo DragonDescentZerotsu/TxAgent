@@ -13,6 +13,8 @@ from predict.retrieval.assay_reranking import build_ranked_uid_retrieval as buil
 from predict.retrieval.assay_reranking import ranked_uid_retrieval
 from predict.retrieval.assay_reranking.build_ranked_uid_retrieval import finalize_level
 from predict.retrieval.assay_reranking.ranked_uid_retrieval import (
+    HIDDEN_PARTIAL_METHOD,
+    HYBRID_METHOD,
     _select_assay_contrastive,
     load_candidates,
     load_ranked_panels,
@@ -42,6 +44,15 @@ def test_partial_snapshot_profiles_are_active(benchmark: str, task: str) -> None
     assert builder.runtime.cache_profile_root(cache).is_relative_to(
         builder.runtime.DATA_ACTIVE_CACHE_ROOT
     )
+
+
+@pytest.mark.parametrize("benchmark,task", [("gold", "carcinogens"), ("tdc", "ames")])
+def test_hybrid_profiles_are_active(benchmark: str, task: str) -> None:
+    from predict.retrieval.assay_reranking.build_safety_v27_ranked_retrieval import profile
+
+    cache = profile(task, benchmark, 40, hybrid=True)
+    assert cache in builder.runtime.ACTIVE_CACHE_PROFILES
+    assert "/l2plus/hybrid/v27/" in cache
 
 
 def test_normal_validator_rejects_partial_snapshot(tmp_path: Path) -> None:
@@ -543,6 +554,63 @@ def test_expanded_parent_universe_selects_records_then_hydrates_once(tmp_path: P
     assert audit["cache_content_ids"] == {"L1": "L1", "L2": "L2"}
 
 
+def test_hybrid_incomplete_level_keeps_all_records_and_hides_scores(tmp_path: Path) -> None:
+    policy, manifest = _release(tmp_path)
+    with sqlite3.connect(manifest.parent / "rankings.sqlite3") as connection:
+        connection.execute(
+            "UPDATE rankings SET assay_transfer_score=NULL,assay_rank=NULL WHERE item_id='u7'"
+        )
+    document = json.loads(manifest.read_text())
+    document["score_coverage"] = "partial_snapshot"
+    document["parent_universe_source"] = "shared_l2plus_morgan_100"
+    document["query_counts"]["q1"].update(scored_records=4, missing_scores=1)
+    manifest.write_text(json.dumps(document))
+    index = json.loads(Path(policy["cache_index"]).read_text())
+    index["splits"]["valid"]["levels"]["L2"]["manifest_sha256"] = sha256_file(manifest)
+    Path(policy["cache_index"]).write_text(json.dumps(index))
+    policy["stages"]["L2"] = HYBRID_METHOD
+    policy["all_later_records"] = True
+
+    _, later, audit = load_candidates(
+        {"q1": "CCC"}, task="bbb_martins", subset="valid", policy=policy,
+        molecule_limit=1, l1_limit=10, later_limit={"L2": 1}, cache_pool="all",
+    )
+
+    records = later["q1"]["L2"]["records"]
+    assert len(records) == 5
+    assert records[-1]["record_id"] == "r7"
+    assert {row["ranking_method"] for row in records} == {HIDDEN_PARTIAL_METHOD}
+    assert all("transfer_likelihood" not in row and row["assay_rank"] is None for row in records)
+    assert later["q1"]["L2"]["allow_shortfall"] is False
+    assert audit["query_audits"]["q1"]["L2"] | {
+        "selection_mode": "scored_assay_then_unscored_morgan",
+        "prompt_assay_scores": "hidden",
+    } == audit["query_audits"]["q1"]["L2"]
+
+
+def test_hybrid_complete_small_level_keeps_assay_scores(tmp_path: Path) -> None:
+    policy, manifest = _release(tmp_path)
+    document = json.loads(manifest.read_text())
+    document["parent_universe_source"] = "shared_l2plus_morgan_100"
+    manifest.write_text(json.dumps(document))
+    index = json.loads(Path(policy["cache_index"]).read_text())
+    index["splits"]["valid"]["levels"]["L2"]["manifest_sha256"] = sha256_file(manifest)
+    Path(policy["cache_index"]).write_text(json.dumps(index))
+    policy["stages"]["L2"] = HYBRID_METHOD
+    policy["all_later_records"] = True
+
+    _, later, audit = load_candidates(
+        {"q1": "CCC"}, task="bbb_martins", subset="valid", policy=policy,
+        molecule_limit=1, l1_limit=10, later_limit={"L2": 1}, cache_pool="all",
+    )
+
+    records = later["q1"]["L2"]["records"]
+    assert len(records) == 5
+    assert all(row["ranking_method"] == "assay_transfer" for row in records)
+    assert all("transfer_likelihood" in row for row in records)
+    assert audit["query_audits"]["q1"]["L2"]["prompt_assay_scores"] == "visible"
+
+
 def test_composite_levels_hydrate_overlap_from_their_own_projection(tmp_path: Path) -> None:
     policy, later_manifest = _release(tmp_path)
     with sqlite3.connect(later_manifest.parent / "rankings.sqlite3") as connection:
@@ -667,6 +735,38 @@ def test_shared_safety_policy_exposes_all_scored_levels(tmp_path: Path, task: st
     )
     assert tuple(policy["stages"]) == tuple(f"L{i}" for i in range(1, 8))
     assert policy["stages"]["L5"] == "assay_transfer"
+    assert policy["all_later_records"] is True
+
+
+def test_version_21_policy_requires_and_selects_hybrid_later_levels(tmp_path: Path) -> None:
+    index = {
+        "schema_version": "ranked_uid_task_release_index.v1", "status": "complete",
+        "task_id": "ames", "pool": "all", "selection_coverage": "complete",
+        "hybrid_policy": {
+            "schema_version": "assay_complete_or_hidden_morgan_tail.v1",
+            "scope": "query_level", "complete_order": "assay_transfer",
+            "incomplete_order": "scored_assay_then_unscored_morgan",
+            "incomplete_prompt_scores": "hidden",
+        },
+        "later_candidate_universe": "all_uids_under_shared_l2plus_morgan_top_40_parents",
+        "splits": {"test": {"levels": {
+            "L1": {"manifest": "L1/VERSION.json"},
+            "L2": {"manifest": "L2/VERSION.json"},
+        }}},
+    }
+    (tmp_path / "direct.json").write_text(json.dumps(index))
+    (tmp_path / "later.json").write_text(json.dumps(index))
+    config = tmp_path / "cache.yaml"
+    config.write_text(
+        "version: 21\ncaches:\n  ames:\n"
+        "    L1: direct.json\n    later: later.json\n"
+    )
+
+    policy = cache_matched.load_cache_policy(
+        config, "ames", "test", "assay-transfer", 2,
+    )
+
+    assert policy["stages"] == {"L1": "assay_transfer", "L2": HYBRID_METHOD}
     assert policy["all_later_records"] is True
 
 

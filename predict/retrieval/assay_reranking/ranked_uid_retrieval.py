@@ -16,6 +16,8 @@ from predict.utils.json import sha256_file
 SCHEMA_VERSION = "ranked_uid_retrieval.v1"
 CAPACITY = 100
 CONTRAST_WIDTHS = (15, 25, 50, 100)
+HYBRID_METHOD = "assay_transfer_complete_or_hidden"
+HIDDEN_PARTIAL_METHOD = "assay_transfer_partial_hidden"
 
 
 def _open(path: Path) -> sqlite3.Connection:
@@ -65,6 +67,8 @@ def _ranked_rows(
     database = manifest_path.with_name(str(manifest["database"]))
     output: dict[str, list[dict[str, Any]]] = defaultdict(list)
     identities: dict[str, tuple[str, str]] = {}
+    if method not in {"morgan", "assay_transfer", HYBRID_METHOD}:
+        raise ValueError(f"Unsupported ranked UID method: {method}")
     rank_column = "morgan_rank" if method == "morgan" else "assay_rank"
     with _open(database) as connection:
         metadata = dict(connection.execute("SELECT key,value FROM metadata"))
@@ -91,7 +95,46 @@ def _ranked_rows(
                 (str(query_id), parent_morgan_width)
                 if parent_morgan_width is not None else (str(query_id),)
             )
-            if selected_uids is not None:
+            if method == HYBRID_METHOD:
+                all_rows = connection.execute(
+                    "SELECT * FROM rankings WHERE benchmark_row_id=?",
+                    (str(query_id),),
+                ).fetchall()
+                scored = [
+                    row for row in all_rows if row["assay_transfer_score"] is not None
+                ]
+                selection_method = (
+                    "assay_transfer"
+                    if len(scored) == len(all_rows) else HIDDEN_PARTIAL_METHOD
+                )
+                if selected_uids is not None:
+                    ordered_uids = [str(uid) for uid in selected_uids[str(query_id)]]
+                    by_uid = {str(row["item_id"]): row for row in all_rows}
+                    missing = [uid for uid in ordered_uids if uid not in by_uid]
+                    if len(set(ordered_uids)) != len(ordered_uids) or missing:
+                        raise ValueError(
+                            f"Invalid preselected UIDs for {query_id}/{level}: {missing[:5]}"
+                        )
+                    rows = [by_uid[uid] for uid in ordered_uids]
+                elif selection_method == "assay_transfer":
+                    rows = sorted(all_rows, key=lambda row: int(row["assay_rank"]))
+                else:
+                    rows = sorted(
+                        scored,
+                        key=lambda row: (
+                            -float(row["assay_transfer_score"]), str(row["item_id"])
+                        ),
+                    ) + sorted(
+                        (row for row in all_rows if row["assay_transfer_score"] is None),
+                        key=lambda row: (int(row["morgan_rank"]), str(row["item_id"])),
+                    )
+                if limit is not None:
+                    rows = rows[:limit]
+                rows = [
+                    {**dict(row), "_selection_method": selection_method}
+                    for row in rows
+                ]
+            elif selected_uids is not None:
                 ordered_uids = [str(uid) for uid in selected_uids[str(query_id)]]
                 if len(set(ordered_uids)) != len(ordered_uids):
                     raise ValueError(f"Preselected UIDs must be unique: {query_id}/{level}")
@@ -287,17 +330,22 @@ def _payload(row: Mapping[str, Any], ranked: Mapping[str, Any], method: str) -> 
     payload.setdefault("evidence_parent_smiles", payload.get("canonical_smiles"))
     payload["canonical_smiles"] = parent_smiles
     payload["reference_parent_smiles"] = parent_smiles
+    effective_method = str(ranked.get("_selection_method") or method)
+    hidden_partial = effective_method == HIDDEN_PARTIAL_METHOD
     result = {
         "record_id": str(row["external_record_id"]),
         "reference_molecule_id": str(ranked["parent_id"]),
         "reference_parent_smiles": parent_smiles,
         "morgan_similarity": similarity,
         "morgan_rank": int(ranked["morgan_rank"]),
-        "assay_rank": int(ranked["assay_rank"]) if ranked["assay_rank"] is not None else None,
-        "ranking_method": method,
+        "assay_rank": (
+            int(ranked["assay_rank"])
+            if ranked["assay_rank"] is not None and not hidden_partial else None
+        ),
+        "ranking_method": effective_method,
         "payload": payload,
     }
-    if method == "assay_transfer":
+    if effective_method == "assay_transfer":
         score = ranked["assay_transfer_score"]
         if score is None or not math.isfinite(float(score)) or not 0 <= float(score) <= 1:
             raise ValueError("Invalid cached assay-transfer score")
@@ -780,6 +828,12 @@ def load_candidates(
                 records.append(record)
             counts = documents[level]["query_counts"][str(query_id)]
             partial_level = documents[level].get("score_coverage") == "partial_snapshot"
+            hybrid_level = level_method == HYBRID_METHOD
+            hybrid_scored = sum(
+                row["assay_transfer_score"] is not None
+                for row in ranked[level][str(query_id)]
+            )
+            score_complete = hybrid_scored == int(counts["candidate_records"])
             later[level] = {
                 "records": records,
                 "ranking_method": level_method,
@@ -796,6 +850,15 @@ def load_candidates(
                 "candidate_molecules": int(counts["candidate_parents"]),
                 "selected_records": len(records),
                 "selected_molecules": len({row["parent_id"] for row in ranked[level][str(query_id)]}),
+                **({
+                    "scored_records": hybrid_scored,
+                    "missing_scores": int(counts["candidate_records"]) - hybrid_scored,
+                    "selection_mode": (
+                        "assay_transfer"
+                        if score_complete else "scored_assay_then_unscored_morgan"
+                    ),
+                    "prompt_assay_scores": "visible" if score_complete else "hidden",
+                } if hybrid_level else {}),
             }
         molecules_by_query[str(query_id)] = molecules
         later_by_query[str(query_id)] = later

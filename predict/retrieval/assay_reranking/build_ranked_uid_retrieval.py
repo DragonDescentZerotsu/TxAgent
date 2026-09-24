@@ -1496,7 +1496,7 @@ def write_index(
 
 def validate_release(
     task: str, output_root: Path, evidence_manifest: Path, *,
-    allow_partial_snapshot: bool = False,
+    allow_partial_snapshot: bool = False, allow_hybrid: bool = False,
 ) -> dict[str, Any]:
     """Run expensive integrity checks once, before atomic publication."""
     task_root = output_root / task
@@ -1509,11 +1509,39 @@ def validate_release(
     ):
         raise ValueError("Task release index is incomplete or incompatible")
     partial_snapshot = index.get("score_coverage") == "partial_snapshot"
+    hybrid = index.get("hybrid_policy")
+    valid_hybrid = (
+        allow_hybrid
+        and hybrid == {
+            "schema_version": "assay_complete_or_hidden_morgan_tail.v1",
+            "scope": "query_level",
+            "complete_order": "assay_transfer",
+            "incomplete_order": "scored_assay_then_unscored_morgan",
+            "incomplete_prompt_scores": "hidden",
+        }
+        and index.get("selection_coverage") == "complete"
+        and str(index.get("profile", "")).endswith(
+            "/assay_complete_or_hidden_morgan_tail_shared_parent40_v1"
+        )
+    )
     if partial_snapshot and (
         not allow_partial_snapshot
-        or not str(index.get("profile", "")).endswith("_partial_snapshot_v1")
+        or not (
+            str(index.get("profile", "")).endswith("_partial_snapshot_v1")
+            or valid_hybrid
+        )
     ):
         raise ValueError("Partial score snapshot requires explicit validation")
+    if hybrid is not None and not valid_hybrid:
+        raise ValueError("Hybrid selection policy requires explicit validation")
+    if valid_hybrid:
+        hybrid_source = index.get("hybrid_source") or {}
+        source_index = Path(str(hybrid_source.get("release_index") or ""))
+        if (
+            not source_index.is_file()
+            or hybrid_source.get("release_index_sha256") != sha256_file(source_index)
+        ):
+            raise ValueError("Hybrid source release changed")
 
     evidence = json.loads(evidence_manifest.read_text(encoding="utf-8"))
     indexed_evidence = (index_path.parent / index["evidence"]["manifest"]).resolve()
