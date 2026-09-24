@@ -1,0 +1,25 @@
+{
+  "version": "skin_level_mapped_indirect_ml.v1",
+  "description": "Rebuild grouped canonical measurements from assay-transfer-eligible Skin Stage-3 UIDs present in the active release-owned level map; require at least 10 distinct parent SMILES per pair bucket.",
+  "release": "v10_main_universe_v6",
+  "inputs": {
+    "data/evidence_libraries/skin_reaction/v10_main_universe_v6/03_pair_buckets/records.parquet": "819cce097a2459f8509e136f70f600b5ef50ad8cc48e14ebf283d44ce636484a",
+    "data/evidence_libraries/skin_reaction/v10_main_universe_v6/level_mapping/records.parquet": "5414abdbc607b9a3de25158f5aca075cf47b4e4d9d1c1987692df5c177598a65",
+    "data/artifacts/indirect_ml/skin_reaction_parent_pair_bucket_measurements.parquet": "f875a5e47806648db67b5ad59cf53bc29b204caf505dc02e24405c569b8834ba"
+  },
+  "output": {
+    "outputs/analysis/indirect_ml/skin_level_mapped_v1/skin_reaction_parent_pair_bucket_measurements.parquet": "75285c161944c656147eff3913be9296c6defc50c8d69663100bcf2be7ea417a"
+  },
+  "summary": {
+    "eligible_source_uids": 304060,
+    "eligible_level_mapped_uids": 14139,
+    "excluded_eligible_uids_not_in_mapping": 289921,
+    "original_rows": 98526,
+    "original_buckets": 2605,
+    "filtered_rows": 3287,
+    "filtered_buckets": 67,
+    "retained_measurement_elements": 11173,
+    "filtered_buckets_below_10_parents": 1067
+  },
+  "baseline_reconstruction_exact": true
+}

@@ -1,0 +1,2 @@
+eligible_source_uids	eligible_level_mapped_uids	excluded_eligible_uids_not_in_mapping	original_rows	original_buckets	filtered_rows	filtered_buckets	retained_measurement_elements	filtered_buckets_below_10_parents
+304060	14139	289921	98526	2605	3287	67	11173	1067
