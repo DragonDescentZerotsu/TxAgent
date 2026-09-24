@@ -1,11 +1,11 @@
 # Final Joseph full-test collection
 
 The [final collection](outputs/paper/assay_transfer_harness/joseph/final/collection.json)
-contains 20 complete arms and 5,084 successful test queries. It includes Gold
-BBB, Oral Bioavailability, Carcinogens, DILI, and Skin Reaction direct and
-direct+indirect arms; TDC Oral Bioavailability and Skin Reaction direct and
-direct+indirect arms; and TDC-v2 BBB, Carcinogens, and DILI direct and
-direct+indirect arms.
+contains 24 complete arms and 8,546 successful arm-query results. It includes
+Gold BBB, Oral Bioavailability, AMES, Carcinogens, DILI, and Skin Reaction
+direct and direct+indirect arms; TDC Oral Bioavailability and Skin Reaction
+direct and direct+indirect arms; and TDC-v2 AMES, BBB, Carcinogens, and DILI
+direct and direct+indirect arms.
 Each arm includes predictions, metrics, per-query run artifacts and traces,
 a combined trace, a query-level model/provider ledger, and
 hash-pinned source and copied-file manifests. The original batches remain at
@@ -48,6 +48,15 @@ and its [TSV](outputs/analysis/record_selection/dili_tdc_v2_direct_same_prompt_v
 found direct-only macro-F1 0.831541 with five false positives among 17 negative
 queries, versus 0.825465 and six false positives with indirect records. Only
 two predictions changed; their upstream OpenRouter providers also differed.
+
+The [AMES collection report](outputs/analysis/record_selection/ames_final_collection_20260924_v1/report.md)
+and [TSV](outputs/analysis/record_selection/ames_final_collection_20260924_v1/results.tsv)
+cover four new full-test arms. Gold-v1 AMES direct and direct+indirect macro-F1
+are 0.708578 and 0.774211 on 274 queries each; TDC-v2 AMES scores are
+0.782289 and 0.799350 on 1,457 queries each. TDC mixed query 1158 used a
+fresh, identical rendered prompt with a lower token ceiling, recorded in its
+arm provenance. The source response sets are complete across preserved runs;
+some historical individual matrices remain partial.
 
 The full collection, including traces, is preserved in Git as
 [compressed parts](outputs/paper/assay_transfer_harness/joseph/final/git_bundle/README.md).

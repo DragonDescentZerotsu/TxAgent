@@ -1,0 +1,41 @@
+{
+  "schema_version": "ames_tdc_v2_full_test_completed.v1",
+  "status": "complete_response_coverage_across_runs",
+  "snapshot_utc": "2026-09-24T16:07:07Z",
+  "labels": {
+    "path": "data/gold_labels/TDC/Ames/v2/original/test_molecule_condition_labels.jsonl",
+    "sha256": "868b6a6be84579d0e202e7907df09066f147b05d7ba1701812d4615d3d31c07d",
+    "rows": 1457
+  },
+  "source_runs": {
+    "direct": [
+      "outputs/paper/assay_transfer_harness/joseph/ames_direct_exactscore_full_test_upstream_v3_20260924_v1/tdc_v2",
+      "outputs/paper/assay_transfer_harness/joseph/ames_direct_exactscore_full_test_upstream_v3_openrouter_resume_20260924_v1/tdc_v2"
+    ],
+    "direct_plus_indirect": [
+      "outputs/paper/assay_transfer_harness/joseph/tdc_v2_ames_indirect_best_full_test_upstream_v3_20260924_v1/tdc_v2",
+      "outputs/paper/assay_transfer_harness/joseph/tdc_v2_ames_indirect_best_full_test_recovery_20260924_v1/tdc_v2",
+      "outputs/paper/assay_transfer_harness/joseph/tdc_v2_ames_indirect_best_full_test_local_recovery_20260924_v1/tdc_v2",
+      "outputs/paper/assay_transfer_harness/joseph/tdc_v2_ames_indirect_best_full_test_local_18082_tail_20260924_v1/tdc_v2",
+      "outputs/paper/assay_transfer_harness/joseph/tdc_v2_ames_indirect_query1158_direct_cap16k_20260924_v1/tdc_v2"
+    ]
+  },
+  "source_matrix_sha256": {
+    "original": "e83e4c0489fecdb8835c750bc150fc8c723da11ef379e96b970f00d68e91ee2f",
+    "openrouter_recovery": "2bc0c61824bdcf8b4afd7b2ae87171aeed8cfdd49b705455570c73f548ab7d32",
+    "first_local_recovery": "557332d64f373ce8b77ee3ac08375a504d0e787a98de272fe7e9145c393df696",
+    "local_18082_tail": "5def0e051c05424120875d2b53e1bc9d9b415268059c19611156d0aff068cfe4"
+  },
+  "final_recovery": {
+    "query_index": 1158,
+    "final_response_sha256": "1ea896d785aa657bbf710c7871af1e65ca7408b546d58870c935a2a00b23403d",
+    "rendered_request_sha256": "e9e0729babf10f30c38b04d85b9e6922aef823d29ac3de7a98afee25bf7ec891",
+    "max_tokens": 16384
+  },
+  "prompt": "full-flat-context-v5-six-tasks-upstream-v3",
+  "reasoning_effort": "high",
+  "selection_profile": {
+    "direct": "ga050_mc010_label025",
+    "direct_plus_indirect": "ga075_mc010_sr035_sd010_ld010_rd010"
+  }
+}

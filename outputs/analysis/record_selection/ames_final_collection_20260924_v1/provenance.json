@@ -1,0 +1,26 @@
+{
+  "schema_version": "ames_final_collection_addition.v1",
+  "status": "complete",
+  "collection_path": "outputs/paper/assay_transfer_harness/joseph/final/collection.json",
+  "collection_sha256": "9cfceb4913b1e99feaafeee30bbace30421d83f8c16aea4282a36dec87a14f46",
+  "source_analyses": [
+    {
+      "path": "outputs/analysis/record_selection/ames_gold_full_test_completed_20260924_v1/manifest.json",
+      "sha256": "f4207c2127fb6382bba484792246cdb855e13d730574cc14f4f3b54bd845d070"
+    },
+    {
+      "path": "outputs/analysis/record_selection/ames_tdc_v2_full_test_completed_20260924_v1/manifest.json",
+      "sha256": "de62a2453557eb795f717968873651a70a0f94ddef6756c128099c2ee915a82c"
+    }
+  ],
+  "new_arm_manifest_sha256": {
+    "gold_v1/ames/direct": "9e5aedf397dc42ee459db7b9f2545b6d1e73eb5593e1c560c54032bcaddf8d87",
+    "gold_v1/ames/direct_plus_indirect": "07c4a4e62b0f3260d3b3d5032f09bce2be48e010d434729d1ae4eef20434eb16",
+    "tdc_v2/ames/direct": "cadf190f51132bd1f8be416d498ecfc540951e3fb19cd9b249564888e45046eb",
+    "tdc_v2/ames/direct_plus_indirect": "fc24120cbcb24a0f395f62a16c99c7c360bb7dd46f395a6fabe3b599920830cc"
+  },
+  "new_arm_count": 4,
+  "new_arm_query_results": 3462,
+  "collection_arm_count": 24,
+  "collection_query_results": 8546
+}

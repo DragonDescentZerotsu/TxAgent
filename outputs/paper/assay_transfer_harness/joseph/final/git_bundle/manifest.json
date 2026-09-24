@@ -1,27 +1,32 @@
 {
   "schema_version": "joseph_final_git_bundle.v1",
-  "source_collection_sha256": "818c4ddee3a390c277e8bf2853e7a5e93cfbd147e07bafaeba4759871bbb5d1e",
-  "archive_sha256": "6f7ac685eaa460517f244de42d1139e5b49e1f87f852bedab71baca15c26a61d",
+  "source_collection_sha256": "9cfceb4913b1e99feaafeee30bbace30421d83f8c16aea4282a36dec87a14f46",
+  "archive_sha256": "ea0c052db65929c5157194764f92b6ac8562e9bafab492c199eedde04ddd9bd8",
   "parts": [
     {
       "name": "payload.tar.zst.part-0000",
       "size": 67108864,
-      "sha256": "02fb5dc5b871fc593fcd5c1e655262794531159fbdda12de4d1c9673a236baa5"
+      "sha256": "5d4c572dcf753b85520391ea2e1d1fb4854be4b289467f4b18355facc89b5ada"
     },
     {
       "name": "payload.tar.zst.part-0001",
       "size": 67108864,
-      "sha256": "690ca104086c5e7e8622a46549ceab1ef558cc5ddb5cb7ad338570053c8d6861"
+      "sha256": "0e38ad7291d57acb017ec6dd7ddce47839c060b826e0d7c59b202cebf856647b"
     },
     {
       "name": "payload.tar.zst.part-0002",
       "size": 67108864,
-      "sha256": "c93882876ad3bcd26099e60e29861df3b501386610a4b03d62704a67ee46f8f6"
+      "sha256": "5aa5be5d504622a9b2c615d433c63db0d3fdfed84bc91e0863861e6b53ac374d"
     },
     {
       "name": "payload.tar.zst.part-0003",
-      "size": 10751584,
-      "sha256": "d289b04630865dbad72065f06fb73fd32ad7c837987d493e98e820013be8513b"
+      "size": 67108864,
+      "sha256": "5df2b500485bd7a99a1f4231d973a62caef86589ffec325ff531144894a3372d"
+    },
+    {
+      "name": "payload.tar.zst.part-0004",
+      "size": 57069648,
+      "sha256": "8f913994063ce59bd0f566e989b1aad27a4c33eeffddf13bc397b80e1dcd5f6f"
     }
   ],
   "restore_root": "outputs/paper/assay_transfer_harness/joseph"

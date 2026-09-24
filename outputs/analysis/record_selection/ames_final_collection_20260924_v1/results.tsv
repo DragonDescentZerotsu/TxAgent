@@ -1,0 +1,5 @@
+benchmark	task	selection	n_queries	macro_f1	accuracy	tn	fp	fn	tp
+gold_v1	ames	direct	274	0.708578	0.748175	52	26	43	153
+gold_v1	ames	direct_plus_indirect	274	0.774211	0.817518	52	26	24	172
+tdc_v2	ames	direct	1457	0.782289	0.792725	418	169	133	737
+tdc_v2	ames	direct_plus_indirect	1457	0.799350	0.811942	409	178	96	774

@@ -1,0 +1,28 @@
+{
+  "schema_version": "ames_gold_full_test_completed.v1",
+  "status": "complete_response_coverage_across_runs",
+  "snapshot_utc": "2026-09-24T15:31:31Z",
+  "labels": {
+    "path": "data/gold_labels/Ames/v1/scaffold/test_molecule_condition_labels.jsonl",
+    "sha256": "1f74a0d12d4200f33254f4494b8fe280e4e4ce08b61e7a941adc3c9b240d66dd",
+    "rows": 274
+  },
+  "source_runs": {
+    "direct": [
+      "outputs/paper/assay_transfer_harness/joseph/ames_direct_v3_full_test_20260924_v1/gold_v1"
+    ],
+    "direct_plus_indirect": [
+      "outputs/paper/assay_transfer_harness/joseph/ames_gold_indirect_best_full_test_upstream_v3_20260924_v1/gold_v1",
+      "outputs/paper/assay_transfer_harness/joseph/ames_gold_indirect_best_full_test_upstream_v3_openrouter_resume_20260924_v1/gold_v1",
+      "outputs/paper/assay_transfer_harness/joseph/ames_gold_indirect_query151_auto_r2_20260924_v1/gold_v1"
+    ]
+  },
+  "final_recovery": {
+    "query_index": 151,
+    "completion_sha256": "498f900b4207b792751b378d9f8bea484ce01bc9f9ce87abedbef73038cf6398",
+    "final_response_sha256": "90d6f55532e5159184758927e3020b3f1f320463dbab2e5a8fc2c51b20ebfaf3"
+  },
+  "prior_snapshot_manifest_sha256": "54c27d4846802a059c2083db191b904b163a4e347a4f0d00cdf94d0e2a9be588",
+  "prompt": "full-flat-context-v5-six-tasks-upstream-v3",
+  "reasoning_effort": "high"
+}

@@ -4,6 +4,20 @@
   "status": "complete",
   "arms": [
     {
+      "path": "gold_v1/ames/direct",
+      "manifest_sha256": "9e5aedf397dc42ee459db7b9f2545b6d1e73eb5593e1c560c54032bcaddf8d87",
+      "n_queries": 274,
+      "macro_f1": 0.708578,
+      "mixed_route": true
+    },
+    {
+      "path": "gold_v1/ames/direct_plus_indirect",
+      "manifest_sha256": "07c4a4e62b0f3260d3b3d5032f09bce2be48e010d434729d1ae4eef20434eb16",
+      "n_queries": 274,
+      "macro_f1": 0.774211,
+      "mixed_route": true
+    },
+    {
       "path": "gold_v1/bbb_martins/direct",
       "manifest_sha256": "6d8039401d7f859ee463a86db42fe88b7a992a7ed334406a0aadd7c66d03c71c",
       "n_queries": 393,
@@ -102,6 +116,20 @@
       "mixed_route": false
     },
     {
+      "path": "tdc_v2/ames/direct",
+      "manifest_sha256": "cadf190f51132bd1f8be416d498ecfc540951e3fb19cd9b249564888e45046eb",
+      "n_queries": 1457,
+      "macro_f1": 0.782289,
+      "mixed_route": true
+    },
+    {
+      "path": "tdc_v2/ames/direct_plus_indirect",
+      "manifest_sha256": "fc24120cbcb24a0f395f62a16c99c7c360bb7dd46f395a6fabe3b599920830cc",
+      "n_queries": 1457,
+      "macro_f1": 0.79935,
+      "mixed_route": true
+    },
+    {
       "path": "tdc_v2/bbb_martins/direct",
       "manifest_sha256": "29839c46dc92df5b84762d2425906034e94ff01e90638fb47a48e3b62350db6e",
       "n_queries": 406,
@@ -144,7 +172,7 @@
       "mixed_route": false
     }
   ],
-  "n_queries": 5084,
+  "n_queries": 8546,
   "note": "Gold local recovery responses use a different served model route; query_provenance.tsv identifies every route.",
-  "updated_at_utc": "2026-09-24T12:28:44.091723+00:00"
+  "updated_at_utc": "2026-09-24T19:36:07+00:00"
 }
