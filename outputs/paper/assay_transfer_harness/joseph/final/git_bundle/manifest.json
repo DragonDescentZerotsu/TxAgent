@@ -1,22 +1,22 @@
 {
   "schema_version": "joseph_final_git_bundle.v1",
-  "source_collection_sha256": "471dab48b4e5af52e80d02d90a447bd37916e57b3d1d7e46415ce7eff24022bb",
-  "archive_sha256": "8fde1bed4efb2233cd705d09f13c5569d0f1432734230e65798ccbc8b4a0d701",
+  "source_collection_sha256": "285cf9b086df80580ed63905121b22cc8ac3f649db172219d5a66c358451a6df",
+  "archive_sha256": "182fd4dff28f3ce9e857b50362dd591132498e036d672d76d39d843bc69a4256",
   "parts": [
     {
       "name": "payload.tar.zst.part-0000",
       "size": 67108864,
-      "sha256": "02a9b59fbf27cbdd524988efe78914ec494c4a1425584c331399728de3581eb3"
+      "sha256": "b3d88fa66da288c300ed5bf234d18a3b5f039e787550c3980f74888d2a5f614b"
     },
     {
       "name": "payload.tar.zst.part-0001",
       "size": 67108864,
-      "sha256": "cbc039503d356afe9cb66e8a2bce27733049db62023247a3c177e1ee4e30356d"
+      "sha256": "d79a9882c6963d99fc2a37b8eafd8de785be76608a98d876a6e326d6ddd51924"
     },
     {
       "name": "payload.tar.zst.part-0002",
-      "size": 13341002,
-      "sha256": "b6f77b04dd0e8696fc80549544fbabf8f52aa3994cbea5da0ae28d6cd0cb0189"
+      "size": 32242121,
+      "sha256": "18fc9a1d100ef51a605e1f7718a4a0b0d102b774d9f9bd5bf156b87d387c5723"
     }
   ],
   "restore_root": "outputs/paper/assay_transfer_harness/joseph"

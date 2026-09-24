@@ -1,0 +1,69 @@
+{
+  "schema_version": "joseph_final_source_v1",
+  "collection": {
+    "path": "outputs/paper/assay_transfer_harness/joseph/final/collection.json",
+    "sha256": "285cf9b086df80580ed63905121b22cc8ac3f649db172219d5a66c358451a6df"
+  },
+  "arms": [
+    {
+      "benchmark": "gold_v1",
+      "task": "skin_reaction",
+      "selection": "direct",
+      "source": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/skin_direct_vs_joint_full_test_upstream_v2_20260923_v1/gold_direct/ga100_mc010_label025/with_query_prior/k10_m0_20260923_skin_gold_direct_test_v2/skin_reaction/skin_reaction__ga100_mc010_label025",
+        "manifest_sha256": "fe95bce7529a44da9cc7edb202490f80fce6557a2afb01a214ba27ae64e71c92",
+        "predictions_sha256": "45c6006c15639ec2583e943a3c78f1e4c7f4a85bd39d851c60eccf6d1b030c3c",
+        "metrics_sha256": "feacc737c604445385d365c0461e6ce319c45c7e0313392def578ef09376a33d",
+        "completion_sha256": "8f180781e19fae4d288f5d264f44e574639bfe644550abf909b7bfa703e54c5e"
+      },
+      "optimization_manifest": {
+        "path": "outputs/analysis/record_selection/skin_direct_joint_full_test_ga100_mc010_label025_20260923_v1/gold_v1/direct/ga100_mc010_label025/skin_reaction/manifest.json",
+        "sha256": "7adb7e10f469cf73407aedc944ad9095c7ea18b9650e849811e76928c926595e"
+      },
+      "final_manifest": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/final/gold_v1/skin_reaction/direct/manifest.json",
+        "sha256": "5dcdb6d2f7792450ed71e4c0ec195f19c02e34fc8f08b45c66a48d7ccd6def16"
+      }
+    },
+    {
+      "benchmark": "gold_v1",
+      "task": "skin_reaction",
+      "selection": "direct_plus_indirect",
+      "source": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/skin_direct_vs_joint_full_test_upstream_v2_20260923_v1/gold_mixed_r2/ga075_mc010_sr050_sd010_ld025/with_query_prior/k10_m0_20260923_skin_gold_mixed_test_v2_r2/skin_reaction/skin_reaction__ga075_mc010_sr050_sd010_ld025",
+        "manifest_sha256": "40e3d9ae368355dee70012ef88679f3a3b5a159472a839166664112debb6b553",
+        "predictions_sha256": "f739f11eb1f52964231fa7ed7d303501151f5a23fe7616dff605d5de805d89ed",
+        "metrics_sha256": "0e71cce94789378a73ce551daf834b56af3d6527a3980819d0212b069c1a7ea2",
+        "completion_sha256": "4bb376cc3a5b8c28852e9dbc98786ebb56247a8ddc0fe2269961e00b60884c58"
+      },
+      "optimization_manifest": {
+        "path": "outputs/analysis/record_selection/skin_direct_joint_full_test_ga100_mc010_label025_20260923_v1/gold_v1/mixed/ga075_mc010_sr050_sd010_ld025/skin_reaction/manifest.json",
+        "sha256": "902bdb8fbf77691dd540fa37a79a287eaa25c9b34ee668d12a6bfb873b3616cd"
+      },
+      "final_manifest": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/final/gold_v1/skin_reaction/direct_plus_indirect/manifest.json",
+        "sha256": "d01c31f3e97b6e995ed869ffa5395564192ca9e2d6e32f799207cac473743399"
+      }
+    },
+    {
+      "benchmark": "tdc_v1",
+      "task": "bioavailability_ma",
+      "selection": "direct",
+      "source": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/bbb_oral_direct_mixed_full_test_upstream_v2_20260923_v1/tdc_direct/ga125_mc010_label025/with_query_prior/k10_m0_20260923_v2_tdc_direct/bioavailability_ma/bioavailability_ma__ga125_mc010_label025",
+        "manifest_sha256": "6fe5abf5b32222b571886153295aed36f66c32674ee4c6c35db97ddb1705abbf",
+        "predictions_sha256": "ca398345d867d2043440f1fc61d6b986c3dab811a58e3b7220c00d3ad09d03a8",
+        "metrics_sha256": "4df942f717dbd83801b949981c7fec6d542b0ea4d8359bbac3c5f1283a95e3dd",
+        "completion_sha256": "7ab2c30cc12dd0dd02c229ce5db454c0a5e1161b4a61326fa252cff8e8e91b03"
+      },
+      "optimization_manifest": {
+        "path": "outputs/analysis/record_selection/direct_context_full_val_winners_test_v1/tdc_v1/direct/ga125_mc010_label025/bioavailability_ma/manifest.json",
+        "sha256": "203082d901937cc944f9f00fc78cea0c441825d0530d69b34d55dd53cce0c567"
+      },
+      "final_manifest": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/final/tdc_v1/bioavailability_ma/direct/manifest.json",
+        "sha256": "9a8f5d427a4f766b0f944edb9518ddef40e2184913661a6560976d583ee05946"
+      }
+    }
+  ]
+}
