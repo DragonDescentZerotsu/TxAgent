@@ -53,4 +53,4 @@ reviews are provenance; obsolete materialized indices are not alternate defaults
 
 ### TDC BBB indirect ablation
 
-The [portable BBB ablation guide](tools/chembl_tool/tasks/bbb_martins/INDIRECT_ABLATION.md) provides frozen inputs, exact filtering/selection rules and the shared-runner commands. This test-tuned experiment compares Direct 50 with added balanced indirect budgets 20/50; original baselines remain unchanged.
+The [BBB guide and Codex handoff](tools/chembl_tool/tasks/bbb_martins/INDIRECT_ABLATION.md#codex-handoff) provide the official 406-row TDC test set and the current assay-aware filter. Historical test-tuned scores used the retired filter; the current filter has offline verification only. Optional ablations reuse the shared runner.

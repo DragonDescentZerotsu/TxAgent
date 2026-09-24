@@ -51,8 +51,10 @@ Balanced arms use the ID-deduplicated union of the original saved `both_fill`,
 `both_cap`, and `both_group` selections, not the complete retrieval index.
 Groups take turns in sorted order; within groups, donors follow similarity order
 and records use a deterministic seed-0 ID hash order. The donor cap applies across
-all groups. Each balanced20 selection is the prefix of balanced50. With historical filter v1, budget 50
-actually returns 24–50 records (median 48), with 158/406 queries reaching 50.
+all groups. Each balanced20 selection is the prefix of balanced50. With the current
+filter, balanced20 fills all 406 budgets; balanced50 returns 24–50 records, with
+168/406 queries reaching 50. Counts and offline checks are in the
+[filter receipt](../../../../artifacts/chembl_tool/bbb_indirect_20260924/filter_review.json).
 All arms use the same original Direct 50 cards and cached single-molecule prior.
 
 The two-stage `anchored0` / `anchored20` experiments remain historical ablations
@@ -62,51 +64,31 @@ Macro-F1 only 0.798533→0.802925, with one net additional correct prediction.
 
 ## Codex handoff
 
-Start here if integrating this change into Joseph's existing harness.
+Use the **official TDC ADMET-group BBB_Martins scaffold test set: 406 rows**,
+replacing Joseph's previous 530-row custom split. The exact rows and labels are
+`evaluation_rows` in `artifacts/chembl_tool/bbb_indirect_20260924/inputs.json.gz`.
+They match the upstream `admet_group/bbb_martins/test.csv` in row order, SMILES and
+labels. Keep all 406 rows, including duplicates; the 375-molecule overlap subset
+is not the full test set.
 
-1. Fetch `codex/bbb-indirect-review-20260924` and inspect its latest commit. The
-   relevant function is `prediction_only(record)` in `indirect_ablation.py`;
-   regression examples are in `tests/chembl_tool/common/test_bbb_indirect_ablation.py`.
-   There is one current implementation and no legacy filter flag.
-2. Apply this predicate only to indirect (L2+) evidence. Joseph's archived records
-   store the card under `evidence_row["prompt_evidence"]`; adapt with
-   `prediction_only({"card": evidence_row["prompt_evidence"]})`. Preserve
-   `assay_context`, `support_text`, `qualifying_conditions`, `extra_details`, and
-   the nested `experimental_details` assay metadata. Do not flatten away assay
-   qualifiers. True means exclude the card from this experiment, not delete it
-   from the source database. Query labels are never passed to the predicate.
-3. For the first isolated comparison, filter the existing selected 50 indirect
-   records without refilling. Preserve Direct IDs/text, cached prior, prompt,
-   query cohort, model, and generation settings; record the resulting budget and
-   dropped IDs. Rebuild visible aliases/citation indices after filtering, and use
-   fresh outputs. This isolates filtering without changing the donor selection.
-   Later candidate-pool filtering/refill is a separate selection change.
-4. Use the **official TDC ADMET-group BBB_Martins scaffold test set: 406 rows**,
-   replacing Joseph's previous 530-row custom split. The exact test rows and labels
-   are already included as `evaluation_rows` in
-   `artifacts/chembl_tool/bbb_indirect_20260924/inputs.json.gz` on this branch.
-   They match the upstream `admet_group/bbb_martins/test.csv` in row order,
-   SMILES and labels. Keep all 406 rows, including duplicates; the 375-molecule
-   overlap subset is not the full test set. This changes only which test set to
-   use; it does not prescribe changes to Joseph's harness or other run settings.
-5. Run the focused tests, then inspect the actual prepared requests before any
-   provider run. At minimum, preserve the archived PAMPA classifications
-   (#217 Record 22-1 and #472 Record 31-1), remove clearly computational-only
-   SwissADME/QikProp/BOILED-Egg cards, and retain real mixed measurements. The
-   prompt and 20/50 selector ablations in this guide are optional separate changes;
-   do not bundle them into the first filter-only comparison.
+For the filter, use the single maintained `prediction_only(record)` function in
+`indirect_ablation.py`. Joseph's indirect (L2+) cards can be passed directly as:
 
-```sh
-python -m pytest -q tests/chembl_tool/common/test_bbb_indirect_ablation.py
+```python
+prediction_only({"card": evidence_row["prompt_evidence"]})
 ```
 
-The filter is heuristic. An experimental classification can still be inapplicable
-to the query; this change does not resolve identity, disease-condition, or source
-validity issues. Historical score improvements are not evidence that this filter
-will improve Joseph's results. See the current offline receipt at
-`artifacts/chembl_tool/bbb_indirect_20260924/filter_review.json`.
+True means exclude the card from the selected evidence, not delete source data.
+Pass the complete card so assay context and nested experimental details remain
+available. The predicate does not use query labels. Focused regression examples
+are in `tests/chembl_tool/common/test_bbb_indirect_ablation.py`.
 
-## Quick start
+The filter has offline verification only, with no new LLM scores. It does not
+resolve identity, condition applicability or source validity. Joseph can keep his
+existing harness and run settings; the preparation and replay commands below are
+an optional way to reproduce our separate compact-prompt ablations.
+
+## Optional: reproduce our compact-prompt ablations
 
 Run from the repository root in the existing TxAgent Python environment (on
 node001/node002, activate `vllm`). The bundled inputs remove the dependency on the
@@ -174,7 +156,8 @@ identical predictions or metrics.
 
 Balanced20 corrects 24 and damages 16 decisions versus its matched Direct control.
 Balanced50 corrects 20 and damages 18 versus balanced20; median prompt tokens rise
-16,219→21,433.5. The budget increase has only a small observed benefit.
+16,219→21,433.5. These historical runs used 24–50 records (median 48), with
+158/406 queries reaching 50. The budget increase has only a small observed benefit.
 The prompt and compact rendering changed together; their Direct-only result
 regresses versus the original. Therefore the experiment supports an incremental
 indirect benefit under the new prompt, not a standalone benefit of the prompt.

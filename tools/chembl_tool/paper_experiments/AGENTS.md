@@ -180,4 +180,10 @@ not be paired across incompatible datasets.
 
 ## BBB indirect ablation maintenance (2026-09-24)
 
-The portable test-tuned BBB experiment uses `tasks/bbb_martins/indirect_ablation.py` for offline preparation and the family runner `--run-prepared` for inference. Reuse `common/record_budget.py` and `prepared_evidence.py`; do not duplicate selectors, clients or retry loops in task code. The source bundle and 2,436 completed output bindings are in `artifacts/chembl_tool/bbb_indirect_20260924/`. All 1,624 maintained one-pass requests match their historical messages/IDs. Preserve original baselines and frozen local scripts; the two-stage anchor arms are historical ablations. See [usage and evidence boundaries](../tasks/bbb_martins/INDIRECT_ABLATION.md).
+The BBB ablation reuses `common/record_budget.py` and the family runner
+`--run-prepared`; do not duplicate selectors, clients or retry loops. Only the
+current assay-aware filter is maintained. The 2,436 output bindings and 1,624
+request-parity checks in the portable artifacts describe historical v1 runs,
+not current-filter scores or input equivalence. The official 406-row test set,
+current filter status and optional commands are documented once in the
+[BBB guide and Codex handoff](../tasks/bbb_martins/INDIRECT_ABLATION.md#codex-handoff).

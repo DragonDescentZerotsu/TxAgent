@@ -934,7 +934,9 @@ they were rejected.
 
 ## TDC BBB test development, 2026-09-24
 
-Six completed arms, 406 queries each (2,436 new predictions), zero final failures.
+Historical results with the retired v1 filter: six completed arms, 406 queries
+each (2,436 predictions), zero final failures. The current assay-aware v2 filter
+has offline verification only; no current-filter LLM score is available.
 Matched compact-prompt Direct Macro-F1/accuracy: 0.762083/0.830049; balanced20:
 0.792696/0.849754; balanced50: 0.795046/0.854680. Budget 50 corrects 20 and damages
 18 versus 20, with 24–50 actual records (median 48). This is explicitly test-tuned;

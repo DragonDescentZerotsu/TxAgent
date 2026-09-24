@@ -4955,8 +4955,10 @@
         "prediction_filter_v2_status": "offline_verification_only_no_llm_scores",
         "prediction_filter_v2_audit": "artifacts/chembl_tool/bbb_indirect_20260924/filter_review.json",
         "review": "artifacts/chembl_tool/bbb_indirect_20260924/review.json",
-        "branch": "codex/bbb-indirect-review-20260924"
-      }
+        "branch": "codex/bbb-indirect-review-20260924",
+        "one_pass_input_parity_scope": "historical_v1_refactor_only"
+      },
+      "results_prediction_filter": "retired_v1"
     }
   }
 }

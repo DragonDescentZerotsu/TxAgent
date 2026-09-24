@@ -550,4 +550,4 @@ runs.
 
 ## Portable TDC BBB indirect ablation
 
-Use [the task guide](../tasks/bbb_martins/INDIRECT_ABLATION.md) and `artifacts/chembl_tool/bbb_indirect_20260924/` for the verified 406-query one-pass controls. Offline preparation is task-specific; `--run-prepared` uses the existing family runtime. Records, messages, source hashes and compact results are portable; historical two-stage ablations are reported separately. Registry: `budgeted_evidence_protocol.tdc_bbb_indirect_test_iteration_20260924`.
+The [task guide and Codex handoff](../tasks/bbb_martins/INDIRECT_ABLATION.md#codex-handoff) identify the official 406-row TDC test set and current assay-aware filter. The portable bundle is in `artifacts/chembl_tool/bbb_indirect_20260924/`. Historical one-pass and two-stage scores used the retired filter; the current filter has offline verification only. Preparation remains task-specific and `--run-prepared` uses the shared family runtime. Registry: `budgeted_evidence_protocol.tdc_bbb_indirect_test_iteration_20260924`.
