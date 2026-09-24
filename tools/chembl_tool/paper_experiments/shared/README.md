@@ -2,11 +2,26 @@
 
 ## Task prompts
 
-For the current DILI follow-up, use the short [DILI handoff](DILI_HANDOFF.md).
-The bundle now includes a minimal DILI correction: native `dili_risk` /
-`no_dili_risk` labels and matching provenance mapping, preserving the templates
-and JSON shape. It has been checked offline, not rerun. Other task definitions
-are unchanged; see the [other-task label audit](LABEL_ENCODING_AUDIT.md).
+The current bundle uses our native labels for the four risk tasks while keeping
+Joseph's `claims` + `final_prediction` format:
+
+| Task | Positive (1) | Negative (0) |
+|---|---|---|
+| DILI | `dili_risk` | `no_dili_risk` |
+| Ames | `positive` | `negative` |
+| Carcinogens | `positive` | `negative` |
+| Skin | `risk` | `no_risk` |
+
+Apply both `tasks.yaml` and the corresponding `provenance.json` label mappings
+to the existing harness. Its validator derives allowed values from the task
+configuration, and its mapper uses identity mappings for these four tasks.
+Keep `final_prediction` as the field name; use a fresh prompt identity/output
+root. The current bundle revision is `joseph_full_flat_v5_risk_native_labels.v1`.
+Templates, evidence rules and BBB/Bioavailability are unchanged. Offline checks
+passed; no model rerun or performance improvement is claimed.
+
+For the motivation and separate retrieval suggestions, see the
+[DILI handoff](DILI_HANDOFF.md) and [other-task label audit](LABEL_ENCODING_AUDIT.md).
 This is an adapter export, not a byte-identical copy of our local runtime prompt.
 
 `joseph_full_flat_v5/tasks.yaml` adds **Ames, Skin, DILI and Carcinogens** to

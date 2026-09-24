@@ -39,12 +39,12 @@ confirmed there. This does not certify every Skin trace as semantically correct.
 
 ## What to change
 
-Use the small [DILI patch](DILI_HANDOFF.md) now supplied in the shared bundle.
-For Ames and Carcinogens, the analogous follow-up is native `positive` /
-`negative` labels with matching allowed values and identity mappings. Skin's
-native pair is `risk` / `no_risk`; the shared naming risk exists, but this screen
-has not established a final Skin inversion. Only DILI is changed in this patch.
-Keep the two-field JSON schema and existing parser; use a fresh prompt identity
+The current [shared bundle](README.md#task-prompts) now uses native labels for
+all four risk tasks: DILI `dili_risk / no_dili_risk`, Ames and Carcinogens
+`positive / negative`, and Skin `risk / no_risk`. Skin's naming ambiguity is
+removed even though this screen did not confirm a final Skin inversion.
+The two-field JSON format and existing parser are retained; task definitions
+and provenance mappings must be applied together with a fresh prompt identity
 and output root. Do not rewrite historical scores by parsing reasoning text.
 
 This issue alone does not explain an Indirect-vs-Direct performance gap. The
@@ -54,5 +54,5 @@ No LLM rerun or causal performance improvement is claimed.
 
 The compact [audit receipt](label_encoding_audit_20260924.json) records exact
 archive paths, profiles, file hashes, label mappings and excerpts, plus the
-DILI offline validation result. It also lists every screened result leaf, so
+historical DILI-only offline validation result at `3f1e7b27`. It also lists every screened result leaf, so
 collaborators can locate these traces without relying on query index alone.

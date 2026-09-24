@@ -1,5 +1,5 @@
 {
-  "version": "joseph_full_flat_v5_dili_native_labels.v1",
+  "version": "joseph_full_flat_v5_risk_native_labels.v1",
   "upstream_commit": "3c36c2640ada12119f4a74a9bdf8511b0d7b8f6e",
   "status": "offline_validated_not_evaluated",
   "supports_tasks": [
@@ -23,13 +23,13 @@
     },
     "skin_reaction": {
       "local_field": "skin_reaction_prediction",
-      "pass": "risk",
-      "fail": "no_risk"
+      "risk": "risk",
+      "no_risk": "no_risk"
     },
     "ames": {
       "local_field": "ames_prediction",
-      "pass": "positive",
-      "fail": "negative"
+      "positive": "positive",
+      "negative": "negative"
     },
     "dili": {
       "local_field": "dili_prediction",
@@ -38,14 +38,14 @@
     },
     "carcinogens": {
       "local_field": "carcinogenicity_prediction",
-      "pass": "positive",
-      "fail": "negative"
+      "positive": "positive",
+      "negative": "negative"
     }
   },
   "files": {
     "system.jinja": "cc8c69665b49b8a1e35ddd5a3358439acd55a644d62adaab8d46a71e02a062d3",
     "user.jinja": "c68a84b2ca55738e6618a73e0dc1d6c285efe46743a5e278b73716341c7127b6",
-    "tasks.yaml": "147029a3df7513f5a9338c636f48aa46d8a1adc5122a2202f1c3a03f488f35b0"
+    "tasks.yaml": "205230c6d08b397c3916c0ee1dae4e2ed0672881fa5ca4bf6715a041e9f19f32"
   },
   "task_contract_sha256": {
     "bbb_martins": "6b269936725d993f112ec0406d515dceb687624705dd54eb4ee3fe09fd2394d9",
@@ -57,8 +57,8 @@
   },
   "revision": {
     "date": "2026-09-24",
-    "supersedes_commit": "945380eb3a75d4d756006ce369e6d5ca4d8505fe",
-    "scope": "DILI output labels and mapping only; system/user templates and other task definitions unchanged.",
+    "supersedes_commit": "3f1e7b2784ea974d95fd1241b25b362809c67735",
+    "scope": "Extend the DILI native-label correction to Ames, Carcinogens and Skin. System/user templates, JSON fields and scientific evidence rules unchanged; BBB and Bioavailability unchanged.",
     "evaluation_status": "offline_validated_not_evaluated"
   }
 }

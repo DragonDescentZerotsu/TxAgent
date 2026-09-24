@@ -14,11 +14,12 @@ These indices are zero-based. This is a model encoding error, not a reversed
 Python mapping, and it affects both arms.
 
 The corrected [task configuration](joseph_full_flat_v5/tasks.yaml) and matching
-[provenance mapping](joseph_full_flat_v5/provenance.json) are now supplied as
-`joseph_full_flat_v5_dili_native_labels.v1`. Only DILI label instructions, allowed
-values and mapping change; `system.jinja`, `user.jinja`, the two-field JSON shape
-and all other task definitions are unchanged. Both native labels have passed
-offline rendering and the existing parser-function checks; no LLM rerun yet.
+[provenance mapping](joseph_full_flat_v5/provenance.json) are supplied as
+`joseph_full_flat_v5_risk_native_labels.v1`. It includes this DILI fix and now
+also uses native labels for Ames, Carcinogens and Skin; see the
+[complete label table](README.md#task-prompts). The two templates, scientific
+evidence rules and `claims` + `final_prediction` shape stay the same. Offline
+rendering and existing parser-function checks passed; no LLM rerun yet.
 
 Keep `claims` + `final_prediction`, but use native DILI labels:
 
@@ -75,12 +76,13 @@ after YAML parsing to Joseph's upstream-v2 configuration at `5c3a6ae2`; his
 system/user templates have other changes. This was not a byte-identical export
 of our local runtime prompt. Do not regenerate a new DILI bundle with the old
 portable exporter unchanged. The original shared assets remain available at commit
-`945380eb`; the current bundle contains the explicit DILI-only revision.
+`945380eb`; the current bundle contains the explicit four-task native-label revision.
 
 The [other-task trace check](LABEL_ENCODING_AUDIT.md) also confirms final label
 inversions in Ames and Carcinogens. Skin has a self-corrected intermediate
 inversion, but no final inversion was confirmed in this screening. The current
-patch changes DILI only; the other tasks still use the old pass/fail contract.
+bundle also removes pass/fail from Ames, Carcinogens and Skin; their native
+label values match our local runtime.
 
 Evidence: [completed trace archive](https://github.com/DragonDescentZerotsu/TxAgent/tree/4b4489c1598ba0fc428308b930d0ca71a90f2c84/outputs/paper/assay_transfer_harness/joseph/trace_archives/final_test_20260923_completed_v2).
 Both arms have 402 successful predictions; Macro-F1 is 0.6145 Direct versus

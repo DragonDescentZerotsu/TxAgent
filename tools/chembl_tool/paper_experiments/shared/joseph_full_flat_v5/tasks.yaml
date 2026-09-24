@@ -64,7 +64,9 @@ skin_reaction:
   endpoint_name: skin sensitization or contact allergy
   label_scope: skin_sensitization_contact_allergy.v2
   task_instructions:
-  - Predict pass for risk and fail for no_risk under the task definition.
+  - Predict risk for skin sensitization/contact allergy and no_risk for its absence
+    under the task definition.
+  - Ensure final_prediction agrees with your overall evidence assessment.
   - Only direct sensitization outcomes and transferable, coherent sensitization AOP
     evidence count as experimental evidence for the binary label.
   - Treat structural haptenation/activation analysis as a prior, not as a substitute
@@ -77,8 +79,8 @@ skin_reaction:
     alert as proof of no_risk.
   - Do not count repeated records and cards as independent evidence.
   prediction_field: final_prediction
-  positive_prediction: pass
-  negative_prediction: fail
+  positive_prediction: risk
+  negative_prediction: no_risk
   required_fields:
   - claims
   - final_prediction
@@ -97,7 +99,9 @@ ames:
     and metabolic activation condition
   label_scope: ames_bacterial_reverse_mutation.v1
   task_instructions:
-  - Predict pass for positive and fail for negative under the task definition.
+  - Predict positive for a positive bacterial reverse-mutation outcome and negative
+    for a negative outcome under the query strain panel and activation condition.
+  - Ensure final_prediction agrees with your overall evidence assessment.
   - Predict the bacterial reverse-mutation result only under the query's exact reported
     strain panel and metabolic activation condition; do not invent missing strains
     or activation conditions.
@@ -125,8 +129,8 @@ ames:
     tested. Preserve the affected molecule and co-treatment context when judging relevance
     to the query.'
   prediction_field: final_prediction
-  positive_prediction: pass
-  negative_prediction: fail
+  positive_prediction: positive
+  negative_prediction: negative
   required_fields:
   - claims
   - final_prediction
@@ -186,7 +190,9 @@ carcinogens:
   endpoint_name: source-supported carcinogenicity in the reported organism group
   label_scope: carcinogens_starling_only_five_organism_groups.v1
   task_instructions:
-  - Predict pass for positive and fail for negative under the task definition.
+  - Predict positive for source-supported carcinogenicity and negative for its
+    absence in the reported organism group under the task definition.
+  - Ensure final_prediction agrees with your overall evidence assessment.
   - Predict source-supported carcinogenicity in the query's reported organism group.
     Rodent pools rats, mice and other explicitly identified rodents; human, dog, monkey
     and rabbit remain separate.
@@ -231,8 +237,8 @@ carcinogens:
     tumor promotion. Assess scoped positive and negative findings symmetrically without
     requiring universal safety.'
   prediction_field: final_prediction
-  positive_prediction: pass
-  negative_prediction: fail
+  positive_prediction: positive
+  negative_prediction: negative
   required_fields:
   - claims
   - final_prediction
