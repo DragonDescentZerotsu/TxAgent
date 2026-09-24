@@ -4572,6 +4572,85 @@
   },
   "cleanup_history": "tools/chembl_tool/paper_experiments/receipts/dili_carcinogens_cleanup_history.json",
   "diagnostics": {
+    "tdc_dili_prompt_20260924": {
+      "status": "retained_tdc_only_post_test_diagnostic",
+      "date": "2026-09-24",
+      "scope": "TDC DILI only; not Gold-v1 or other tasks; not a replacement for frozen paper baselines",
+      "source_commit": "e524503d33ca9fabcc691636eb260caa56bc7165",
+      "test_rows": 96,
+      "prompt": "tools/chembl_tool/paper_experiments/shared/tdc_dili_system.txt",
+      "prompt_sha256": "2a24b8f74188581698a1733de483cff9947c31c25a47f323684606d0592e4af7",
+      "handoff": "tools/chembl_tool/paper_experiments/shared/TDC_DILI_HANDOFF.md",
+      "root": "outputs/paper/joseph_tdc_dili_v2_audit_20260924",
+      "retained_replay": "outputs/paper/joseph_tdc_dili_v2_audit_20260924/prompt_replay",
+      "metrics": {
+        "historical_direct": {
+          "n": 96,
+          "correct": 80,
+          "accuracy": 0.8333333333333334,
+          "macro_f1": 0.8297117516629712,
+          "tn": 33,
+          "fp": 13,
+          "fn": 3,
+          "tp": 47
+        },
+        "historical_mixed": {
+          "n": 96,
+          "correct": 74,
+          "accuracy": 0.7708333333333334,
+          "macro_f1": 0.7604355716878403,
+          "tn": 27,
+          "fp": 19,
+          "fn": 3,
+          "tp": 47
+        },
+        "retained": {
+          "n": 96,
+          "correct": 76,
+          "accuracy": 0.7916666666666666,
+          "macro_f1": 0.7840755735492577,
+          "tn": 29,
+          "fp": 17,
+          "fn": 3,
+          "tp": 47
+        },
+        "rejected_mechanism": {
+          "n": 96,
+          "correct": 73,
+          "accuracy": 0.7604166666666666,
+          "macro_f1": 0.7483760683760684,
+          "tn": 26,
+          "fp": 20,
+          "fn": 3,
+          "tp": 47
+        },
+        "rejected_concise": {
+          "n": 96,
+          "correct": 75,
+          "accuracy": 0.78125,
+          "macro_f1": 0.7741682536126359,
+          "tn": 29,
+          "fp": 17,
+          "fn": 4,
+          "tp": 46
+        }
+      },
+      "combined_run": false,
+      "validation": "288 replay predictions; schema, visible references, actual request parity and served model verified",
+      "records_per_query": {
+        "direct": 10,
+        "indirect": 50
+      },
+      "parent_disjoint": "0 excluded-identity matches among 4800 selected indirect records in source snapshot",
+      "current_local_entrypoints": {
+        "prepare_or_resume_retained": "outputs/paper/joseph_tdc_dili_v2_audit_20260924/prompt_replay/run.py [--run] [--timeout-s 240]",
+        "score_saved_only": "outputs/paper/joseph_tdc_dili_v2_audit_20260924/prompt_replay/summarize.py [--root SAVED_REPLAY_ROOT]"
+      },
+      "rejected_variant_source": "outputs/paper/joseph_tdc_dili_v2_audit_20260924/prompt_replay/ablations/reproduction_source.zip",
+      "comparison": "outputs/paper/joseph_tdc_dili_v2_audit_20260924/prompt_replay/ablations/comparison.json",
+      "maintenance_receipt": "outputs/paper/joseph_tdc_dili_v2_audit_20260924/prompt_replay/maintenance_review.json",
+      "limitations": "Retained 0.784076 beats historical Mixed but not Direct; two combined edits, historical controls, auto routing and post-test selection."
+    },
     "functional_group_tree_20260913": {
       "status": "complete",
       "kind": "posthoc_selected_error_diagnostic_not_benchmark",

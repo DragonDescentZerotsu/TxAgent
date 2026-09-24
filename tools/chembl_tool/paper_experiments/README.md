@@ -19,6 +19,18 @@ small verified validation/test CSV tables, and the canonical plotter command.
 The portable CSV mode needs no private inference traces. Add results by extending
 the CSV and its `curve_settings` metadata.
 
+## TDC DILI prompt and local replay maintenance
+
+The [TDC-only handoff](shared/TDC_DILI_HANDOFF.md) provides the retained complete
+system prompt, score-display change and completed results. Reuse the collaborator's
+existing harness. Gold-v1 and other tasks keep their existing task prompts.
+Registry `diagnostics.tdc_dili_prompt_20260924` owns this post-test diagnostic.
+Its local `prompt_replay/run.py` only prepares/resumes the retained 96-query replay;
+`summarize.py --root <saved-root>` scores saved requests without rebuilding inputs
+or rewriting configuration. These require local archived traces; they are not new
+paper runners. Rejected A/B generation switches are retired; their source is
+archived beside frozen prompts/results. The combined arm was not run.
+
 ## Paper scope
 
 The retained paper matrix has six result families and two visibility controls:

@@ -1,6 +1,7 @@
 # DILI: small changes to try
 
-For the current **TDC DILI-only** request, use [the scoped handoff](TDC_DILI_HANDOFF.md).
+For the retained **TDC DILI-only** prompt and completed replay results, use
+[the scoped handoff](TDC_DILI_HANDOFF.md). This override does not apply to Gold-v1.
 The Gold-v1 suggestions below are background, not instructions to launch more runs.
 
 Use the existing harness and the same 402-row Gold-v1 scaffold test. This is a

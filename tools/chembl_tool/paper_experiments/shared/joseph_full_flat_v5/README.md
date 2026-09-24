@@ -22,3 +22,8 @@ system/user templates have evolved. Apply the small task/mapping changes there
 without replacing those templates. Our local runtime retains task-specific
 prediction fields; this bundle retains `final_prediction`. The prior renderer
 supports six tasks and excludes `exact_chembl_evidence_assessment`.
+
+The retained [TDC DILI system override](../TDC_DILI_HANDOFF.md) is a separate,
+benchmark-specific asset. Its hash and evaluated scores live in
+`diagnostics.tdc_dili_prompt_20260924`, not this general bundle's `provenance.json`.
+The six task contracts and template hashes above remain unchanged.

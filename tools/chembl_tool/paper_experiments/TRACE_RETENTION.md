@@ -1,6 +1,6 @@
 # Paper trace and artifact retention
 
-Updated: 2026-09-14.
+Updated: 2026-09-24.
 
 Retain evidence needed to reproduce the paper result families, not every smoke,
 retry, or abandoned method branch. The canonical allowlist of result roots is
@@ -11,6 +11,14 @@ Current retrieval inputs are independently locked by
 `current_starling_retrieval.json`.
 
 ## Retain
+
+For `diagnostics.tdc_dili_prompt_20260924`, retain the pinned Joseph v2 source
+requests/retrievals, retained prompt and all 288 replay requests/responses, retry
+and invocation receipts, scores, paired comparisons and maintenance receipt.
+A/B variants are rejected diagnostics, not active prompt options; keep their
+frozen system files and `reproduction_source.zip` for provenance. Do not remove
+failed-attempt traces or overwrite the historical controls. The registry owns
+local paths; the shared TDC handoff owns collaborator integration and scope.
 
 For `replicate_suites.l3_parent_disjoint_progressive_test_20260914`, retain the
 retrieval diagnostic, mixed-policy prepared contexts, exact prefix-reuse receipts,

@@ -1,10 +1,21 @@
 # Current paper results and artifact status
 
-Updated: 2026-09-14.
+Updated: 2026-09-24.
 
 `current_conditioned_results.json` is the authority for result roots and freshness.
 Source reconstruction is documented in `CURRENT_STARLING_RETRIEVAL.md`; the retrieval
 protocol is in `ASSAY_LEVEL_RETRIEVAL.md`.
+
+TDC DILI now retains the conditional-transfer prompt with hidden transfer-score
+lines **for TDC only**. On the same 96-query Joseph v2 cohort, Macro-F1 is
+0.784076 (76 correct), versus historical Mixed 0.760436 (74) and Direct 0.829712
+(80). The mechanism/concise ablations scored 0.748376 (73) / 0.774168 (75) and
+were rejected; the combined arm was not run. All 288 replay outputs are verified.
+The identity repair is already present in the inspected v2 records. These are
+post-test diagnostics with ten L1 plus fifty indirect records, not the fixed
+50/50 paper baseline. See [the current TDC handoff](shared/TDC_DILI_HANDOFF.md)
+and registry `diagnostics.tdc_dili_prompt_20260924` for assets, exact metrics,
+local entrypoints and retention. Gold-v1 and other tasks are unchanged.
 
 ## Skin primary-source rebinding replay (2026-09-14)
 
