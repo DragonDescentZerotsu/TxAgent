@@ -22,8 +22,9 @@ include datasets in the wheel. For a lightweight checkout that avoids the large
 data files:
 
 ```sh
-git clone --filter=blob:none --sparse https://github.com/DragonDescentZerotsu/TxAgent.git
+git clone --depth 1 --filter=blob:none --sparse https://github.com/DragonDescentZerotsu/TxAgent.git
 cd TxAgent
+git sparse-checkout init --cone
 git sparse-checkout set dili_score
 python -m pip install .
 ```
