@@ -1,0 +1,38 @@
+{
+  "schema_version": "ames_test_provisional_snapshot.v1",
+  "status": "provisional",
+  "snapshot_utc": "2026-09-24T13:44:55Z",
+  "labels": {
+    "gold_v1": {
+      "path": "data/gold_labels/Ames/v1/scaffold/test_molecule_condition_labels.jsonl",
+      "sha256": "1f74a0d12d4200f33254f4494b8fe280e4e4ce08b61e7a941adc3c9b240d66dd",
+      "rows": 274
+    },
+    "tdc_v2": {
+      "path": "data/gold_labels/TDC/Ames/v2/original/test_molecule_condition_labels.jsonl",
+      "sha256": "868b6a6be84579d0e202e7907df09066f147b05d7ba1701812d4615d3d31c07d",
+      "rows": 1457
+    }
+  },
+  "source_runs": {
+    "gold_direct": ["outputs/paper/assay_transfer_harness/joseph/ames_direct_v3_full_test_20260924_v1/gold_v1"],
+    "gold_direct_plus_indirect": [
+      "outputs/paper/assay_transfer_harness/joseph/ames_gold_indirect_best_full_test_upstream_v3_20260924_v1/gold_v1",
+      "outputs/paper/assay_transfer_harness/joseph/ames_gold_indirect_best_full_test_upstream_v3_openrouter_resume_20260924_v1/gold_v1",
+      "outputs/paper/assay_transfer_harness/joseph/ames_gold_indirect_query151_parallel_a_20260924_v1/gold_v1",
+      "outputs/paper/assay_transfer_harness/joseph/ames_gold_indirect_query151_parallel_b_20260924_v1/gold_v1"
+    ],
+    "tdc_direct": [
+      "outputs/paper/assay_transfer_harness/joseph/ames_direct_exactscore_full_test_upstream_v3_20260924_v1/tdc_v2",
+      "outputs/paper/assay_transfer_harness/joseph/ames_direct_exactscore_full_test_upstream_v3_openrouter_resume_20260924_v1/tdc_v2"
+    ],
+    "tdc_direct_plus_indirect": ["outputs/paper/assay_transfer_harness/joseph/tdc_v2_ames_indirect_best_full_test_upstream_v3_20260924_v1/tdc_v2"]
+  },
+  "snapshot_pins": {
+    "gold_direct_completion_sha256": "154e88a8e8c4d5292be830de18df665343731c801ae888712a7861dcffd1a038",
+    "tdc_direct_recovery_metrics_sha256": "3f5e5b18c8eb1328da57ae5f85a41accbaa23ee7ca271206379fd27fc188a0f6",
+    "gold_indirect_recovery_matrix_sha256_at_snapshot": "b755d91bad1f76a380c5d8e99a0397d1e8b32f7f25050b89131f0906358fd7ec",
+    "tdc_indirect_matrix_sha256_at_snapshot": "e83e4c0489fecdb8835c750bc150fc8c723da11ef379e96b970f00d68e91ee2f"
+  },
+  "note": "Live indirect matrices may change after this snapshot; their hashes identify the state read for this report. Raw inference traces are not copied into this compact analysis artifact."
+}

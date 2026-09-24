@@ -1,0 +1,7 @@
+benchmark	retrieval	cohort	valid_responses	test_total	macro_f1	accuracy	tn	fp	fn	tp	status
+gold_v1	direct	full_test	274	274	0.708578	0.748175	52	26	43	153	complete
+gold_v1	direct	indirect_valid_queries	273	274	0.711416	0.750916	52	26	42	153	matched_comparison
+gold_v1	direct_plus_indirect	available_valid	273	274	0.773887	0.816850	52	26	24	171	provisional
+tdc_v2	direct	full_test	1457	1457	0.782289	0.792725	418	169	133	737	complete_response_coverage_combined_recovery
+tdc_v2	direct	indirect_valid_queries	1363	1457	0.783357	0.792370	401	159	124	679	matched_comparison
+tdc_v2	direct_plus_indirect	available_valid	1363	1457	0.800735	0.811445	395	165	92	711	provisional
