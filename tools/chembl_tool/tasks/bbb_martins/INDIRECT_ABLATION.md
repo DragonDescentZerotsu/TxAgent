@@ -64,6 +64,9 @@ Macro-F1 only 0.798533→0.802925, with one net additional correct prediction.
 
 ## Codex handoff
 
+For the separate Gold-v1 DILI review, see the short
+[DILI handoff](../../paper_experiments/shared/DILI_HANDOFF.md).
+
 Use the **official TDC ADMET-group BBB_Martins scaffold test set: 406 rows**,
 replacing Joseph's previous 530-row custom split. The exact rows and labels are
 `evaluation_rows` in `artifacts/chembl_tool/bbb_indirect_20260924/inputs.json.gz`.

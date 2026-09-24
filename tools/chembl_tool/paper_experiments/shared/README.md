@@ -2,13 +2,18 @@
 
 ## Task prompts
 
+For the current DILI follow-up, use the short [DILI handoff](DILI_HANDOFF.md).
+The old bundle below uses portable `pass`/`fail` labels that caused confirmed
+DILI output inversions. Our local DILI runtime uses native labels; the bundle
+is a historical adapter export, not a byte-identical runtime prompt.
+
 `joseph_full_flat_v5/tasks.yaml` adds **Ames, Skin, DILI and Carcinogens** to
 Joseph’s BBB/Bioavailability task definitions. `system.jinja` and `user.jinja`
 use Joseph v5 (`3c36c264`) prose and his `claims` + `final_prediction` output.
 The prior renderer supports all six tasks and excludes the retired ChEMBL field.
 `provenance.json` contains the positive/negative label mapping in both directions.
-See the bundle README for the remaining runner/data registration step; this is
-a prompt handoff, not a second inference implementation.
+The six-task integration now exists on Joseph's branch. See the bundle README
+for its historical scope; this directory does not implement another runner.
 
 ## Reproduce the curves
 
