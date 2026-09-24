@@ -582,10 +582,9 @@ def test_hybrid_incomplete_level_keeps_all_records_and_hides_scores(tmp_path: Pa
     assert {row["ranking_method"] for row in records} == {HIDDEN_PARTIAL_METHOD}
     assert all("transfer_likelihood" not in row and row["assay_rank"] is None for row in records)
     assert later["q1"]["L2"]["allow_shortfall"] is False
-    assert audit["query_audits"]["q1"]["L2"] | {
-        "selection_mode": "scored_assay_then_unscored_morgan",
-        "prompt_assay_scores": "hidden",
-    } == audit["query_audits"]["q1"]["L2"]
+    level_audit = audit["query_audits"]["q1"]["L2"]
+    assert level_audit["selection_mode"] == "scored_assay_then_unscored_morgan"
+    assert level_audit["prompt_assay_scores"] == "hidden"
 
 
 def test_hybrid_complete_small_level_keeps_assay_scores(tmp_path: Path) -> None:
