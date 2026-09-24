@@ -1,0 +1,237 @@
+{
+  "archive_commit": "4b4489c1598ba0fc428308b930d0ca71a90f2c84",
+  "archive_root": "outputs/paper/assay_transfer_harness/joseph/trace_archives/final_test_20260923_completed_v2",
+  "scope": "Gold-v1 only; all 9 available Ames, Carcinogens and Skin result leaves, including alternate profiles, screened for explicit pass/fail semantic inversions. Candidate conclusions, raw output and mapping inspected; Skin recovery conclusions also inspected. This is not an exhaustive semantic review.",
+  "successful_outputs": 3147,
+  "leaves": [
+    {
+      "family": "safety_direct_full_test_upstream_v2_relaunch_20260923_v2",
+      "branch": "gold_ames",
+      "task": "ames",
+      "experiment": "ames__ga050_mc010_label010",
+      "n_total": "274",
+      "n_successful": "274",
+      "n_failed_runs": "0",
+      "n_recovered": "2",
+      "macro_f1": "0.726353",
+      "accuracy": "0.773723",
+      "metrics_sha256": "50917cee6a8e3f83e99c0539ed6a58fa0f1e881e5d76659c1c00189184f9eca8",
+      "metrics_path": "_batches/safety_direct_full_test_upstream_v2_relaunch_20260923_v2/gold_ames/ga050_mc010_label010/with_query_prior/k10_m0_20260923_gold_ames_test_v2_relaunch_v2/ames/ames__ga050_mc010_label010/metrics.json"
+    },
+    {
+      "family": "safety_direct_full_test_upstream_v2_relaunch_20260923_v2",
+      "branch": "gold_carcinogens",
+      "task": "carcinogens",
+      "experiment": "carcinogens__ga075_mc000_label000",
+      "n_total": "469",
+      "n_successful": "469",
+      "n_failed_runs": "0",
+      "n_recovered": "8",
+      "macro_f1": "0.532669",
+      "accuracy": "0.560768",
+      "metrics_sha256": "7fe0e064fdd498342ec996c9197814531786c88af8dcb6e05474501dc965c2e7",
+      "metrics_path": "_batches/safety_direct_full_test_upstream_v2_relaunch_20260923_v2/gold_carcinogens/ga075_mc000_label000/with_query_prior/k10_m0_20260923_gold_carcinogens_test_v2_relaunch_v2/carcinogens/carcinogens__ga075_mc000_label000/metrics.json"
+    },
+    {
+      "family": "safety_direct_ga100_mc010_label025_full_test_v2_20260923_v1",
+      "branch": "gold_carcinogens",
+      "task": "carcinogens",
+      "experiment": "carcinogens__ga100_mc010_label025",
+      "n_total": "469",
+      "n_successful": "469",
+      "n_failed_runs": "0",
+      "n_recovered": "8",
+      "macro_f1": "0.528807",
+      "accuracy": "0.558635",
+      "metrics_sha256": "603d654ba0e9902c40a836351092e06c4fd0676bf301eaa23224b67b39ef0a68",
+      "metrics_path": "_batches/safety_direct_ga100_mc010_label025_full_test_v2_20260923_v1/gold_carcinogens/ga100_mc010_label025/with_query_prior/k10_m0_20260923_gold_carcinogens_ga100_mc010_label025_test_v2/carcinogens/carcinogens__ga100_mc010_label025/metrics.json"
+    },
+    {
+      "family": "safety_direct_joint_full_test_upstream_v2_v27_20260923_v1",
+      "branch": "gold_ames_dili_mixed",
+      "task": "ames",
+      "experiment": "ames__ga100_mc010_sr050_sd010_ld025",
+      "n_total": "274",
+      "n_successful": "274",
+      "n_failed_runs": "0",
+      "n_recovered": "15",
+      "macro_f1": "0.749338",
+      "accuracy": "0.791971",
+      "metrics_sha256": "a726537e94f51b12c2fb482936d6ad6f3c5128c4865cd7846a5e72641432d742",
+      "metrics_path": "_batches/safety_direct_joint_full_test_upstream_v2_v27_20260923_v1/gold_ames_dili_mixed/ga100_mc010_sr050_sd010_ld025/with_query_prior/k10_m0_20260923_safety_gold_ames_dili_mixed_v27/ames/ames__ga100_mc010_sr050_sd010_ld025/metrics.json"
+    },
+    {
+      "family": "safety_direct_joint_full_test_upstream_v2_v27_20260923_v1",
+      "branch": "gold_carcinogens_direct",
+      "task": "carcinogens",
+      "experiment": "carcinogens__ga075_mc010_label025",
+      "n_total": "469",
+      "n_successful": "469",
+      "n_failed_runs": "0",
+      "n_recovered": "192",
+      "macro_f1": "0.536465",
+      "accuracy": "0.5629",
+      "metrics_sha256": "5d84729ff075853561d1acb542b553223ee2b6d348c99647a0d86b92c42fabdb",
+      "metrics_path": "_batches/safety_direct_joint_full_test_upstream_v2_v27_20260923_v1/gold_carcinogens_direct/ga075_mc010_label025/with_query_prior/k10_m0_20260923_safety_gold_carcinogens_direct_ga075_mc010_label025_v27/carcinogens/carcinogens__ga075_mc010_label025/metrics.json"
+    },
+    {
+      "family": "safety_direct_joint_full_test_upstream_v2_v27_20260923_v1",
+      "branch": "gold_carcinogens_mixed",
+      "task": "carcinogens",
+      "experiment": "carcinogens__ga100_mc010_sr050_sd010_ld025",
+      "n_total": "469",
+      "n_successful": "469",
+      "n_failed_runs": "0",
+      "n_recovered": "17",
+      "macro_f1": "0.647253",
+      "accuracy": "0.705757",
+      "metrics_sha256": "ebabf240997cf3f8b431f3dc710449bf537b866d24167ae957eb65e0b37c418e",
+      "metrics_path": "_batches/safety_direct_joint_full_test_upstream_v2_v27_20260923_v1/gold_carcinogens_mixed/ga100_mc010_sr050_sd010_ld025/with_query_prior/k10_m0_20260923_safety_gold_carcinogens_mixed_v27/carcinogens/carcinogens__ga100_mc010_sr050_sd010_ld025/metrics.json"
+    },
+    {
+      "family": "skin_direct_vs_joint_full_test_upstream_v2_20260923_v1",
+      "branch": "gold_direct",
+      "task": "skin_reaction",
+      "experiment": "skin_reaction__ga100_mc010_label025",
+      "n_total": "241",
+      "n_successful": "241",
+      "n_failed_runs": "0",
+      "n_recovered": "1",
+      "macro_f1": "0.59932",
+      "accuracy": "0.705394",
+      "metrics_sha256": "feacc737c604445385d365c0461e6ce319c45c7e0313392def578ef09376a33d",
+      "metrics_path": "_batches/skin_direct_vs_joint_full_test_upstream_v2_20260923_v1/gold_direct/ga100_mc010_label025/with_query_prior/k10_m0_20260923_skin_gold_direct_test_v2/skin_reaction/skin_reaction__ga100_mc010_label025/metrics.json"
+    },
+    {
+      "family": "skin_direct_vs_joint_full_test_upstream_v2_20260923_v1",
+      "branch": "gold_mixed_r2",
+      "task": "skin_reaction",
+      "experiment": "skin_reaction__ga075_mc010_sr050_sd010_ld025",
+      "n_total": "241",
+      "n_successful": "241",
+      "n_failed_runs": "0",
+      "n_recovered": "11",
+      "macro_f1": "0.615042",
+      "accuracy": "0.713693",
+      "metrics_sha256": "0e71cce94789378a73ce551daf834b56af3d6527a3980819d0212b069c1a7ea2",
+      "metrics_path": "_batches/skin_direct_vs_joint_full_test_upstream_v2_20260923_v1/gold_mixed_r2/ga075_mc010_sr050_sd010_ld025/with_query_prior/k10_m0_20260923_skin_gold_mixed_test_v2_r2/skin_reaction/skin_reaction__ga075_mc010_sr050_sd010_ld025/metrics.json"
+    },
+    {
+      "family": "skin_direct_vs_joint_full_test_upstream_v2_20260923_v1",
+      "branch": "gold_mixed_r2",
+      "task": "skin_reaction",
+      "experiment": "skin_reaction__ga100_mc010_sr050_sd010_ld025",
+      "n_total": "241",
+      "n_successful": "241",
+      "n_failed_runs": "0",
+      "n_recovered": "11",
+      "macro_f1": "0.573571",
+      "accuracy": "0.684647",
+      "metrics_sha256": "4626973d026dd79f2aa1ee85ad5ff0affc71ebd76179e7bd5e9a42f9a4efa98b",
+      "metrics_path": "_batches/skin_direct_vs_joint_full_test_upstream_v2_20260923_v1/gold_mixed_r2/ga100_mc010_sr050_sd010_ld025/with_query_prior/k10_m0_20260923_skin_gold_mixed_test_v2_r2/skin_reaction/skin_reaction__ga100_mc010_sr050_sd010_ld025/metrics.json"
+    }
+  ],
+  "confirmed_examples_are_lower_bounds_not_error_rates": true,
+  "cases": [
+    {
+      "task": "ames",
+      "family": "safety_direct_full_test_upstream_v2_relaunch_20260923_v2",
+      "branch": "gold_ames",
+      "experiment": "ames__ga050_mc010_label010",
+      "index": 115,
+      "recovery": true,
+      "archive_path": "_batches/safety_direct_full_test_upstream_v2_relaunch_20260923_v2/gold_ames/ga050_mc010_label010/with_query_prior/k10_m0_20260923_gold_ames_test_v2_relaunch_v2/ames/ames__ga050_mc010_label010/recovery/runs/ames__ga050_mc010_label010__local_recovery__local_flash_idx00115/final_reasoning_output.json",
+      "sha256": "9a5efbb9e1a0c5e0e986fdb45276cf1c4aceb18c975292afcef09c8afd2b6bec",
+      "gold": 0,
+      "pred_label": 1,
+      "prediction_mapping": {
+        "schema_version": "portable_prediction_mapping.v1",
+        "task": "ames",
+        "portable_prediction": "pass",
+        "native_prediction": "positive",
+        "mapping_sha256": "2d7f227fa2846d18b135b84bff1fd1e6b9bbd6adee344e326b060b6699df19cb"
+      },
+      "assessment": "confirmed_final_inversion",
+      "reasoning_excerpt": "the prediction would be \"pass\" (negative for mutagenicity)."
+    },
+    {
+      "task": "carcinogens",
+      "family": "safety_direct_full_test_upstream_v2_relaunch_20260923_v2",
+      "branch": "gold_carcinogens",
+      "experiment": "carcinogens__ga075_mc000_label000",
+      "index": 290,
+      "recovery": true,
+      "archive_path": "_batches/safety_direct_full_test_upstream_v2_relaunch_20260923_v2/gold_carcinogens/ga075_mc000_label000/with_query_prior/k10_m0_20260923_gold_carcinogens_test_v2_relaunch_v2/carcinogens/carcinogens__ga075_mc000_label000/recovery/runs/carcinogens__ga075_mc000_label000__local_recovery__local_flash_idx00290/final_reasoning_output.json",
+      "sha256": "d89d76e9198bc32e4ede137b5bc6ffa66efdc7a390522bc84b71e4eb44818872",
+      "gold": 1,
+      "pred_label": 0,
+      "prediction_mapping": {
+        "schema_version": "portable_prediction_mapping.v1",
+        "task": "carcinogens",
+        "portable_prediction": "fail",
+        "native_prediction": "negative",
+        "mapping_sha256": "2d7f227fa2846d18b135b84bff1fd1e6b9bbd6adee344e326b060b6699df19cb"
+      },
+      "assessment": "confirmed_final_inversion",
+      "reasoning_excerpt": "The final prediction is \"fail\" meaning the molecule is predicted to be carcinogenic."
+    },
+    {
+      "task": "carcinogens",
+      "family": "safety_direct_ga100_mc010_label025_full_test_v2_20260923_v1",
+      "branch": "gold_carcinogens",
+      "experiment": "carcinogens__ga100_mc010_label025",
+      "index": 271,
+      "recovery": true,
+      "archive_path": "_batches/safety_direct_ga100_mc010_label025_full_test_v2_20260923_v1/gold_carcinogens/ga100_mc010_label025/with_query_prior/k10_m0_20260923_gold_carcinogens_ga100_mc010_label025_test_v2/carcinogens/carcinogens__ga100_mc010_label025/recovery/runs/carcinogens__ga100_mc010_label025__local_recovery__local_flash_idx00271/final_reasoning_output.json",
+      "sha256": "174d74f0c1460286f17e8f58c9d24e96f34a816ec12aa7e9c13efebc43c080e7",
+      "gold": 0,
+      "pred_label": 1,
+      "prediction_mapping": {
+        "schema_version": "portable_prediction_mapping.v1",
+        "task": "carcinogens",
+        "portable_prediction": "pass",
+        "native_prediction": "positive",
+        "mapping_sha256": "2d7f227fa2846d18b135b84bff1fd1e6b9bbd6adee344e326b060b6699df19cb"
+      },
+      "assessment": "confirmed_final_inversion",
+      "reasoning_excerpt": "the final prediction should be \"pass\" (i.e., not a carcinogen)."
+    },
+    {
+      "task": "skin_reaction",
+      "family": "skin_direct_vs_joint_full_test_upstream_v2_20260923_v1",
+      "branch": "gold_mixed_r2",
+      "experiment": "skin_reaction__ga075_mc010_sr050_sd010_ld025",
+      "index": 107,
+      "recovery": false,
+      "archive_path": "_batches/skin_direct_vs_joint_full_test_upstream_v2_20260923_v1/gold_mixed_r2/ga075_mc010_sr050_sd010_ld025/with_query_prior/k10_m0_20260923_skin_gold_mixed_test_v2_r2/skin_reaction/skin_reaction__ga075_mc010_sr050_sd010_ld025/runs/skin_reaction__ga075_mc010_sr050_sd010_ld025_idx00107/final_reasoning_output.json",
+      "sha256": "57a17ad4dfbdbf94db89d486041b38a5ab33367a0f0fd70717743866c690136c",
+      "gold": 1,
+      "pred_label": 0,
+      "prediction_mapping": {
+        "schema_version": "portable_prediction_mapping.v1",
+        "task": "skin_reaction",
+        "portable_prediction": "fail",
+        "native_prediction": "no_risk",
+        "mapping_sha256": "aa3e3e83d1c83db7c878fc4a2e984d9de6932697bbdb8f3f247b28de405599e5"
+      },
+      "assessment": "self_corrected_not_final_inversion",
+      "reasoning_excerpt": "\"fail\" = non-sensitizer. This is unusual but explicit."
+    }
+  ],
+  "dili_prompt_validation": {
+    "status": "passed",
+    "scope": "Offline template rendering and isolated existing collaborator validation/mapping/scoring functions; not a full harness or LLM run.",
+    "collaborator_commit": "5c3a6ae257ffe73ec2e57199ff494c9e11ed2082",
+    "changed_tasks": [
+      "dili"
+    ],
+    "templates_byte_identical": true,
+    "other_task_configs_and_mappings_unchanged": true,
+    "file_hashes_verified": true,
+    "native_labels_validate_map_and_score": {
+      "dili_risk": 1,
+      "no_dili_risk": 0
+    },
+    "pass_fail_rejected_by_allowed_values_and_mapper": true
+  }
+}

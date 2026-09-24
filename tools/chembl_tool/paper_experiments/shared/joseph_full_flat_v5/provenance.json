@@ -1,5 +1,5 @@
 {
-  "version": "joseph_full_flat_v5_adapted.v1",
+  "version": "joseph_full_flat_v5_dili_native_labels.v1",
   "upstream_commit": "3c36c2640ada12119f4a74a9bdf8511b0d7b8f6e",
   "status": "offline_validated_not_evaluated",
   "supports_tasks": [
@@ -33,8 +33,8 @@
     },
     "dili": {
       "local_field": "dili_prediction",
-      "pass": "dili_risk",
-      "fail": "no_dili_risk"
+      "dili_risk": "dili_risk",
+      "no_dili_risk": "no_dili_risk"
     },
     "carcinogens": {
       "local_field": "carcinogenicity_prediction",
@@ -45,7 +45,7 @@
   "files": {
     "system.jinja": "cc8c69665b49b8a1e35ddd5a3358439acd55a644d62adaab8d46a71e02a062d3",
     "user.jinja": "c68a84b2ca55738e6618a73e0dc1d6c285efe46743a5e278b73716341c7127b6",
-    "tasks.yaml": "2b9f25f223c6d192aee53dbe86fb494e68b2ff4d0985466bc59837e55ad72168"
+    "tasks.yaml": "147029a3df7513f5a9338c636f48aa46d8a1adc5122a2202f1c3a03f488f35b0"
   },
   "task_contract_sha256": {
     "bbb_martins": "6b269936725d993f112ec0406d515dceb687624705dd54eb4ee3fe09fd2394d9",
@@ -54,5 +54,11 @@
     "ames": "ca0b0fb1de292051a7ed18486e88ac56f43b787615136720017f32fc036f8477",
     "dili": "9bcc70608674ce5a7e6b5e2678e84675dbace96c1f34ebfded93bf4df8b1e5d0",
     "carcinogens": "efa3a0f20a40de368262ded9bf12cb8479507421f68fc6e768d965a7c37e94ae"
+  },
+  "revision": {
+    "date": "2026-09-24",
+    "supersedes_commit": "945380eb3a75d4d756006ce369e6d5ca4d8505fe",
+    "scope": "DILI output labels and mapping only; system/user templates and other task definitions unchanged.",
+    "evaluation_status": "offline_validated_not_evaluated"
   }
 }

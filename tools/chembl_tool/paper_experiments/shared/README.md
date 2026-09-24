@@ -3,9 +3,11 @@
 ## Task prompts
 
 For the current DILI follow-up, use the short [DILI handoff](DILI_HANDOFF.md).
-The old bundle below uses portable `pass`/`fail` labels that caused confirmed
-DILI output inversions. Our local DILI runtime uses native labels; the bundle
-is a historical adapter export, not a byte-identical runtime prompt.
+The bundle now includes a minimal DILI correction: native `dili_risk` /
+`no_dili_risk` labels and matching provenance mapping, preserving the templates
+and JSON shape. It has been checked offline, not rerun. Other task definitions
+are unchanged; see the [other-task label audit](LABEL_ENCODING_AUDIT.md).
+This is an adapter export, not a byte-identical copy of our local runtime prompt.
 
 `joseph_full_flat_v5/tasks.yaml` adds **Ames, Skin, DILI and Carcinogens** to
 Joseph’s BBB/Bioavailability task definitions. `system.jinja` and `user.jinja`

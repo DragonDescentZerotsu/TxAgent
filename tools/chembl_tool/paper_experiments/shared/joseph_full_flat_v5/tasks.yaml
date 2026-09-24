@@ -144,7 +144,9 @@ dili:
   endpoint_name: clinically meaningful human drug-induced liver injury
   label_scope: dili_conditioned_or_source_molecule_outcome.v1
   task_instructions:
-  - Predict pass for dili_risk and fail for no_dili_risk under the task definition.
+  - Predict dili_risk for clinically meaningful human DILI risk and no_dili_risk
+    for its absence under the task definition.
+  - Ensure final_prediction agrees with your overall evidence assessment.
   - Predict clinically meaningful human drug-induced liver injury under the query's
     reported exposure and population when these are supplied.
   - When the query has no reported external condition, assess the molecule-level DILI
@@ -165,8 +167,8 @@ dili:
   - Keep mixed outcomes, predictions, missing context and uncertainty explicit. Family
     placement does not establish a new experiment or independent evidence support.
   prediction_field: final_prediction
-  positive_prediction: pass
-  negative_prediction: fail
+  positive_prediction: dili_risk
+  negative_prediction: no_dili_risk
   required_fields:
   - claims
   - final_prediction
