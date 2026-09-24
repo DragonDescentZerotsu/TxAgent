@@ -1,0 +1,58 @@
+{
+  "schema_version": "joseph_final_collection.v1",
+  "created_at_utc": "2026-09-24T09:54:27.483275+00:00",
+  "status": "complete",
+  "arms": [
+    {
+      "path": "gold_v1/bbb_martins/direct",
+      "manifest_sha256": "6d8039401d7f859ee463a86db42fe88b7a992a7ed334406a0aadd7c66d03c71c",
+      "n_queries": 393,
+      "macro_f1": 0.673178,
+      "mixed_route": true
+    },
+    {
+      "path": "gold_v1/bbb_martins/direct_plus_indirect",
+      "manifest_sha256": "8f47740e34dc82867642f4dc7090b6c074edb493337a1081afd9500e4d48f59e",
+      "n_queries": 393,
+      "macro_f1": 0.72534,
+      "mixed_route": true
+    },
+    {
+      "path": "gold_v1/bioavailability_ma/direct",
+      "manifest_sha256": "761729107dba3c31c3beeb2617a387b2f4c68047ecf293123660a4d2e2ae8850",
+      "n_queries": 269,
+      "macro_f1": 0.768091,
+      "mixed_route": true
+    },
+    {
+      "path": "gold_v1/bioavailability_ma/direct_plus_indirect",
+      "manifest_sha256": "5cd7b0aeaf979c59cb9f0db91b2e1b3fc578ca7c09932677394d6e9393f085dd",
+      "n_queries": 269,
+      "macro_f1": 0.86134,
+      "mixed_route": true
+    },
+    {
+      "path": "gold_v1/carcinogens/direct",
+      "manifest_sha256": "0b61b14667780a748601c5bd314d7e644ee42a4e4c32cec686656c091f482ef7",
+      "n_queries": 469,
+      "macro_f1": 0.532669,
+      "mixed_route": true
+    },
+    {
+      "path": "gold_v1/carcinogens/direct_plus_indirect",
+      "manifest_sha256": "00b41a4d1109b7a4ea3c9c586a5304340a8f08ceed03211dfafcb3ad8170de8b",
+      "n_queries": 469,
+      "macro_f1": 0.647253,
+      "mixed_route": true
+    },
+    {
+      "path": "tdc_v1/bioavailability_ma/direct_plus_indirect",
+      "manifest_sha256": "bec85665f60f7929bd59cdeab3d11e650eb442d7f9b27fba6a2bd2d14ad45e34",
+      "n_queries": 128,
+      "macro_f1": 0.830732,
+      "mixed_route": false
+    }
+  ],
+  "n_queries": 2390,
+  "note": "Gold local recovery responses use a different served model route; query_provenance.tsv identifies every route."
+}

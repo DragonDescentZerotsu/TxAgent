@@ -28,6 +28,18 @@ outputs/chembl_tool/tasks/skin_reaction/*
 !outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/*
 !outputs/chembl_tool/tasks/skin_reaction/evidence_library/*
 
+# The canonical Joseph final collection is shipped as a verified Git bundle.
+!outputs/paper/
+outputs/paper/*
+!outputs/paper/assay_transfer_harness/
+outputs/paper/assay_transfer_harness/*
+!outputs/paper/assay_transfer_harness/joseph/
+outputs/paper/assay_transfer_harness/joseph/*
+!outputs/paper/assay_transfer_harness/joseph/final/
+outputs/paper/assay_transfer_harness/joseph/final/*
+!outputs/paper/assay_transfer_harness/joseph/final/collection.json
+!outputs/paper/assay_transfer_harness/joseph/final/git_bundle/
+
 # Live evidence-library payloads are local restores/builds. Track CURRENT
 # pointers and portable release parts under data/artifacts instead.
 data/evidence_libraries/*/v*/

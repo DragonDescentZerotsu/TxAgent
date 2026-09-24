@@ -1,0 +1,8 @@
+benchmark	task	selection	profile	n_successful	n_total	macro_f1	accuracy	original_queries	local_recovery_queries	predecessor_queries	final_arm
+gold_v1	bbb_martins	direct	ga075_mc010_label025	393	393	0.673178	0.770992	392	1	0	outputs/paper/assay_transfer_harness/joseph/final/gold_v1/bbb_martins/direct
+gold_v1	bbb_martins	direct_plus_indirect	ga100_mc025_sr025_sd025_ld010	393	393	0.72534	0.821883	389	4	0	outputs/paper/assay_transfer_harness/joseph/final/gold_v1/bbb_martins/direct_plus_indirect
+gold_v1	bioavailability_ma	direct	ga050_mc010_label035	269	269	0.768091	0.832714	260	9	0	outputs/paper/assay_transfer_harness/joseph/final/gold_v1/bioavailability_ma/direct
+gold_v1	bioavailability_ma	direct_plus_indirect	ga075_mc010_sr050_sd010_ld025	269	269	0.86134	0.888476	262	7	0	outputs/paper/assay_transfer_harness/joseph/final/gold_v1/bioavailability_ma/direct_plus_indirect
+gold_v1	carcinogens	direct	ga075_mc000_label000	469	469	0.532669	0.560768	461	8	0	outputs/paper/assay_transfer_harness/joseph/final/gold_v1/carcinogens/direct
+gold_v1	carcinogens	direct_plus_indirect	ga100_mc010_sr050_sd010_ld025	469	469	0.647253	0.705757	452	17	0	outputs/paper/assay_transfer_harness/joseph/final/gold_v1/carcinogens/direct_plus_indirect
+tdc_v1	bioavailability_ma	direct_plus_indirect	ga075_mc025_sr025_sd010_ld025	128	128	0.830732	0.882812	87	0	41	outputs/paper/assay_transfer_harness/joseph/final/tdc_v1/bioavailability_ma/direct_plus_indirect
