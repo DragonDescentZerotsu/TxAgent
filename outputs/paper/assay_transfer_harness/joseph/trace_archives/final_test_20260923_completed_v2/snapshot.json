@@ -1,0 +1,24 @@
+{
+  "schema_version": "joseph_final_test_trace_snapshot.v2",
+  "started_utc": "2026-09-24T06:31:55.772499+00:00",
+  "finished_utc": "2026-09-24T06:40:09.900153+00:00",
+  "source_repository": "/vast/projects/myatskar/design-documents/joseph/TxAgent",
+  "source_branch_commit": "5c3a6ae257ffe73ec2e57199ff494c9e11ed2082",
+  "predecessor": "final_test_20260923_snapshot_v1",
+  "file_count": 79825,
+  "source_bytes": 7471776139,
+  "families": [
+    "bbb_gold_direct_ga125_mc000_label025_test_v2_20260923_v1",
+    "bbb_oral_direct_mixed_full_test_upstream_v2_20260923_v1",
+    "safety_direct_full_test_upstream_v2_relaunch_20260923_v2",
+    "safety_direct_ga100_mc010_label025_full_test_v2_20260923_v1",
+    "safety_direct_joint_full_test_upstream_v2_v27_20260923_v1",
+    "skin_direct_vs_joint_full_test_upstream_v2_20260923_v1"
+  ],
+  "branches": 24,
+  "result_leaves": 31,
+  "successful_queries": 9755,
+  "reconciled_queries": 340,
+  "compressed_parts": 8,
+  "compressed_bytes": 380959454
+}
