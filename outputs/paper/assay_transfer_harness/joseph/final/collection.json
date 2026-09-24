@@ -46,13 +46,42 @@
       "mixed_route": true
     },
     {
+      "path": "gold_v1/dili/direct",
+      "manifest_sha256": "d194a6e5dc6cbcbd646dadc8e4a3d8903dc7a8655b8b6e9f38c7ae1d4a724c59",
+      "n_queries": 402,
+      "macro_f1": 0.627614,
+      "mixed_route": true
+    },
+    {
+      "path": "gold_v1/dili/direct_plus_indirect",
+      "manifest_sha256": "c5eed1c569f2a5886ab4832f90ece8dcf6515c83e1e42c8e2bb6bc12f08cb579",
+      "n_queries": 402,
+      "macro_f1": 0.650819,
+      "mixed_route": true
+    },
+    {
       "path": "tdc_v1/bioavailability_ma/direct_plus_indirect",
       "manifest_sha256": "bec85665f60f7929bd59cdeab3d11e650eb442d7f9b27fba6a2bd2d14ad45e34",
       "n_queries": 128,
       "macro_f1": 0.830732,
       "mixed_route": false
+    },
+    {
+      "path": "tdc_v1/skin_reaction/direct",
+      "manifest_sha256": "ba6c12963cdcb1e6b93e6aee6a315caae6f06823e2b5eeba25bd955e9fd59ccb",
+      "n_queries": 82,
+      "macro_f1": 0.677825,
+      "mixed_route": false
+    },
+    {
+      "path": "tdc_v1/skin_reaction/direct_plus_indirect",
+      "manifest_sha256": "534fc718ce2962e1dac78126288d0cf3b3ed0d88079c9b113741ec668b90badc",
+      "n_queries": 82,
+      "macro_f1": 0.621518,
+      "mixed_route": false
     }
   ],
-  "n_queries": 2390,
-  "note": "Gold local recovery responses use a different served model route; query_provenance.tsv identifies every route."
+  "n_queries": 3358,
+  "note": "Gold local recovery responses use a different served model route; query_provenance.tsv identifies every route.",
+  "updated_at_utc": "2026-09-24T10:43:10.927122+00:00"
 }
