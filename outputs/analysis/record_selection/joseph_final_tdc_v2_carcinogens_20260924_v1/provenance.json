@@ -1,0 +1,74 @@
+{
+  "schema_version": "joseph_final_study.v1",
+  "status": "complete",
+  "benchmark": "tdc_v2",
+  "task": "carcinogens",
+  "collection_arms": 16,
+  "collection_queries": 4080,
+  "inputs": {
+    "collection": {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/collection.json",
+      "sha256": "152ffa524706e36310a384384be4b32fd5795f38ecfea89fbaf9cb543b9e8f2f"
+    },
+    "direct_source_manifest": {
+      "path": "outputs/paper/assay_transfer_harness/joseph/tdc_v2_carcinogens_direct_only_test_20260924_v1/ga075_mc000_label010/with_query_prior/k10_m0_20260924_tdc_v2_test_r1/carcinogens/carcinogens__ga075_mc000_label010/manifest.json",
+      "sha256": "eb255c9902b4cd646b3d0ac381c0f88ece01df9331bcdb6ffbc3276667c91d81"
+    },
+    "direct_source_metrics": {
+      "path": "outputs/paper/assay_transfer_harness/joseph/tdc_v2_carcinogens_direct_only_test_20260924_v1/ga075_mc000_label010/with_query_prior/k10_m0_20260924_tdc_v2_test_r1/carcinogens/carcinogens__ga075_mc000_label010/metrics.json",
+      "sha256": "c40e28f4b2669b328b4835d2787e7d4f6790cc22a79371fbcdfdae346ed64178"
+    },
+    "direct_source_predictions": {
+      "path": "outputs/paper/assay_transfer_harness/joseph/tdc_v2_carcinogens_direct_only_test_20260924_v1/ga075_mc000_label010/with_query_prior/k10_m0_20260924_tdc_v2_test_r1/carcinogens/carcinogens__ga075_mc000_label010/predictions.jsonl",
+      "sha256": "dbd18335801d2473165f78afe01933c3298af70d61adbe7cc5cb0f4a5b10afbb"
+    },
+    "direct_selection": {
+      "path": "outputs/analysis/record_selection/tdc_v2_carcinogens_direct_only_test_20260924_v1/tdc_v2/direct/ga075_mc000_label010/carcinogens/manifest.json",
+      "sha256": "332466376806f79cf7824afce16fc2d16960d409fc2eff829b1bccfae3e82231"
+    },
+    "direct_final_manifest": {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/tdc_v2/carcinogens/direct/manifest.json",
+      "sha256": "a9c2b90f32b896e9382958344423d48aa9c088262e06667f62263ca27d8d8a8d"
+    },
+    "direct_final_metrics": {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/tdc_v2/carcinogens/direct/metrics.json",
+      "sha256": "c40e28f4b2669b328b4835d2787e7d4f6790cc22a79371fbcdfdae346ed64178"
+    },
+    "direct_query_provenance": {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/tdc_v2/carcinogens/direct/query_provenance.tsv",
+      "sha256": "d56e10b7f4293be1f61e59ab9b3d6ee25bc0019dd325c1ee06ea03c32b0f6929"
+    },
+    "direct_plus_indirect_source_manifest": {
+      "path": "outputs/paper/assay_transfer_harness/joseph/tdc_v2_carcinogens_best_indirect_test_20260924_v1/ga125_mc025_sr025_sd025_ld025_rd025/with_query_prior/k10_joint50_20260924_test_r1/carcinogens/carcinogens__ga125_mc025_sr025_sd025_ld025_rd025/manifest.json",
+      "sha256": "17c961905ab69c9dd4639d375b1e03906746ca8e2a52853c39dd0a6ee74373a9"
+    },
+    "direct_plus_indirect_source_metrics": {
+      "path": "outputs/paper/assay_transfer_harness/joseph/tdc_v2_carcinogens_best_indirect_test_20260924_v1/ga125_mc025_sr025_sd025_ld025_rd025/with_query_prior/k10_joint50_20260924_test_r1/carcinogens/carcinogens__ga125_mc025_sr025_sd025_ld025_rd025/metrics.json",
+      "sha256": "3b9a8c58b7291aed28d6e19e35e857920198da5a627393c0f2ba278542dd29f3"
+    },
+    "direct_plus_indirect_source_predictions": {
+      "path": "outputs/paper/assay_transfer_harness/joseph/tdc_v2_carcinogens_best_indirect_test_20260924_v1/ga125_mc025_sr025_sd025_ld025_rd025/with_query_prior/k10_joint50_20260924_test_r1/carcinogens/carcinogens__ga125_mc025_sr025_sd025_ld025_rd025/predictions.jsonl",
+      "sha256": "026f4959910cb55897d086bb6057e3c3cb5cc2c7095443088ebae8189d1f1c6b"
+    },
+    "direct_plus_indirect_selection": {
+      "path": "outputs/analysis/record_selection/tdc_v2_carcinogens_best_indirect_test_20260924_v1/selection/ga125_mc025_sr025_sd025_ld025_rd025/manifest.json",
+      "sha256": "02bcc66ced1671c62b1fc4980790a2af74a7a04c41e17f7d7d33f277348a0f24"
+    },
+    "direct_plus_indirect_final_manifest": {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/tdc_v2/carcinogens/direct_plus_indirect/manifest.json",
+      "sha256": "288a1d94a209bad00a0fd4b7b4fd2df18e9e3283693f126539a954556dae4168"
+    },
+    "direct_plus_indirect_final_metrics": {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/tdc_v2/carcinogens/direct_plus_indirect/metrics.json",
+      "sha256": "3b9a8c58b7291aed28d6e19e35e857920198da5a627393c0f2ba278542dd29f3"
+    },
+    "direct_plus_indirect_query_provenance": {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/tdc_v2/carcinogens/direct_plus_indirect/query_provenance.tsv",
+      "sha256": "ced04903f25adf12f83a2c4ac26fffb6f5638406d990320d8e2c48fffb2a93b5"
+    }
+  },
+  "outputs": {
+    "results_tsv_sha256": "5d2aec7be9c491347aab9ea79848e253a550fdc1eaf20058ea905198cbedbc7b",
+    "report_sha256": "e78d661834524629e463b1139af8bf301898faefb4152273642381e4b8b619ab"
+  }
+}

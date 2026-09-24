@@ -1,0 +1,22 @@
+{
+  "schema_version": "joseph_final_tdc_v2_bbb_filtered_report.v1",
+  "status": "complete",
+  "collection_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/final/collection.json",
+  "collection_sha256": "ab86b085e74dec6b2d794d4ed2259c480bf5c9960fec89ff5ac884cdd6e91df8",
+  "arms": {
+    "direct": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/final/tdc_v2/bbb_martins/direct",
+      "manifest_sha256": "29839c46dc92df5b84762d2425906034e94ff01e90638fb47a48e3b62350db6e",
+      "source_batch": "outputs/paper/assay_transfer_harness/joseph/tdc_v2_bbb_best_direct_test_upstream_v3_20260924_v1/ga075_mc010_label025/with_query_prior/k10_m0_20260924_test_v1/bbb_martins/bbb_martins__ga075_mc010_label025"
+    },
+    "direct_plus_indirect": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/final/tdc_v2/bbb_martins/direct_plus_indirect",
+      "manifest_sha256": "b258df06ceb51150f12c54d916398cb9eb6e5dac025540778b76464bf6d0938a",
+      "source_batch": "outputs/paper/assay_transfer_harness/joseph/tdc_v2_bbb_filtered_winner_test_upstream_v3_20260924_v1/ga075_mc025_sr025_sd025_ld025_rd025/with_query_prior/k10_m0_test406_20260924_v1/bbb_martins/bbb_martins__ga075_mc025_sr025_sd025_ld025_rd025"
+    }
+  },
+  "files": {
+    "results.tsv": "c3ba22579398d1fea6df8d47da4552a0bccd7da57c1e8bf7178bd30d51fecece",
+    "report.md": "2ce2ce9b3fe93c1bf7c603434953c7e3a96c4f8717dd44ed4e3a96d8bae6fa1c"
+  }
+}

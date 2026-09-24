@@ -1,0 +1,3 @@
+selection	n_queries	macro_f1	accuracy	tn	fp	fn	tp
+direct	406	0.865673	0.913793	64	14	21	307
+direct_plus_indirect	406	0.880814	0.928571	60	18	11	317

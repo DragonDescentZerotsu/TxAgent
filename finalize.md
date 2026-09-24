@@ -1,11 +1,12 @@
 # Final Joseph full-test collection
 
 The [final collection](outputs/paper/assay_transfer_harness/joseph/final/collection.json)
-contains 14 complete arms and 3,968 successful test queries. It includes Gold
+contains 18 complete arms and 4,892 successful test queries. It includes Gold
 BBB, Oral Bioavailability, Carcinogens, DILI, and Skin Reaction direct and
-direct+indirect arms; and TDC Oral Bioavailability and Skin Reaction direct and
-direct+indirect arms. Each arm includes predictions, metrics, per-query run artifacts
-and traces, a combined trace, a query-level model/provider ledger, and
+direct+indirect arms; TDC Oral Bioavailability and Skin Reaction direct and
+direct+indirect arms; and TDC-v2 BBB and Carcinogens direct and direct+indirect arms.
+Each arm includes predictions, metrics, per-query run artifacts and traces,
+a combined trace, a query-level model/provider ledger, and
 hash-pinned source and copied-file manifests. The original batches remain at
 their source paths.
 
@@ -22,6 +23,18 @@ actual served model and provider.
 
 The [recovery snapshot](outputs/analysis/record_selection/full_test_upstream_v2_recovery_20260924_v1/report.md)
 is a dated selection aid; final arm manifests pin their installed source leaves.
+The [TDC-v2 Carcinogens report](outputs/analysis/record_selection/joseph_final_tdc_v2_carcinogens_20260924_v1/report.md)
+and [TSV](outputs/analysis/record_selection/joseph_final_tdc_v2_carcinogens_20260924_v1/results.tsv)
+cover the two new 56-query arms: direct macro-F1 0.695652 and
+direct+indirect macro-F1 0.726830. OpenRouter upstream routes differed between
+these arms; their query-level provenance records the actual route.
+
+The [TDC-v2 BBB report](outputs/analysis/record_selection/joseph_final_tdc_v2_bbb_filtered_20260924_v1/report.md)
+and [TSV](outputs/analysis/record_selection/joseph_final_tdc_v2_bbb_filtered_20260924_v1/results.tsv)
+cover the 406-query direct and filtered direct+indirect arms: macro-F1 0.865673
+and 0.880814, respectively. The indirect selector removed prediction-only
+records before its joint 50-record selection.
+
 The full collection, including traces, is preserved in Git as
 [compressed parts](outputs/paper/assay_transfer_harness/joseph/final/git_bundle/README.md).
 
@@ -45,24 +58,34 @@ final arms unchanged; a replacement needs a reviewed successor collection.
    query count, and update `updated_at_utc`. Save the result report, numerical
    TSV, and compact provenance under `outputs/analysis/record_selection/<study-id>/`;
    update this page's counts and links.
-4. Check the collection and every arm before rebuilding the Git bundle:
+4. Check the collection index and fully verify only new arms before rebuilding
+   the Git bundle. Existing published arms must retain their collection entries
+   and manifest hashes; the archive rebuild reads their files once.
 
    ```bash
    python - <<'PY'
-   import csv, hashlib, json
+   import csv, hashlib, json, subprocess
    from pathlib import Path
 
    final = Path('outputs/paper/assay_transfer_harness/joseph/final')
    sha = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
    collection = json.loads((final / 'collection.json').read_text())
+   prior = json.loads(subprocess.check_output([
+       'git', 'show', 'HEAD:outputs/paper/assay_transfer_harness/joseph/final/collection.json'
+   ]))
+   published = {a['path']: a for a in prior['arms']}
    assert len({a['path'] for a in collection['arms']}) == len(collection['arms'])
    assert [a['path'] for a in collection['arms']] == sorted(a['path'] for a in collection['arms'])
    assert collection['n_queries'] == sum(a['n_queries'] for a in collection['arms'])
+   assert published.keys() <= {a['path'] for a in collection['arms']}
    for arm in collection['arms']:
        path = final / arm['path']
+       assert sha(path / 'manifest.json') == arm['manifest_sha256']
+       if arm['path'] in published:
+           assert arm == published[arm['path']]
+           continue
        manifest = json.loads((path / 'manifest.json').read_text())
        metrics = json.loads((path / 'metrics.json').read_text())
-       assert sha(path / 'manifest.json') == arm['manifest_sha256']
        assert manifest['status'] == 'complete'
        assert manifest['n_queries'] == arm['n_queries']
        assert metrics['n_total'] == metrics['n_successful'] == arm['n_queries']
