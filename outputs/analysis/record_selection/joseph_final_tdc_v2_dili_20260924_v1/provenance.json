@@ -1,0 +1,50 @@
+{
+  "schema_version": "joseph_final_study.v1",
+  "status": "complete",
+  "benchmark": "tdc_v2",
+  "task": "dili",
+  "collection_arms": 20,
+  "collection_queries": 5084,
+  "inputs": {
+    "direct_final_manifest": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/final/tdc_v2/dili/direct/manifest.json",
+      "sha256": "f1501d27952637ba7d2f2e252bc1cc62fcac63c7ba9fad7978e2dbf0751f9f71"
+    },
+    "direct_final_metrics": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/final/tdc_v2/dili/direct/metrics.json",
+      "sha256": "053a8391c5cdfd684b078a25aa7329c827405ee6c28fabc6a556f2e50d786b5b"
+    },
+    "direct_query_provenance": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/final/tdc_v2/dili/direct/query_provenance.tsv",
+      "sha256": "46176442edc19b2837c5c770aabe7c5f6caf9dd265d790b4b892bb8a5ed5e38e"
+    },
+    "direct_source_selection": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/dili_tdc_v2_direct_winner_test_upstream_v3_20260924_v1/tdc_v2/direct/ga075_mc025_label000/dili/manifest.json",
+      "sha256": "4347d586f08fdeeeb485325d42d741251e229ad5943988e8b90925b10780aa7b"
+    },
+    "direct_plus_indirect_final_manifest": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/final/tdc_v2/dili/direct_plus_indirect/manifest.json",
+      "sha256": "9fbf3d090615c42d30694cdeb92f5555c2eba3bd2cb8ba04815f2fff07608450"
+    },
+    "direct_plus_indirect_final_metrics": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/final/tdc_v2/dili/direct_plus_indirect/metrics.json",
+      "sha256": "adf6ffdbdb839c8f0f9cb840db9bba7609efd10e1c9ddb31289056e4c921d668"
+    },
+    "direct_plus_indirect_query_provenance": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/final/tdc_v2/dili/direct_plus_indirect/query_provenance.tsv",
+      "sha256": "d09f427aefd0431a01ddd76d9ff1165ca18e328c3a13e13a65b74014f19c6aed"
+    },
+    "direct_plus_indirect_source_selection": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/test_winner/ga050_mc025_sr025_sd025_ld025_rd025/manifest.json",
+      "sha256": "3f9a23ea9a807181a5e1133fc6a9e7ed8f161b19154f906696467a045280dd53"
+    },
+    "collection": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/final/collection.json",
+      "sha256": "818c4ddee3a390c277e8bf2853e7a5e93cfbd147e07bafaeba4759871bbb5d1e"
+    },
+    "test_analysis": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/test_result_manifest.json",
+      "sha256": "a3a573c66b6651a2eda74591ba8024132ba835c7698e4f2ed7365448467b1b6c"
+    }
+  }
+}

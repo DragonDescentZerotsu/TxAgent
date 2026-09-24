@@ -1,0 +1,3 @@
+subset	queries	eligible_parents_per_query	excluded_exact	excluded_same_connectivity	normalizer	source_path	source_sha256
+valid	47	100	26	35	rdkit_fragment_parent.v2	/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/valid/PARENT_UNIVERSE.json	00691b346c4829cbe1792aecfb91f37b307edf781c4f90624c819f0047cbec6b
+test	96	100	55	41	rdkit_fragment_parent.v2	/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/test/PARENT_UNIVERSE.json	7edb94e222913f13763b5d7c5da80dbc708a59ba5870a2cf9cafb4e8c76591cc

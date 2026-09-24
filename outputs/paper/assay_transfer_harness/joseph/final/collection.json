@@ -128,9 +128,23 @@
       "n_queries": 56,
       "macro_f1": 0.72683,
       "mixed_route": false
+    },
+    {
+      "path": "tdc_v2/dili/direct",
+      "manifest_sha256": "f1501d27952637ba7d2f2e252bc1cc62fcac63c7ba9fad7978e2dbf0751f9f71",
+      "n_queries": 96,
+      "macro_f1": 0.829711,
+      "mixed_route": true
+    },
+    {
+      "path": "tdc_v2/dili/direct_plus_indirect",
+      "manifest_sha256": "9fbf3d090615c42d30694cdeb92f5555c2eba3bd2cb8ba04815f2fff07608450",
+      "n_queries": 96,
+      "macro_f1": 0.760436,
+      "mixed_route": false
     }
   ],
-  "n_queries": 4892,
+  "n_queries": 5084,
   "note": "Gold local recovery responses use a different served model route; query_provenance.tsv identifies every route.",
-  "updated_at_utc": "2026-09-24T12:14:21.904040+00:00"
+  "updated_at_utc": "2026-09-24T12:28:44.091723+00:00"
 }

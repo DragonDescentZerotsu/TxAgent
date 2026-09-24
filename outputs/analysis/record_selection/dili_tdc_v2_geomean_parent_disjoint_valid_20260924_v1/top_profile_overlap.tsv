@@ -1,0 +1,4 @@
+profile_a	profile_b	queries	median_shared_records_of_50	minimum_shared_records	maximum_shared_records
+ga050_mc025_sr025_sd025_ld025_rd025	ga075_mc025_sr075_sd025_ld025_rd025	47	31	23	38
+ga050_mc025_sr025_sd025_ld025_rd025	ga075_mc035_sr075_sd035_ld035_rd035	47	30	18	38
+ga075_mc025_sr075_sd025_ld025_rd025	ga075_mc035_sr075_sd035_ld035_rd035	47	38	28	46

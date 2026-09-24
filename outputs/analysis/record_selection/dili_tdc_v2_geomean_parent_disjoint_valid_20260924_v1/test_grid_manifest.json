@@ -1,0 +1,22 @@
+{
+  "schema_version": "tdc_v2_dili_geomean_mixed_grid.v1",
+  "status": "complete",
+  "kind": "mixed",
+  "benchmark": "tdc_v2",
+  "subset": "test",
+  "tasks": [
+    "dili"
+  ],
+  "profile_count": 1,
+  "profiles": [
+    {
+      "name": "ga050_mc025_sr025_sd025_ld025_rd025",
+      "task_manifests": {
+        "dili": {
+          "path": "test_winner/ga050_mc025_sr025_sd025_ld025_rd025/manifest.json",
+          "sha256": "3f9a23ea9a807181a5e1133fc6a9e7ed8f161b19154f906696467a045280dd53"
+        }
+      }
+    }
+  ]
+}

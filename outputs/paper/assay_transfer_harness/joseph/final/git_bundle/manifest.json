@@ -1,27 +1,27 @@
 {
   "schema_version": "joseph_final_git_bundle.v1",
-  "source_collection_sha256": "ab86b085e74dec6b2d794d4ed2259c480bf5c9960fec89ff5ac884cdd6e91df8",
-  "archive_sha256": "b2fd5b929b5384fea17274da2ebef77b8f940a548941f119731c6357ef49adc7",
+  "source_collection_sha256": "818c4ddee3a390c277e8bf2853e7a5e93cfbd147e07bafaeba4759871bbb5d1e",
+  "archive_sha256": "6f7ac685eaa460517f244de42d1139e5b49e1f87f852bedab71baca15c26a61d",
   "parts": [
     {
       "name": "payload.tar.zst.part-0000",
       "size": 67108864,
-      "sha256": "27f3541a6e318b99b354aae83cd35ebb2a32a98e81b082bc56d9027b6fd23a4e"
+      "sha256": "02fb5dc5b871fc593fcd5c1e655262794531159fbdda12de4d1c9673a236baa5"
     },
     {
       "name": "payload.tar.zst.part-0001",
       "size": 67108864,
-      "sha256": "3ef9fa63c2a9c9f6fd7db8785157f2f99c456e9d21dd0f959b89adc0c06b79f0"
+      "sha256": "690ca104086c5e7e8622a46549ceab1ef558cc5ddb5cb7ad338570053c8d6861"
     },
     {
       "name": "payload.tar.zst.part-0002",
       "size": 67108864,
-      "sha256": "484080d9db75e5baccc50d03ff2346618fa13c78ae099b40984be89fb2b18425"
+      "sha256": "c93882876ad3bcd26099e60e29861df3b501386610a4b03d62704a67ee46f8f6"
     },
     {
       "name": "payload.tar.zst.part-0003",
-      "size": 950431,
-      "sha256": "48485d7386ef77c767577b59892e2461c54d5d6daa6eed918a545298721f5096"
+      "size": 10751584,
+      "sha256": "d289b04630865dbad72065f06fb73fd32ad7c837987d493e98e820013be8513b"
     }
   ],
   "restore_root": "outputs/paper/assay_transfer_harness/joseph"

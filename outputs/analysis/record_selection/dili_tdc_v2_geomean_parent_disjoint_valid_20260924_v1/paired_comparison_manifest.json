@@ -1,0 +1,34 @@
+{
+  "schema_version": "dili_tdc_v2_paired_comparison.v1",
+  "status": "complete",
+  "references": {
+    "direct_predictions": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_direct_winner_test_upstream_v3_20260924_v1/ga075_mc025_label000/with_query_prior/k10_m0_20260924_065150/dili/dili__ga075_mc025_label000/predictions.jsonl",
+      "sha256": "580f24c55a7a6437b0834d2efaafbf29bac30e5fa00bf56482031708d8c93ace"
+    },
+    "indirect_predictions": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_test_20260924_v1/ga050_mc025_sr025_sd025_ld025_rd025/with_query_prior/k10_m0_20260924_075156/dili/dili__ga050_mc025_sr025_sd025_ld025_rd025/predictions.jsonl",
+      "sha256": "964a61feb6f855cc7d28fe7f782912e254ea4c058ec721667dbd24423a904f6f"
+    },
+    "direct_metrics": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_direct_winner_test_upstream_v3_20260924_v1/ga075_mc025_label000/with_query_prior/k10_m0_20260924_065150/dili/dili__ga075_mc025_label000/metrics.json",
+      "sha256": "053a8391c5cdfd684b078a25aa7329c827405ee6c28fabc6a556f2e50d786b5b"
+    },
+    "indirect_metrics": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_test_20260924_v1/ga050_mc025_sr025_sd025_ld025_rd025/with_query_prior/k10_m0_20260924_075156/dili/dili__ga050_mc025_sr025_sd025_ld025_rd025/metrics.json",
+      "sha256": "adf6ffdbdb839c8f0f9cb840db9bba7609efd10e1c9ddb31289056e4c921d668"
+    },
+    "direct_prompt_system": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/predict/harnesses/branches/prompts/full_flat_context_v5_six_tasks_upstream_v3/system.jinja",
+      "sha256": "3267fec5b714527b552c789e9b0c055c8c91b2af6225302a067eb456ed67a4b1"
+    },
+    "indirect_prompt_system": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/predict/harnesses/branches/prompts/full_flat_context_v5_six_tasks_dili_tdc_v2_mixed_v3/system.jinja",
+      "sha256": "ea127ed9d06a1b41957bc07930187ec8d121bc544316920fadc6191322f97247"
+    },
+    "indirect_selection": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/test_winner/ga050_mc025_sr025_sd025_ld025_rd025/manifest.json",
+      "sha256": "3f9a23ea9a807181a5e1133fc6a9e7ed8f161b19154f906696467a045280dd53"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+metric	value
+queries	96
+changed_predictions	16
+direct_correct_indirect_wrong	11
+direct_wrong_indirect_correct	5
+new_false_positives	9
+recovered_true_negatives	3
+new_false_negatives	2
+recovered_true_positives	2
+median_direct_prompt_chars	7298.0
+median_indirect_prompt_chars	76904.5
+high_coverage_losses	10

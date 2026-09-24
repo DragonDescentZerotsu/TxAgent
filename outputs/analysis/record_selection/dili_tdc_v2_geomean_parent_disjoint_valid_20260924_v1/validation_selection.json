@@ -1,0 +1,99 @@
+{
+  "schema_version": "tdc_v2_dili_geomean_validation_selection.v1",
+  "status": "complete",
+  "selection_rule": [
+    "macro_f1 descending",
+    "accuracy descending",
+    "profile ascending"
+  ],
+  "winner": {
+    "profile": "ga050_mc025_sr025_sd025_ld025_rd025",
+    "macro_f1": 0.825465,
+    "accuracy": 0.851064,
+    "n_successful": 47,
+    "metrics_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga050_mc025_sr025_sd025_ld025_rd025/with_query_prior/k10_m0_20260924_072939/dili/dili__ga050_mc025_sr025_sd025_ld025_rd025/metrics.json",
+    "metrics_sha256": "956589bb59d9d5ea82568d3b365e3e17845e1cd7de128ca3c9604ab250de9c4a"
+  },
+  "inputs": [
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga050_mc010_sr025_sd010_ld010_rd010/with_query_prior/k10_m0_20260924_072939/dili/dili__ga050_mc010_sr025_sd010_ld010_rd010/metrics.json",
+      "sha256": "c7de46b290cd7ea8687cd900863278121f4180642010ef2e2731f07ffc40c295"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga050_mc010_sr050_sd010_ld010_rd010/with_query_prior/k10_m0_20260924_072939/dili/dili__ga050_mc010_sr050_sd010_ld010_rd010/metrics.json",
+      "sha256": "c49760c9c60ef78e61114c142050e2d3fa3b2c3f2ae8b9f08ac83cd856e2841b"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga050_mc010_sr075_sd010_ld010_rd010/with_query_prior/k10_m0_20260924_072939/dili/dili__ga050_mc010_sr075_sd010_ld010_rd010/metrics.json",
+      "sha256": "77267ce72de5f61058d949a43d2f95f90afabf06037ea21ddc8299a41154bc14"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga050_mc025_sr025_sd025_ld025_rd025/with_query_prior/k10_m0_20260924_072939/dili/dili__ga050_mc025_sr025_sd025_ld025_rd025/metrics.json",
+      "sha256": "956589bb59d9d5ea82568d3b365e3e17845e1cd7de128ca3c9604ab250de9c4a"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga050_mc025_sr050_sd025_ld025_rd025/with_query_prior/k10_m0_20260924_072939/dili/dili__ga050_mc025_sr050_sd025_ld025_rd025/metrics.json",
+      "sha256": "c49760c9c60ef78e61114c142050e2d3fa3b2c3f2ae8b9f08ac83cd856e2841b"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga050_mc025_sr075_sd025_ld025_rd025/with_query_prior/k10_m0_20260924_072939/dili/dili__ga050_mc025_sr075_sd025_ld025_rd025/metrics.json",
+      "sha256": "7066d9414b14facd4257ae79d036ed757768df68b4e1495c3489298926dce35e"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga050_mc035_sr025_sd035_ld035_rd035/with_query_prior/k10_m0_20260924_072939/dili/dili__ga050_mc035_sr025_sd035_ld035_rd035/metrics.json",
+      "sha256": "e0da8f482175c117be9e9cb747d1b922800c1ade044acaf2a1ab420e477b89a3"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga050_mc035_sr050_sd035_ld035_rd035/with_query_prior/k10_m0_20260924_072939/dili/dili__ga050_mc035_sr050_sd035_ld035_rd035/metrics.json",
+      "sha256": "653733ea9d0968d9f310706d862a1fe805e9a1227d25ac7d9f32564551432fb3"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga050_mc035_sr075_sd035_ld035_rd035/with_query_prior/k10_m0_20260924_072939/dili/dili__ga050_mc035_sr075_sd035_ld035_rd035/metrics.json",
+      "sha256": "f76a6031030b02c5749a669c5e15f3eabfa7949157864511730a812327cb179c"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga075_mc010_sr025_sd010_ld010_rd010/with_query_prior/k10_m0_20260924_072939/dili/dili__ga075_mc010_sr025_sd010_ld010_rd010/metrics.json",
+      "sha256": "e0da8f482175c117be9e9cb747d1b922800c1ade044acaf2a1ab420e477b89a3"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga075_mc010_sr050_sd010_ld010_rd010/with_query_prior/k10_m0_20260924_072939/dili/dili__ga075_mc010_sr050_sd010_ld010_rd010/metrics.json",
+      "sha256": "f76a6031030b02c5749a669c5e15f3eabfa7949157864511730a812327cb179c"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga075_mc010_sr075_sd010_ld010_rd010/with_query_prior/k10_m0_20260924_072939/dili/dili__ga075_mc010_sr075_sd010_ld010_rd010/metrics.json",
+      "sha256": "7df199a77b789bb79d8c3ae4958ee661fea42f8e8ff71e32aabcc425d22ae704"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga075_mc025_sr025_sd025_ld025_rd025/with_query_prior/k10_m0_20260924_072939/dili/dili__ga075_mc025_sr025_sd025_ld025_rd025/metrics.json",
+      "sha256": "916defed367934b7ad8538e657c9b769c30eff04ab8063198570e18de7dbfe41"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga075_mc025_sr050_sd025_ld025_rd025/with_query_prior/k10_m0_20260924_072939/dili/dili__ga075_mc025_sr050_sd025_ld025_rd025/metrics.json",
+      "sha256": "354ec2c6771341fdb5991ffe328157e771aa5cb5f4779c0d48e3b6d4a723e31c"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga075_mc025_sr075_sd025_ld025_rd025/with_query_prior/k10_m0_20260924_072939/dili/dili__ga075_mc025_sr075_sd025_ld025_rd025/metrics.json",
+      "sha256": "73c0b0d674c78f6ecefeb09a12f6a60fcab3cc5dfda6a5a3235dec207dabc60f"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga075_mc035_sr025_sd035_ld035_rd035/with_query_prior/k10_m0_20260924_072939/dili/dili__ga075_mc035_sr025_sd035_ld035_rd035/metrics.json",
+      "sha256": "354ec2c6771341fdb5991ffe328157e771aa5cb5f4779c0d48e3b6d4a723e31c"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga075_mc035_sr050_sd035_ld035_rd035/with_query_prior/k10_m0_20260924_072939/dili/dili__ga075_mc035_sr050_sd035_ld035_rd035/metrics.json",
+      "sha256": "893e6cba1721d29e58d8984e109a2b7a10b32025e701c131ce88c247f765489d"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/ga075_mc035_sr075_sd035_ld035_rd035/with_query_prior/k10_m0_20260924_072939/dili/dili__ga075_mc035_sr075_sd035_ld035_rd035/metrics.json",
+      "sha256": "8038ba6e2b59eca58a9f4336f748abf60657337eaaa3da7b3d61ae95eb1959cc"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/grid_manifest.json",
+      "sha256": "842c120ecd8e3fb816586daa6482ee8cf9249d4c2894272b23f5a6ec85b6de98"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/dili_tdc_v2_geomean_parent_disjoint_valid_20260924_v1/completion.json",
+      "sha256": "4baa981b3dd3cfb98bc17aa0eebcc8d0e162e76890e0eac798e5fabf81ab90b7"
+    }
+  ]
+}

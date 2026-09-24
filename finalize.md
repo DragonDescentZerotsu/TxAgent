@@ -1,10 +1,11 @@
 # Final Joseph full-test collection
 
 The [final collection](outputs/paper/assay_transfer_harness/joseph/final/collection.json)
-contains 18 complete arms and 4,892 successful test queries. It includes Gold
+contains 20 complete arms and 5,084 successful test queries. It includes Gold
 BBB, Oral Bioavailability, Carcinogens, DILI, and Skin Reaction direct and
 direct+indirect arms; TDC Oral Bioavailability and Skin Reaction direct and
-direct+indirect arms; and TDC-v2 BBB and Carcinogens direct and direct+indirect arms.
+direct+indirect arms; and TDC-v2 BBB, Carcinogens, and DILI direct and
+direct+indirect arms.
 Each arm includes predictions, metrics, per-query run artifacts and traces,
 a combined trace, a query-level model/provider ledger, and
 hash-pinned source and copied-file manifests. The original batches remain at
@@ -34,6 +35,19 @@ and [TSV](outputs/analysis/record_selection/joseph_final_tdc_v2_bbb_filtered_202
 cover the 406-query direct and filtered direct+indirect arms: macro-F1 0.865673
 and 0.880814, respectively. The indirect selector removed prediction-only
 records before its joint 50-record selection.
+
+The [TDC-v2 DILI report](outputs/analysis/record_selection/joseph_final_tdc_v2_dili_20260924_v1/report.md)
+and [TSV](outputs/analysis/record_selection/joseph_final_tdc_v2_dili_20260924_v1/results.tsv)
+cover the 96-query direct and direct+indirect arms: macro-F1 0.829711 and
+0.760436, respectively. The indirect selector uses the parent-disjoint top-100
+universe, DILI tool and semantic scores, and tied diversity terms. Its semantic
+projection extension remains marked `candidate_unreviewed`. The prompts and
+provider routes differ between arms; the comparison does not isolate the effect
+of indirect records. A [same-prompt validation control](outputs/analysis/record_selection/dili_tdc_v2_direct_same_prompt_valid_20260924_v1/report.md)
+and its [TSV](outputs/analysis/record_selection/dili_tdc_v2_direct_same_prompt_valid_20260924_v1/results.tsv)
+found direct-only macro-F1 0.831541 with five false positives among 17 negative
+queries, versus 0.825465 and six false positives with indirect records. Only
+two predictions changed; their upstream OpenRouter providers also differed.
 
 The full collection, including traces, is preserved in Git as
 [compressed parts](outputs/paper/assay_transfer_harness/joseph/final/git_bundle/README.md).
