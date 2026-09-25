@@ -1,0 +1,3 @@
+benchmark	task	valid_queries	direct_profile	mixed_profile	valid_direct_macro_f1	valid_mixed_macro_f1	test_queries	test_direct_macro_f1	test_mixed_macro_f1	test_delta_macro_f1
+gold_v1	ames	274	ga100_mc025_label000	ga125_mc010_sr025_sd010_ld010_rd010	0.776817	0.787095	274	0.66773	0.706003	0.038273
+tdc_v2	carcinogens	28	ga025_mc000_label010	ga125_mc025_sr025_sd025_ld025_rd025	0.755102	0.6813	56	0.841539	0.7375	-0.104039

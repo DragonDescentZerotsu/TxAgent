@@ -1,0 +1,13 @@
+{
+  "schema_version": "luna_selection_freeze.v1",
+  "benchmark": "gold_v1",
+  "task": "ames",
+  "selection": "direct",
+  "profile": "ga100_mc025_label000",
+  "validation_queries": 274,
+  "validation_macro_f1": 0.776817,
+  "validation_accuracy": 0.810219,
+  "source_matrix": "luna_gold_ames_direct_top5_full_valid_20260925_v2",
+  "source_metrics_sha256": "cfa9e021eb202ca5ccd34f98ecc9e2e1cf6ca3b6459b8b67a741f922031b2f8b",
+  "decision_rule": "highest validation macro-F1, then accuracy, then profile name"
+}

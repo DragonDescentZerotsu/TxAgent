@@ -1,0 +1,12 @@
+{
+  "schema_version": "derived_results_provenance.v1",
+  "status": "complete",
+  "source_matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_carcinogens_direct_positive_gate_top2_test_20260925_v1/matrix.json",
+  "source_matrix_sha256": "4fe6592d78471086b2f3504bc9ac50e73a0a3a4ec26d003a71f0f00fa291172d",
+  "source_completion_sha256": "a6b7a53184c8ba4bf5ac0c2d10ee4c0dcddc553d6b25c0c14fe85c498fd43a49",
+  "selection_grid_sha256": "20bf689ec0207d0e265edcd6a5cc6e5d3337077d4841ee3194bfc7210dd194ec",
+  "prompt_files_tsv_sha256": "050b44e51987b3b1edbc9929ad59de0202ee2f32ea97b76edcd7e3444a31e389",
+  "results_tsv_sha256": "38a309e61286bd22f70996aec8817a21439b7c5152bcfa427a7b41c90db54862",
+  "published_arm": "luna/test/tdc_v2/carcinogens/direct_plus_indirect_positive_gate_v1",
+  "published_manifest_sha256": "eda8cc330f12e20381ef414cfeb09c4e43b05595e37788eb0ba27c7b04b7c909"
+}

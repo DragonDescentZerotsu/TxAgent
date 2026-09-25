@@ -1,0 +1,66 @@
+{
+  "schema_version": "tdc_v2_carcinogens_selected_final_full_flat_50.v1",
+  "status": "locked_by_user",
+  "selected_on": "2026-09-25",
+  "task": "carcinogens",
+  "benchmark": "tdc_v2_original_split",
+  "subset": "test",
+  "selection_note": "User selected model and stronger prompt after observing held-out test metrics. The indirect profile was selected from validation.",
+  "model": "deepseek/deepseek-v4-flash-0731",
+  "reasoning_effort": "high",
+  "prompt_version": "final_full_flat_tdc_carc_strong_direct_v1",
+  "harness_version": "final-full-flat-tdc-carc-strong-direct-v1",
+  "direct_profile": "ga075_mc000_label010",
+  "indirect_profile": "ga125_mc010_sr025_sd010_ld010_rd010",
+  "direct_count": 10,
+  "indirect_count": 50,
+  "n_test_queries": 56,
+  "macro_f1": 0.790611,
+  "accuracy": 0.839286,
+  "inputs": {
+    "direct_manifest": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/tdc_v2_carcinogens_full_exact_direct_indirect_20260925_v1/direct_test/direct/ga075_mc000_label010/carcinogens/manifest.json",
+      "sha256": "edd81c10b6e0fde41b35dc3c72a07a9222f9ee92acb748c35ffc04136941a442"
+    },
+    "mixed_selection_manifest": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/tdc_v2_carcinogens_full_exact_direct_indirect_20260925_v1/indirect_test/ga125_mc010_sr025_sd010_ld010_rd010/manifest.json",
+      "sha256": "993ce121195df9d9a584f801e6cd5226ba3322c5ffce00508b6bbdbce7a13a48"
+    },
+    "selection_grid": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/tdc_v2_carcinogens_full_exact_direct_indirect_20260925_v1/indirect_test_grid.json",
+      "sha256": "75e4d99d65f986f1ff9a4f697f2fa5577ef7a5455e49b1286ad7a8552e5441be"
+    },
+    "prompt_system": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/predict/harnesses/branches/prompts/final_full_flat_tdc_carc_strong_direct_v1/system.jinja",
+      "sha256": "b5bb5ff8c6362f20348682517f460b69150fa2f7c6f7c91b53254dc68b8114d4"
+    },
+    "prompt_provenance": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/predict/harnesses/branches/prompts/final_full_flat_tdc_carc_strong_direct_v1/provenance.json",
+      "sha256": "cc4ccebe9ebccabdd7760fb25df97b3a47aa069c3993f1eaaaaed795a206ff8e"
+    },
+    "provider_config": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/tdc_v2_carcinogens_final_full_flat_direct_priority_50_test_20260925_v1/provider_v4_openrouter_128_high.json",
+      "sha256": "a380c36616df42a0b2b1c195337ce3f97d0ef07d04ded48e6c7507e4946614a8"
+    },
+    "run_matrix": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/tdc_v2_carcinogens_final_full_flat_strong_direct_50_v4_test_20260925_v1/matrix.json",
+      "sha256": "a3a2763adc1445ac43813987901e4234c1204005c1a28e045f7424caa471411e"
+    },
+    "run_completion": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/tdc_v2_carcinogens_final_full_flat_strong_direct_50_v4_test_20260925_v1/completion.json",
+      "sha256": "f5b9a46a29ea1c19b8cba12241abdaf6f2b659a096beedd8afddb38f7d380c15"
+    },
+    "run_metrics": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/tdc_v2_carcinogens_final_full_flat_strong_direct_50_v4_test_20260925_v1/ga125_mc010_sr025_sd010_ld010_rd010/with_query_prior/k10_m0_20260925_081816/carcinogens/carcinogens__ga125_mc010_sr025_sd010_ld010_rd010/metrics.json",
+      "sha256": "75e263b4e4af3c7d37b40f4eefb00701d049289c9f7f9fe9f1b45460c73a208c"
+    },
+    "comparison_results": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/tdc_v2_carcinogens_final_full_flat_strong_direct_50_test_20260925_v1/results.tsv",
+      "sha256": "2a55ac4d5260daf9c864ca9f386d660a03476872cdd50ab407abc39c6b799dda"
+    },
+    "prediction_changes": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/tdc_v2_carcinogens_final_full_flat_strong_direct_50_test_20260925_v1/changed_predictions.tsv",
+      "sha256": "d69666f458bec967caefee6d654b576695eaf4cb5db4de942b8d443059e1959b"
+    }
+  }
+}

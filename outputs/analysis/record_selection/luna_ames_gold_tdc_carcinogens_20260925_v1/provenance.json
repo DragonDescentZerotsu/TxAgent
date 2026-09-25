@@ -1,0 +1,65 @@
+{
+  "schema_version": "luna_ames_carcinogens_study.v1",
+  "status": "complete",
+  "model": "openai/gpt-6-luna",
+  "reasoning_effort": "high",
+  "provider_pool": {
+    "path": "predict/api_client/providers/gpt6_luna_openrouter_flex_512.json",
+    "sha256": "e938d4a03c7df718c706dce85e1c4b7d7a36b8203b4e521b7f080c64167c9d66"
+  },
+  "prompt_provenance": {
+    "path": "predict/harnesses/branches/prompts/final_full_flat/provenance.json",
+    "sha256": "5e44bcd6d8ec592eaaeddc5e500b4f9ae6c1870098ae38b46d1b793eb46b12bf"
+  },
+  "sources": {
+    "luna_gold_ames_direct_top5_full_valid_20260925_v2": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_gold_ames_direct_top5_full_valid_20260925_v2/matrix.json",
+      "matrix_sha256": "7d480af1c7731ba833fdea1be6e7eba5d52ab58ccbf660d79143095c2ec21433",
+      "completion_sha256": "5ffa665911f069e3599c88e2dfbd51895691ffef05b8d79f45457f05e3b8efd7"
+    },
+    "luna_gold_ames_indirect_top5_full_valid_20260925_v1": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_gold_ames_indirect_top5_full_valid_20260925_v1/matrix.json",
+      "matrix_sha256": "dedddb9f9c74b321feb0dc48c6672baaebb6a4a16385df23a50690c9e00435ff",
+      "completion_sha256": "cbec987d331db9771d46113fe8ed1ee8c8ecf05dc834f00ba937d4baa8ec41eb"
+    },
+    "luna_tdc_v2_carcinogens_direct_top5_full_valid_20260925_v1": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_carcinogens_direct_top5_full_valid_20260925_v1/matrix.json",
+      "matrix_sha256": "811bd6fcf71f4e6f4ee2f2aa5e753286b3d52c52ce33600275eec7ffdb5c371b",
+      "completion_sha256": "a1664978d0a493e183325f9f7a284373994ac8105e3ff85837f2b472260567c9"
+    },
+    "luna_tdc_v2_carcinogens_indirect_top5_full_valid_20260925_v1": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_carcinogens_indirect_top5_full_valid_20260925_v1/matrix.json",
+      "matrix_sha256": "036d113a9e90f2196250580eae4c7f6a39685594664b676b8a91ab73b64283e4",
+      "completion_sha256": "d2f4ddd37f2cb2f8d39425e0c2316662d8cf9f0a557e0af18ae1535e0f5e1f96"
+    },
+    "luna_gold_ames_direct_frozen_test_20260925_v1": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_gold_ames_direct_frozen_test_20260925_v1/matrix.json",
+      "matrix_sha256": "eb424901ed325c0b3ec413b19e33de9de889b7ff0f94595cdc0e673619beb645",
+      "completion_sha256": "7ed24a054d3c83c9b147e646aa7e7fcabe6fa76d78aac02f3ce46a89e2e826c9"
+    },
+    "luna_gold_ames_indirect_frozen_test_20260925_v1": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_gold_ames_indirect_frozen_test_20260925_v1/matrix.json",
+      "matrix_sha256": "584222969e9dd8c56e27b5c14c1dca0bfc906492e1f47cc427cb34e02986ff03",
+      "completion_sha256": "ac0fe7fafd105d8459f601f6bcdb14ddff975d46e8d37284e479a67bec81b578"
+    },
+    "luna_tdc_v2_carcinogens_direct_frozen_test_20260925_v1": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_carcinogens_direct_frozen_test_20260925_v1/matrix.json",
+      "matrix_sha256": "5606f2f3ef914bba5e3d419af0faa8b6689ee0384f64acd2071a22be455d82a5",
+      "completion_sha256": "eacc5de9c9e808f35344fe9385a946cceb1f90c8aa186e6f36b8c152ca608b10"
+    },
+    "luna_tdc_v2_carcinogens_indirect_frozen_test_20260925_v1": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_carcinogens_indirect_frozen_test_20260925_v1/matrix.json",
+      "matrix_sha256": "683f6bb39b56fec923b9f68da2802fd5cb3c1c1822e43c761cad8429d76fd947",
+      "completion_sha256": "b2f8bb3d6b86d0aed4714bada323b45b447c90c994a5a8c24b99776f3ed4c19f"
+    }
+  },
+  "freeze_sha256": {
+    "gold_v1_ames_direct_freeze.json": "996b19073cb4a61296ae5df5bdb55bbdc66f7eb1d5aa124e95f43442349044dd",
+    "gold_v1_ames_indirect_freeze.json": "c6fb8d8bdc9d9bcf7473197a71fd2ed5e361d279f3c3f0c573ee68caed931c3e",
+    "tdc_v2_carcinogens_direct_freeze.json": "6d057de326126b1d41648ad705be74cb891ab0a5ef5463dbc0b217efebd90630",
+    "tdc_v2_carcinogens_indirect_freeze.json": "72cb87b9464fe114f2f4d04cc7750d5796a09b1327e6e26f88f22a98bb33d8ab"
+  },
+  "results_sha256": "e60495a6781e088e1173dfd491c890c9c9c05a73b8149f411952b5fb72a782f4",
+  "comparisons_tsv_sha256": "d06f1fca419222514fd27de08bbde96c3e4f00f7a7347d80ef58af79e0901267",
+  "report_md_sha256": "84e9c0876309dec3d1903ce14c1fb4f78fa1768334601d993111e6e2fcae0f4d"
+}

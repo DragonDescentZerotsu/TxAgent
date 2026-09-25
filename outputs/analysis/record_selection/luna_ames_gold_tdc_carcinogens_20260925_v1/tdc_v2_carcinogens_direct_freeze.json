@@ -1,0 +1,13 @@
+{
+  "schema_version": "luna_selection_freeze.v1",
+  "benchmark": "tdc_v2",
+  "task": "carcinogens",
+  "selection": "direct",
+  "profile": "ga025_mc000_label010",
+  "validation_queries": 28,
+  "validation_macro_f1": 0.755102,
+  "validation_accuracy": 0.892857,
+  "source_matrix": "luna_tdc_v2_carcinogens_direct_top5_full_valid_20260925_v1",
+  "source_metrics_sha256": "735f1eed5de3cabfb6abdfae5d78efba2bae36572dde707f124f83204d5ebc43",
+  "decision_rule": "highest validation macro-F1, then accuracy, then profile name"
+}

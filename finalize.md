@@ -1,7 +1,7 @@
 # Final Joseph full-test collection
 
 The [final collection](outputs/paper/assay_transfer_harness/joseph/final/collection.json)
-contains 42 complete test arms and 13,253 successful arm-query results. It includes
+contains 48 complete test arms and 14,025 successful arm-query results. It includes
 Gold BBB, Oral Bioavailability, AMES, Carcinogens, DILI, and Skin Reaction
 direct and direct+indirect arms; TDC Oral Bioavailability and Skin Reaction
 direct and direct+indirect arms; and TDC-v2 AMES, BBB, Carcinogens, and DILI
@@ -31,6 +31,15 @@ and [TSV](outputs/analysis/record_selection/joseph_final_tdc_v2_carcinogens_2026
 cover the two new 56-query arms: direct macro-F1 0.695652 and
 direct+indirect macro-F1 0.726830. OpenRouter upstream routes differed between
 these arms; their query-level provenance records the actual route.
+
+The selected [DeepSeek V4 Carcinogens arm](outputs/paper/assay_transfer_harness/joseph/final/deepseek/test/tdc_v2/carcinogens/direct_plus_indirect/manifest.json)
+uses the stronger direct-trust Final Full Flat prompt, ten frozen direct cards,
+and fifty validation-selected indirect records. Its 56-query TDC-v2 test scored
+0.790611 macro-F1. The [selection report](outputs/analysis/record_selection/tdc_v2_carcinogens_final_full_flat_strong_direct_50_test_20260925_v1/report.md)
+and [TSV](outputs/analysis/record_selection/tdc_v2_carcinogens_final_full_flat_strong_direct_50_test_20260925_v1/results.tsv)
+compare prompt and model variants; the prompt and model choice was made after
+viewing test results. The DeepSeek final directory preserves the chosen prompt,
+parameters, per-query traces, and served-provider provenance.
 
 The [TDC-v2 BBB report](outputs/analysis/record_selection/joseph_final_tdc_v2_bbb_filtered_20260924_v1/report.md)
 and [TSV](outputs/analysis/record_selection/joseph_final_tdc_v2_bbb_filtered_20260924_v1/results.tsv)
@@ -94,6 +103,23 @@ are 0.666929 and 0.722610 for Gold BBB, 0.760093 and 0.856127 for Gold Oral,
 0.828823 and 0.846330 for TDC-v2 BBB, and 0.718372 and 0.774023 for TDC-v2
 Oral. All eight test arms use `final_full_flat` and GPT-6-Luna with high reasoning;
 the Luna directory preserves all 40 validation arms and eight test arms.
+
+The [Luna AMES/Carcinogens report](outputs/analysis/record_selection/luna_ames_gold_tdc_carcinogens_20260925_v1/report.md)
+and [comparison TSV](outputs/analysis/record_selection/luna_ames_gold_tdc_carcinogens_20260925_v1/comparisons.tsv)
+cover five direct and five indirect full-validation profiles for Gold-v1 AMES
+and TDC-v2 Carcinogens. Frozen direct and direct+indirect test macro-F1 scores
+are 0.667730 and 0.706003 for Gold AMES, and 0.841539 and 0.737500 for
+TDC-v2 Carcinogens. Their four test arms use `final_full_flat` and GPT-6-Luna;
+the Luna directory also preserves all 20 validation arms.
+
+The [Luna TDC-v2 Carcinogens positive-gate arm](outputs/paper/assay_transfer_harness/joseph/final/luna/test/tdc_v2/carcinogens/direct_plus_indirect_positive_gate_v1/manifest.json)
+preserves the validation-frozen direct and indirect selection, the exact prompt
+bundle used by the test, provider provenance, and all 56 per-query traces. It
+scored 0.878261 macro-F1. The [comparison report](outputs/analysis/record_selection/luna_tdc_v2_carcinogens_positive_gate_test_20260925_v1/report.md)
+and [TSV](outputs/analysis/record_selection/luna_tdc_v2_carcinogens_positive_gate_test_20260925_v1/results.tsv)
+also record the second tested profile. The prompt was revised after viewing test
+results, so this is an exploratory successor arm rather than a validation-selected
+prompt result.
 
 The full collection, including traces, is preserved in Git as
 [compressed parts](outputs/paper/assay_transfer_harness/joseph/final/git_bundle/README.md).
@@ -160,7 +186,9 @@ final arms unchanged; a replacement needs a reviewed successor collection.
    PY
    ```
 
-5. Rebuild and check the tracked archive. Raw files under `final/` are ignored
+5. Rebuild and check the tracked archive once, immediately before committing all
+   intended additions. Do not recompress after each arm or intermediate edit.
+   Raw files under `final/` are ignored
    by Git; the compressed parts carry their complete copy, including traces.
 
    ```bash

@@ -18,6 +18,13 @@
       "mixed_route": true
     },
     {
+      "path": "deepseek/test/tdc_v2/carcinogens/direct_plus_indirect",
+      "manifest_sha256": "7e84d372d03134aae3c733671cde3baecbd901612425cd1ed961ddd3f137e10d",
+      "n_queries": 56,
+      "macro_f1": 0.790611,
+      "mixed_route": true
+    },
+    {
       "path": "deepseek/test/tdc_v2/dili/direct",
       "manifest_sha256": "574214bc30e7bda6fb205b2d245f5147d76796a0eeeebd5f679fcaaed6c6255c",
       "n_queries": 96,
@@ -116,6 +123,20 @@
       "mixed_route": true
     },
     {
+      "path": "luna/test/gold_v1/ames/direct",
+      "manifest_sha256": "59662c0327c8c93bc694e74b64c5f320ab4ca2f70a8d8da3dab0eceb5e05370d",
+      "n_queries": 274,
+      "macro_f1": 0.66773,
+      "mixed_route": false
+    },
+    {
+      "path": "luna/test/gold_v1/ames/direct_plus_indirect",
+      "manifest_sha256": "1f51cf74359a4dc7fb2f6c95e46ce60c8d10ff890c18c37a2a92cfe78a8be2a4",
+      "n_queries": 274,
+      "macro_f1": 0.706003,
+      "mixed_route": false
+    },
+    {
       "path": "luna/test/gold_v1/bbb_martins/direct",
       "manifest_sha256": "6daeb752c37c3e9b3ffc18eb30bb04ddb30ad2125a80ebdf0547ce796de6c79a",
       "n_queries": 393,
@@ -190,6 +211,27 @@
       "manifest_sha256": "2a4dc43ad0457d59137e342e3e5bc0cb4229f98ac07798eacdd3901c2a8bdb63",
       "n_queries": 128,
       "macro_f1": 0.774023,
+      "mixed_route": false
+    },
+    {
+      "path": "luna/test/tdc_v2/carcinogens/direct",
+      "manifest_sha256": "ca5ae6b80991e1b5c19b156423bc239006ce645ac63fd3bf3bf366cc90ce6ccd",
+      "n_queries": 56,
+      "macro_f1": 0.841539,
+      "mixed_route": false
+    },
+    {
+      "path": "luna/test/tdc_v2/carcinogens/direct_plus_indirect",
+      "manifest_sha256": "e36804427a7fc2f905556ed31f5b69823c3650df7e391a4888dc43b525052b6e",
+      "n_queries": 56,
+      "macro_f1": 0.7375,
+      "mixed_route": false
+    },
+    {
+      "path": "luna/test/tdc_v2/carcinogens/direct_plus_indirect_positive_gate_v1",
+      "manifest_sha256": "eda8cc330f12e20381ef414cfeb09c4e43b05595e37788eb0ba27c7b04b7c909",
+      "n_queries": 56,
+      "macro_f1": 0.878261,
       "mixed_route": false
     },
     {
@@ -298,9 +340,9 @@
       "mixed_route": false
     }
   ],
-  "n_queries": 13253,
+  "n_queries": 14025,
   "note": "Gold local recovery responses use a different served model route; query_provenance.tsv identifies every route.",
-  "updated_at_utc": "2026-09-25T05:36:25.736662+00:00",
+  "updated_at_utc": "2026-09-25T13:02:14.143112+00:00",
   "canonical_dili": {
     "gold_v1": {
       "deepseek": {
