@@ -287,6 +287,30 @@ once, immediately before committing and pushing the accumulated FINAL additions;
 do not recompress after each arm or intermediate edit. Follow
 `.agents/skills/finalizing/SKILL.md` and `finalize.md` for the artifact contract.
 
+Keep the following reference result table synchronized with the `finalizing`
+skill when a completed result is explicitly promoted. Starling means Gold-v1;
+do not silently replace a cell with the highest test score across models.
+
+| Task | Benchmark | Direct macro F1 | Direct + Indirect macro F1 |
+| --- | --- | ---: | ---: |
+| bbb_martins | Starling | 0.673178 | 0.725340 |
+| bioavailability_ma | Starling | 0.768091 | 0.861340 |
+| skin_reaction | Starling | 0.599320 | 0.615042 |
+| ames | Starling | 0.708578 | 0.773887* |
+| dili | Starling | 0.627614 | 0.650819 |
+| carcinogens | Starling | 0.532669 | 0.647253 |
+| bbb_martins | TDC | 0.865673 | 0.880814 |
+| bioavailability_ma | TDC | 0.746709 | 0.830732 |
+| skin_reaction | TDC | 0.700912 | 0.666875 |
+| ames | TDC | 0.782289 | 0.800280* |
+| dili | TDC | 0.829711 | 0.799900* |
+| carcinogens | TDC | 0.695652 | 0.878261 |
+
+*Reference value, not a verified complete arm in the current `final/collection.json`.
+The AMES values came from provisional coverage. Update a marked cell only when
+its completed result is explicitly promoted. TDC Skin direct is an equivalent-
+cohort v1 replay, as its FINAL manifest records.
+
 Raw assay-transfer harness runs for Joseph remain under
 `outputs/paper/assay_transfer_harness/joseph/`. Every derived analysis, including
 KNN, query-prior, oracle-union, and progressive-level comparisons, must be saved
