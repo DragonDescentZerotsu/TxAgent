@@ -74,6 +74,13 @@
       "mixed_route": true
     },
     {
+      "path": "gemini38/test/tdc_v2/carcinogens/ga075_mc025_sr050_sd025_ld025_rd025",
+      "manifest_sha256": "38c39d32ead183f7cda0c7478563091bfe698fb84a64c1403860bd2afe3b1149",
+      "n_queries": 56,
+      "macro_f1": 0.787879,
+      "mixed_route": true
+    },
+    {
       "path": "gold_v1/ames/direct",
       "manifest_sha256": "9e5aedf397dc42ee459db7b9f2545b6d1e73eb5593e1c560c54032bcaddf8d87",
       "n_queries": 274,
@@ -424,9 +431,9 @@
       "mixed_route": false
     }
   ],
-  "n_queries": 19843,
+  "n_queries": 19899,
   "note": "Gold local recovery responses use a different served model route; query_provenance.tsv identifies every route.",
-  "updated_at_utc": "2026-09-25T15:06:36.582784+00:00",
+  "updated_at_utc": "2026-09-25T20:08:41.527811+00:00",
   "canonical_dili": {
     "gold_v1": {
       "deepseek": {

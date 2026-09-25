@@ -1,0 +1,46 @@
+{
+  "schema_version": "gemini38_tdc_v2_carcinogens_validation_freeze.v1",
+  "created_at_utc": "2026-09-25T18:59:45.270275+00:00",
+  "winner": "ga075_mc025_sr050_sd025_ld025_rd025",
+  "tie_rule": [
+    "macro_f1_descending",
+    "accuracy_descending",
+    "profile_name_ascending"
+  ],
+  "n_profiles": 4,
+  "n_queries_per_profile": 28,
+  "all_prediction_vectors_equal": true,
+  "validation_results_tsv_sha256": "bbbbe2784c50d017fb452cacee9f8ca3a02f09d9a6e94e1cca207a110f56c9d3",
+  "source_deepseek_results_tsv_sha256": "957a9e35e4ad86a1eacd84f8189607b881d90115311eb3601367b26e075bf964",
+  "source_luna_results_tsv_sha256": "e60495a6781e088e1173dfd491c890c9c9c05a73b8149f411952b5fb72a782f4",
+  "source_arms": [
+    {
+      "profile": "ga125_mc010_sr025_sd010_ld010_rd010",
+      "source_batch": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/tdc_v2_carcinogens_full_exact_indirect_valid_20260925_v2/ga125_mc010_sr025_sd010_ld010_rd010/with_query_prior/k10_m0_20260925_002639/carcinogens/carcinogens__ga125_mc010_sr025_sd010_ld010_rd010",
+      "source_metrics_sha256": "ac1dc8a95600bf057c7f408c5a3b2e795d1264f51ad2560d9f2a55ef548177bf",
+      "gemini_batch": "outputs/paper/assay_transfer_harness/joseph/_batches/gemini38_tdc_v2_carcinogens_top4_valid_20260925_v1/ga125_mc010_sr025_sd010_ld010_rd010/carcinogens__ga125_mc010_sr025_sd010_ld010_rd010"
+    },
+    {
+      "profile": "ga100_mc025_sr025_sd025_ld025_rd025",
+      "source_batch": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/tdc_v2_carcinogens_full_exact_indirect_valid_20260925_v2/ga100_mc025_sr025_sd025_ld025_rd025/with_query_prior/k10_m0_20260925_002639/carcinogens/carcinogens__ga100_mc025_sr025_sd025_ld025_rd025",
+      "source_metrics_sha256": "9728e30aca253fd593135884ad509ca9110df13284065687907c3163e3ba67ce",
+      "gemini_batch": "outputs/paper/assay_transfer_harness/joseph/_batches/gemini38_tdc_v2_carcinogens_top4_valid_20260925_v1/ga100_mc025_sr025_sd025_ld025_rd025/carcinogens__ga100_mc025_sr025_sd025_ld025_rd025"
+    },
+    {
+      "profile": "ga125_mc025_sr025_sd025_ld025_rd025",
+      "source_batch": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/tdc_v2_carcinogens_full_exact_indirect_valid_20260925_v2/ga125_mc025_sr025_sd025_ld025_rd025/with_query_prior/k10_m0_20260925_002639/carcinogens/carcinogens__ga125_mc025_sr025_sd025_ld025_rd025",
+      "source_metrics_sha256": "77ceca3a01e5befd96500ee4c285fa5c12adc6c176984399b79a5c94737eeb93",
+      "gemini_batch": "outputs/paper/assay_transfer_harness/joseph/_batches/gemini38_tdc_v2_carcinogens_top4_valid_20260925_v1/ga125_mc025_sr025_sd025_ld025_rd025/carcinogens__ga125_mc025_sr025_sd025_ld025_rd025"
+    },
+    {
+      "profile": "ga075_mc025_sr050_sd025_ld025_rd025",
+      "source_batch": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/tdc_v2_carcinogens_full_exact_indirect_valid_20260925_v2/ga075_mc025_sr050_sd025_ld025_rd025/with_query_prior/k10_m0_20260925_002639/carcinogens/carcinogens__ga075_mc025_sr050_sd025_ld025_rd025",
+      "source_metrics_sha256": "291dc470ea85652588ce80d44969e1cd4db4abe6800ebae221a8be0615b8c9cc",
+      "gemini_batch": "outputs/paper/assay_transfer_harness/joseph/_batches/gemini38_tdc_v2_carcinogens_top4_valid_20260925_v1/ga075_mc025_sr050_sd025_ld025_rd025/carcinogens__ga075_mc025_sr050_sd025_ld025_rd025"
+    }
+  ],
+  "prompt_version": "full_flat_context_v5_six_tasks_upstream_v3",
+  "fixed_direct_profile": "ga075_mc000_label010",
+  "model": "google/gemini-3.8-flash",
+  "reasoning_effort": "high"
+}

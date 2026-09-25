@@ -1,0 +1,58 @@
+{
+  "schema_version": "gemini38_tdc_v2_carcinogens_finalization.v1",
+  "validation_decision": {
+    "path": "outputs/analysis/record_selection/gemini38_tdc_v2_carcinogens_top4_valid_20260925_v1/freeze.json",
+    "sha256": "e4d2c38939911c311051b5b6de105a9aaaf90ac0d8d1883698b9ca3ae3cdade9"
+  },
+  "final_model_index": {
+    "path": "outputs/paper/assay_transfer_harness/joseph/final/gemini38/index.json",
+    "sha256": "e80eee8cc47d942c78bab500e7293c3e0b3152cfcc9326d1c19c2f3b97f4c6b9"
+  },
+  "final_collection": {
+    "path": "outputs/paper/assay_transfer_harness/joseph/final/collection.json",
+    "sha256": "1c7f5f83de2bcc57feae1eae687d4aebab77c2d424fac443ece08d9e1173b36a"
+  },
+  "arms": [
+    {
+      "path": "gemini38/test/tdc_v2/carcinogens/ga075_mc025_sr050_sd025_ld025_rd025",
+      "manifest_sha256": "38c39d32ead183f7cda0c7478563091bfe698fb84a64c1403860bd2afe3b1149",
+      "split": "test",
+      "n_queries": 56,
+      "macro_f1": 0.787879
+    },
+    {
+      "path": "gemini38/validation/tdc_v2/carcinogens/ga075_mc025_sr050_sd025_ld025_rd025",
+      "manifest_sha256": "d53027b79f09f10b08bd330cf40e91c4461ac2dc919c696b6999d8d41c5e2d2e",
+      "split": "valid",
+      "n_queries": 28,
+      "macro_f1": 0.717172
+    },
+    {
+      "path": "gemini38/validation/tdc_v2/carcinogens/ga100_mc025_sr025_sd025_ld025_rd025",
+      "manifest_sha256": "62672679d367bb4f24fc9ce7f3038076b2c7edeb41e35f1873bcba324e969069",
+      "split": "valid",
+      "n_queries": 28,
+      "macro_f1": 0.717172
+    },
+    {
+      "path": "gemini38/validation/tdc_v2/carcinogens/ga125_mc010_sr025_sd010_ld010_rd010",
+      "manifest_sha256": "533990b5676e969746af2a3fe8c1a5bfab6add26332599119fe7cbba37a81624",
+      "split": "valid",
+      "n_queries": 28,
+      "macro_f1": 0.717172
+    },
+    {
+      "path": "gemini38/validation/tdc_v2/carcinogens/ga125_mc025_sr025_sd025_ld025_rd025",
+      "manifest_sha256": "6fafb0664e8d3b902e2d4cb1e2c4c4469fb796d8dc954a5f90dd1a3ca16b55e3",
+      "split": "valid",
+      "n_queries": 28,
+      "macro_f1": 0.717172
+    }
+  ],
+  "tables": {
+    "validation_results.tsv": "bbbbe2784c50d017fb452cacee9f8ca3a02f09d9a6e94e1cca207a110f56c9d3",
+    "test_results.tsv": "290126b5883a39adfecdf1fd5fc87d1ec17a5e4d4ab78d68813469cc97a4ec2e"
+  },
+  "report_sha256": "a967eac2edaedb32572e9593a918b84395fb31b16c8ef468f1c1be2aac1e64ae",
+  "test_cohort_prior_use": "Earlier Gemini, DeepSeek, and Luna test comparisons used the same TDC-v2 Carcinogens test cohort."
+}

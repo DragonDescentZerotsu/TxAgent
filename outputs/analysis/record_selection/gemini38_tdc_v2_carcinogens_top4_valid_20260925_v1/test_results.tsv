@@ -1,0 +1,5 @@
+arm	subset	profile	n_queries	macro_f1	status
+Gemini direct, prior frozen profile	test	ga075_mc000_label010	56	0.830303	prior completed
+Gemini mixed, prior DeepSeek profile	test	ga125_mc010_sr025_sd010_ld010_rd010	56	0.773737	prior completed
+Gemini mixed, validation selected	valid	ga075_mc025_sr050_sd025_ld025_rd025	28	0.717172	complete
+Gemini mixed, validation selected	test	ga075_mc025_sr050_sd025_ld025_rd025	56	0.787879	complete

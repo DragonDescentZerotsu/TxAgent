@@ -1,7 +1,7 @@
 # Final Joseph full-test collection
 
 The [final collection](outputs/paper/assay_transfer_harness/joseph/final/collection.json)
-contains 60 complete test arms and 19,843 successful arm-query results. It includes
+contains 61 complete test arms and 19,899 successful arm-query results. It includes
 Gold BBB, Oral Bioavailability, AMES, Carcinogens, DILI, and Skin Reaction
 direct and direct+indirect arms; TDC Oral Bioavailability and Skin Reaction
 direct and direct+indirect arms; and TDC-v2 AMES, BBB, Carcinogens, and DILI
@@ -52,6 +52,8 @@ The [Gold-v1 best-test full-control promotion](outputs/analysis/record_selection
 The [12-row DeepSeek test table](outputs/paper/assay_transfer_harness/joseph/final/test_macro_f1_12_task_benchmarks_deepseek_selected_20260925_v1.tsv) lists the current complete selected direct and direct+indirect FINAL arms for each Gold-v1 (Starling) and TDC task. It includes the selected Gold-v1 mixed successors and the completed newer TDC-v2 AMES, DILI, and Carcinogens arms; each row pins both arm paths and manifest hashes.
 
 The matching [12-row Luna test table](outputs/paper/assay_transfer_harness/joseph/final/test_macro_f1_12_task_benchmarks_luna_selected_20260925_v1.tsv) includes the new Gold-v1 Carcinogens direct arm at 0.482328 macro-F1 on 469 queries and the TDC-v2 Carcinogens direct arm at 0.841539 on 56 queries. Each row pins its selected FINAL arms and manifest hashes.
+
+The [DeepSeek trace-augmented table](outputs/paper/assay_transfer_harness/joseph/final/test_macro_f1_12_task_benchmarks_deepseek_selected_trace_metrics_20260925_v1.tsv) and [Luna trace-augmented table](outputs/paper/assay_transfer_harness/joseph/final/test_macro_f1_12_task_benchmarks_luna_selected_trace_metrics_20260925_v1.tsv) retain those scores and add mean final-call reasoning references, reasoning tokens, and structured final-claim citations for every direct and direct+indirect arm. The [analysis report](outputs/analysis/prediction/joseph_final_trace_metrics_20260925_v1/report.md), [cell summary](outputs/analysis/prediction/joseph_final_trace_metrics_20260925_v1/cell_summary.tsv), and per-query audit describe unavailable reasoning text and pin the source runs. Matching v4 Gold-v1 ablation and scaling tables are linked from the FINAL ablations README. This offline analysis does not change inference runs or the compressed bundle.
 
 The [TDC-v2 BBB report](outputs/analysis/record_selection/joseph_final_tdc_v2_bbb_filtered_20260924_v1/report.md)
 and [TSV](outputs/analysis/record_selection/joseph_final_tdc_v2_bbb_filtered_20260924_v1/results.tsv)
@@ -171,6 +173,19 @@ and [direct+indirect](outputs/paper/assay_transfer_harness/joseph/final/luna/tes
 arms. Their 469-query test macro-F1 values are 0.482328 and 0.623776. They
 were added as model-specific results; both trail the DeepSeek FINAL direct
 score of 0.532669 and the selected mixed score of 0.658598.
+
+The [Gemini 3.8 Flash TDC-v2 Carcinogens arm](outputs/paper/assay_transfer_harness/joseph/final/gemini38/test/tdc_v2/carcinogens/ga075_mc025_sr050_sd025_ld025_rd025/manifest.json)
+uses the upstream-v3 prompt and the best of four indirect profiles evaluated on
+28 validation queries. All four tied at 0.717172 macro-F1; the frozen tie rule
+selected `ga075_mc025_sr050_sd025_ld025_rd025`. On all 56 test queries, the
+selected mixed arm scored 0.787879, above the earlier Gemini mixed arm
+(0.773737) and below Gemini direct (0.830303). The [Gemini index](outputs/paper/assay_transfer_harness/joseph/final/gemini38/index.json)
+preserves all four validation arms and the selected test arm with per-query
+traces and served-provider routes. The [report](outputs/analysis/record_selection/gemini38_tdc_v2_carcinogens_top4_valid_20260925_v1/report.md)
+and [TSVs](outputs/analysis/record_selection/gemini38_tdc_v2_carcinogens_top4_valid_20260925_v1/validation_results.tsv)
+pin the validation decision and test comparison. This test cohort was used in
+earlier model and prompt comparisons, so the result is descriptive rather than
+an untouched holdout estimate.
 
 The complete collection, including its traces, is preserved in Git as
 [compressed parts](outputs/paper/assay_transfer_harness/joseph/final/git_bundle/README.md).

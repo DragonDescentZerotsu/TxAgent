@@ -1,0 +1,21 @@
+{
+  "schema_version": "gemini38_tdc_v2_carcinogens_top4_test_report.v1",
+  "freeze_json": "outputs/analysis/record_selection/gemini38_tdc_v2_carcinogens_top4_valid_20260925_v1/freeze.json",
+  "freeze_sha256": "e4d2c38939911c311051b5b6de105a9aaaf90ac0d8d1883698b9ca3ae3cdade9",
+  "test_selection_manifest": "outputs/analysis/record_selection/gemini38_tdc_v2_carcinogens_top4_valid_20260925_v1/test_selection/carcinogens/manifest.json",
+  "test_selection_sha256": "a15e52553e9e57674b06abaa8949e4738663c80174b49becbd5040becbbbaf1c",
+  "test_batch": "outputs/paper/assay_transfer_harness/joseph/_batches/gemini38_tdc_v2_carcinogens_top4_test_20260925_v1/ga075_mc025_sr050_sd025_ld025_rd025/carcinogens__ga075_mc025_sr050_sd025_ld025_rd025",
+  "test_metrics_sha256": "d0e49de454a93c04b20014b7126c1d9986ead5c9eba1993038e0a5a2292f6704",
+  "test_predictions_sha256": "4a1297693e213dd3341137ce37bcd6b764d1c83de46f5fe12bf5c1ec19eb4fb9",
+  "test_batch_manifest_sha256": "19eba9eb82e6d6a2f300100f71c7578e15e8c744323ef63a6e40c2ce44f8052b",
+  "comparison_source": "outputs/analysis/record_selection/gemini38_flash_frozen_deepseek_test_20260925_v1/full_matrix.tsv",
+  "comparison_source_sha256": "f1be2f7f7a2ce00f6ba46ab882a03bc201ec7999179e215f58471a097357923f",
+  "test_results_sha256": "290126b5883a39adfecdf1fd5fc87d1ec17a5e4d4ab78d68813469cc97a4ec2e",
+  "verified_confusion": {
+    "tn": 40,
+    "fp": 5,
+    "fn": 3,
+    "tp": 8
+  },
+  "recomputed_macro_f1": 0.7878787878787878
+}
