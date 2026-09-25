@@ -1,0 +1,19 @@
+{
+  "schema_version": "gold_v1_best_test_full_control_final_promotion.v1",
+  "status": "complete",
+  "created_at_utc": "2026-09-25T14:55:33.325031+00:00",
+  "collection_path": "outputs/paper/assay_transfer_harness/joseph/final/collection.json",
+  "results_sha256": "1084f96c60f21fd074306be87d031daceecc486d7d7b3494e6c400b7d16b9fc5",
+  "report_sha256": "63832f92cbdd3bdba49b4d4fc5c5a6408d88ed15b68aaa7dcee21cd6a64f109c",
+  "selected_arm_manifest_sha256": {
+    "ames": "07c4a4e62b0f3260d3b3d5032f09bce2be48e010d434729d1ae4eef20434eb16",
+    "bbb_martins": "4f092019903ac52f4365294652e30ad434d01198f983cace8d550b249d2a6dfc",
+    "bioavailability_ma": "5cd7b0aeaf979c59cb9f0db91b2e1b3fc578ca7c09932677394d6e9393f085dd",
+    "carcinogens": "e5e2b8239ae9574ce898cf331e5fc64b6de9e6bb5654a717feb6a2817b24bc77",
+    "dili": "a3a15caee004e1a54beb77151d9abf0f44d2526334a1c2a39e22500ca41a5225",
+    "skin_reaction": "9c040b1f87c805e5790a7f00cf7130a5fbff1a0dea4fc694512466dffbb58209"
+  },
+  "collection_sha256_at_promotion": "81207541e571ea08cce6290c79922bf5880948b1325d9e98ea9d66aa54df06ba",
+  "selected_collection_snapshot_sha256": "ef8779ef258397f19c3594386018d13c9640f3a74600da6194f1b84307b7f35c",
+  "collection_hash_note": "The collection is append-only and may gain unrelated arms after this promotion; the selected snapshot and arm manifest hashes pin this study."
+}

@@ -1,0 +1,2 @@
+benchmark	task	selection	profile	validation_subset	validation_n	validation_macro_f1	test_n	test_n_successful	test_macro_f1	test_accuracy	tn	fp	fn	tp
+gold_v1	skin_reaction	direct	ga100_mc025_label010	valid_small	100	0.716178	241	241	0.559252	0.672199	20	48	31	142

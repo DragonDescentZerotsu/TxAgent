@@ -1,0 +1,69 @@
+{
+  "schema_version": "luna_skin_tdc_v2_indirect_final_report.v1",
+  "status": "complete",
+  "selection_rule": "highest full-validation macro F1 among eight mixed profiles, frozen before test",
+  "selected_profile": "ga100_mc025_sr050_sd025_ld025_rd025",
+  "selected_validation_macro_f1": 0.702502,
+  "selected_test_macro_f1": 0.611005,
+  "requested_model": "openai/gpt-6-luna",
+  "served_model": "openai/gpt-6-luna",
+  "upstream_provider": "OpenAI",
+  "inputs": [
+    {
+      "path": "outputs/analysis/record_selection/luna_skin_tdc_v2_indirect_expanded_valid_20260925_v1/results.tsv",
+      "sha256": "ca56d8a35ae0e4432211f0fa6dbe5534badc743f15dbf0905b423a549c8681ae"
+    },
+    {
+      "path": "outputs/analysis/record_selection/luna_skin_tdc_v2_indirect_expanded_test_20260925_v1/results.tsv",
+      "sha256": "2394988b786d8b734c566363ead989fc53559305d78f949052c67726f0fef6ba"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/luna/parameters/skin_tdc_v2_luna_indirect_expanded_20260925_v1/validation_decision.json",
+      "sha256": "083ebbf8f48b17042aa1eb1c870036f35f8c5951d70c515d3240a4f5c57a9e68"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/luna/parameters/skin_tdc_v2_luna_indirect_expanded_20260925_v1/files.tsv",
+      "sha256": "6a053d1133e4f043d1eac79585ed31c19d8aecae171791918e861aa3af2b75a5"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/luna/test/tdc_v2/skin_reaction/direct_plus_indirect_valid_selected_v2/manifest.json",
+      "sha256": "cad4ef3965d261aecafab7e3098494c6583e27faa230850b0104899ebc501f19"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/luna/index.json",
+      "sha256": "df5b8c2bc712a6d964347a121f68dbe40a2e1d01d5d6a04a71a70ae26000cc8c"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/collection.json",
+      "sha256": "78fac4023c3376847f5799c2dd67474d6cb08aaec9ad95b335b6e9ea2d95d2aa"
+    },
+    {
+      "path": "outputs/analysis/record_selection/luna_skin_tdc_v2_indirect_final_20260925_v1/results.tsv",
+      "sha256": "b0874928505496c2a9db258da4b0a0a87e141b2c84d9de6a2a992afc7dc0f860"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/luna/validation/tdc_v2/skin_reaction/direct_plus_indirect/ga075_mc010_sr025_sd010_ld010_rd010/manifest.json",
+      "sha256": "1825038c04fcc86700aac23927ff84853b036b3c08c9cd0a50b0536750c4893b"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/luna/validation/tdc_v2/skin_reaction/direct_plus_indirect/ga075_mc025_sr025_sd025_ld025_rd025/manifest.json",
+      "sha256": "a22f627b83da088d71a5a636bb44e7a4646b15fef98579754f001dcca3319e1d"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/luna/validation/tdc_v2/skin_reaction/direct_plus_indirect/ga100_mc010_sr010_sd010_ld010_rd010/manifest.json",
+      "sha256": "7f0e1d4aa7ea0194e7c99a4edf7d2180d43b3d9397ef210075ade0bdcabeb7f0"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/luna/validation/tdc_v2/skin_reaction/direct_plus_indirect/ga100_mc025_sr025_sd025_ld025_rd025/manifest.json",
+      "sha256": "736ebf2768977138630687d6d25a3298f673adfe15b0d03e26b9926985f06f29"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/luna/validation/tdc_v2/skin_reaction/direct_plus_indirect/ga100_mc025_sr050_sd025_ld025_rd025/manifest.json",
+      "sha256": "6275b41a3104d12b5163b9dedb7b29859baaa9688ab95e8bba87ec1815cff629"
+    },
+    {
+      "path": "outputs/analysis/record_selection/luna_skin_tdc_v2_indirect_final_20260925_v1/run_audit.tsv",
+      "sha256": "d9e39420c2daa33135e1411b542d39e81e7d2b126911c56ab5e7116ae1fd9f76"
+    }
+  ]
+}

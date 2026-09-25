@@ -1,0 +1,195 @@
+{
+  "schema_version": "luna_final_carcinogens_ames_comparison.v1",
+  "status": "complete",
+  "comparison_policy": "cross-model differences identify whether the new Luna cell reaches the existing DeepSeek cell; direct-versus-mixed comparisons use matching upstream-v3 prompt assets",
+  "model": "openai/gpt-6-luna",
+  "reasoning_effort": "high",
+  "parallelism_per_test_launcher": 512,
+  "sources": [
+    {
+      "task": "carcinogens",
+      "benchmark": "gold_v1",
+      "selection": "direct",
+      "batch": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_gold_v1_carcinogens_direct_test_upstream_v3_20260925_v1/ga125_mc000_label010/with_query_prior/k10_m0_20260925_101332/carcinogens/carcinogens__ga125_mc000_label010",
+      "matrix": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_gold_v1_carcinogens_direct_test_upstream_v3_20260925_v1/matrix.json",
+        "sha256": "d9a26e516d288a48062935b3a52349ed2cee1b866901a95736d129db9df1cc76"
+      },
+      "completion": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_gold_v1_carcinogens_direct_test_upstream_v3_20260925_v1/completion.json",
+        "sha256": "81834ee9949deb5a4db044adf726bf012a2ba3cda0481aa2641afa7b8ee8759b"
+      },
+      "metrics": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_gold_v1_carcinogens_direct_test_upstream_v3_20260925_v1/ga125_mc000_label010/with_query_prior/k10_m0_20260925_101332/carcinogens/carcinogens__ga125_mc000_label010/metrics.json",
+        "sha256": "82110f441b115b83a63b526bcacd4ac801e8b108be38dbb551d53dc53028831f"
+      },
+      "predictions": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_gold_v1_carcinogens_direct_test_upstream_v3_20260925_v1/ga125_mc000_label010/with_query_prior/k10_m0_20260925_101332/carcinogens/carcinogens__ga125_mc000_label010/predictions.jsonl",
+        "sha256": "5280848a6efc8828d2c21ecb56ec7f5eae768b119175307800a6bdf3b2df4e16"
+      },
+      "retrieval_manifest": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_gold_v1_carcinogens_direct_test_upstream_v3_20260925_v1/ga125_mc000_label010/with_query_prior/k10_m0_20260925_101332/carcinogens/carcinogens__ga125_mc000_label010/cache_matched_retrieval/manifest.json",
+        "sha256": "3756e45b2f17ed81a5764caab60e722e1dab8a37b0cbb8762237f60653a1b76c"
+      },
+      "selection_manifest": {
+        "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/luna_gold_carcinogens_tdc_ames_20260925_v1/gold_test/direct/ga125_mc000_label010/carcinogens/manifest.json",
+        "sha256": "089a650c4ee8c94d9ac762ff8e9fa8e6717c6b7409d47be615f55d3dc1007659"
+      },
+      "prompt_version": "full_flat_context_v5_six_tasks_upstream_v3",
+      "prompt_assets_sha256": "ec8fbf5fbe6f93b0b95bdda9ac7e59420c38508ddd2e0c8075b34cb3214c4062"
+    },
+    {
+      "task": "carcinogens",
+      "benchmark": "gold_v1",
+      "selection": "direct_plus_indirect",
+      "batch": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_gold_v1_carcinogens_mixed_test_parent100_20260925_v1/ga100_mc010_sr025_sd010_ld010_rd010/with_query_prior/k10_m0_20260925_093055/carcinogens/carcinogens__ga100_mc010_sr025_sd010_ld010_rd010",
+      "matrix": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_gold_v1_carcinogens_mixed_test_parent100_20260925_v1/matrix.json",
+        "sha256": "d05b37f295af7505ce8ca60b5b87c41ec679ae95f22147e3531020b0950e33ab"
+      },
+      "completion": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_gold_v1_carcinogens_mixed_test_parent100_20260925_v1/completion.json",
+        "sha256": "7fb7528485d271b7009a646efe53cb553670924bc9a10b03d008beb1e1db5751"
+      },
+      "metrics": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_gold_v1_carcinogens_mixed_test_parent100_20260925_v1/ga100_mc010_sr025_sd010_ld010_rd010/with_query_prior/k10_m0_20260925_093055/carcinogens/carcinogens__ga100_mc010_sr025_sd010_ld010_rd010/metrics.json",
+        "sha256": "952aa7d62b33342e21d068e27c2a28653c6ef6f2f36d7a49d8adf5df7b4a6c61"
+      },
+      "predictions": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_gold_v1_carcinogens_mixed_test_parent100_20260925_v1/ga100_mc010_sr025_sd010_ld010_rd010/with_query_prior/k10_m0_20260925_093055/carcinogens/carcinogens__ga100_mc010_sr025_sd010_ld010_rd010/predictions.jsonl",
+        "sha256": "9994c1d5281459c662ab1d4be1a4d5206a71d92826e818fc67e7545a1d274e08"
+      },
+      "retrieval_manifest": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_gold_v1_carcinogens_mixed_test_parent100_20260925_v1/ga100_mc010_sr025_sd010_ld010_rd010/with_query_prior/k10_m0_20260925_093055/carcinogens/carcinogens__ga100_mc010_sr025_sd010_ld010_rd010/cache_matched_retrieval/manifest.json",
+        "sha256": "4bff16ed697e5bf4b88e94d5ee3e74c3bf6bc4795b1cf597dc1f8d4db26ec27d"
+      },
+      "selection_manifest": {
+        "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/luna_gold_carcinogens_tdc_ames_20260925_v1/gold_test/mixed/ga100_mc010_sr025_sd010_ld010_rd010/carcinogens/manifest.json",
+        "sha256": "df418f2b39990fc08b9dc2f3fa38ea623e8c6dd475fce428b889f565cce4b87a"
+      },
+      "prompt_version": "full_flat_context_v5_six_tasks_upstream_v3",
+      "prompt_assets_sha256": "ec8fbf5fbe6f93b0b95bdda9ac7e59420c38508ddd2e0c8075b34cb3214c4062"
+    },
+    {
+      "task": "ames",
+      "benchmark": "tdc_v2",
+      "selection": "direct",
+      "batch": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_ames_direct_test_upstream_v3_20260925_v1/ga050_mc010_label025/with_query_prior/k10_m0_20260925_101342/ames/ames__ga050_mc010_label025",
+      "matrix": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_ames_direct_test_upstream_v3_20260925_v1/matrix.json",
+        "sha256": "f4ca130ff6d3b15da6f27b15e0293554784080a4abe51ce9b0220fcaecc9d5f9"
+      },
+      "completion": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_ames_direct_test_upstream_v3_20260925_v1/completion.json",
+        "sha256": "cdf14bce7b4a3b23d65b22015bb6407cf283c18aa516dfc149e710186d0de28b"
+      },
+      "metrics": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_ames_direct_test_upstream_v3_20260925_v1/ga050_mc010_label025/with_query_prior/k10_m0_20260925_101342/ames/ames__ga050_mc010_label025/metrics.json",
+        "sha256": "7bb763f8cd0c0d1bb965cedd401fb26d430ee2bf8979661d002c6a4bcc4b02e6"
+      },
+      "predictions": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_ames_direct_test_upstream_v3_20260925_v1/ga050_mc010_label025/with_query_prior/k10_m0_20260925_101342/ames/ames__ga050_mc010_label025/predictions.jsonl",
+        "sha256": "c730d372878e564da7d79df6de1f89fa5f66fb711a3349934e9bfeffeb7b5e28"
+      },
+      "retrieval_manifest": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_ames_direct_test_upstream_v3_20260925_v1/ga050_mc010_label025/with_query_prior/k10_m0_20260925_101342/ames/ames__ga050_mc010_label025/cache_matched_retrieval/manifest.json",
+        "sha256": "f5714a758497b561c82fc2235032ad8b11df0633622f3ef921a5155d2015bc2e"
+      },
+      "selection_manifest": {
+        "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/luna_gold_carcinogens_tdc_ames_20260925_v1/ames_test/direct/ga050_mc010_label025/ames/manifest.json",
+        "sha256": "b9220affa200cc64ec69910fccdca535cf7ec52b1bb6ab02ed658d46c71697f3"
+      },
+      "prompt_version": "full_flat_context_v5_six_tasks_upstream_v3",
+      "prompt_assets_sha256": "ec8fbf5fbe6f93b0b95bdda9ac7e59420c38508ddd2e0c8075b34cb3214c4062"
+    },
+    {
+      "task": "ames",
+      "benchmark": "tdc_v2",
+      "selection": "direct_plus_indirect",
+      "batch": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_ames_mixed_test_valid100_v3_20260925_v1/ga100_mc025_sr010_sd025_ld025_rd025/with_query_prior/k10_m0_20260925_095457/ames/ames__ga100_mc025_sr010_sd025_ld025_rd025",
+      "matrix": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_ames_mixed_test_valid100_v3_20260925_v1/matrix.json",
+        "sha256": "33c92c18c757b4ad8f00cb0e4750d9ab392788c07dfc75b985136aee20ecb64d"
+      },
+      "completion": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_ames_mixed_test_valid100_v3_20260925_v1/completion.json",
+        "sha256": "6e337a4709353b6c02d227b53fee3ef8885d8900fd537b94e7744ef62f7c0f14"
+      },
+      "metrics": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_ames_mixed_test_valid100_v3_20260925_v1/ga100_mc025_sr010_sd025_ld025_rd025/with_query_prior/k10_m0_20260925_095457/ames/ames__ga100_mc025_sr010_sd025_ld025_rd025/metrics.json",
+        "sha256": "1cfd24a35566f2f0917d753387ae47df794b411cb8b7bacbf295e04963439e38"
+      },
+      "predictions": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_ames_mixed_test_valid100_v3_20260925_v1/ga100_mc025_sr010_sd025_ld025_rd025/with_query_prior/k10_m0_20260925_095457/ames/ames__ga100_mc025_sr010_sd025_ld025_rd025/predictions.jsonl",
+        "sha256": "d17b53486f8d81768db03c9980127dbe5cb46addb879e36eaced6125180aace9"
+      },
+      "retrieval_manifest": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_ames_mixed_test_valid100_v3_20260925_v1/ga100_mc025_sr010_sd025_ld025_rd025/with_query_prior/k10_m0_20260925_095457/ames/ames__ga100_mc025_sr010_sd025_ld025_rd025/cache_matched_retrieval/manifest.json",
+        "sha256": "40a38ec6b88bf1fdc29686de1eab850a014c0c3d6ea2f9ea57ce7efef1c42083"
+      },
+      "selection_manifest": {
+        "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/luna_gold_carcinogens_tdc_ames_20260925_v1/ames_mixed_test_from_valid100/selections/ga100_mc025_sr010_sd025_ld025_rd025/manifest.json",
+        "sha256": "9255cd5c0e6a046ddd053eec72a1bb11d9dd9ed758e70ad4bb2e3cd9a7f59fe2"
+      },
+      "prompt_version": "full_flat_context_v5_six_tasks_upstream_v3",
+      "prompt_assets_sha256": "ec8fbf5fbe6f93b0b95bdda9ac7e59420c38508ddd2e0c8075b34cb3214c4062"
+    }
+  ],
+  "validation_sources": [
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_gold_v1_carcinogens_direct100_parent100_20260925_v1/matrix.json",
+      "sha256": "d637906bd2cec3325dc3adbb306ac3b2e224d57702f90cc7fcbb2938f69ad935"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_gold_v1_carcinogens_mixed12_querymean_20260925_r2/matrix.json",
+      "sha256": "52eedcb71bd86d2779a5fa16e86c1c6d66116636d36797cecc7acf144172d2e2"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_ames_direct100_v3_20260925_v1/matrix.json",
+      "sha256": "f4bdc54532accf2148ab5959dc252e41f779619a7648d0203f155e77002e2b71"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_ames_mixed5_v3_20260925_v1/matrix.json",
+      "sha256": "e083aba31d4c47616a7c3a638126b0676d8a57ac31be6edb072b0308c700d474"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_ames_direct720_v3_20260925_v1/matrix.json",
+      "sha256": "6200854422692b05762258bfa2e2b5a95df898c8cc86d1726b63f64d4cd208c5"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_tdc_v2_ames_direct720_v3_20260925_r2/matrix.json",
+      "sha256": "324b158104a0174f8280fd6d5030e9d474f2e1b3c9f4f96f9660328f15ac7491"
+    }
+  ],
+  "results_tsv_sha256": "585052ee1c8d1d337e757cc5a5e12521038f045323b9bdf27a90191fdb5c38c0",
+  "validation_tsv_sha256": "326133751c6f2beffec597e1e949e80a034267fb5e4d404eb07b53bfc8aa5104",
+  "direct_prompt_control_note": "Earlier direct test commands used final_full_flat because mixed-harness-version does not set the direct-grid prompt. New direct runs explicitly use preselected-direct-harness-version upstream-v3 and preserve earlier runs for audit.",
+  "ames_indirect_selection_note": "Winner selected among five profiles on 100 validation queries. Full-validation mixed run was interrupted and not used.",
+  "gold_validation_score_note": "Missing Gold Carcinogens assay scores received per-query observed means for validation selection only; imputed numbers were hidden from prompts.",
+  "existing_final_collection": {
+    "path": "outputs/paper/assay_transfer_harness/joseph/final/collection.json",
+    "sha256": "06562d3fe4d5ed92e0f2f83f4c4dffce9bdcce921407374f27e154581f4cfd67"
+  },
+  "reference_arms": [
+    {
+      "path": "gold_v1/carcinogens/direct",
+      "manifest_sha256": "0b61b14667780a748601c5bd314d7e644ee42a4e4c32cec686656c091f482ef7",
+      "macro_f1": 0.532669
+    },
+    {
+      "path": "gold_v1/carcinogens/direct_plus_indirect",
+      "manifest_sha256": "00b41a4d1109b7a4ea3c9c586a5304340a8f08ceed03211dfafcb3ad8170de8b",
+      "macro_f1": 0.647253
+    },
+    {
+      "path": "tdc_v2/ames/direct",
+      "manifest_sha256": "cadf190f51132bd1f8be416d498ecfc540951e3fb19cd9b249564888e45046eb",
+      "macro_f1": 0.782289
+    },
+    {
+      "path": "tdc_v2/ames/direct_plus_indirect",
+      "manifest_sha256": "fc24120cbcb24a0f395f62a16c99c7c360bb7dd46f395a6fabe3b599920830cc",
+      "macro_f1": 0.79935
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+benchmark	task	selection	decision_basis	n_queries	macro_f1	accuracy	tn	fp	fn	tp	final_arm
+tdc_v2	carcinogens	direct	validation_selected	56	0.817392	0.892857	43	2	4	7	deepseek/test/tdc_v2/carcinogens/direct
+gold_v1	dili	direct_plus_indirect_sr000_v3_control	exploratory_test_ablation	402	0.680085	0.79602	39	43	39	281	deepseek/test/gold_v1/dili/direct_plus_indirect_sr000_v3_control

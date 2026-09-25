@@ -1,0 +1,12 @@
+split	arm	profile	selected	n_queries	macro_f1	accuracy	tn	fp	fn	tp
+validation	mixed	ga100_mc025_sr050_sd025_ld025_rd025	yes	40	0.702502	0.725000	9	9	2	20
+validation	mixed	ga100_mc025_sr025_sd025_ld025_rd025	no	40	0.636618	0.675000	7	11	2	20
+validation	mixed	ga075_mc010_sr025_sd010_ld010_rd010	no	40	0.601139	0.650000	6	12	2	20
+validation	mixed	ga075_mc025_sr025_sd025_ld025_rd025	no	40	0.601139	0.650000	6	12	2	20
+validation	mixed	ga100_mc010_sr010_sd010_ld010_rd010	no	40	0.601139	0.650000	6	12	2	20
+test	mixed	ga075_mc010_sr010_sd010_ld010_rd010	no	82	0.632051	0.658537	16	19	9	38
+test	mixed	ga100_mc025_sr050_sd025_ld025_rd025	yes	82	0.611005	0.634146	16	19	11	36
+test	mixed	ga100_mc025_sr025_sd025_ld025_rd025	no	82	0.579488	0.609756	14	21	11	36
+validation	direct	ga100_mc000_label025	no	40	0.648411	0.675000	8	10	3	19
+test	prior_mixed	ga100_mc010_sr025_sd010_ld010_rd010	no	82	0.605770	0.634146	15	20	10	37
+test	direct_equivalent_cohort	ga100_mc000_label025	no	82	0.700912	0.707317	23	12	12	35

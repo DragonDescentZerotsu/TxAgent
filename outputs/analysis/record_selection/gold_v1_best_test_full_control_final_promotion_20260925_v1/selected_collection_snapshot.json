@@ -1,0 +1,42 @@
+{
+  "schema_version": "gold_v1_selected_deepseek_test_best.v1",
+  "selection_basis": "higher_completed_test_full_control",
+  "selected": {
+    "ames": {
+      "path": "gold_v1/ames/direct_plus_indirect",
+      "manifest_sha256": "07c4a4e62b0f3260d3b3d5032f09bce2be48e010d434729d1ae4eef20434eb16",
+      "macro_f1": 0.774211,
+      "n_queries": 274
+    },
+    "bbb_martins": {
+      "path": "deepseek/test/gold_v1/bbb_martins/direct_plus_indirect_coverage_control_20260925_v1",
+      "manifest_sha256": "4f092019903ac52f4365294652e30ad434d01198f983cace8d550b249d2a6dfc",
+      "macro_f1": 0.732966,
+      "n_queries": 393
+    },
+    "bioavailability_ma": {
+      "path": "gold_v1/bioavailability_ma/direct_plus_indirect",
+      "manifest_sha256": "5cd7b0aeaf979c59cb9f0db91b2e1b3fc578ca7c09932677394d6e9393f085dd",
+      "macro_f1": 0.86134,
+      "n_queries": 269
+    },
+    "carcinogens": {
+      "path": "deepseek/test/gold_v1/carcinogens/direct_plus_indirect_repeated_control_20260925_v1",
+      "manifest_sha256": "e5e2b8239ae9574ce898cf331e5fc64b6de9e6bb5654a717feb6a2817b24bc77",
+      "macro_f1": 0.658598,
+      "n_queries": 469
+    },
+    "dili": {
+      "path": "deepseek/test/gold_v1/dili/direct_plus_indirect_sr000_v3_control",
+      "manifest_sha256": "a3a15caee004e1a54beb77151d9abf0f44d2526334a1c2a39e22500ca41a5225",
+      "macro_f1": 0.680085,
+      "n_queries": 402
+    },
+    "skin_reaction": {
+      "path": "deepseek/test/gold_v1/skin_reaction/direct_plus_indirect_sr005_control_20260925_v1",
+      "manifest_sha256": "9c040b1f87c805e5790a7f00cf7130a5fbff1a0dea4fc694512466dffbb58209",
+      "macro_f1": 0.618458,
+      "n_queries": 241
+    }
+  }
+}

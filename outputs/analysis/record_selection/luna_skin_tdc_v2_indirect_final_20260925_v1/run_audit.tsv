@@ -1,0 +1,10 @@
+measure	value
+new_validation_profiles	5
+total_validation_profiles	8
+validation_queries_per_profile	40
+test_queries_selected	82
+copied_responses	282
+selected_test_initial_responses	78
+selected_test_retry1_responses	3
+selected_test_retry2_responses	1
+selected_test_recovered_responses	4

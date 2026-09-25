@@ -1,0 +1,49 @@
+{
+  "schema_version": "joseph_final_deepseek_additions.v1",
+  "status": "complete",
+  "arms": {
+    "deepseek/test/tdc_v2/carcinogens/direct": {
+      "manifest_sha256": "1eee1a70c2c3936b5221a2481cf66aa382251e38aac8c3d99af9d04c9a101135",
+      "metrics_sha256": "2edc083710d5b71a02d6a4e7ff6196411cb5eedea4eaddaf487cd834fb29e739",
+      "predictions_sha256": "ed1dbdf8d5a420c745fbe5616987b0ebca7e7342a1d2c0de69ddd883e0429219",
+      "trace_sha256": "5941212c9adcd0f7a1a63b1cff5ee41cc523b426559ce9dddfc7ae3ee8da3b9f",
+      "selection_manifest": {
+        "path": "outputs/analysis/record_selection/tdc_v2_carcinogens_full_exact_direct_indirect_20260925_v1/direct_test/direct/ga075_mc000_label010/carcinogens/manifest.json",
+        "sha256": "edd81c10b6e0fde41b35dc3c72a07a9222f9ee92acb748c35ffc04136941a442"
+      },
+      "prompt_snapshot": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/final/deepseek/prompts/full_flat_context_v5_six_tasks_upstream_v3",
+        "files_tsv_sha256": "290688de73afb6a9224f1f90ef329676bf210ec1d07fbba7c108e74cce67705b"
+      },
+      "parameter_snapshot": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/final/deepseek/parameters/tdc_v2_carcinogens_direct_exact_20260925_v1",
+        "files_tsv_sha256": "dc8611eada8c11ccaa4b5e835ddee4e8890ba2b5832e98b8b962821c9d964f8d"
+      }
+    },
+    "deepseek/test/gold_v1/dili/direct_plus_indirect_sr000_v3_control": {
+      "manifest_sha256": "a3a15caee004e1a54beb77151d9abf0f44d2526334a1c2a39e22500ca41a5225",
+      "metrics_sha256": "8ff97a1e6356142cde61b94325987f6cb26d35037aa6be0ad98f8e08bc87026f",
+      "predictions_sha256": "00b9a1d104144df4bed264d4246b000c97c98a001cf5c06a28f85ac6ce4a41dd",
+      "trace_sha256": "89f8618331e1f32049beaa22062341e3952fccedea14e034bc6cfe104b327115",
+      "selection_manifest": {
+        "path": "outputs/analysis/record_selection/gold_v1_dili_v3_indirect_terms_frozen_direct_test_20260925_v3/selections/dili/mixed/ga050_mc025_sr000_sd025_ld025_rd025/dili/manifest.json",
+        "sha256": "598d8867e72d53dda7dcf499c9397464be6e340d9425386b0c6424ca4eb3d06d"
+      },
+      "prompt_snapshot": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/final/deepseek/prompts/full_flat_context_v5_six_tasks_upstream_v3",
+        "files_tsv_sha256": "290688de73afb6a9224f1f90ef329676bf210ec1d07fbba7c108e74cce67705b"
+      },
+      "parameter_snapshot": {
+        "path": "outputs/paper/assay_transfer_harness/joseph/final/deepseek/parameters/gold_v1_dili_sr000_control_20260925_v1",
+        "files_tsv_sha256": "a9bde06bbee90bcb56ea95271d127a5f83a8bcce2f86566066a5ae15a5aab3c0"
+      }
+    }
+  },
+  "results_tsv_sha256": "ecfeebc9358b93469c02c60e3e1d6be3b1aacdb17439f4e34c3ecde8319ab129",
+  "notes": [
+    "Carcinogens direct profile selected on validation with upstream-v3 prompt.",
+    "Gold DILI sr=0 control is a complete exploratory test ablation; validation-selected DILI arm and canonical_dili stay unchanged.",
+    "Gold DILI macro-F1 averages exact class F1 values before six-decimal rounding; the historical harness first rounds class F1 values and reports 0.680086.",
+    "Existing DeepSeek Carcinogens stronger-direct mixed and Luna arms were verified, not duplicated."
+  ]
+}

@@ -1,0 +1,5 @@
+task	benchmark	selection	queries	luna_macro_f1	luna_accuracy	existing_final_deepseek_macro_f1	luna_minus_existing	better_or_equal_overall	failed
+carcinogens	gold_v1	direct	469	0.482328	0.498934	0.532669	-0.050341	false	0
+carcinogens	gold_v1	direct_plus_indirect	469	0.623776	0.690832	0.647253	-0.023477	false	0
+ames	tdc_v2	direct	1457	0.787868	0.796156	0.782289	+0.005579	true	0
+ames	tdc_v2	direct_plus_indirect	1457	0.811343	0.822924	0.799350	+0.011993	true	0

@@ -1,13 +1,14 @@
 # Final Joseph full-test collection
 
 The [final collection](outputs/paper/assay_transfer_harness/joseph/final/collection.json)
-contains 49 complete test arms and 14,107 successful arm-query results. It includes
+contains 60 complete test arms and 19,843 successful arm-query results. It includes
 Gold BBB, Oral Bioavailability, AMES, Carcinogens, DILI, and Skin Reaction
 direct and direct+indirect arms; TDC Oral Bioavailability and Skin Reaction
 direct and direct+indirect arms; and TDC-v2 AMES, BBB, Carcinogens, and DILI
 direct and direct+indirect arms. The [Luna directory](outputs/paper/assay_transfer_harness/joseph/final/luna/README.md)
 indexes frozen Gold-v1 and TDC-v2 Skin, BBB, and Oral Bioavailability validation
-and test arms, plus DILI test arms, with their traces and source provenance.
+and test arms, plus DILI, Gold-v1 Carcinogens, and TDC-v2 AMES test arms, with
+their traces and source provenance.
 Each arm includes predictions, metrics, per-query run artifacts and traces,
 a combined trace, a query-level model/provider ledger, and
 hash-pinned source and copied-file manifests. The original batches remain at
@@ -17,7 +18,10 @@ The [original results report](outputs/analysis/record_selection/joseph_final_gol
 covers the first seven arms. The [TDC Skin report](outputs/analysis/record_selection/joseph_final_tdc_skin_upstream_v2_test_20260924_v1/report.md)
 and [TSV](outputs/analysis/record_selection/joseph_final_tdc_skin_upstream_v2_test_20260924_v1/results.tsv)
 cover the selected upstream-v2 pair: direct macro-F1 0.634097 and
-direct+indirect macro-F1 0.666875, each on all 82 test queries. Gold Carcinogens
+direct+indirect macro-F1 0.666875, each on all 82 TDC-v1 test queries. The
+pair was retained after test comparisons, and later DeepSeek prompt and model
+iterations reused the same cohort. These are historical descriptive scores,
+not an untouched TDC-v2 holdout estimate. Gold Carcinogens
 direct uses `ga075_mc000_label000`. The [Gold Skin and TDC Oral direct report](outputs/analysis/record_selection/joseph_final_gold_skin_tdc_oral_direct_20260924_v1/report.md)
 and [TSV](outputs/analysis/record_selection/joseph_final_gold_skin_tdc_oral_direct_20260924_v1/results.tsv)
 cover three further arms. TDC Oral direct+indirect joins 87 recovery-leaf queries
@@ -40,6 +44,14 @@ and [TSV](outputs/analysis/record_selection/tdc_v2_carcinogens_final_full_flat_s
 compare prompt and model variants; the prompt and model choice was made after
 viewing test results. The DeepSeek final directory preserves the chosen prompt,
 parameters, per-query traces, and served-provider provenance.
+
+The [DeepSeek Carcinogens direct arm](outputs/paper/assay_transfer_harness/joseph/final/deepseek/test/tdc_v2/carcinogens/direct/manifest.json) adds the validation-selected exact-score upstream-v3 direct panel: 0.817392 macro-F1 on all 56 test queries. The separate [Gold DILI `sr=0` control](outputs/paper/assay_transfer_harness/joseph/final/deepseek/test/gold_v1/dili/direct_plus_indirect_sr000_v3_control/manifest.json) scored 0.680085 on all 402 test queries. It was evaluated after viewing test ablations; `canonical_dili` now points to it because the user chose the better completed test result. The prior validation-selected 0.659233 arm remains preserved. The further diversity ablation at 0.693906 was not promoted. Their [report](outputs/analysis/record_selection/joseph_final_deepseek_carc_direct_dili_sr0_20260925_v1/report.md), [TSV](outputs/analysis/record_selection/joseph_final_deepseek_carc_direct_dili_sr0_20260925_v1/results.tsv), and provenance pin the source runs, prompts, frozen selections, weights, routes, and traces. The upstream-v3 and polarized DILI prompt snapshots and selected TDC DILI optimization snapshot are in `final/deepseek/`.
+
+The [Gold-v1 best-test full-control promotion](outputs/analysis/record_selection/gold_v1_best_test_full_control_final_promotion_20260925_v1/report.md) adds complete BBB, Carcinogens, and Skin mixed successor arms and selects the already packaged DILI `sr=0` arm. `collection.json` records all six selected DeepSeek Gold-v1 mixed paths under `selected_gold_v1_deepseek_test_best`; Oral and AMES retain their earlier FINAL arms. This is a choice after viewing test results. The [numeric TSV](outputs/analysis/record_selection/gold_v1_best_test_full_control_final_promotion_20260925_v1/results.tsv) records the previous and selected scores. The separate [ablation and scaling tables](outputs/paper/assay_transfer_harness/joseph/final/ablations/README.md) include 10, 25, 50, 75, and 100 indirect records.
+
+The [12-row DeepSeek test table](outputs/paper/assay_transfer_harness/joseph/final/test_macro_f1_12_task_benchmarks_deepseek_selected_20260925_v1.tsv) lists the current complete selected direct and direct+indirect FINAL arms for each Gold-v1 (Starling) and TDC task. It includes the selected Gold-v1 mixed successors and the completed newer TDC-v2 AMES, DILI, and Carcinogens arms; each row pins both arm paths and manifest hashes.
+
+The matching [12-row Luna test table](outputs/paper/assay_transfer_harness/joseph/final/test_macro_f1_12_task_benchmarks_luna_selected_20260925_v1.tsv) includes the new Gold-v1 Carcinogens direct arm at 0.482328 macro-F1 on 469 queries and the TDC-v2 Carcinogens direct arm at 0.841539 on 56 queries. Each row pins its selected FINAL arms and manifest hashes.
 
 The [TDC-v2 BBB report](outputs/analysis/record_selection/joseph_final_tdc_v2_bbb_filtered_20260924_v1/report.md)
 and [TSV](outputs/analysis/record_selection/joseph_final_tdc_v2_bbb_filtered_20260924_v1/results.tsv)
@@ -92,8 +104,15 @@ and [TSV](outputs/analysis/record_selection/luna_skin_final_publication_20260924
 cover the frozen Gold-v1 and TDC-v2 indirect validation winners and their
 complete test runs. Their test macro-F1 scores are 0.564175 on 241 Gold-v1
 queries and 0.605770 on 82 TDC-v2 queries. The new `final/luna/` directory
-preserves the full validation profile traces and both prompt bundles; only the
-two test winners appear in the full-test collection index.
+preserves the full validation profile traces and both prompt bundles. The two
+original test winners remain in the full-test collection index.
+
+The [Luna Gold-v1 Skin direct arm](outputs/paper/assay_transfer_harness/joseph/final/luna/test/gold_v1/skin_reaction/direct/manifest.json)
+uses the direct profile frozen on 100 `valid_small` queries. It scored 0.559252
+macro-F1 on all 241 test queries. Its exact upstream-v2 prompt, selection,
+Azure route, and per-query traces are preserved. The [publication report](outputs/analysis/record_selection/luna_gold_skin_direct_final_20260925_v1/report.md)
+and [TSV](outputs/analysis/record_selection/luna_gold_skin_direct_final_20260925_v1/results.tsv)
+record the result and validation provenance.
 
 The [Luna TDC Skin direct arm](outputs/paper/assay_transfer_harness/joseph/final/luna/test/tdc_v2/skin_reaction/direct/manifest.json)
 adds a frozen 82-query TDC-v1 direct test run to the TDC-v2 view. The v1 and v2
@@ -102,6 +121,15 @@ different order; the arm retains its original v1 retrieval, query prior, and
 prompt. It scored 0.700912 macro-F1. The [equivalence report](outputs/analysis/record_selection/luna_skin_tdc_v1_v2_direct_final_20260925_v1/report.md)
 and [TSV](outputs/analysis/record_selection/luna_skin_tdc_v1_v2_direct_final_20260925_v1/results.tsv)
 document this as an equivalent-cohort replay rather than a native v2 rerun.
+
+The [Luna TDC-v2 Skin mixed successor](outputs/paper/assay_transfer_harness/joseph/final/luna/test/tdc_v2/skin_reaction/direct_plus_indirect_valid_selected_v2/manifest.json)
+uses the best of eight full-validation mixed profiles with the direct panel
+frozen. Its validation macro-F1 was 0.702502 on 40 queries; its complete 82-query
+test macro-F1 was 0.611005. Five new validation profile arms, the selected test
+arm, exact prompt and parameter snapshots, and recovery traces are in `final/luna/`.
+The previous 0.605770 Skin mixed arm remains for audit. The [comparison report](outputs/analysis/record_selection/luna_skin_tdc_v2_indirect_final_20260925_v1/report.md)
+and [TSV](outputs/analysis/record_selection/luna_skin_tdc_v2_indirect_final_20260925_v1/results.tsv)
+show the validation decision and all three tested profiles.
 
 The [Luna BBB/Oral report](outputs/analysis/record_selection/luna_bbb_oral_20260924_v1/report.md)
 and [comparison TSV](outputs/analysis/record_selection/luna_bbb_oral_20260924_v1/comparisons.tsv)
@@ -129,7 +157,22 @@ also record the second tested profile. The prompt was revised after viewing test
 results, so this is an exploratory successor arm rather than a validation-selected
 prompt result.
 
-The full collection, including traces, is preserved in Git as
+The [Luna TDC-v2 AMES direct arm](outputs/paper/assay_transfer_harness/joseph/final/luna/test/tdc_v2/ames/direct/manifest.json)
+and [direct+indirect arm](outputs/paper/assay_transfer_harness/joseph/final/luna/test/tdc_v2/ames/direct_plus_indirect/manifest.json)
+use the same upstream-v3 prompt and the v3 parent-100 exact-score cache for
+their 1,457-query test. They scored 0.787868 and 0.811343 macro-F1, above the
+existing DeepSeek FINAL values of 0.782289 and 0.799350. The mixed profile was
+chosen on a 100-query validation cohort; the full-validation mixed run was
+stopped and did not inform selection. The [comparison report](outputs/analysis/record_selection/luna_gold_carcinogens_tdc_ames_20260925_v1/final_publication_v1/report.md),
+[test TSV](outputs/analysis/record_selection/luna_gold_carcinogens_tdc_ames_20260925_v1/final_publication_v1/results.tsv),
+and [validation TSV](outputs/analysis/record_selection/luna_gold_carcinogens_tdc_ames_20260925_v1/final_publication_v1/validation.tsv)
+also record the [Gold-v1 Carcinogens Luna direct](outputs/paper/assay_transfer_harness/joseph/final/luna/test/gold_v1/carcinogens/direct/manifest.json)
+and [direct+indirect](outputs/paper/assay_transfer_harness/joseph/final/luna/test/gold_v1/carcinogens/direct_plus_indirect/manifest.json)
+arms. Their 469-query test macro-F1 values are 0.482328 and 0.623776. They
+were added as model-specific results; both trail the DeepSeek FINAL direct
+score of 0.532669 and the selected mixed score of 0.658598.
+
+The complete collection, including its traces, is preserved in Git as
 [compressed parts](outputs/paper/assay_transfer_harness/joseph/final/git_bundle/README.md).
 
 ## Updating the final files
@@ -141,7 +184,7 @@ final arms unchanged; a replacement needs a reviewed successor collection.
    prediction and per-query trace, and recomputed metrics match `metrics.json`.
    Check that its retrieval manifest pins the intended optimization manifest.
 2. Install the approved arm under
-   `outputs/paper/assay_transfer_harness/joseph/final/<benchmark>/<task>/<selection>/`.
+   `outputs/paper/assay_transfer_harness/joseph/final/<model>/test/<benchmark>/<task>/<selection>/`.
    Include `manifest.json`, `metrics.json`, `predictions.jsonl`,
    `query_provenance.tsv`, `files.tsv`, `trace_messages.jsonl`, and all
    `runs/<query>/` files. Hash-pin the source batch, optimization manifest, and
@@ -152,9 +195,9 @@ final arms unchanged; a replacement needs a reviewed successor collection.
    query count, and update `updated_at_utc`. Save the result report, numerical
    TSV, and compact provenance under `outputs/analysis/record_selection/<study-id>/`;
    update this page's counts and links.
-4. Check the collection index and fully verify only new arms before rebuilding
-   the Git bundle. Existing published arms must retain their collection entries
-   and manifest hashes; the archive rebuild reads their files once.
+4. Check the collection index and fully verify only new arms. Existing published
+   arms must retain their collection entries and manifest hashes. Leave the Git
+   bundle unchanged until a push is requested.
 
    ```bash
    python - <<'PY'
@@ -194,8 +237,9 @@ final arms unchanged; a replacement needs a reviewed successor collection.
    PY
    ```
 
-5. Rebuild and check the tracked archive once, immediately before committing all
-   intended additions. Do not recompress after each arm or intermediate edit.
+5. Only when the user wants to push, rebuild and check the tracked archive once
+   after all intended additions. Do not recompress after each arm or intermediate
+   edit.
    Raw files under `final/` are ignored
    by Git; the compressed parts carry their complete copy, including traces.
 
@@ -207,9 +251,10 @@ final arms unchanged; a replacement needs a reviewed successor collection.
    cd ../../../../../..
    ```
 
-6. Stage the updated `finalize.md`, `final/collection.json`,
-   `final/git_bundle/`, and the new report, TSV, and provenance. The analysis
-   directory is ignored, so stage those three files with `git add -f`.
+6. When pushing, stage the updated `finalize.md`, `final/collection.json`,
+   `final/git_bundle/`, and the new report, result and validation TSVs, and
+   provenance. The analysis directory is ignored, so stage those files with
+   `git add -f`.
    Replace `STUDY_ID` with the new study directory name:
 
    ```bash
