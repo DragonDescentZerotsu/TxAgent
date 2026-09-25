@@ -1,0 +1,43 @@
+{
+  "schema_version": "luna_skin_final_publication.v1",
+  "status": "complete",
+  "inputs": [
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/luna/index.json",
+      "sha256": "81056df444c657e8e3a38559f5d197e308ffd04b16140bf5dc8d400c730edc9f"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/luna/README.md",
+      "sha256": "8d0bfc12fd1c0d10e50b9b3bc6eb3f30366867be7dd1ecf6a0da28be877bc883"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/luna/parameters/files.tsv",
+      "sha256": "54a236f8d7163197ffff13cb5d8660d1b5f13fbdcfb751f9c6936477caba74c4"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/luna/provider_pool.json",
+      "sha256": "1b5379b03a2cf124721bda750ae03ce027fbf7d0bcb139ded0ff9017393c4a46"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/collection.json",
+      "sha256": "ed376c013c2f83b9735c648cebd3bd7fb6c6527fdfa6f82be305a6b7d8ce4ee4"
+    },
+    {
+      "path": "outputs/analysis/record_selection/luna_skin_v2_indirect_gold_tdc_valid_20260924_v1/results.tsv",
+      "sha256": "d081158c0167c09fc30dd03d3a087031b3c80ed4356d419e93ee9b6cf1771626"
+    },
+    {
+      "path": "outputs/analysis/record_selection/luna_skin_v2_indirect_gold_tdc_test_20260924_v1/results.tsv",
+      "sha256": "7871c909faccbdc5335bc5d8ef1724c5c2078b6d0fdb028da2055a655f6a18f3"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/luna/prompts/full_flat_context_v5_six_tasks_tdc_v2_mixed_v1/files.tsv",
+      "sha256": "65a102e144f9fef4ea69a21c8551bbbead2df4898f1aca426d57ab48afab4723"
+    },
+    {
+      "path": "outputs/paper/assay_transfer_harness/joseph/final/luna/prompts/full_flat_context_v5_six_tasks_upstream_v2/files.tsv",
+      "sha256": "1435388ddfdbf5300f534af166da1b4accff035b2f09c7e01640848df4ddbb38"
+    }
+  ],
+  "results_sha256": "d171aea0bdde3b8868f9ad5ed7d3501254996d6779f763f079923dfcec120596"
+}

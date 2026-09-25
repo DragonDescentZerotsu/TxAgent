@@ -1,11 +1,13 @@
 # Final Joseph full-test collection
 
 The [final collection](outputs/paper/assay_transfer_harness/joseph/final/collection.json)
-contains 24 complete arms and 8,546 successful arm-query results. It includes
+contains 26 complete test arms and 8,869 successful arm-query results. It includes
 Gold BBB, Oral Bioavailability, AMES, Carcinogens, DILI, and Skin Reaction
 direct and direct+indirect arms; TDC Oral Bioavailability and Skin Reaction
 direct and direct+indirect arms; and TDC-v2 AMES, BBB, Carcinogens, and DILI
-direct and direct+indirect arms.
+direct and direct+indirect arms. The [Luna Skin directory](outputs/paper/assay_transfer_harness/joseph/final/luna/README.md)
+adds frozen Gold-v1 and TDC-v2 test winners, with their validation profiles,
+selection parameters, prompts, and traces preserved alongside them.
 Each arm includes predictions, metrics, per-query run artifacts and traces,
 a combined trace, a query-level model/provider ledger, and
 hash-pinned source and copied-file manifests. The original batches remain at
@@ -57,6 +59,14 @@ are 0.708578 and 0.774211 on 274 queries each; TDC-v2 AMES scores are
 fresh, identical rendered prompt with a lower token ceiling, recorded in its
 arm provenance. The source response sets are complete across preserved runs;
 some historical individual matrices remain partial.
+
+The [Luna Skin report](outputs/analysis/record_selection/luna_skin_final_publication_20260924_v1/report.md)
+and [TSV](outputs/analysis/record_selection/luna_skin_final_publication_20260924_v1/results.tsv)
+cover the frozen Gold-v1 and TDC-v2 indirect validation winners and their
+complete test runs. Their test macro-F1 scores are 0.564175 on 241 Gold-v1
+queries and 0.605770 on 82 TDC-v2 queries. The new `final/luna/` directory
+preserves the full validation profile traces and both prompt bundles; only the
+two test winners appear in the full-test collection index.
 
 The full collection, including traces, is preserved in Git as
 [compressed parts](outputs/paper/assay_transfer_harness/joseph/final/git_bundle/README.md).
