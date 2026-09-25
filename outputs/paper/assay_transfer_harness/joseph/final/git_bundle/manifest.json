@@ -1,37 +1,42 @@
 {
   "schema_version": "joseph_final_git_bundle.v1",
-  "source_collection_sha256": "ed376c013c2f83b9735c648cebd3bd7fb6c6527fdfa6f82be305a6b7d8ce4ee4",
-  "archive_sha256": "0e685f5d075de9ab58d1978f18ee634c145d52c7adede2c678b5f18a7580c219",
+  "source_collection_sha256": "d5612f3ab2dfbe0f9e402d93bec9aaf1c352fe8fbd9afbe3146dd038ad08f1cb",
+  "archive_sha256": "d63c02a3425a71b82c23d23daaf4f13c16398cca2c8261f97655659d581c169c",
   "parts": [
     {
       "name": "payload.tar.zst.part-0000",
       "size": 67108864,
-      "sha256": "6c9554b517cd37077dc2816c7417384626e3769d78a47443f152f3af8acecc32"
+      "sha256": "e162fc444099b4baad45424df7abd02ae9249a86807088b6748c73416ee7024a"
     },
     {
       "name": "payload.tar.zst.part-0001",
       "size": 67108864,
-      "sha256": "518d8ba508d098014692587159409404e5a2fc751dc551850881284958b29fdb"
+      "sha256": "9dc32f003dc03ec88f68998f8653b857f6b67becb47339326f59b2d7ef1b4e24"
     },
     {
       "name": "payload.tar.zst.part-0002",
       "size": 67108864,
-      "sha256": "344f58e0669ec0b470d216bde9dea6f5c4b6fe4ebac44cf73d653fd8feec01dd"
+      "sha256": "0c3fe0307095f2d3d87931a60cf92ff9815ac0cc462d0a96ede6ccbda0d8f3ca"
     },
     {
       "name": "payload.tar.zst.part-0003",
       "size": 67108864,
-      "sha256": "d7407bd7536681720133b14ba2672ab8f67ce6ec434f74464b55de92d1d082f7"
+      "sha256": "dac56ce93d3ad8e47b4ad2d456adf2cade2623e2811fdfb61922bf467e4c98f1"
     },
     {
       "name": "payload.tar.zst.part-0004",
       "size": 67108864,
-      "sha256": "e19824c9372055e6c55056e6bd8af7aaca3653804f6e4aaeccd5f092cbd3fbc1"
+      "sha256": "f873340ce5ef3e89eb01906ee3db121cf9cbc448fb5472aa40ae429ad2828d7e"
     },
     {
       "name": "payload.tar.zst.part-0005",
-      "size": 39102070,
-      "sha256": "bf36f72860fbe2751d3352031a29ec6d3e4e60ea8aeb75a02032d2cfcd588d33"
+      "size": 67108864,
+      "sha256": "d55256dbd58d914fba37b77a9269905ad930e7c95c2ff006b909f1183bf6b041"
+    },
+    {
+      "name": "payload.tar.zst.part-0006",
+      "size": 55329699,
+      "sha256": "643e31cb1bd7855163b6bd9af6e848ef1c104486e8458a51042c000e67afc70c"
     }
   ],
   "restore_root": "outputs/paper/assay_transfer_harness/joseph"

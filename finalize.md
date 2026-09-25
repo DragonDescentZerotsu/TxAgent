@@ -1,13 +1,13 @@
 # Final Joseph full-test collection
 
 The [final collection](outputs/paper/assay_transfer_harness/joseph/final/collection.json)
-contains 26 complete test arms and 8,869 successful arm-query results. It includes
+contains 34 complete test arms and 10,861 successful arm-query results. It includes
 Gold BBB, Oral Bioavailability, AMES, Carcinogens, DILI, and Skin Reaction
 direct and direct+indirect arms; TDC Oral Bioavailability and Skin Reaction
 direct and direct+indirect arms; and TDC-v2 AMES, BBB, Carcinogens, and DILI
-direct and direct+indirect arms. The [Luna Skin directory](outputs/paper/assay_transfer_harness/joseph/final/luna/README.md)
-adds frozen Gold-v1 and TDC-v2 test winners, with their validation profiles,
-selection parameters, prompts, and traces preserved alongside them.
+direct and direct+indirect arms. The [Luna directory](outputs/paper/assay_transfer_harness/joseph/final/luna/README.md)
+indexes frozen Gold-v1 and TDC-v2 Skin validation and test arms and the new
+DILI test arms, with their traces and source provenance.
 Each arm includes predictions, metrics, per-query run artifacts and traces,
 a combined trace, a query-level model/provider ledger, and
 hash-pinned source and copied-file manifests. The original batches remain at
@@ -38,7 +38,7 @@ cover the 406-query direct and filtered direct+indirect arms: macro-F1 0.865673
 and 0.880814, respectively. The indirect selector removed prediction-only
 records before its joint 50-record selection.
 
-The [TDC-v2 DILI report](outputs/analysis/record_selection/joseph_final_tdc_v2_dili_20260924_v1/report.md)
+The earlier [TDC-v2 DILI report](outputs/analysis/record_selection/joseph_final_tdc_v2_dili_20260924_v1/report.md)
 and [TSV](outputs/analysis/record_selection/joseph_final_tdc_v2_dili_20260924_v1/results.tsv)
 cover the 96-query direct and direct+indirect arms: macro-F1 0.829711 and
 0.760436, respectively. The indirect selector uses the parent-disjoint top-100
@@ -50,6 +50,24 @@ and its [TSV](outputs/analysis/record_selection/dili_tdc_v2_direct_same_prompt_v
 found direct-only macro-F1 0.831541 with five false positives among 17 negative
 queries, versus 0.825465 and six false positives with indirect records. Only
 two predictions changed; their upstream OpenRouter providers also differed.
+Those arms remain in the collection as historical results.
+
+The current DILI results are the eight model-specific arms indexed under
+`canonical_dili` in `collection.json`. The [joint DILI report](outputs/analysis/record_selection/dili_v2_partitioned_joint_gold_tdc_20260924_v1/report.md),
+[validation table](outputs/analysis/record_selection/dili_v2_partitioned_joint_gold_tdc_20260924_v1/validation.tsv),
+and [test table](outputs/analysis/record_selection/dili_v2_partitioned_joint_gold_tdc_20260924_v1/test.tsv)
+record the frozen validation choices and complete test results:
+
+| Benchmark | Model | Direct macro-F1 | Direct+indirect macro-F1 |
+|---|---|---:|---:|
+| Gold-v1 | GPT-6-Luna | 0.621456 | 0.665266 |
+| Gold-v1 | DeepSeek-V4-Flash-0731 | 0.639755 | 0.659233 |
+| TDC-v2 | GPT-6-Luna | 0.790850 | 0.801545 |
+| TDC-v2 | DeepSeek-V4-Flash-0731 | 0.819609 | 0.821346 |
+
+Each new arm preserves its 402 Gold or 96 TDC per-query runs, combined trace,
+served provider ledger, selection manifest, and hash-pinned source batch. The
+partitioned V2 DILI semantic snapshot remains an unselected experimental input.
 
 The [AMES collection report](outputs/analysis/record_selection/ames_final_collection_20260924_v1/report.md)
 and [TSV](outputs/analysis/record_selection/ames_final_collection_20260924_v1/results.tsv)

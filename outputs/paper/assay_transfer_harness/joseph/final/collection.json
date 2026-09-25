@@ -4,6 +4,34 @@
   "status": "complete",
   "arms": [
     {
+      "path": "deepseek/test/gold_v1/dili/direct",
+      "manifest_sha256": "a6ed48822218522741b48c189477921c57d82250a47f2e93dfacc546adaaee97",
+      "n_queries": 402,
+      "macro_f1": 0.639755,
+      "mixed_route": true
+    },
+    {
+      "path": "deepseek/test/gold_v1/dili/direct_plus_indirect",
+      "manifest_sha256": "3042eb5e0c643d1bb895f8ced0296e9e18ab4d8bdf923a727b0f0441ae6b5738",
+      "n_queries": 402,
+      "macro_f1": 0.659233,
+      "mixed_route": true
+    },
+    {
+      "path": "deepseek/test/tdc_v2/dili/direct",
+      "manifest_sha256": "574214bc30e7bda6fb205b2d245f5147d76796a0eeeebd5f679fcaaed6c6255c",
+      "n_queries": 96,
+      "macro_f1": 0.819609,
+      "mixed_route": false
+    },
+    {
+      "path": "deepseek/test/tdc_v2/dili/direct_plus_indirect",
+      "manifest_sha256": "480f572e476e98d549a5233c3eb2ca3173816851ab821669611ca7837595941c",
+      "n_queries": 96,
+      "macro_f1": 0.821346,
+      "mixed_route": true
+    },
+    {
       "path": "gold_v1/ames/direct",
       "manifest_sha256": "9e5aedf397dc42ee459db7b9f2545b6d1e73eb5593e1c560c54032bcaddf8d87",
       "n_queries": 274,
@@ -88,10 +116,38 @@
       "mixed_route": true
     },
     {
+      "path": "luna/test/gold_v1/dili/direct",
+      "manifest_sha256": "c1b849ff35cb587ecf044c5c347b8ea34051d883a501def5439f36ff31e283bc",
+      "n_queries": 402,
+      "macro_f1": 0.621456,
+      "mixed_route": false
+    },
+    {
+      "path": "luna/test/gold_v1/dili/direct_plus_indirect",
+      "manifest_sha256": "6457f0aae0ac7996e99565499377d9dd5169f23f9fe5a4d7c54f044505fa5c08",
+      "n_queries": 402,
+      "macro_f1": 0.665266,
+      "mixed_route": false
+    },
+    {
       "path": "luna/test/gold_v1/skin_reaction/direct_plus_indirect",
       "manifest_sha256": "88e859161a53ce87f19a184f1b504cba89f8328c20c105b5644380fb3a33c62b",
       "n_queries": 241,
       "macro_f1": 0.564175,
+      "mixed_route": false
+    },
+    {
+      "path": "luna/test/tdc_v2/dili/direct",
+      "manifest_sha256": "cf20c631e4cef7ca67819852430d19d4f2ef84f09611a5e8d8234cd971daaa83",
+      "n_queries": 96,
+      "macro_f1": 0.79085,
+      "mixed_route": false
+    },
+    {
+      "path": "luna/test/tdc_v2/dili/direct_plus_indirect",
+      "manifest_sha256": "319d6414da3cfd08651819abec1796bd81424bf3fbc115cdd2f0af45b2e22c02",
+      "n_queries": 96,
+      "macro_f1": 0.801545,
       "mixed_route": false
     },
     {
@@ -186,7 +242,29 @@
       "mixed_route": false
     }
   ],
-  "n_queries": 8869,
+  "n_queries": 10861,
   "note": "Gold local recovery responses use a different served model route; query_provenance.tsv identifies every route.",
-  "updated_at_utc": "2026-09-25T03:07:45+00:00"
+  "updated_at_utc": "2026-09-25T03:56:21.908289+00:00",
+  "canonical_dili": {
+    "gold_v1": {
+      "deepseek": {
+        "direct": "deepseek/test/gold_v1/dili/direct",
+        "direct_plus_indirect": "deepseek/test/gold_v1/dili/direct_plus_indirect"
+      },
+      "luna": {
+        "direct": "luna/test/gold_v1/dili/direct",
+        "direct_plus_indirect": "luna/test/gold_v1/dili/direct_plus_indirect"
+      }
+    },
+    "tdc_v2": {
+      "deepseek": {
+        "direct": "deepseek/test/tdc_v2/dili/direct",
+        "direct_plus_indirect": "deepseek/test/tdc_v2/dili/direct_plus_indirect"
+      },
+      "luna": {
+        "direct": "luna/test/tdc_v2/dili/direct",
+        "direct_plus_indirect": "luna/test/tdc_v2/dili/direct_plus_indirect"
+      }
+    }
+  }
 }
