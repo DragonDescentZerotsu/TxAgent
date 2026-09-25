@@ -1,0 +1,3 @@
+# Luna Skin direct equivalent-cohort final arm
+
+The TDC-v1 and TDC-v2 Skin test files contain the same 82 molecule structures, labels and condition fields, in different orders with different benchmark row IDs. The frozen TDC-v1 direct Luna run completed 82/82 queries with no failures and scored 0.700912 macro-F1. It is indexed in the TDC-v2 FINAL view as an equivalent-cohort replay, while its TDC-v1 retrieval cache, query prior, prompt and Azure route remain explicitly pinned. It is not a native TDC-v2 rerun. `results.tsv` holds the numeric result and `provenance.json` pins the source and equivalence check.

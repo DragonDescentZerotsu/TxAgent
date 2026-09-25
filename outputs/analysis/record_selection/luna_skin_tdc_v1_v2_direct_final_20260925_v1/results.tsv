@@ -1,0 +1,2 @@
+benchmark_view	source_benchmark	selection	profile	n_queries	macro_f1	accuracy	tn	fp	fn	tp	matched_cohort_rows	source_metrics_sha256
+tdc_v2	tdc_v1_skin	direct	ga100_mc000_label025	82	0.700912	0.707317	23	12	12	35	82	067191abd9ea1208da6ad4b2739479207dcec9b55286cabd3651952f30f87cf9

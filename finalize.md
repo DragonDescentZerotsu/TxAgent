@@ -1,7 +1,7 @@
 # Final Joseph full-test collection
 
 The [final collection](outputs/paper/assay_transfer_harness/joseph/final/collection.json)
-contains 48 complete test arms and 14,025 successful arm-query results. It includes
+contains 49 complete test arms and 14,107 successful arm-query results. It includes
 Gold BBB, Oral Bioavailability, AMES, Carcinogens, DILI, and Skin Reaction
 direct and direct+indirect arms; TDC Oral Bioavailability and Skin Reaction
 direct and direct+indirect arms; and TDC-v2 AMES, BBB, Carcinogens, and DILI
@@ -94,6 +94,14 @@ complete test runs. Their test macro-F1 scores are 0.564175 on 241 Gold-v1
 queries and 0.605770 on 82 TDC-v2 queries. The new `final/luna/` directory
 preserves the full validation profile traces and both prompt bundles; only the
 two test winners appear in the full-test collection index.
+
+The [Luna TDC Skin direct arm](outputs/paper/assay_transfer_harness/joseph/final/luna/test/tdc_v2/skin_reaction/direct/manifest.json)
+adds a frozen 82-query TDC-v1 direct test run to the TDC-v2 view. The v1 and v2
+test files contain the same molecule structures, labels, and condition fields in
+different order; the arm retains its original v1 retrieval, query prior, and
+prompt. It scored 0.700912 macro-F1. The [equivalence report](outputs/analysis/record_selection/luna_skin_tdc_v1_v2_direct_final_20260925_v1/report.md)
+and [TSV](outputs/analysis/record_selection/luna_skin_tdc_v1_v2_direct_final_20260925_v1/results.tsv)
+document this as an equivalent-cohort replay rather than a native v2 rerun.
 
 The [Luna BBB/Oral report](outputs/analysis/record_selection/luna_bbb_oral_20260924_v1/report.md)
 and [comparison TSV](outputs/analysis/record_selection/luna_bbb_oral_20260924_v1/comparisons.tsv)

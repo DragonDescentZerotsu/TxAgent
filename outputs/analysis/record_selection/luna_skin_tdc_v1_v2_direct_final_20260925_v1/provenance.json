@@ -1,0 +1,11 @@
+{
+  "schema_version": "derived_results_provenance.v1",
+  "status": "complete",
+  "published_arm": "luna/test/tdc_v2/skin_reaction/direct",
+  "published_manifest_sha256": "9ee0dda27526fd2235877567e2bfc63ade93c80dc7d8186fad2e1388140da16f",
+  "source_matrix": "outputs/paper/assay_transfer_harness/joseph/skin_luna_v2_direct_tdc_v1_test_20260924_v1/matrix.json",
+  "source_matrix_sha256": "c56d50b7cda84b883c7e9953431559240ce06b19dfb3f6660b61fe6303c308d5",
+  "source_completion_sha256": "33bceeee2671d11ea2f5f0e2cd7756b8f1f5cae71044a1787787aa5f2398dfc2",
+  "cohort_equivalence_sha256": "9c256b4798d9be4b7e6599f2b4536c022a909c5b5b457e9cc671a27f4bc01f05",
+  "results_tsv_sha256": "9daafdfacee3ba63037d8fd1c1b75bdd1c74562e5fc1855a7f046b6cc3472fa7"
+}

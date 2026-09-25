@@ -249,6 +249,13 @@
       "mixed_route": false
     },
     {
+      "path": "luna/test/tdc_v2/skin_reaction/direct",
+      "manifest_sha256": "9ee0dda27526fd2235877567e2bfc63ade93c80dc7d8186fad2e1388140da16f",
+      "n_queries": 82,
+      "macro_f1": 0.700912,
+      "mixed_route": false
+    },
+    {
       "path": "luna/test/tdc_v2/skin_reaction/direct_plus_indirect",
       "manifest_sha256": "1b5b2b01e767bbc475e362c12a7ee30d48be541a9a67b56c0ea13d936e988241",
       "n_queries": 82,
@@ -340,9 +347,9 @@
       "mixed_route": false
     }
   ],
-  "n_queries": 14025,
+  "n_queries": 14107,
   "note": "Gold local recovery responses use a different served model route; query_provenance.tsv identifies every route.",
-  "updated_at_utc": "2026-09-25T13:02:14.143112+00:00",
+  "updated_at_utc": "2026-09-25T13:29:38.574106+00:00",
   "canonical_dili": {
     "gold_v1": {
       "deepseek": {

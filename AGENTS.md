@@ -279,6 +279,14 @@ sprawling pipeline, reuse existing libraries, and keep tests proportional.
 
 ### Artifact hygiene
 
+For Joseph FINAL publication, save each completed arm's frozen optimization
+parameters, exact prompt assets, results, provider provenance, and per-query
+traces before updating the collection index. Verify every new arm and preserve
+existing entries. Rebuild and verify the compressed `final/git_bundle/` only
+once, immediately before committing and pushing the accumulated FINAL additions;
+do not recompress after each arm or intermediate edit. Follow
+`.agents/skills/finalizing/SKILL.md` and `finalize.md` for the artifact contract.
+
 Raw assay-transfer harness runs for Joseph remain under
 `outputs/paper/assay_transfer_harness/joseph/`. Every derived analysis, including
 KNN, query-prior, oracle-union, and progressive-level comparisons, must be saved
