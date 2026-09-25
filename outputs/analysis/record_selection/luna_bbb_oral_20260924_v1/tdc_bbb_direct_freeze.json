@@ -1,0 +1,15 @@
+{
+  "status": "frozen",
+  "benchmark": "tdc_v2",
+  "task": "bbb_martins",
+  "subset": "valid",
+  "winner": "ga100_mc025_label010",
+  "selection_manifest": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/luna_bbb_oral_20260924_v1/tdc_bbb_direct_valid_v3/direct/ga100_mc025_label010/bbb_martins/manifest.json",
+  "source_matrix": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/luna_bbb_tdc_v2_direct_top5_full_valid_20260925_v2/matrix.json",
+  "source_matrix_sha256": "701ef98ec48a7bd85c58acc0b191433d856120b0c3749817a7f22ec8b6d4be85",
+  "ranking": [
+    "macro_f1_desc",
+    "accuracy_desc",
+    "profile_asc"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "schema_version": "direct_context_selection_grid.v2",
+  "status": "complete",
+  "kind": "direct",
+  "benchmark": "tdc_v2",
+  "subset": "test",
+  "objective_version": "direct_normalized_gated_bit_log_label.v2",
+  "profile_count": 2,
+  "tasks": [
+    "bbb_martins",
+    "bioavailability_ma"
+  ],
+  "profiles": [
+    {
+      "name": "ga100_mc025_label010",
+      "gated_assay_lambda": 1.0,
+      "molecular_coverage_lambda": 0.25,
+      "label_diversity_lambda": 0.1,
+      "task_manifests": {
+        "bbb_martins": {
+          "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/luna_bbb_oral_20260924_v1/tdc_bbb_direct_test/direct/ga100_mc025_label010/bbb_martins/manifest.json",
+          "sha256": "752aae06a49a52ba0386a94fa65fcc94ace26abef7d75105f504229e66fa20e8"
+        }
+      }
+    },
+    {
+      "name": "ga075_mc010_label025",
+      "gated_assay_lambda": 0.75,
+      "molecular_coverage_lambda": 0.1,
+      "label_diversity_lambda": 0.25,
+      "task_manifests": {
+        "bioavailability_ma": {
+          "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/luna_bbb_oral_20260924_v1/tdc_oral_direct_test/direct/ga075_mc010_label025/bioavailability_ma/manifest.json",
+          "sha256": "8e3cae11f1c6f63fd0fb61f95d17f629e94fbee7969f4d18f0a26f03d20da7a8"
+        }
+      }
+    }
+  ]
+}

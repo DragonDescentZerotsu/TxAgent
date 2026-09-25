@@ -1,0 +1,54 @@
+{
+  "status": "frozen",
+  "selection_rule": "documented DeepSeek seed plus four local objective neighbors; weights reselected on each benchmark cache",
+  "panels": {
+    "gold_bbb": {
+      "source": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/bbb_oral_direct_vs_joint_full_test_20260923_v1/selection_winners.tsv",
+      "source_sha256": "bfaf5148d254ae3df2d1975c6e37862b2d346ffba638353f2930b120c1d25ae6",
+      "seed": "ga100_mc025_sr025_sd025_ld010",
+      "profiles": [
+        "ga100_mc025_sr025_sd025_ld010",
+        "ga075_mc025_sr025_sd025_ld010",
+        "ga125_mc025_sr025_sd025_ld010",
+        "ga100_mc010_sr025_sd025_ld010",
+        "ga100_mc025_sr050_sd025_ld010"
+      ]
+    },
+    "gold_oral": {
+      "source": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/bbb_oral_direct_vs_joint_full_test_20260923_v1/selection_winners.tsv",
+      "source_sha256": "bfaf5148d254ae3df2d1975c6e37862b2d346ffba638353f2930b120c1d25ae6",
+      "seed": "ga075_mc010_sr050_sd010_ld025",
+      "profiles": [
+        "ga075_mc010_sr050_sd010_ld025",
+        "ga050_mc010_sr050_sd010_ld025",
+        "ga100_mc010_sr050_sd010_ld025",
+        "ga075_mc010_sr025_sd010_ld025",
+        "ga075_mc025_sr050_sd010_ld025"
+      ]
+    },
+    "tdc_bbb": {
+      "source": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/tdc_v2_bbb_filtered_tied8_valid100_20260924_v1/results.tsv",
+      "source_sha256": "76d090368acda5d79f270a671b5cf083875d92a1953a9db62cc36b2ffa57f9df",
+      "seed": "ga075_mc025_sr025_sd025_ld025_rd025",
+      "profiles": [
+        "ga075_mc025_sr025_sd025_ld025_rd025",
+        "ga075_mc025_sr010_sd025_ld025_rd025",
+        "ga050_mc025_sr025_sd025_ld025_rd025",
+        "ga075_mc010_sr025_sd010_ld010_rd010",
+        "ga075_mc010_sr010_sd010_ld010_rd010"
+      ]
+    },
+    "tdc_oral": {
+      "source": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/bbb_oral_direct_vs_joint_full_test_20260923_v1/selection_winners.tsv",
+      "source_sha256": "bfaf5148d254ae3df2d1975c6e37862b2d346ffba638353f2930b120c1d25ae6",
+      "seed": "ga075_mc025_sr025_sd010_ld025",
+      "profiles": [
+        "ga075_mc025_sr025_sd010_ld025",
+        "ga050_mc025_sr025_sd010_ld025",
+        "ga100_mc025_sr025_sd010_ld025",
+        "ga075_mc010_sr025_sd010_ld025",
+        "ga075_mc025_sr050_sd010_ld025"
+      ]
+    }
+  }
+}

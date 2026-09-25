@@ -1,0 +1,84 @@
+{
+  "schema_version": "luna_bbb_oral_study.v1",
+  "status": "complete",
+  "model": "openai/gpt-6-luna",
+  "reasoning_effort": "high",
+  "provider_pool": {
+    "path": "predict/api_client/providers/gpt6_luna_openrouter_flex_256.json",
+    "sha256": "1b5379b03a2cf124721bda750ae03ce027fbf7d0bcb139ded0ff9017393c4a46"
+  },
+  "prompt_provenance": {
+    "path": "predict/harnesses/branches/prompts/final_full_flat/provenance.json",
+    "sha256": "5e44bcd6d8ec592eaaeddc5e500b4f9ae6c1870098ae38b46d1b793eb46b12bf"
+  },
+  "sources": {
+    "luna_bbb_gold_direct_top5_full_valid_20260924_v4": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_bbb_gold_direct_top5_full_valid_20260924_v4/matrix.json",
+      "matrix_sha256": "188906f92f818aa5e0db2c42f0d5250658a642596f9552e7403c1d02cae5b178",
+      "completion_sha256": "abea31ff72cc6e84778e10c54d3f8912459a87638d17fcbdd6b62f991498bbc1"
+    },
+    "luna_oral_gold_direct_top5_full_valid_20260924_v1": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_oral_gold_direct_top5_full_valid_20260924_v1/matrix.json",
+      "matrix_sha256": "2056c0f8f9882c01f7fbf25ca55aae15f8a7a1c4446fb26a8fe48df67852baf3",
+      "completion_sha256": "42c4a2eebbe74e3db3122a81eb14f343252fddeb563dccd7d3be7f21e20c3552"
+    },
+    "luna_bbb_tdc_v2_direct_top5_full_valid_20260925_v2": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_bbb_tdc_v2_direct_top5_full_valid_20260925_v2/matrix.json",
+      "matrix_sha256": "701ef98ec48a7bd85c58acc0b191433d856120b0c3749817a7f22ec8b6d4be85",
+      "completion_sha256": "679a258387aa675dcc351ecadc87a4611beb92de33a47727c076330e8db7bb04"
+    },
+    "luna_oral_tdc_v2_direct_top5_full_valid_20260925_v1": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_oral_tdc_v2_direct_top5_full_valid_20260925_v1/matrix.json",
+      "matrix_sha256": "58a239ad34b34b589334d3924683d28a356f86f6ad1f168aa9928d531e4df68e",
+      "completion_sha256": "d9e97963a575ed81f1e0f72785a0d24032c07bbf7cec7ef6d88ae927e0097aec"
+    },
+    "luna_bbb_gold_indirect_top5_full_valid_20260925_v1": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_bbb_gold_indirect_top5_full_valid_20260925_v1/matrix.json",
+      "matrix_sha256": "0ce539e7ceb8394cd1d44ab58be08b4c53be577a0e5c8903a7a629951e6f9f82",
+      "completion_sha256": "b626f7d43f236dc27d8c20bcc208d9b7f4a1243645c1df6a852c9ffba69735cf"
+    },
+    "luna_oral_gold_indirect_top5_full_valid_20260925_v1": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_oral_gold_indirect_top5_full_valid_20260925_v1/matrix.json",
+      "matrix_sha256": "f775812e11cbdb7c2b3d50bf7ecde5fe21a799b0ac3345427a174a7195d7ac2d",
+      "completion_sha256": "d0454b9e6fe9b41abad872d4d42eb7b3188b931c67c355f04d2747d191d83b6f"
+    },
+    "luna_bbb_oral_tdc_v2_indirect_top5_full_valid_20260925_v1": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_bbb_oral_tdc_v2_indirect_top5_full_valid_20260925_v1/matrix.json",
+      "matrix_sha256": "e290b9ee42556eca865a5479caa46b5639d2f4596ef143f334721204a5241090",
+      "completion_sha256": "7dd7d0be766f81d5317f52ff846bb4b1b5b2de707f19421d94516a69b14b22b0"
+    },
+    "luna_bbb_oral_gold_direct_frozen_test_20260925_v1": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_bbb_oral_gold_direct_frozen_test_20260925_v1/matrix.json",
+      "matrix_sha256": "f4c278a76c8c07584de36528081ecaa7253381ae6a53971420387882cd09bf5c",
+      "completion_sha256": "5a2b130fe911842241438076f6a9476a551cc1fe889d5b136291c3d248026c78"
+    },
+    "luna_bbb_oral_gold_indirect_frozen_test_20260925_v1": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_bbb_oral_gold_indirect_frozen_test_20260925_v1/matrix.json",
+      "matrix_sha256": "9359ce61ece2a65be38f420d0974d12a9922d9114f076902264cca3a068826e2",
+      "completion_sha256": "c6fb75e17a88d539c1cd0d2be9a0ccf8142a86c0210e3fd6c0e31a5a244ad6b1"
+    },
+    "luna_bbb_oral_tdc_v2_direct_frozen_test_20260925_v1": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_bbb_oral_tdc_v2_direct_frozen_test_20260925_v1/matrix.json",
+      "matrix_sha256": "15c9edd9099f7747c3ee69064107b99b6edad234c2d38f8758d5f959f24b145a",
+      "completion_sha256": "a0e452c01f37f77f06868bdf7098df1f6c336fb6ac73b99c5439faa8760297a9"
+    },
+    "luna_bbb_oral_tdc_v2_indirect_frozen_test_20260925_v1": {
+      "matrix": "outputs/paper/assay_transfer_harness/joseph/_batches/luna_bbb_oral_tdc_v2_indirect_frozen_test_20260925_v1/matrix.json",
+      "matrix_sha256": "a83bf896447a7a5fcb368aad4a9273f1d6cc3ef5864476f35bb4b2f7ef5c1a2f",
+      "completion_sha256": "914f59f19e6c65892fb9debc406a16703e7561d72e868401da2efed0fa0717e7"
+    }
+  },
+  "freeze_sha256": {
+    "gold_bbb_direct_freeze.json": "fd64527c603aca19f5aa5fd23f973b0dff78e17fea34c500b141373cfd0bcd02",
+    "gold_bbb_indirect_freeze.json": "d71e5f5696339e168d9bfe846145b8e6687088967f09261fc55f6b856b6405fa",
+    "gold_oral_direct_freeze.json": "fb44316ddce6773cc77e7cef6889c3b61cdc12b0e9d915eaeceab67b30e4e56f",
+    "gold_oral_indirect_freeze.json": "aca7db8c306ed5d8562ba3ab651633de6582344be8fd3609c3a46f429b1f260f",
+    "tdc_bbb_direct_freeze.json": "714e88af637dd8e82e33a9ff527c5663aa473adad03709dcb9c4799868cc9ff6",
+    "tdc_bbb_indirect_freeze.json": "339f6add5ddc21b244842d02f7d93573094ee6e1b5f94f0b3c42a20d7fcf7976",
+    "tdc_oral_direct_freeze.json": "1d5da780c4f7b3a2175ba6e087ce408fbea287ac6e6c8ab166ec5d363e3afb5d",
+    "tdc_oral_indirect_freeze.json": "ab20a35fc3fc62254ec7d2e55301656001747224a37a79fa20eb28fa48a18f0c"
+  },
+  "results_sha256": "c24651467846ac103954ed708bde9d6ff975441585894fbea6ff41c090880767",
+  "comparisons_tsv_sha256": "5323abca14ec99fcf83389ae84227dcd51e97aea049e5e44437a109440e16433",
+  "report_md_sha256": "7c77f8741f64a50147d88569c370a4d6df673479bdfc68c8a5d2fe3403cc663c"
+}

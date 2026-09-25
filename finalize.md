@@ -1,13 +1,13 @@
 # Final Joseph full-test collection
 
 The [final collection](outputs/paper/assay_transfer_harness/joseph/final/collection.json)
-contains 34 complete test arms and 10,861 successful arm-query results. It includes
+contains 42 complete test arms and 13,253 successful arm-query results. It includes
 Gold BBB, Oral Bioavailability, AMES, Carcinogens, DILI, and Skin Reaction
 direct and direct+indirect arms; TDC Oral Bioavailability and Skin Reaction
 direct and direct+indirect arms; and TDC-v2 AMES, BBB, Carcinogens, and DILI
 direct and direct+indirect arms. The [Luna directory](outputs/paper/assay_transfer_harness/joseph/final/luna/README.md)
-indexes frozen Gold-v1 and TDC-v2 Skin validation and test arms and the new
-DILI test arms, with their traces and source provenance.
+indexes frozen Gold-v1 and TDC-v2 Skin, BBB, and Oral Bioavailability validation
+and test arms, plus DILI test arms, with their traces and source provenance.
 Each arm includes predictions, metrics, per-query run artifacts and traces,
 a combined trace, a query-level model/provider ledger, and
 hash-pinned source and copied-file manifests. The original batches remain at
@@ -85,6 +85,15 @@ complete test runs. Their test macro-F1 scores are 0.564175 on 241 Gold-v1
 queries and 0.605770 on 82 TDC-v2 queries. The new `final/luna/` directory
 preserves the full validation profile traces and both prompt bundles; only the
 two test winners appear in the full-test collection index.
+
+The [Luna BBB/Oral report](outputs/analysis/record_selection/luna_bbb_oral_20260924_v1/report.md)
+and [comparison TSV](outputs/analysis/record_selection/luna_bbb_oral_20260924_v1/comparisons.tsv)
+cover five direct validation profiles and five indirect validation profiles per
+benchmark/task panel. The frozen direct and direct+indirect test macro-F1 scores
+are 0.666929 and 0.722610 for Gold BBB, 0.760093 and 0.856127 for Gold Oral,
+0.828823 and 0.846330 for TDC-v2 BBB, and 0.718372 and 0.774023 for TDC-v2
+Oral. All eight test arms use `final_full_flat` and GPT-6-Luna with high reasoning;
+the Luna directory preserves all 40 validation arms and eight test arms.
 
 The full collection, including traces, is preserved in Git as
 [compressed parts](outputs/paper/assay_transfer_harness/joseph/final/git_bundle/README.md).

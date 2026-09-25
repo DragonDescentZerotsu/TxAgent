@@ -1,0 +1,17 @@
+{
+  "status": "frozen",
+  "benchmark": "gold_v1",
+  "task": "bioavailability_ma",
+  "subset": "valid",
+  "winner": "ga075_mc010_sr025_sd010_ld025",
+  "frozen_direct": "ga100_mc010_label025",
+  "selection_manifest": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/record_selection/luna_bbb_oral_20260924_v1/gold_oral_indirect_valid/mixed/ga075_mc010_sr025_sd010_ld025/bioavailability_ma/manifest.json",
+  "selection_manifest_sha256": "47e6afa61bc78d36138ed28ed770348d1fb640e99cc1c312d60b140ade34a940",
+  "source_matrix": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/paper/assay_transfer_harness/joseph/_batches/luna_oral_gold_indirect_top5_full_valid_20260925_v1/matrix.json",
+  "source_matrix_sha256": "f775812e11cbdb7c2b3d50bf7ecde5fe21a799b0ac3345427a174a7195d7ac2d",
+  "ranking": [
+    "macro_f1_desc",
+    "accuracy_desc",
+    "profile_asc"
+  ]
+}

@@ -116,6 +116,34 @@
       "mixed_route": true
     },
     {
+      "path": "luna/test/gold_v1/bbb_martins/direct",
+      "manifest_sha256": "6daeb752c37c3e9b3ffc18eb30bb04ddb30ad2125a80ebdf0547ce796de6c79a",
+      "n_queries": 393,
+      "macro_f1": 0.666929,
+      "mixed_route": false
+    },
+    {
+      "path": "luna/test/gold_v1/bbb_martins/direct_plus_indirect",
+      "manifest_sha256": "8f0509a20c21ead991b4d13d47117bc088b79025b618b08829a881617f0f4baf",
+      "n_queries": 393,
+      "macro_f1": 0.72261,
+      "mixed_route": false
+    },
+    {
+      "path": "luna/test/gold_v1/bioavailability_ma/direct",
+      "manifest_sha256": "22f5db89f18aab1d790fdaa63d466cf340ea7d63b0391692ea8602660b938c64",
+      "n_queries": 269,
+      "macro_f1": 0.760093,
+      "mixed_route": false
+    },
+    {
+      "path": "luna/test/gold_v1/bioavailability_ma/direct_plus_indirect",
+      "manifest_sha256": "fb87062b3d1eef425afc64d0801baa058e507c3038d8095fe7b992349071c925",
+      "n_queries": 269,
+      "macro_f1": 0.856127,
+      "mixed_route": false
+    },
+    {
       "path": "luna/test/gold_v1/dili/direct",
       "manifest_sha256": "c1b849ff35cb587ecf044c5c347b8ea34051d883a501def5439f36ff31e283bc",
       "n_queries": 402,
@@ -134,6 +162,34 @@
       "manifest_sha256": "88e859161a53ce87f19a184f1b504cba89f8328c20c105b5644380fb3a33c62b",
       "n_queries": 241,
       "macro_f1": 0.564175,
+      "mixed_route": false
+    },
+    {
+      "path": "luna/test/tdc_v2/bbb_martins/direct",
+      "manifest_sha256": "ce545f59642bc7793a9e250e7fd65ae7f53eac8615cffd38f400f0100f13b6a9",
+      "n_queries": 406,
+      "macro_f1": 0.828823,
+      "mixed_route": false
+    },
+    {
+      "path": "luna/test/tdc_v2/bbb_martins/direct_plus_indirect",
+      "manifest_sha256": "e730f058344ff9175c8c5351a7eaa68c91ba4c8ddb8b1451cf2f05f355797655",
+      "n_queries": 406,
+      "macro_f1": 0.84633,
+      "mixed_route": false
+    },
+    {
+      "path": "luna/test/tdc_v2/bioavailability_ma/direct",
+      "manifest_sha256": "1fb30b02073b3508f7787ffbdebee908640336185ca72a334b2e1e32fa44d626",
+      "n_queries": 128,
+      "macro_f1": 0.718372,
+      "mixed_route": false
+    },
+    {
+      "path": "luna/test/tdc_v2/bioavailability_ma/direct_plus_indirect",
+      "manifest_sha256": "2a4dc43ad0457d59137e342e3e5bc0cb4229f98ac07798eacdd3901c2a8bdb63",
+      "n_queries": 128,
+      "macro_f1": 0.774023,
       "mixed_route": false
     },
     {
@@ -242,9 +298,9 @@
       "mixed_route": false
     }
   ],
-  "n_queries": 10861,
+  "n_queries": 13253,
   "note": "Gold local recovery responses use a different served model route; query_provenance.tsv identifies every route.",
-  "updated_at_utc": "2026-09-25T03:56:21.908289+00:00",
+  "updated_at_utc": "2026-09-25T05:36:25.736662+00:00",
   "canonical_dili": {
     "gold_v1": {
       "deepseek": {

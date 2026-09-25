@@ -1,0 +1,5 @@
+benchmark	task	direct_profile	mixed_profile	valid_queries	valid_direct_macro_f1	valid_mixed_macro_f1	valid_delta_macro_f1	valid_direct_accuracy	valid_mixed_accuracy	test_queries	test_direct_macro_f1	test_mixed_macro_f1	test_delta_macro_f1	test_direct_accuracy	test_mixed_accuracy
+gold_v1	bbb_martins	ga125_mc010_label010	ga100_mc025_sr050_sd025_ld010	397	0.764957	0.766554	0.001597	0.808564	0.833753	393	0.666929	0.72261	0.055681	0.748092	0.816794
+gold_v1	bioavailability_ma	ga100_mc010_label025	ga075_mc010_sr025_sd010_ld025	262	0.750945	0.818124	0.067179	0.835878	0.866412	269	0.760093	0.856127	0.096034	0.832714	0.884758
+tdc_v2	bbb_martins	ga100_mc025_label010	ga075_mc010_sr010_sd010_ld010_rd010	203	0.876349	0.864937	-0.011412	0.931034	0.921182	406	0.828823	0.84633	0.017507	0.884236	0.908867
+tdc_v2	bioavailability_ma	ga075_mc010_label025	ga075_mc025_sr025_sd010_ld025	64	0.74359	0.814493	0.070903	0.84375	0.890625	128	0.718372	0.774023	0.055651	0.8125	0.835938
