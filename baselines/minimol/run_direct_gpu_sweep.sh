@@ -12,7 +12,7 @@ embedding_cache_dir="$3"
 output_root="$4"
 gpu_csv="${5:-4,5,6,7}"
 
-conda_bin="/data1/tianang/anaconda3/condabin/conda"
+conda_bin="${CONDA_EXE:-conda}"
 IFS=',' read -r -a gpus <<< "$gpu_csv"
 
 configs=(

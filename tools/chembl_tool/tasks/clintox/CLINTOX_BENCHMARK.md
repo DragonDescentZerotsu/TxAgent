@@ -188,10 +188,10 @@ artifacts are rejected rather than silently reinterpreted.
 Build the full source index and the valid/test-filtered benchmark index with:
 
 ```bash
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+conda run -n vllm \
   python -m tools.chembl_tool.tasks.clintox.starling_retrieval --workers 8
 
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+conda run -n vllm \
   python -m tools.chembl_tool.paper_experiments.build_starling_benchmark_indices \
     --splits scaffold --indices clintox_starling_full \
     --output-root outputs/paper \
@@ -203,14 +203,14 @@ Visible evaluation may use `--harness-prefetch-tools`. This preserves visible
 query and neighbor structures and visible tool text while moving the three
 deterministic tool calls into the harness. It is a distinct manifest contract,
 `deployment_visible_prefetched`, not an identity-blind run. DeepSeek runs use a
-PARCC SSH tunnel from local `127.0.0.1:50001` to `epyc-1-4:50000`, with model
+Hosted SSH tunnel from local `127.0.0.1:50001` to `epyc-1-4:50000`, with model
 `deepseek-ai/DeepSeek-V4-Flash-0731`, not OpenRouter. Endpoint/model identity
 must be recorded in the manifest.
 
 Audit a completed strict run with:
 
 ```bash
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+conda run -n vllm \
   python -m tools.chembl_tool.tasks.clintox.audit_clinical_trial_failure_agent \
     --run-root <matrix-run-root>/runs_deployment_visible_parent_disjoint/clintox \
     --conditions clintox__none clintox__starling_direct \
@@ -274,10 +274,10 @@ trace audit:
 ## Build and verification
 
 ```bash
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+conda run -n vllm \
   python -m tools.chembl_tool.tasks.clintox.build_clinical_trial_failure_benchmark
 
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+conda run -n vllm \
   pytest -q tests/chembl_tool/tasks/clintox/test_clinical_trial_failure_benchmark.py \
     tests/chembl_tool/common/test_record_supported_benchmark.py
 ```

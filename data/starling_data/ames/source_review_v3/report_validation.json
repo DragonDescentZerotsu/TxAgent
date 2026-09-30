@@ -8,7 +8,7 @@
       "metrics": 0,
       "tables": 2
     },
-    "html": "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v3/report.html",
+    "html": "data/starling_data/ames/source_review_v3/report.html",
     "ok": true,
     "title": "Ames 非投票记录语义审查：需要修正机械筛选"
   },

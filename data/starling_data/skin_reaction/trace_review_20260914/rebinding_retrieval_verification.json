@@ -9,43 +9,43 @@
         "ok": true
       },
       "canonical_records": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/chembl_tool/starling/current_records/skin_reaction/03_records/records.parquet",
+        "path": "outputs/chembl_tool/starling/current_records/skin_reaction/03_records/records.parquet",
         "expected_sha256": "85b464d5ff7d89480b2cea4342d2f039515edf13d8840b33a254dd6db2f5df76",
         "actual_sha256": "85b464d5ff7d89480b2cea4342d2f039515edf13d8840b33a254dd6db2f5df76",
         "ok": true
       },
       "overlay_records": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/source_family_purity_v7/skin_reaction/records.parquet",
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/source_family_purity_v7/skin_reaction/records.parquet",
         "expected_sha256": "999453952793d890209968a659d8a13cf43dd5c2b97892a96e76546353ee2945",
         "actual_sha256": "999453952793d890209968a659d8a13cf43dd5c2b97892a96e76546353ee2945",
         "ok": true
       },
       "catalog": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs_mechanism_tagged_v1/skin_reaction_source_purity_v7/family_assays.jsonl",
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs_mechanism_tagged_v1/skin_reaction_source_purity_v7/family_assays.jsonl",
         "expected_sha256": "728c046848b84347b86f72f841410dc4c37d529f1590fec427b8e1d7b13b65a0",
         "actual_sha256": "728c046848b84347b86f72f841410dc4c37d529f1590fec427b8e1d7b13b65a0",
         "ok": true
       },
       "scaffold_index": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/skin_reaction/mechanism_tagged_v4_source_purity_v7/assay_neighbor_index.pkl",
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/skin_reaction/mechanism_tagged_v4_source_purity_v7/assay_neighbor_index.pkl",
         "expected_sha256": "0dda1a2a67ad50f76ff6eb653f1d0a98a97a82a3d9f5f0b0e1719481060e6349",
         "actual_sha256": "0dda1a2a67ad50f76ff6eb653f1d0a98a97a82a3d9f5f0b0e1719481060e6349",
         "ok": true
       },
       "scaffold_evidence": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/skin_reaction/mechanism_tagged_v4_source_purity_v7/assay_molecule_evidence.jsonl",
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/skin_reaction/mechanism_tagged_v4_source_purity_v7/assay_molecule_evidence.jsonl",
         "expected_sha256": "ba8f5304f86de123ca03fe45bc5afb38506dad2a116b61f97d3a87ed3b972a22",
         "actual_sha256": "ba8f5304f86de123ca03fe45bc5afb38506dad2a116b61f97d3a87ed3b972a22",
         "ok": true
       },
       "random_index": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v7/assay_neighbor_index.pkl",
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v7/assay_neighbor_index.pkl",
         "expected_sha256": "c61c8e6e54c8cd8b9ec187da847fea68a2c6c5c60fd4938e3faf73b8e417b06c",
         "actual_sha256": "c61c8e6e54c8cd8b9ec187da847fea68a2c6c5c60fd4938e3faf73b8e417b06c",
         "ok": true
       },
       "random_evidence": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v7/assay_molecule_evidence.jsonl",
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v7/assay_molecule_evidence.jsonl",
         "expected_sha256": "2a38280a96230500ecc697513fdf17c199f8ae25aa9a20864286ce3800d72956",
         "actual_sha256": "2a38280a96230500ecc697513fdf17c199f8ae25aa9a20864286ce3800d72956",
         "ok": true

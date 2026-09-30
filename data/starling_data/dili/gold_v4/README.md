@@ -56,7 +56,7 @@
 在仓库根运行，使用现有 vllm 环境：
 
 ```sh
-PYTHONPATH=. /data1/tianang/anaconda3/envs/vllm/bin/python -m tools.chembl_tool.tasks.dili.build_reviewed_starling build
+PYTHONPATH=. python -m tools.chembl_tool.tasks.dili.build_reviewed_starling build
 ```
 
 不需要运行 `review`；该入口已由取消 receipt 阻止重启。

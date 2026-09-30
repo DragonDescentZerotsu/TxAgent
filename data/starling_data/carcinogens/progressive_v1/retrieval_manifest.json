@@ -15,11 +15,11 @@
   "catalog_sha256": "57be6e629bbd7ff25c4ddc26ad1f4a6be032ec3bbf669c9299e1e9abd5f558e2",
   "identity_contract": "new_task_tautomer_identity.v2",
   "validation": "data/starling_data/carcinogens/progressive_v1/validation_current.json",
-  "validation_sha256": "e04240ff8bd1f22c278b2266ab626a8f85184b3eccf63a9fbf7825ea43d36de6",
+  "validation_sha256": "7ea3e6b08519a0c78d24eb29c5fb33630d8b23576021d06387aed7c4601df1ab",
   "validation_status": "passed",
   "historical_validation": {
     "path": "data/starling_data/carcinogens/progressive_v1/validation_all.json",
-    "sha256": "9e8ae339d1849930c87d422ac5a748b3ff33a52f6db63c4b985acaf29bd8638c",
+    "sha256": "e0c3cd4e3efe62342f1c3a0e916af0abdbac80a30b61e14014ce67937fc46656",
     "status": "historical_before_tautomer_identity_v2",
     "reuse_scope": "unchanged source semantics and raw fields only; current identity/index checks are the new scheme receipts"
   },

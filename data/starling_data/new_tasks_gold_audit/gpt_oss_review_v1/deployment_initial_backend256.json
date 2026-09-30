@@ -1,6 +1,6 @@
 {
   "host": "node001",
-  "model_snapshot": "/local/tmp/tianang-gptoss-source-review/model",
+  "model_snapshot": "/local/tmp/source-review/model",
   "session": "gptoss-source-review",
   "proxy": "http://127.0.0.1:9001/v1",
   "launches": [
@@ -8,9 +8,9 @@
       "gpu_pair": "0,1",
       "port": 8001,
       "command": [
-        "/data1/tianang/anaconda3/envs/vllm/bin/vllm",
+        "vllm",
         "serve",
-        "/local/tmp/tianang-gptoss-source-review/model",
+        "/local/tmp/source-review/model",
         "--host",
         "127.0.0.1",
         "--port",
@@ -34,9 +34,9 @@
       "gpu_pair": "2,3",
       "port": 8002,
       "command": [
-        "/data1/tianang/anaconda3/envs/vllm/bin/vllm",
+        "vllm",
         "serve",
-        "/local/tmp/tianang-gptoss-source-review/model",
+        "/local/tmp/source-review/model",
         "--host",
         "127.0.0.1",
         "--port",
@@ -60,9 +60,9 @@
       "gpu_pair": "4,5",
       "port": 8003,
       "command": [
-        "/data1/tianang/anaconda3/envs/vllm/bin/vllm",
+        "vllm",
         "serve",
-        "/local/tmp/tianang-gptoss-source-review/model",
+        "/local/tmp/source-review/model",
         "--host",
         "127.0.0.1",
         "--port",
@@ -86,9 +86,9 @@
       "gpu_pair": "6,7",
       "port": 8004,
       "command": [
-        "/data1/tianang/anaconda3/envs/vllm/bin/vllm",
+        "vllm",
         "serve",
-        "/local/tmp/tianang-gptoss-source-review/model",
+        "/local/tmp/source-review/model",
         "--host",
         "127.0.0.1",
         "--port",

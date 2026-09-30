@@ -2,7 +2,7 @@
   "method": "After a complete source rebuild, add the missing mouse-lymphoma alias; inspect every previously unresolved base/v1 endpoint, reconstruct restored records using the current canonical builder and identity helpers, and require no fingerprint collisions. Unaffected records remain unchanged.",
   "prior_source_manifest_sha256": "f029b0b9512e409ab8fd9e1702778864a68eb852fbc1c3879b04f64076ef1148",
   "prior_records_sha256": "83497a68511bb7288c23a63238c45c346b7cd0c35e4683f2e5648e591e98d6de",
-  "current_source_manifest_sha256": "fc8e6f1badc7a414b59f47e07a6ca29e16c9ff96a4ec50d92244d9274cc53809",
+  "current_source_manifest_sha256": "33bb27db84650163533b092bd81e1c88cab277f89f31f9d94f42a994de9594bd",
   "current_records_sha256": "fc4051781a85478ede2e22a4930523a9cb0893d37bb036cf59109243366bb99a",
   "policy_source_sha256": "95130f147328be1bed0c49f83ae5e73d2620c239544fa6991564908afc914db0",
   "source_votes_sha256": "a505bbb4ff2ef37c2497253fc89e01f3974bf1ad3a4ffe6ff6c58200fbef48b1",

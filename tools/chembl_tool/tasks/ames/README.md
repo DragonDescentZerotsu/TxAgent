@@ -44,7 +44,7 @@ this correction is not an independent replicate or a replay of historical full-f
 
 `data/starling_data/ames/raw_v1/manifest.json` pins four unchanged Parquet files
 from commit `03e4c7c694b45bcfdf7776ac1045bc3e69936f0a` of
-`DragonDescentZerotsu/TxAgent`, originally on `codex/ames-compressed-parquets`.
+`this repository`, originally on `codex/ames-compressed-parquets`.
 Missing or hash-mismatched raw files are restored from that pinned commit into
 a temporary file; only a successful SHA-256 check publishes the replacement.
 An interrupted restore can be retried without manually deleting partial files.
@@ -69,7 +69,7 @@ For routine refreshes of the current initialized dataset, from the repository
 root on node002:
 
 ```sh
-/data1/tianang/anaconda3/condabin/conda run -n vllm python -m \
+conda run -n vllm python -m \
   tools.chembl_tool.tasks.ames.build_dataset --phase refresh-retrieval --workers 128
 ```
 
@@ -354,7 +354,7 @@ scientifically unrelated. Run the full card-lineage, direct-containment, heldout
 cumulative/progressive retrieval audit with:
 
 ```sh
-/data1/tianang/anaconda3/condabin/conda run -n vllm python -m \
+conda run -n vllm python -m \
   tools.chembl_tool.tasks.ames.validate_retrieval
 ```
 

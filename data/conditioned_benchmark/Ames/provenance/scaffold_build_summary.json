@@ -12,10 +12,10 @@
     },
     {
       "path": "data/starling_data/ames/canonical_v1/manifest.json",
-      "sha256": "8ebf1e9ed0cb2e0eb7cca2904f9c1f863d8de180d7c2c24d6519ad6cfe81977b"
+      "sha256": "4188fa504d48ed9a2de2ae3b9f27f3bf48d6f2fb9012b5af41caac0c36476154"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/source_contract.py",
+      "path": "tools/chembl_tool/tasks/ames/source_contract.py",
       "sha256": "cd0796468c4007c8e3e9319826e641635850b774c57685e57001077ce6d7d732"
     },
     {
@@ -23,11 +23,11 @@
       "sha256": "ba4797eea2682e9629a085e1c868e79f2d5d5f2c8d2ae42c570f382ba9b23c77"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/build_conditioned_source.py",
+      "path": "tools/chembl_tool/tasks/ames/build_conditioned_source.py",
       "sha256": "1d996e77453eeec7228b4cc4d0335fc4005caa66896dadbada1ed82c68c1f143"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/identity_review.py",
+      "path": "tools/chembl_tool/tasks/ames/identity_review.py",
       "sha256": "7b65b7dd1d480258782256fb42295851ba44a03151a2de29f03fd021702cf845"
     }
   ],

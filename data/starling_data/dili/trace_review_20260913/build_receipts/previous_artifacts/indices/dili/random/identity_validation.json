@@ -3,7 +3,7 @@
   "task": "dili",
   "scheme": "random",
   "identity_contract": "new_task_tautomer_identity.v2",
-  "manifest_sha256": "0f1f4a71d5c509d26194d7293c58c6d9eb0bdff8250a9cc0103b171b1a7ae7f4",
+  "manifest_sha256": "c5169e6485385d7cc05b0765ca91b96c0f076e580d7dec06881f467f68191fbb",
   "artifacts": {
     "assay_neighbor_index.pkl": "5ecfbe24230d7458b1bdd309cbe5c1fbb262287ae5c7cbacc9a4390b48ad79df",
     "assay_molecule_evidence.jsonl": "acb2e2ff0d32c774e1680d2034554a800e56dfb16ee0d266e77c5ad0fcb23e80"

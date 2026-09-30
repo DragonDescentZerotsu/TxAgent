@@ -1,6 +1,6 @@
 {
   "status": "passed",
-  "archive_root": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v5/scaffold_artifacts",
+  "archive_root": "data/starling_data/dili/retrieval_review_v5/scaffold_artifacts",
   "files": {
     "family_catalogs/dili/family_assays.jsonl": "f890c5ee726965e257732ee08dd960b0c01bdfbdc8b8e38859355306b58d25c0",
     "family_catalogs/dili/manifest.json": "6df9c21934dd1b90c444b09309402ea7bb71e46f871005c7afd54c9ccfa55be2",
@@ -9,6 +9,6 @@
     "indices/dili/scaffold/manifest.json": "a27bfbc8f84c1846d4994031c55b580f6e0ecc563b07c2f4c1749b93051224f3",
     "indices/dili/scaffold/identity_validation.json": "913dcc2564dbde093ffd73ad0e4ebbf7289897f37e44486d085e4278e8258f76"
   },
-  "stable_artifact_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v5/artifacts",
+  "stable_artifact_path": "data/starling_data/dili/retrieval_review_v5/artifacts",
   "bytes_unchanged": true
 }

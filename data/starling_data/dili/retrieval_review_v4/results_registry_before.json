@@ -794,7 +794,7 @@
       "baseline_root": "outputs/baselines/dili_carcinogens_scaffold_v2",
       "model_curve_results_available": true,
       "provider_pool_config": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v2/providers.json",
-      "transport_note": "PARCC proxy discovery used model/info; 13 prior gateway504 failures recovered. Curves use two direct tunneled same-model SGLang backends to avoid proxy300s timeout.",
+      "transport_note": "Hosted proxy discovery used model/info; 13 prior gateway504 failures recovered. Curves use two direct tunneled same-model SGLang backends to avoid proxy300s timeout.",
       "partial_outputs_eligible_for_scoring": false,
       "reason": "All eight organization/subset cells passed full prediction/state/metric completeness and matched prepared-input validation. One test full-flat query recovered in the first configured stage requeue without changing scientific settings.",
       "repair_authorized": true,
@@ -850,7 +850,7 @@
         },
         "index_publication": {
           "path": "data/.build/new_task_tautomer_repair/retrieval_identity_publication.json",
-          "sha256": "a9de260639f0e6d5e174bf90fbe0c470b6d5f33356cfcce02a60d84ce34268f4"
+          "sha256": "94d7a96085e322c76f6dc960189730dcce629976313f8b25008bb610826fd9b3"
         }
       },
       "index_status": "historical_gold_v3_index",
@@ -1930,15 +1930,15 @@
         "storage": "node002 local /local/tmp; project output path is a symlink",
         "startup_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/startup_validation.json",
         "automatic_completion_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/completion_validation.json",
-        "current_transport": "PARCC DeepSeek-V4-Flash-0731 for remaining progressive; full-flat complete",
+        "current_transport": "Hosted DeepSeek-V4-Flash-0731 for remaining progressive; full-flat complete",
         "transport_switch": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/transport_switch.json",
-        "parcc_stop_receipt": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/parcc_stop_receipt.json",
+        "hosted_stop_receipt": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/hosted_stop_receipt.json",
         "successful_recomputed_levels_before_switch": 97,
         "remaining_levels_at_switch": 1175,
         "openrouter_resume_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/openrouter_resume_validation.json",
         "deadline_recovery": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/deadline_recovery.json",
-        "parcc_resume_receipt": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/parcc_resume_receipt.json",
-        "parcc_recheck": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/parcc_recheck/summary.json",
+        "hosted_resume_receipt": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/hosted_resume_receipt.json",
+        "hosted_recheck": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/hosted_recheck/summary.json",
         "completed_at": "2026-09-10T21:07:13.311630+00:00",
         "report": "/local/tmp/txagent_carcinogens_retrieval_cleanup_diagnostic_v1/REPORT.md",
         "completion_validation": "/local/tmp/txagent_carcinogens_retrieval_cleanup_diagnostic_v1/completion_validation.json",
@@ -2073,12 +2073,12 @@
             "valid",
             "test"
           ],
-          "provider": "PARCC",
+          "provider": "Hosted",
           "parallelism_per_run": 256,
           "combined_maximum_requests": 512,
           "retry_race_width": 6,
           "timeout_s": 900,
-          "reuse_source": "original PARCC run; never round1 OpenRouter states",
+          "reuse_source": "original Hosted run; never round1 OpenRouter states",
           "canonical_source_modified": false,
           "independent_test_result": false,
           "counts": {
@@ -3258,7 +3258,7 @@
       ],
       "queue_pid": 101888,
       "replacement_suite": "dili_l1_condition_priority_openrouter_v1",
-      "n_new_parcc_calls": 0
+      "n_new_hosted_calls": 0
     },
     "dili_l1_condition_priority_openrouter_v1": {
       "status": "complete_verified",
@@ -3293,8 +3293,8 @@
       "max_tokens": 20480,
       "n_fresh_L1_queries": 804,
       "n_reused_level_predictions": 0,
-      "priors_and_tools": "frozen; inherited from corresponding PARCC cohort",
-      "inference_backend_comparison_limit": "Previous PARCC vs current OpenRouter is not an isolated retrieval-effect estimate",
+      "priors_and_tools": "frozen; inherited from corresponding Hosted cohort",
+      "inference_backend_comparison_limit": "Previous Hosted vs current OpenRouter is not an isolated retrieval-effect estimate",
       "source_changes": false,
       "gold_changes": false,
       "subsets": {
@@ -3307,14 +3307,14 @@
           "runner_pid": 108932,
           "updated_at": "2026-09-11T01:12:52.186019+00:00",
           "performance": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/valid/performance.json",
-          "completion_validation": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/valid/completion_validation.json",
+          "completion_validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/valid/completion_validation.json",
           "exit_code": 0,
           "metrics": {
             "accuracy": 0.7910447761194029,
             "macro_f1": 0.6325891108499804
           },
-          "corrected_vs_parcc": 14,
-          "regressed_vs_parcc": 27
+          "corrected_vs_hosted": 14,
+          "regressed_vs_hosted": 27
         },
         "test": {
           "status": "complete_verified",
@@ -3325,14 +3325,14 @@
           "runner_pid": 108933,
           "updated_at": "2026-09-11T01:11:42.411760+00:00",
           "performance": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/test/performance.json",
-          "completion_validation": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/test/completion_validation.json",
+          "completion_validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/test/completion_validation.json",
           "exit_code": 0,
           "metrics": {
             "accuracy": 0.6990049751243781,
             "macro_f1": 0.6063894350981963
           },
-          "corrected_vs_parcc": 28,
-          "regressed_vs_parcc": 32
+          "corrected_vs_hosted": 28,
+          "regressed_vs_hosted": 32
         }
       },
       "controller_pid": 108918,
@@ -3341,7 +3341,7 @@
       "storage_migration_receipt": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/storage_migration_receipt.json",
       "retrieval_lineage_note": "Completed on retrieval_review_v1. v2 changes only one L2 and three L4 source records; L1 source rows are unchanged. No fresh v2 inference or condition-policy-specific full prompt reuse audit in this release."
     },
-    "dili_l1_condition_priority_parcc_endpoint_v1": {
+    "dili_l1_condition_priority_hosted_endpoint_v1": {
       "status": "complete_verified",
       "task": "dili",
       "split_scheme": "scaffold",
@@ -3362,9 +3362,9 @@
         6,
         7
       ],
-      "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1",
+      "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/hosted_endpoint_comparison_v1",
       "reference_suite": "dili_l1_condition_priority_openrouter_v1",
-      "contract": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/CONTRACT.md",
+      "contract": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/hosted_endpoint_comparison_v1/CONTRACT.md",
       "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
       "base_url": "http://127.0.0.1:50003/v1",
       "parallelism_per_split": 256,
@@ -3377,10 +3377,10 @@
       "subsets": {
         "valid": {
           "status": "complete_verified",
-          "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/valid",
-          "command": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/valid_command.json",
+          "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/hosted_endpoint_comparison_v1/valid",
+          "command": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/hosted_endpoint_comparison_v1/valid_command.json",
           "n_rows": 402,
-          "performance": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/valid/performance.json",
+          "performance": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/hosted_endpoint_comparison_v1/valid/performance.json",
           "runner_pid": 139835,
           "exit_code": 0,
           "metrics": {
@@ -3395,16 +3395,16 @@
             ]
           },
           "endpoint_disagreements": 41,
-          "parcc_corrected": 25,
-          "parcc_regressed": 16,
-          "completion_validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/valid/completion_validation.json"
+          "hosted_corrected": 25,
+          "hosted_regressed": 16,
+          "completion_validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/hosted_endpoint_comparison_v1/valid/completion_validation.json"
         },
         "test": {
           "status": "complete_verified",
-          "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/test",
-          "command": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/test_command.json",
+          "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/hosted_endpoint_comparison_v1/test",
+          "command": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/hosted_endpoint_comparison_v1/test_command.json",
           "n_rows": 402,
-          "performance": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/test/performance.json",
+          "performance": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/hosted_endpoint_comparison_v1/test/performance.json",
           "runner_pid": 139836,
           "exit_code": 0,
           "metrics": {
@@ -3419,9 +3419,9 @@
             ]
           },
           "endpoint_disagreements": 56,
-          "parcc_corrected": 29,
-          "parcc_regressed": 27,
-          "completion_validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/test/completion_validation.json"
+          "hosted_corrected": 29,
+          "hosted_regressed": 27,
+          "completion_validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/hosted_endpoint_comparison_v1/test/completion_validation.json"
         }
       },
       "controller_pid": 139760,
@@ -3430,9 +3430,9 @@
       "l1_knn_trace_audit": {
         "status": "complete_verified",
         "scope": "post_hoc_current_test_L1_trace_diagnostic",
-        "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/l1_knn_trace_audit",
-        "report": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/l1_knn_trace_audit/REPORT.md",
-        "validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/l1_knn_trace_audit/validation.json",
+        "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/hosted_endpoint_comparison_v1/l1_knn_trace_audit",
+        "report": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/hosted_endpoint_comparison_v1/l1_knn_trace_audit/REPORT.md",
+        "validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/hosted_endpoint_comparison_v1/l1_knn_trace_audit/validation.json",
         "n_queries": 402,
         "n_disagreement_summaries_read": 126,
         "n_representative_cases": 12,
@@ -3458,9 +3458,9 @@
         "interpretation": "Condition coverage trades off structural similarity; weak evidence/negative transfer and role attribution need attention. Single runs do not establish stable retrieval gain; valid negatives retained and source questions remain pending.",
         "valid_test_comparison": {
           "status": "complete_verified",
-          "report": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/l1_knn_trace_audit/VALID_TEST_COMPARISON.md",
-          "summary": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/l1_knn_trace_audit/split_comparison.json",
-          "valid_validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/l1_knn_trace_audit/valid/validation.json",
+          "report": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/hosted_endpoint_comparison_v1/l1_knn_trace_audit/VALID_TEST_COMPARISON.md",
+          "summary": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/hosted_endpoint_comparison_v1/l1_knn_trace_audit/split_comparison.json",
+          "valid_validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/hosted_endpoint_comparison_v1/l1_knn_trace_audit/valid/validation.json",
           "n_queries": 804,
           "additional_valid_representative_reviews": 6,
           "valid_L1_KNN_macro_f1": [

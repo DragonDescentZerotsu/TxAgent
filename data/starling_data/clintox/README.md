@@ -15,7 +15,7 @@ questions and must not vote on the same gold label.
 The strict benchmark is built with:
 
 ```bash
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+conda run -n vllm \
   python -m tools.chembl_tool.tasks.clintox.build_clinical_trial_failure_benchmark
 ```
 

@@ -259,7 +259,7 @@
       "codex_review_pending_or_excluded": 3
     },
     "input_hashes": {
-      "/data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/tdc_comparison/dili.tab": "d3961647ff6df9711b6aa4b9fe59d6cbeb40f9d23dd6e9d51d6656e6e6df5ed8",
+      "data/starling_data/new_tasks_gold_audit/tdc_comparison/dili.tab": "d3961647ff6df9711b6aa4b9fe59d6cbeb40f9d23dd6e9d51d6656e6e6df5ed8",
       "data/starling_data/dili/dataset_manifest.json": "0537b1122d9a631eb13fdda618bdce2a5df3c038f1adda4bfed2ade10d424b64",
       "data/starling_data/dili/raw_v1/dili_base/extraction_guidance.json": "a724600693b0da0c1047e12965879bf3c97f5875b23cece7730bb5121b404ff6",
       "data/starling_data/dili/gold_v2/base_record_decisions.parquet": "76cbfed73cb346152bae31b51eb46086ad71470430b25abdc43b511de87d5190",
@@ -528,7 +528,7 @@
       "answer_bearing_condition_requires_semantic_review": 1
     },
     "input_hashes": {
-      "/data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/tdc_comparison/carcinogens_lagunin.tab": "fe057a144d31a5883c0d9902173c4d208b9af826670d47d4ed0eeabf798fc160",
+      "data/starling_data/new_tasks_gold_audit/tdc_comparison/carcinogens_lagunin.tab": "fe057a144d31a5883c0d9902173c4d208b9af826670d47d4ed0eeabf798fc160",
       "data/starling_data/carcinogens/dataset_manifest.json": "4101a0c15559dc9f6d2fa46a45a1274f9e3be3b98a97a4255f22d026b4d8f40d",
       "data/starling_data/carcinogens/raw_v1/carcinogens_base/extraction_guidance.json": "a82bd065142a955e9c31a30c2ff9e8b9617f5b1fcb9776452fcdd2e9cdbe78a5",
       "data/starling_data/carcinogens/gold_v2/base_record_decisions.parquet": "28dbaf24020b55d26a92e26d537085776d9963f8ed2b8fb5f42112cf4b57d88a",

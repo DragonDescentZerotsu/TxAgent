@@ -22,15 +22,15 @@
       "sha256": "dc52416347c3819509ca8dca6945ee794d4e5d116c1a789760b2b0ea2e1e7f43"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/starling/source_gold_review.py",
+      "path": "tools/chembl_tool/common/starling/source_gold_review.py",
       "sha256": "61d08a31fc6193360dee0361a2a5c515e172b180b2147f7f508d3abd4050de30"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/starling/build_source_gold.py",
+      "path": "tools/chembl_tool/common/starling/build_source_gold.py",
       "sha256": "c4aa988f72f3af9e34c51921808249fc71427c6b7f28768be74068f804ffcc87"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/carcinogens/starling_gold.py",
+      "path": "tools/chembl_tool/tasks/carcinogens/starling_gold.py",
       "sha256": "73493af9f4064ed9f2e39cfc08fd77e70f8ce51301f9618cca449334834758bb"
     }
   ],

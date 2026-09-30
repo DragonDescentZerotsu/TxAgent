@@ -1,7 +1,7 @@
 {
   "schema_version": "clintox_base_source_manifest.v1",
   "source_id": "clintox_base_v1",
-  "provided_directory": "/vast/projects/myatskar/lab/shared_docs/clintox_base",
+  "provided_directory": "external_source/clintox_base",
   "raw_policy": "Files are copied byte-for-byte. Derived artifacts never modify these files.",
   "files": [
     {

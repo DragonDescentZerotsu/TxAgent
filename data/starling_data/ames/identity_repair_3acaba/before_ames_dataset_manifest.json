@@ -47,26 +47,26 @@
     },
     {
       "path": "data/starling_data/ames/raw_v1/manifest.json",
-      "sha256": "7f5645c242f53447b3f0afac4102d6a2189db9482f9881212cea5634222b5021"
+      "sha256": "8f2223f854a5e4208a27d62a8ba3e702e99c8f91cbba3cc5232e02e64945f45b"
     },
     {
       "path": "data/starling_data/ames/canonical_v1/manifest.json",
-      "sha256": "ded5ba04fffe9c0ce1362b34a2cd9438e50e51487e1cc6acee8270bedc953aa5"
+      "sha256": "5fb5c5e16d37023a9f3f129713eba472d14f2a51a7bcfaae3ffd044497e3ea15"
     },
     {
       "path": "data/starling_data/ames/identity_review_v1/pubchem_name_responses.jsonl",
       "sha256": "ba4797eea2682e9629a085e1c868e79f2d5d5f2c8d2ae42c570f382ba9b23c77"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/source_contract.py",
+      "path": "tools/chembl_tool/tasks/ames/source_contract.py",
       "sha256": "cd0796468c4007c8e3e9319826e641635850b774c57685e57001077ce6d7d732"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/build_conditioned_source.py",
+      "path": "tools/chembl_tool/tasks/ames/build_conditioned_source.py",
       "sha256": "ab7d62a30589bd6091c8ef1fa111c5880d3b0d7f17d06471d67dddfaf0e3d241"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/identity_review.py",
+      "path": "tools/chembl_tool/tasks/ames/identity_review.py",
       "sha256": "7b65b7dd1d480258782256fb42295851ba44a03151a2de29f03fd021702cf845"
     },
     {
@@ -78,7 +78,7 @@
       "sha256": "b8046ea5afcf6bee8801e4d06eb3ae752df3d4b1f3ed011c1b2f7745a021ca26"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/reviewed_source.py",
+      "path": "tools/chembl_tool/tasks/ames/reviewed_source.py",
       "sha256": "e570fad4016ded3ff0ff58ca4d8c69cefb6c8aa5536f48606ccc1ac294d0a4d3"
     }
   ],
@@ -170,7 +170,7 @@
         "sha256": "cee3f89f1e825d3d4b9b230084a6ab63ee92199758095a2d88ca77ab9a0badd9"
       },
       {
-        "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/experiment_config.py",
+        "path": "tools/chembl_tool/tasks/ames/experiment_config.py",
         "sha256": "945f7612b180aee8b8955c015a8a6d05f66d8019f728f09e6a7424036788317d"
       }
     ],

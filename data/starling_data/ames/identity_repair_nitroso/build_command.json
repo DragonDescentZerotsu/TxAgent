@@ -1,7 +1,7 @@
 {
   "pid": 2461305,
   "command": [
-    "/data1/tianang/anaconda3/envs/vllm/bin/python",
+    "python",
     "-u",
     "-m",
     "tools.chembl_tool.tasks.ames.build_dataset",

@@ -218,7 +218,7 @@
   ],
   "gold_preservation": {
     "source_votes_sha256": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9",
-    "previous_dataset_manifest_sha256": "4b92c978f65a706d31bacc894a8aea6f176f811baafe13169b51e2818b00032c",
+    "previous_dataset_manifest_sha256": "702eacbd57a47404c4df3fe582a2506d18ed3b4bf0ca2aa286f5edc379027814",
     "benchmark_files_unchanged": true,
     "split_allocation_repeated": false
   },

@@ -6,7 +6,7 @@
   "n_checked_changed_surfaces": 148,
   "n_reviewed_matching_surfaces": 94,
   "n_unreviewed_surfaces": 54,
-  "pending_packet": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pending_reselected_cards.jsonl",
+  "pending_packet": "data/starling_data/dili/retrieval_review_v4/pending_reselected_cards.jsonl",
   "accepted": [
     {
       "card_id": "card_93251ae0a2863295",

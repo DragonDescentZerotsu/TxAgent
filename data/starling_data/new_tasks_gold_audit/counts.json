@@ -1,6 +1,6 @@
 {
   "dili": {
-    "raw_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/raw_v1/compressed/dili_base.parquet",
+    "raw_path": "data/starling_data/dili/raw_v1/compressed/dili_base.parquet",
     "raw_sha256": "4c4f871240e77510e59116a2cbf1c7e2ec2c35021b6a1b6f91c6d24a20d22573",
     "raw_records": 189172,
     "raw_status_counts": {
@@ -109,7 +109,7 @@
     }
   },
   "carcinogens": {
-    "raw_path": "/data1/tianang/Projects/TxAgent/data/starling_data/carcinogens/raw_v1/compressed/carcinogens_base.parquet",
+    "raw_path": "data/starling_data/carcinogens/raw_v1/compressed/carcinogens_base.parquet",
     "raw_sha256": "1d50bb6f4223b536c9b6ee76f72bc0b2440aa989896a7abfb32fd4c50577ec4c",
     "raw_records": 354386,
     "raw_status_counts": {

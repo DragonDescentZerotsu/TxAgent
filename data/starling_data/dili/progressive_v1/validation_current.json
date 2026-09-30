@@ -30,12 +30,12 @@
       "excluded_direct_source_records": 71088
     }
   },
-  "source_manifest_sha256": "3e293f9a200decc6d3755026f699b307f55dc4c85c31de9c34b3479f6203e22a",
+  "source_manifest_sha256": "9e43df7e81e536da837c6c1132b77f601d20dd1457aca4a15a8454d83f177a58",
   "raw_uid_preservation_receipt": "data/starling_data/dili/progressive_v1/identity_repair_overlay_receipt.json",
   "raw_uid_preservation_receipt_sha256": "00dd30c0622b90a1474a2898967fc6ffb5f4cab803d59b8a2538efa28887a988",
   "historical_semantic_source_validation": {
     "path": "data/starling_data/dili/progressive_v1/validation_all.json",
-    "sha256": "cbf106f8386ec6ab553c640f0a4f5a1715b3b23dfbed0de84ec394f7bcce7a90",
+    "sha256": "f3912863956fab6d3176e60c0c44d8ea522d871b3ca2a1d7bb5c19f92e2f672d",
     "status": "historical_before_tautomer_identity_v2",
     "reuse_scope": "unchanged source semantics and raw fields only; current identity/index checks are the new scheme receipts"
   },

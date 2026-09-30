@@ -94,7 +94,7 @@
     "data/starling_data/dili/gold_v4/applied_citation_corrections.jsonl": "781d225aaadddecdaee66a4a4b04fae1276ae5ea929c6df86714dd7764635c47",
     "data/starling_data/new_tasks_gold_audit/targeted_review_v2/dili_condition_review/source_votes.jsonl": "fd78e264f9783d2a10be53cbe1dd25113749168849b7311eecab986a1b68f265",
     "data/starling_data/dili/gold_v4/source_votes.jsonl": "a19f799e202a3a16db867f3093c2d6d249e17bb13a6ef3b83c40a65ef3b81af1",
-    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/dili/build_reviewed_starling.py": "1bc6a6e024a513860b455a17def16254d239ca632025cafe878fb39675aa1c79"
+    "tools/chembl_tool/tasks/dili/build_reviewed_starling.py": "1bc6a6e024a513860b455a17def16254d239ca632025cafe878fb39675aa1c79"
   },
   "gold_labels": {
     "1": 3193,

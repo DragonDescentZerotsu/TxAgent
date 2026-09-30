@@ -214,7 +214,7 @@
       "data/conditioned_benchmark/Ames/random/summary.json": "cfe2a7ead3af30b6f53cf5aa978d3c6ae8ec231d4c06e7ed45268f2abbf04c7c",
       "data/conditioned_benchmark/Ames/provenance/scaffold_build_summary.json": "6a639d23eb19765f6adb2a97ae9916757143e28d2dae7a15229b42e5de0b39f4",
       "data/starling_data/ames/canonical_v1/source_votes.jsonl": "a505bbb4ff2ef37c2497253fc89e01f3974bf1ad3a4ffe6ff6c58200fbef48b1",
-      "data/starling_data/ames/canonical_v1/manifest.json": "fc8e6f1badc7a414b59f47e07a6ca29e16c9ff96a4ec50d92244d9274cc53809",
+      "data/starling_data/ames/canonical_v1/manifest.json": "33bb27db84650163533b092bd81e1c88cab277f89f31f9d94f42a994de9594bd",
       "data/starling_data/ames/dataset_manifest.json": "89aaac6e3e6e9eda3257937d693f0d4641330b4315386558cab797afa6093c0a"
     },
     "notebook_code_compiles": true,
@@ -269,8 +269,8 @@
       "bytes": 509110
     },
     "report_validation.json": {
-      "sha256": "797050048639baf59f89a46b4349c7e382254028437521732548623b4f869a36",
-      "bytes": 939
+      "sha256": "e78eaf4e8de3c6ed560a056944cf6b4afb13fb9d30f90b75baab158436d5f024",
+      "bytes": 907
     },
     "review.ipynb": {
       "sha256": "768b1361818941246d9ed0178c268f3318bb7665aa8ea8363d9323ebba968a7c",

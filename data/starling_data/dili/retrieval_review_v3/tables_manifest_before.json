@@ -3,7 +3,7 @@
   "exporter": "tools/chembl_tool/paper_experiments/export_current_starling_level_records.py",
   "exporter_sha256": "40686ab1dbfb15aff4b2d6c0832d3a9fe3ffbc32c563130bf168e16a65ad98ed",
   "current_retrieval_contract": "tools/chembl_tool/paper_experiments/current_starling_retrieval.json",
-  "current_retrieval_contract_sha256": "f931647d5210c021f9e7b965e4c14ed6464033b0a54677123894153c5ca7fa2f",
+  "current_retrieval_contract_sha256": "e3adbed4e62fd7d9135d4d2e80638228e59815fdd30152236531362e26422713",
   "verified_current_inputs": true,
   "interpretation": {
     "source_membership": "all retrieval-eligible overlay records assigned to a current level, before split-specific direct heldout filtering",
@@ -1245,13 +1245,13 @@
     "dili_retrieval_review_v1": {
       "manifest": "data/starling_data/dili/retrieval_review_v1/tables/manifest.json",
       "verified_current_inputs": true,
-      "current_retrieval_contract_sha256": "6886a568ec595e1f44ffe9b4e4858e1cc0084bb1402165ad422faaf1d4ac66c7",
+      "current_retrieval_contract_sha256": "67614fcb7e4b4ffa36942d655e827ab84e3239c9e5cb86663def511e463c1919",
       "other_tasks_reexported": false
     },
     "dili_retrieval_review_v2": {
       "manifest": "data/starling_data/dili/retrieval_review_v2/tables/manifest.json",
       "verified_current_inputs": true,
-      "current_retrieval_contract_sha256": "f931647d5210c021f9e7b965e4c14ed6464033b0a54677123894153c5ca7fa2f",
+      "current_retrieval_contract_sha256": "e3adbed4e62fd7d9135d4d2e80638228e59815fdd30152236531362e26422713",
       "other_tasks_reexported": false
     }
   }

@@ -6,7 +6,7 @@ OUT_DIR="${2:-outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw}"
 INTERVAL_SECONDS="${3:-5400}"
 LOG="${4:-/tmp/chembl_assay_monitor.log}"
 
-cd /data1/tianang/Projects/TxAgent || exit 1
+cd -- "$(dirname -- "$0")/../../../.." || exit 1
 
 while true; do
   ts="$(date -Is)"

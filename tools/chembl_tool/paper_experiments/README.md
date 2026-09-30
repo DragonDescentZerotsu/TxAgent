@@ -14,7 +14,7 @@ DILI 新版 prompt-v5 源修复 replay 与历史 retrieval-review v5 分开登�
 
 ## Shared prompts and plotting points
 
-[Joseph handoff](shared/README.md) contains six-task full-flat v5 prompt assets,
+[Reference handoff](shared/README.md) contains six-task full-flat v5 prompt assets,
 small verified validation/test CSV tables, and the canonical plotter command.
 The portable CSV mode needs no private inference traces. Add results by extending
 the CSV and its `curve_settings` metadata.
@@ -461,7 +461,7 @@ retry or replicate executable.
 ## OpenRouter Batch transport
 
 The shared progressive and matched-family runners also accept provider
-`transport: "openrouter_batch"`. The default remains `chat_completions` for PARCC
+`transport: "openrouter_batch"`. The default remains `chat_completions` for Hosted
 and ordinary OpenRouter requests. The reusable example is
 [`provider_pools/gpt56_sol_openrouter_batch.json`](provider_pools/gpt56_sol_openrouter_batch.json).
 Use the base model ID (`openai/gpt-5.6-sol`, without `:batch`); the transport calls
@@ -518,7 +518,7 @@ python -m tools.chembl_tool.paper_experiments.run_conditioned_assay_family_curve
   --matched-organizations progressive --replicate-ids 1 --refresh-query-priors \
   --output-root outputs/paper/carcinogens_sol_batch_replicate \
   --model openai/gpt-5.6-sol --base-url https://openrouter.ai/api/v1 \
-  --api-key-env OPENROUTER_API_KEY_Mark_1 \
+  --api-key-env OPENROUTER_API_KEY \
   --provider-pool-config tools/chembl_tool/paper_experiments/provider_pools/gpt56_sol_openrouter_batch.json \
   --parallelism 128 --parallelism-per-task 128 --endpoint-concurrency-budget 128 \
   --retry-race-width 1 --max-tokens 20480

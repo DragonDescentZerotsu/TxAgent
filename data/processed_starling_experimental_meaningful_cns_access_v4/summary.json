@@ -277,7 +277,7 @@
             "review_artifact": "data/starling_data/bbb_martins/experimental_metric_direction_review_v1/summary.json"
           }
         },
-        "local_source_arrow": "/data1/tianang/cache/datasets/starling-labs___bbb/default/0.0.0/f50c638621fcc2dedfc9e00f7074f867640efc1b/bbb-train.arrow",
+        "local_source_arrow": "${HF_HOME}/datasets/starling-labs___bbb/default/0.0.0/f50c638621fcc2dedfc9e00f7074f867640efc1b/bbb-train.arrow",
         "local_source_arrow_sha256": "faa63a4e2ecc234691c86bc63c2cd3a69db82387cfe0687cc930d9a5e458709c",
         "benchmark_lineage_source_revision": "f50c638621fcc2dedfc9e00f7074f867640efc1b",
         "benchmark_lineage": "experimental_meaningful_cns_access_v4"

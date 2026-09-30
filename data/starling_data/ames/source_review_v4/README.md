@@ -57,7 +57,7 @@
 抽样已从冻结的旧 votes、L2 frame 和既往 sampled IDs 重新运行，144 条输出字节级相同：
 
 ```sh
-/data1/tianang/anaconda3/envs/vllm/bin/python data/starling_data/ames/source_review_v4/sample_selection.py /local/tmp/ames-review-replayed
+python data/starling_data/ames/source_review_v4/sample_selection.py /local/tmp/ames-review-replayed
 ```
 
 完整重建仍使用 task 原有入口 `python -m tools.chembl_tool.tasks.ames.build_dataset --phase all --workers 16`；审核决定不绕过 identity、study collapse、condition support 或 heldout filtering。

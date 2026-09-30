@@ -1,4 +1,6 @@
 .env
+# Local agent instructions are not part of the anonymous review release.
+AGENTS.md
 .DS_Store
 __pycache__/
 *.py[cod]

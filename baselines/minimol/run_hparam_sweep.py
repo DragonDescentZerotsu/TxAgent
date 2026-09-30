@@ -33,7 +33,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-root", default=Path("outputs/baselines/minimol_sweeps"), type=Path)
     parser.add_argument("--embedding-cache-dir", default=None, type=Path)
     parser.add_argument("--gpus", default="4,5,6,7")
-    parser.add_argument("--conda", default="/data1/tianang/anaconda3/condabin/conda")
+    parser.add_argument("--conda", default=os.environ.get("CONDA_EXE", "conda"))
     parser.add_argument("--env-name", default="intern")
     parser.add_argument("--epochs", type=int, default=25)
     parser.add_argument("--ensemble-size", type=int, default=5)

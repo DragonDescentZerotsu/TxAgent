@@ -140,7 +140,7 @@ For registered Carcinogens source-cleanup diagnostics, retain the hash-bound
 review overlay, source proposals and adjudication overrides, unresolved-concern
 ledger, all-query input comparison, replacement-card audit and prefix-reuse
 receipts. Round 3 also records opt-in endpoint diversity. Its completed round-2
-PARCC source is a provenance dependency; partial or changed-input outputs cannot
+Hosted source is a provenance dependency; partial or changed-input outputs cannot
 be substituted for a matched full-flat result or an independent replicate.
 
 ### Paper result cells

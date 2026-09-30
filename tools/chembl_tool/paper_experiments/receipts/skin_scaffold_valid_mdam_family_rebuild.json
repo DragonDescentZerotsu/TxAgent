@@ -72,7 +72,7 @@
   "reuse_decision": {
     "scaffold_valid_agent_predictions_reusable_without_replay": false,
     "targeted_replay_required": true,
-    "targeted_replay_status": "blocked_by_expired_parcc_gssapi_authentication",
+    "targeted_replay_status": "blocked_by_expired_hosted_gssapi_authentication",
     "completed_run_metrics_status": "last_complete_reference_not_current",
     "baselines_reusable": true,
     "baseline_reason": "The benchmark rows, labels, train split, and validation split are byte-identical; only the retrieval source and index changed."

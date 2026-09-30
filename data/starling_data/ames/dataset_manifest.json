@@ -47,26 +47,26 @@
     },
     {
       "path": "data/starling_data/ames/raw_v1/manifest.json",
-      "sha256": "7f5645c242f53447b3f0afac4102d6a2189db9482f9881212cea5634222b5021"
+      "sha256": "8f2223f854a5e4208a27d62a8ba3e702e99c8f91cbba3cc5232e02e64945f45b"
     },
     {
       "path": "data/starling_data/ames/canonical_v1/manifest.json",
-      "sha256": "8ebf1e9ed0cb2e0eb7cca2904f9c1f863d8de180d7c2c24d6519ad6cfe81977b"
+      "sha256": "4188fa504d48ed9a2de2ae3b9f27f3bf48d6f2fb9012b5af41caac0c36476154"
     },
     {
       "path": "data/starling_data/ames/identity_review_v1/pubchem_name_responses.jsonl",
       "sha256": "ba4797eea2682e9629a085e1c868e79f2d5d5f2c8d2ae42c570f382ba9b23c77"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/source_contract.py",
+      "path": "tools/chembl_tool/tasks/ames/source_contract.py",
       "sha256": "cd0796468c4007c8e3e9319826e641635850b774c57685e57001077ce6d7d732"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/build_conditioned_source.py",
+      "path": "tools/chembl_tool/tasks/ames/build_conditioned_source.py",
       "sha256": "1d996e77453eeec7228b4cc4d0335fc4005caa66896dadbada1ed82c68c1f143"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/identity_review.py",
+      "path": "tools/chembl_tool/tasks/ames/identity_review.py",
       "sha256": "7b65b7dd1d480258782256fb42295851ba44a03151a2de29f03fd021702cf845"
     },
     {
@@ -78,7 +78,7 @@
       "sha256": "6bc83b1b0442afe02249601655a9608cd69b10c7f7bde053ebf696182cf425fc"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/reviewed_source.py",
+      "path": "tools/chembl_tool/tasks/ames/reviewed_source.py",
       "sha256": "42cb35b4d38f68606922546c7bea0c274cf64ed9cd14a06bd7c5f77d3efd2a57"
     }
   ],
@@ -86,7 +86,7 @@
   "benchmark": [
     {
       "path": "data/conditioned_benchmark/Ames/provenance/scaffold_build_summary.json",
-      "sha256": "6cb0d2a5be1bc47ab5e032daaf27c7004506149abb4ee669ec64d810ae841faa"
+      "sha256": "9a96c7de75b8b23b4c59043f68ccf669ecfc58146a491907c145eefb5c1cf7c3"
     },
     {
       "path": "data/conditioned_benchmark/Ames/scaffold/summary.json",
@@ -164,7 +164,7 @@
         "sha256": "f30a2e59be114d58904170eefe87628b68a0dd511323682ea7c2c7488a4aa643"
       },
       {
-        "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/experiment_config.py",
+        "path": "tools/chembl_tool/tasks/ames/experiment_config.py",
         "sha256": "879f0e060622e31127fc26ee439ea411502f0f3627ec8f114c34508ff902a924"
       }
     ],

@@ -4,29 +4,29 @@
   "independent_passes": 2,
   "sources": {
     "dili": {
-      "path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/raw_v1/compressed/dili_base.parquet",
+      "path": "data/starling_data/dili/raw_v1/compressed/dili_base.parquet",
       "sha256": "4c4f871240e77510e59116a2cbf1c7e2ec2c35021b6a1b6f91c6d24a20d22573",
       "rows": 189172,
       "previous_decisions": {
-        "path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/gold_v2/base_record_decisions.parquet",
+        "path": "data/starling_data/dili/gold_v2/base_record_decisions.parquet",
         "sha256": "f8f440d8ee2d35fe0e24dec124ccbe944f9d5a54623122726635671754f6ff76"
       },
       "previous_votes": {
-        "path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/gold_v3/source_votes.jsonl",
+        "path": "data/starling_data/dili/gold_v3/source_votes.jsonl",
         "sha256": "9d0372d129481cb0af23e1d061c250636e21ffab2aa392f56c5afcc5cb96e68b"
       },
       "review_contract_sha256": "ce474fedee34fa64d85f262847c45a224eef7943ae1fba4324fff16941f080e2"
     },
     "carcinogens": {
-      "path": "/data1/tianang/Projects/TxAgent/data/starling_data/carcinogens/raw_v1/compressed/carcinogens_base.parquet",
+      "path": "data/starling_data/carcinogens/raw_v1/compressed/carcinogens_base.parquet",
       "sha256": "1d50bb6f4223b536c9b6ee76f72bc0b2440aa989896a7abfb32fd4c50577ec4c",
       "rows": 354386,
       "previous_decisions": {
-        "path": "/data1/tianang/Projects/TxAgent/data/starling_data/carcinogens/gold_v2/base_record_decisions.parquet",
+        "path": "data/starling_data/carcinogens/gold_v2/base_record_decisions.parquet",
         "sha256": "e4a2944310b7a9f641055efa6b6c1b3e9c2ab19a48219b5dc3b2773256052faa"
       },
       "previous_votes": {
-        "path": "/data1/tianang/Projects/TxAgent/data/starling_data/carcinogens/gold_v3/source_votes.jsonl",
+        "path": "data/starling_data/carcinogens/gold_v3/source_votes.jsonl",
         "sha256": "c9b057201a9ec88a357a5874e47d5764e73d7a52f51fe521092c7beb3958fbcb"
       },
       "review_contract_sha256": "637808e47724320c090571da221731964489937845bbe9bec83ffd9c3cd33be6"

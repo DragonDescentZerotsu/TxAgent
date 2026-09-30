@@ -18,7 +18,7 @@
       "allow_new_target": true,
       "target_inchi_key": "AUZONCFQVSMFAP-UHFFFAOYSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_9726816.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_9726816.json",
         "document_sha256": "03a11d468ea621bc7a87a3afbd252623c2e7b78336f306804377f844758349db",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -166,7 +166,7 @@
       "allow_new_target": true,
       "target_inchi_key": "BMYFUCYXRGTQQL-IOSLPCCCSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_20814157.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_20814157.json",
         "document_sha256": "19497463ebc58584adc0d173beea747a0be87e6597a2b84787bc9bdf42e84773",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -187,7 +187,7 @@
       "allow_new_target": true,
       "target_inchi_key": "BMYFUCYXRGTQQL-IOSLPCCCSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_32363674.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_32363674.json",
         "document_sha256": "1e67ed6748627502ae405fd1160b4f7444e6b993b00b63c87289f4e2ee63de80",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -208,7 +208,7 @@
       "allow_new_target": true,
       "target_inchi_key": "BMYFUCYXRGTQQL-IOSLPCCCSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_22072847.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_22072847.json",
         "document_sha256": "581cc5553f02f55ae274558fab490daf7ea616d28de9b017c0dd224354c899ce",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -229,7 +229,7 @@
       "allow_new_target": true,
       "target_inchi_key": "BMYFUCYXRGTQQL-IOSLPCCCSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_18222062.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_18222062.json",
         "document_sha256": "a402325ef228bbfe523902f6071108c775d80e3fc6218ae343c943104710782f",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -250,7 +250,7 @@
       "allow_new_target": true,
       "target_inchi_key": "BMYFUCYXRGTQQL-IOSLPCCCSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_22500525.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_22500525.json",
         "document_sha256": "13e2101d1b87925e982a843c2d7a97b8833ead5ec2987aa19218a6c35fa942d3",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -271,7 +271,7 @@
       "allow_new_target": true,
       "target_inchi_key": "BMYFUCYXRGTQQL-IOSLPCCCSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_29512050.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_29512050.json",
         "document_sha256": "60056c53480b4bead61efd89ea519d7813906b4400db6d11dacaec2733505dca",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -334,7 +334,7 @@
       "allow_new_target": true,
       "target_inchi_key": "ZXDDPOHVAMWLBH-UHFFFAOYSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_40243607.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_40243607.json",
         "document_sha256": "25893cc4163dbf5b973eb3e59a6cfa773a753cf1dc48441b769aa2ec339fcd26",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -384,7 +384,7 @@
       "allow_new_target": true,
       "target_inchi_key": "DLYVTEULDNMQAR-SRNOMOOLSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_22571613.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_22571613.json",
         "document_sha256": "4a01808baf4e466a239152665f39df31238e4c68152d9b229919f7dffcfee01f",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -405,7 +405,7 @@
       "allow_new_target": true,
       "target_inchi_key": "DLYVTEULDNMQAR-SRNOMOOLSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_22571613.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_22571613.json",
         "document_sha256": "4a01808baf4e466a239152665f39df31238e4c68152d9b229919f7dffcfee01f",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -426,7 +426,7 @@
       "allow_new_target": true,
       "target_inchi_key": "DLYVTEULDNMQAR-SRNOMOOLSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_22571613.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_22571613.json",
         "document_sha256": "4a01808baf4e466a239152665f39df31238e4c68152d9b229919f7dffcfee01f",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -447,7 +447,7 @@
       "allow_new_target": true,
       "target_inchi_key": "NAHTXVIXCMUDLF-RFNFAWMESA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_36558960.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_36558960.json",
         "document_sha256": "8adde11e402f6389406006008a89c6e6ec85a50d99c3aebd1a2b06167541dff7",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -469,7 +469,7 @@
       "allow_new_target": true,
       "target_inchi_key": "NAHTXVIXCMUDLF-RFNFAWMESA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_36558960.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_36558960.json",
         "document_sha256": "8adde11e402f6389406006008a89c6e6ec85a50d99c3aebd1a2b06167541dff7",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -490,7 +490,7 @@
       "allow_new_target": true,
       "target_inchi_key": "MTKNDAQYHASLID-QXYWQCSFSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_12029626.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_12029626.json",
         "document_sha256": "e3867b24e1737375caa051d244a5ea936514cdcbe0c307b67ec37ee1a2c92c12",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -511,7 +511,7 @@
       "allow_new_target": true,
       "target_inchi_key": "NAHTXVIXCMUDLF-RFNFAWMESA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_36558960.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_36558960.json",
         "document_sha256": "8adde11e402f6389406006008a89c6e6ec85a50d99c3aebd1a2b06167541dff7",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -532,7 +532,7 @@
       "allow_new_target": true,
       "target_inchi_key": "NAHTXVIXCMUDLF-RFNFAWMESA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_36558960.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_36558960.json",
         "document_sha256": "8adde11e402f6389406006008a89c6e6ec85a50d99c3aebd1a2b06167541dff7",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -553,7 +553,7 @@
       "allow_new_target": true,
       "target_inchi_key": "MTKNDAQYHASLID-QXYWQCSFSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_12029626.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_12029626.json",
         "document_sha256": "e3867b24e1737375caa051d244a5ea936514cdcbe0c307b67ec37ee1a2c92c12",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -598,7 +598,7 @@
       "allow_new_target": true,
       "target_inchi_key": "WVCHIGAIXREVNS-UHFFFAOYSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_29859372.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_29859372.json",
         "document_sha256": "7c06bf7a0fbd906fb5a67acad2e7cd43d67de442a827452a9802a4c38dd970c6",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -619,7 +619,7 @@
       "allow_new_target": true,
       "target_inchi_key": "WVCHIGAIXREVNS-UHFFFAOYSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_29859372.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_29859372.json",
         "document_sha256": "7c06bf7a0fbd906fb5a67acad2e7cd43d67de442a827452a9802a4c38dd970c6",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -640,7 +640,7 @@
       "allow_new_target": true,
       "target_inchi_key": "WVCHIGAIXREVNS-UHFFFAOYSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_29859372.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_29859372.json",
         "document_sha256": "7c06bf7a0fbd906fb5a67acad2e7cd43d67de442a827452a9802a4c38dd970c6",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -661,7 +661,7 @@
       "allow_new_target": true,
       "target_inchi_key": "WVCHIGAIXREVNS-UHFFFAOYSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_29859372.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_29859372.json",
         "document_sha256": "7c06bf7a0fbd906fb5a67acad2e7cd43d67de442a827452a9802a4c38dd970c6",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -690,7 +690,7 @@
       "allow_new_target": true,
       "target_inchi_key": "QRXWMOHMRWLFEY-UHFFFAOYSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_27000539.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_27000539.json",
         "document_sha256": "832484a325f632ab51ff8cb62de823119afe862f1033d55cb02661609747dac6",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -711,7 +711,7 @@
       "allow_new_target": true,
       "target_inchi_key": "IPCSVZSSVZVIGE-UHFFFAOYSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_34070938.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_34070938.json",
         "document_sha256": "d3462ed39d12389c9d4cd49d0249f1d611a5f0dc7a90c2b37f6f8040ce126d23",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -733,7 +733,7 @@
       "allow_new_target": true,
       "target_inchi_key": "IPCSVZSSVZVIGE-UHFFFAOYSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_34070938.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_34070938.json",
         "document_sha256": "d3462ed39d12389c9d4cd49d0249f1d611a5f0dc7a90c2b37f6f8040ce126d23",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -754,7 +754,7 @@
       "allow_new_target": true,
       "target_inchi_key": "IPCSVZSSVZVIGE-UHFFFAOYSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_34070938.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_34070938.json",
         "document_sha256": "d3462ed39d12389c9d4cd49d0249f1d611a5f0dc7a90c2b37f6f8040ce126d23",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -775,7 +775,7 @@
       "allow_new_target": true,
       "target_inchi_key": "IPCSVZSSVZVIGE-UHFFFAOYSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_34070938.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_34070938.json",
         "document_sha256": "d3462ed39d12389c9d4cd49d0249f1d611a5f0dc7a90c2b37f6f8040ce126d23",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -796,7 +796,7 @@
       "allow_new_target": true,
       "target_inchi_key": "HCIKUKNAJRJFOW-KQYNXXCUSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_22898900.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_22898900.json",
         "document_sha256": "0efe1c4ec787e3b3afa2f9ef9f6011425f85d3e9c2e63a2315277f4468142380",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -847,7 +847,7 @@
       "allow_new_target": true,
       "target_inchi_key": "ZQWBOKJVVYNKTL-AUEPDCJTSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_27530964.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_27530964.json",
         "document_sha256": "a155f75d1c5114d95733a3936d32fdfac0e046594ed548ee1cd3564ddfd2d718",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -868,7 +868,7 @@
       "allow_new_target": true,
       "target_inchi_key": "ZQWBOKJVVYNKTL-AUEPDCJTSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_27530964.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_27530964.json",
         "document_sha256": "a155f75d1c5114d95733a3936d32fdfac0e046594ed548ee1cd3564ddfd2d718",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -889,7 +889,7 @@
       "allow_new_target": true,
       "target_inchi_key": "DJSISFGPUUYILV-ZFORQUDYSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_35095509.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_35095509.json",
         "document_sha256": "f1febd779767c9a30d312ac51ee52c8a1aec2c707a449f6a591601d39d515846",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -910,7 +910,7 @@
       "allow_new_target": true,
       "target_inchi_key": "IKIIZLYTISPENI-ZFORQUDYSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_35095509.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_35095509.json",
         "document_sha256": "f1febd779767c9a30d312ac51ee52c8a1aec2c707a449f6a591601d39d515846",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -939,7 +939,7 @@
       "allow_new_target": true,
       "target_inchi_key": "IKIIZLYTISPENI-ZFORQUDYSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_35095509.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_35095509.json",
         "document_sha256": "f1febd779767c9a30d312ac51ee52c8a1aec2c707a449f6a591601d39d515846",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -999,7 +999,7 @@
       "allow_new_target": true,
       "target_inchi_key": "QZRIMAMDGWAHPQ-ATPAGDLWSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_28594915.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_28594915.json",
         "document_sha256": "6cd8e8fa8d3ce013018dfdb5ad0415d19ecc9773a8c30d16d8fdd301c7b3cf32",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -1020,7 +1020,7 @@
       "allow_new_target": true,
       "target_inchi_key": "UWFYSQMTEOIJJG-FDTZYFLXSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_9476091.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_9476091.json",
         "document_sha256": "92e1c8084609c12437fb0b4637f1235c779ee6daf1cb33b561dde3736ce11777",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -1041,7 +1041,7 @@
       "allow_new_target": true,
       "target_inchi_key": "UWFYSQMTEOIJJG-FDTZYFLXSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_16845534.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_16845534.json",
         "document_sha256": "3d59fd74c34c105bf5ceb9de29f6841d23dbd466ca577ea3b7242427fa2e6b5b",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -1062,7 +1062,7 @@
       "allow_new_target": true,
       "target_inchi_key": "UWFYSQMTEOIJJG-FDTZYFLXSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_16406864.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_16406864.json",
         "document_sha256": "7f83bb5bbafe4d588fc37d6c13f0de87a72ad735b6f87842dbfd507c12d31e38",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -1083,7 +1083,7 @@
       "allow_new_target": true,
       "target_inchi_key": "QZRIMAMDGWAHPQ-ATPAGDLWSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_28594915.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_28594915.json",
         "document_sha256": "6cd8e8fa8d3ce013018dfdb5ad0415d19ecc9773a8c30d16d8fdd301c7b3cf32",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -1104,7 +1104,7 @@
       "allow_new_target": true,
       "target_inchi_key": "QZRIMAMDGWAHPQ-ATPAGDLWSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_28594915.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_28594915.json",
         "document_sha256": "6cd8e8fa8d3ce013018dfdb5ad0415d19ecc9773a8c30d16d8fdd301c7b3cf32",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }
@@ -1125,7 +1125,7 @@
       "allow_new_target": true,
       "target_inchi_key": "QZRIMAMDGWAHPQ-ATPAGDLWSA-N",
       "identity_provenance": {
-        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_28594915.json",
+        "document_path": "data/starling_data/dili/retrieval_review_v4/pmid_28594915.json",
         "document_sha256": "6cd8e8fa8d3ce013018dfdb5ad0415d19ecc9773a8c30d16d8fdd301c7b3cf32",
         "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
       }

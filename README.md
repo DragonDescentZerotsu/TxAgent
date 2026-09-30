@@ -4,6 +4,33 @@ Molecular evidence retrieval and reasoning over condition-aware benchmarks.
 Shared tools compute molecular properties and structural comparisons; task-specific
 experimental records provide evidence for the reasoning model.
 
+## Environment configuration
+
+Use the Python environment containing the project dependencies. Python orchestration
+defaults to that interpreter; existing `--python-executable` overrides still apply.
+MiniMol uses an installed package or a sibling `minimol/` checkout; set
+`TXAGENT_MINIMOL_SOURCE` or the existing `--minimol-source` option for another location.
+Conda launchers use `CONDA_EXE` or `conda` on PATH; Hugging Face caches follow `HF_HOME`.
+The optional SSH watchdog accepts `--ssh-host` or `TXAGENT_SSH_HOST`.
+
+The historical activity-transfer helpers accept explicit HF dataset IDs through
+`--repos` / `TXAGENT_TRANSFER_DATASETS` (space-separated), or
+`--hf-repo` / `TXAGENT_TRANSFER_HF_REPO`; feature preparation also accepts local
+`--train-jsonl`. Use the existing input/output path arguments for saved runs.
+The ChEMBL data symlink points to a sibling data checkout; replace it with a link
+to your local ChEMBL data when using those optional tools.
+
+Review copies use repository-relative paths and neutral archive ownership.
+Historical path strings are normalized; scientific record payloads, labels and
+scores retain their original values. Artifact manifests bind the distributed bytes.
+Hashes changed by release metadata normalization refer to the distributed copy;
+this does not represent a new experiment or revised scientific result. In the
+Carcinogens archive, only document-location fields within audit provenance were
+normalized; all other record cells were checked for equality. Provider-pool examples
+use local loopback endpoints and generic credential variable names; pass your
+existing provider configuration when resuming a saved deployment.
+Reading saved results or using the offline scorer does not start a tool service.
+
 ## Score a DILI evidence record
 
 [DILI record score](dili_score/README.md) is a lightweight Python package for

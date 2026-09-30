@@ -18,20 +18,11 @@ python -m pip install .
 ```
 
 This installs only `dili_score`; it does not install the experiment framework or
-include datasets in the wheel. For a lightweight checkout that avoids the large
-data files:
-
-```sh
-git clone --depth 1 --filter=blob:none --sparse https://github.com/DragonDescentZerotsu/TxAgent.git
-cd TxAgent
-git sparse-checkout init --cone
-git sparse-checkout set dili_score
-python -m pip install .
-```
-
-Repository access is required because TxAgent is private. Use your normal GitHub
-credentials; do not put tokens in scripts. An existing checkout can also build a
-small distributable wheel with `python -m pip wheel --no-deps . -w dist`.
+include datasets in the wheel. A downloaded review snapshot works as well as a
+Git checkout: extract it and run the command from its repository root. For a
+minimal installation, only `pyproject.toml` and `dili_score/` are required.
+An existing checkout can build a small distributable wheel with
+`python -m pip wheel --no-deps . -w dist`.
 
 ```python
 from dili_score import score_dili_record

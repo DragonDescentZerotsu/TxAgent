@@ -33,7 +33,7 @@
         }
       },
       "validation": "data/starling_data/dili/progressive_v1/validation_current.json",
-      "validation_sha256": "51a80e9f8d4a1ce6620200d58c06abb4b751a5802c7ea5574d64cea7db69dd7e",
+      "validation_sha256": "51c7dd88e1b56575aab496b04eff1946089c185e79e1681a566c2c8e4cd228f5",
       "dataset_manifest_sha256": "d5f5b42b7cb3e52f47eb57324d0b17b50291199189c65f5eaa899d07178ebec6"
     },
     "carcinogens": {
@@ -67,7 +67,7 @@
         }
       },
       "validation": "data/starling_data/carcinogens/progressive_v1/validation_current.json",
-      "validation_sha256": "e04240ff8bd1f22c278b2266ab626a8f85184b3eccf63a9fbf7825ea43d36de6",
+      "validation_sha256": "7ea3e6b08519a0c78d24eb29c5fb33630d8b23576021d06387aed7c4601df1ab",
       "dataset_manifest_sha256": "965a8b06df5a2b431667e37f2358b1672a7419c8023078939cb1e0a91de7067d"
     }
   },

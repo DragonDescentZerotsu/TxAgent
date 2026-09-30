@@ -9,49 +9,49 @@
         "ok": true
       },
       "canonical_records": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/chembl_tool/starling/current_records/dili/03_records/records.parquet",
+        "path": "outputs/chembl_tool/starling/current_records/dili/03_records/records.parquet",
         "expected_sha256": "5a152e85befa525c385ef02189d3658f8d2a3ce52f6d23010c5ad3d2f7382694",
         "actual_sha256": "5a152e85befa525c385ef02189d3658f8d2a3ce52f6d23010c5ad3d2f7382694",
         "ok": true
       },
       "overlay_records": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/chembl_tool/starling/current_records/dili/03_records/records.parquet",
+        "path": "outputs/chembl_tool/starling/current_records/dili/03_records/records.parquet",
         "expected_sha256": "5a152e85befa525c385ef02189d3658f8d2a3ce52f6d23010c5ad3d2f7382694",
         "actual_sha256": "5a152e85befa525c385ef02189d3658f8d2a3ce52f6d23010c5ad3d2f7382694",
         "ok": true
       },
       "catalog": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/dili/family_assays.jsonl",
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/dili/family_assays.jsonl",
         "expected_sha256": "182aa1ea1d887be0d716a31d9a380151f51eae4c1ea17ae7bc0abbef819ec224",
         "actual_sha256": "182aa1ea1d887be0d716a31d9a380151f51eae4c1ea17ae7bc0abbef819ec224",
         "ok": true
       },
       "published_source_records": {
-        "path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/gold_v4/retrieval/source/records.parquet",
+        "path": "data/starling_data/dili/gold_v4/retrieval/source/records.parquet",
         "expected_sha256": "5a152e85befa525c385ef02189d3658f8d2a3ce52f6d23010c5ad3d2f7382694",
         "actual_sha256": "5a152e85befa525c385ef02189d3658f8d2a3ce52f6d23010c5ad3d2f7382694",
         "ok": true
       },
       "scaffold_index": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/dili/scaffold/assay_neighbor_index.pkl",
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/dili/scaffold/assay_neighbor_index.pkl",
         "expected_sha256": "8e437035120469939cded038f97fda05e807f25416a5c27265ba3271e900f209",
         "actual_sha256": "8e437035120469939cded038f97fda05e807f25416a5c27265ba3271e900f209",
         "ok": true
       },
       "scaffold_evidence": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/dili/scaffold/assay_molecule_evidence.jsonl",
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/dili/scaffold/assay_molecule_evidence.jsonl",
         "expected_sha256": "6ef0c0d3d1691da774213887845c00d7c3054a5e489019baca70160d11ee864a",
         "actual_sha256": "6ef0c0d3d1691da774213887845c00d7c3054a5e489019baca70160d11ee864a",
         "ok": true
       },
       "random_index": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/dili/random/assay_neighbor_index.pkl",
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/dili/random/assay_neighbor_index.pkl",
         "expected_sha256": "a893b9564535be2b77fdfc829c4b9132e6a7e95716539227f5da43d8dd8a1489",
         "actual_sha256": "a893b9564535be2b77fdfc829c4b9132e6a7e95716539227f5da43d8dd8a1489",
         "ok": true
       },
       "random_evidence": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/dili/random/assay_molecule_evidence.jsonl",
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/dili/random/assay_molecule_evidence.jsonl",
         "expected_sha256": "a20b1a13d33d36299f9256c8d452e7778adab52a73e736afd4f999e7c775521e",
         "actual_sha256": "a20b1a13d33d36299f9256c8d452e7778adab52a73e736afd4f999e7c775521e",
         "ok": true

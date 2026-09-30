@@ -5,7 +5,7 @@
     "status": "passed",
     "task": "carcinogens",
     "base_source_sha256": "1ae4bea6126b5ea632774e87621e939bcd0d2a6d50aaed72e63dfabb4bfef569",
-    "records_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
+    "records_sha256": "245b9da971016595f9f85ef45fec68096fcc1990097348a9ca8342761be7b534",
     "source_rows": 3270087,
     "modified_source_rows": 1735,
     "matched_modified_cards": 1735,
@@ -21,21 +21,21 @@
     },
     "source_rows_deleted": 0,
     "raw_acquisition_and_frozen_vote_membership_unchanged": true,
-    "review_sha256": "3b836800acb585497fca617b3ec3383cc6dcffaff86418e403fad6eab7805edf",
+    "review_sha256": "d23085669f39103cb966ee38d3dac477b12843343eb68be8ef2004969dff8455",
     "all_unchanged_source_fields_independently_verified": true,
     "excluded_identity_metadata_corrected": 52
   },
   "source_records": "data/starling_data/carcinogens/retrieval_final/source/records.parquet",
   "source_changes": {
     "path": "data/starling_data/carcinogens/retrieval_final/source_changes.jsonl",
-    "sha256": "0a375d8076ddbc9aa6a92616472d12795d02c94a8494bace22bae489d866a115"
+    "sha256": "7d2f8c93d27e8067cc9c9821670a94d8b5bdd382624e46ae3fee4b692cc88a66"
   },
   "portable_bundle_manifest": "artifacts/chembl_tool/starling/current_records/manifest.json",
   "clean_room_restore_verified": true,
   "current_index_contract": {
-    "canonical_records_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
+    "canonical_records_sha256": "245b9da971016595f9f85ef45fec68096fcc1990097348a9ca8342761be7b534",
     "overlay_is_canonical": true,
-    "overlay_records_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
+    "overlay_records_sha256": "245b9da971016595f9f85ef45fec68096fcc1990097348a9ca8342761be7b534",
     "source_records": "data/starling_data/carcinogens/retrieval_final/source/records.parquet",
     "catalog": "family_catalogs/carcinogens",
     "catalog_config": "STARLING",
@@ -361,7 +361,7 @@
       "accepted_parent_conditions.jsonl": "e2fdbd4847e6bc8c039fbec2a49afcb9073ac26cf30376973dd0e80139bbd72a",
       "rejected_parent_conditions.jsonl": "d6e9dc81050bb2ad30c7b1634a381273992ac2a5c471932e3508db29d758a8c6",
       "group_distribution.csv": "8b162390628cef70513731d09d0170c89f915107fb824eb0563afa1c3ed543c4",
-      "summary.json": "72e7918f7d291a83d443aadbc480e17092f3d36f1b62acda65345fa38cc9bd13"
+      "summary.json": "d6e2589dd26d7190a2c23c70816441eb2a4f8c71e81c16fdfac636c23be251ba"
     },
     "random": {
       "train_molecule_condition_labels.jsonl": "bf40cefd23ba7d9870883139fc144744e18e6d30222a5a4c975c7ec447729d53",

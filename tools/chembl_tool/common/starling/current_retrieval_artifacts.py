@@ -148,7 +148,11 @@ def publish_snapshot(task: str, source: Path, bundle_root: Path) -> dict[str, An
         archive = temporary / "stage.tar"
         with tarfile.open(archive, "w", dereference=True) as handle:
             for p in files:
-                handle.add(p, arcname=p.name, recursive=False)
+                member = handle.gettarinfo(str(p), arcname=p.name)
+                member.uid = member.gid = 0
+                member.uname = member.gname = ""
+                with p.open("rb") as content:
+                    handle.addfile(member, content)
         compressed = temporary / "stage.tar.zst"
         subprocess.run(
             ["zstd", "-q", "-T8", "-3", str(archive), "-o", str(compressed)], check=True

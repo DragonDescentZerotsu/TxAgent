@@ -2868,7 +2868,7 @@ def plot_assay_retrieval_curves(
         0.06,
         0.025,
         "No-retrieval and group-level references reuse historical OpenRouter DeepSeek-V4-Flash runs; "
-        "assay-level points use PARCC DeepSeek-V4-Flash-0731. This is a descriptive, not endpoint-matched, comparison. "
+        "assay-level points use Hosted DeepSeek-V4-Flash-0731. This is a descriptive, not endpoint-matched, comparison. "
         "Panel E uses frozen Codex GPT-5.6 Sol assay-relevance scores.",
         fontsize=8.2,
         color="#555555",

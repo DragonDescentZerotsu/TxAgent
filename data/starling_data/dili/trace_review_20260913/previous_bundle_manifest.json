@@ -12,12 +12,12 @@
     {
       "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0002",
       "size": 90000000,
-      "sha256": "4c75dbed66f540e09829084fa6b62b23a38fa07d07fa9e65ebbd399eb9b605b6"
+      "sha256": "a840c5cca3b7654042f552b412be59850f3ae3dfae73973c893e6b0615399233"
     },
     {
       "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0003",
       "size": 90000000,
-      "sha256": "4b78256cc4dd29693cb9f853d18c84e072d0169a47fb534491263fd6e8e7b0f8"
+      "sha256": "70055d61d966f81721fb6320d75efba628c6645153c3e7220fd68ff05afb71b9"
     },
     {
       "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0004",

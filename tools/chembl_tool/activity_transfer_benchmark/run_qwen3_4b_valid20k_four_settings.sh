@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PYTHON_BIN="${PYTHON_BIN:-/data1/tianang/anaconda3/envs/vllm/bin/python}"
+PYTHON_BIN="${PYTHON_BIN:-python}"
 MODEL="${MODEL:-qwen3-4b}"
 BASE_URL="${BASE_URL:-http://127.0.0.1:9001/v1}"
 API_KEY="${API_KEY:-EMPTY}"
@@ -10,10 +10,10 @@ TIMEOUT_S="${TIMEOUT_S:-180}"
 PROGRESS_EVERY="${PROGRESS_EVERY:-100}"
 MAX_TOKENS_THINK="${MAX_TOKENS_THINK:-20480}"
 OUT_ROOT="${OUT_ROOT:-outputs/chembl_tool/activity_transfer_benchmark/llm_runs}"
-COMPARISON_DIR="${COMPARISON_DIR:-outputs/chembl_tool/activity_transfer_benchmark/comparisons/hf_jiosephlee_valid20k/qwen3_4b_proper_valid20k}"
+COMPARISON_DIR="${COMPARISON_DIR:-outputs/chembl_tool/activity_transfer_benchmark/comparisons/hf_transfer_valid20k/qwen3_4b_proper_valid20k}"
 
-INPUT_NO_PROPS="${INPUT_NO_PROPS:-outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid20k/proper_assay_transfer_no_prop_no_tanimoto/validation.jsonl}"
-INPUT_PROPS="${INPUT_PROPS:-outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid20k/proper_assay_transfer_no_tanimoto/validation.jsonl}"
+INPUT_NO_PROPS="${INPUT_NO_PROPS:-outputs/chembl_tool/activity_transfer_benchmark/hf_transfer_valid20k/proper_assay_transfer_no_prop_no_tanimoto/validation.jsonl}"
+INPUT_PROPS="${INPUT_PROPS:-outputs/chembl_tool/activity_transfer_benchmark/hf_transfer_valid20k/proper_assay_transfer_no_tanimoto/validation.jsonl}"
 
 RUN_NO_PROPS_CHOICE="${RUN_NO_PROPS_CHOICE:-qwen3_4b_proper_no_prop_no_tanimoto_valid20k_choice_no_thinking}"
 RUN_NO_PROPS_JSON_THINK="${RUN_NO_PROPS_JSON_THINK:-qwen3_4b_proper_no_prop_no_tanimoto_valid20k_json_with_thinking_trace}"

@@ -799,7 +799,7 @@
       "baseline_root": "outputs/baselines/dili_carcinogens_scaffold_v2",
       "model_curve_results_available": true,
       "provider_pool_config": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v2/providers.json",
-      "transport_note": "PARCC proxy discovery used model/info; 13 prior gateway504 failures recovered. Curves use two direct tunneled same-model SGLang backends to avoid proxy300s timeout.",
+      "transport_note": "Hosted proxy discovery used model/info; 13 prior gateway504 failures recovered. Curves use two direct tunneled same-model SGLang backends to avoid proxy300s timeout.",
       "partial_outputs_eligible_for_scoring": false,
       "reason": "All eight organization/subset cells passed full prediction/state/metric completeness and matched prepared-input validation. One test full-flat query recovered in the first configured stage requeue without changing scientific settings.",
       "repair_authorized": true,
@@ -855,7 +855,7 @@
         },
         "index_publication": {
           "path": "data/.build/new_task_tautomer_repair/retrieval_identity_publication.json",
-          "sha256": "a9de260639f0e6d5e174bf90fbe0c470b6d5f33356cfcce02a60d84ce34268f4"
+          "sha256": "94d7a96085e322c76f6dc960189730dcce629976313f8b25008bb610826fd9b3"
         }
       },
       "index_status": "historical_gold_v3_index",
@@ -1920,25 +1920,25 @@
           "status": "complete_verified",
           "inference_started": true,
           "source_review": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/record_review.json",
-          "audit_report": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/REPORT.md",
+          "audit_report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/REPORT.md",
           "source_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/final_source_validation.json",
           "reference_root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16/replay",
           "root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17",
           "input_change_summary": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/input_change_summary.json",
-          "source_checkpoint": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17",
-          "inference_root": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/replay",
+          "source_checkpoint": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17",
+          "inference_root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/replay",
           "affected_query_counts": {
             "valid": 2,
             "test": 2
           },
           "recomputed_suffix_levels": 14,
-          "run_plan": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/replay/run_plan.json",
-          "progress": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/replay/progress.json",
+          "run_plan": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/replay/run_plan.json",
+          "progress": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/replay/progress.json",
           "inference_started_at": "2026-09-12T05:40:35.775160+00:00",
-          "startup_validation": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/replay/startup_validation.json",
+          "startup_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/replay/startup_validation.json",
           "completed_at": "2026-09-12T06:16:07.939533+00:00",
-          "completion_validation": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/replay/completion_validation.json",
-          "report": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/replay/REPORT.md",
+          "completion_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/replay/completion_validation.json",
+          "report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/replay/REPORT.md",
           "final_level_metrics": [
             {
               "subset": "valid",
@@ -1996,25 +1996,25 @@
           "status": "complete_verified",
           "inference_started": true,
           "source_review": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18/record_review.json",
-          "audit_report": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18/REPORT.md",
+          "audit_report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18/REPORT.md",
           "source_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18/final_source_validation.json",
           "reference_root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/replay",
           "root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18",
           "input_change_summary": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18/input_change_summary.json",
-          "source_checkpoint": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18",
-          "inference_root": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18/replay",
+          "source_checkpoint": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18",
+          "inference_root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18/replay",
           "affected_query_counts": {
             "valid": 3,
             "test": 3
           },
           "recomputed_suffix_levels": 18,
-          "run_plan": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18/replay/run_plan.json",
-          "progress": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18/replay/progress.json",
+          "run_plan": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18/replay/run_plan.json",
+          "progress": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18/replay/progress.json",
           "inference_started_at": "2026-09-12T19:14:58.964878+00:00",
-          "startup_validation": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18/replay/startup_validation.json",
+          "startup_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18/replay/startup_validation.json",
           "completed_at": "2026-09-12T19:35:21.325190+00:00",
-          "completion_validation": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18/replay/completion_validation.json",
-          "report": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18/replay/REPORT.md",
+          "completion_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18/replay/completion_validation.json",
+          "report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18/replay/REPORT.md",
           "final_level_metrics": [
             {
               "subset": "valid",
@@ -2759,7 +2759,7 @@
       "prefix_reuse": "Exact unchanged model-input prefixes only; no stale downstream state after first changed level.",
       "baseline": "Current source-repaired v5 for Ames/DILI; original v5 for BBB/Carcinogens; frozen legacy replicate 03 for Bioavailability/Skin.",
       "v5_test_full_flat": "paused by user; no automatic resume",
-      "preflight": "/data1/tianang/Projects/TxAgent/outputs/paper/l3_parent_disjoint_progressive_test_20260914/ready.json",
+      "preflight": "outputs/paper/l3_parent_disjoint_progressive_test_20260914/ready.json",
       "n_reused_levels": 6808,
       "n_L1_L2_verified_levels": 4096,
       "request_scheduling": "All six tasks dynamically share one HAProxy backend cap; no task or runtime reservations.",
@@ -2767,10 +2767,10 @@
         "url": "http://127.0.0.1:50004/v1",
         "upstream": "http://127.0.0.1:50003/v1",
         "max_inflight": 1024,
-        "config": "/data1/tianang/Projects/TxAgent/outputs/paper/l3_parent_disjoint_progressive_test_20260914/shared_request_pool.cfg"
+        "config": "outputs/paper/l3_parent_disjoint_progressive_test_20260914/shared_request_pool.cfg"
       },
       "queued_followup": "l3_parent_disjoint_progressive_valid_20260914",
-      "paired_performance": "/data1/tianang/Projects/TxAgent/outputs/paper/l3_parent_disjoint_progressive_test_20260914/paired_performance.json",
+      "paired_performance": "outputs/paper/l3_parent_disjoint_progressive_test_20260914/paired_performance.json",
       "n_level_outputs": 11769,
       "n_fresh_successful_requests": 4855,
       "performance_comparison_figure": {
@@ -2806,7 +2806,7 @@
         "url": "http://127.0.0.1:50004/v1",
         "upstream": "http://127.0.0.1:50003/v1",
         "max_inflight": 1024,
-        "config": "/data1/tianang/Projects/TxAgent/outputs/paper/l3_parent_disjoint_progressive_test_20260914/shared_request_pool.cfg"
+        "config": "outputs/paper/l3_parent_disjoint_progressive_test_20260914/shared_request_pool.cfg"
       },
       "status": "complete_verified",
       "root": "outputs/paper/l3_parent_disjoint_progressive_valid_20260914",
@@ -2816,7 +2816,7 @@
       "n_rows": 2043,
       "expected_level_outputs": 11741,
       "start_after": {
-        "suite_root": "/data1/tianang/Projects/TxAgent/outputs/paper/l3_parent_disjoint_progressive_test_20260914",
+        "suite_root": "outputs/paper/l3_parent_disjoint_progressive_test_20260914",
         "required_status": "complete_verified"
       },
       "configuration_comparison": "outputs/paper/l3_parent_disjoint_progressive_valid_20260914/configuration_comparison.json",
@@ -2829,18 +2829,18 @@
         "reason": "Existing MDAM source repair retained in restored valid inputs; five historical level inputs differ. Refresh only the changed prefixes and dependent levels before reuse.",
         "expected_new_levels": 5,
         "command": [
-          "/data1/tianang/anaconda3/envs/vllm/bin/python",
+          "python",
           "-m",
           "tools.chembl_tool.paper_experiments.run_conditioned_assay_family_curve",
           "--tasks",
           "bioavailability_ma",
           "skin_reaction",
           "--matched-progressive-root",
-          "/data1/tianang/Projects/TxAgent/outputs/paper/bio_skin_legacy_configuration_20260913/prepared/valid",
+          "outputs/paper/bio_skin_legacy_configuration_20260913/prepared/valid",
           "--matched-organizations",
           "progressive",
           "--output-root",
-          "/data1/tianang/Projects/TxAgent/outputs/paper/l3_parent_disjoint_progressive_valid_20260914/reference/legacy",
+          "outputs/paper/l3_parent_disjoint_progressive_valid_20260914/reference/legacy",
           "--model",
           "deepseek-ai/DeepSeek-V4-Flash-0731",
           "--base-url",
@@ -2848,9 +2848,9 @@
           "--api-key-env",
           "DEEPSEEK_API_KEY",
           "--env-file",
-          "/data1/tianang/Projects/TxAgent/.env",
+          ".env",
           "--provider-pool-config",
-          "/data1/tianang/Projects/TxAgent/outputs/paper/l3_parent_disjoint_progressive_valid_20260914/providers_legacy.json",
+          "outputs/paper/l3_parent_disjoint_progressive_valid_20260914/providers_legacy.json",
           "--parallelism",
           "1024",
           "--parallelism-per-task",
@@ -2866,12 +2866,12 @@
           "--timeout-s",
           "900"
         ],
-        "cwd": "/data1/tianang/Projects/TxAgent/outputs/paper/bio_skin_legacy_configuration_20260913/runtime",
-        "output_root": "/data1/tianang/Projects/TxAgent/outputs/paper/l3_parent_disjoint_progressive_valid_20260914/reference/legacy"
+        "cwd": "outputs/paper/bio_skin_legacy_configuration_20260913/runtime",
+        "output_root": "outputs/paper/l3_parent_disjoint_progressive_valid_20260914/reference/legacy"
       },
       "v5_test_full_flat": "remains paused; no automatic resume",
       "source_repair_followup": "skin_trace_source_replay_20260914",
-      "paired_performance": "/data1/tianang/Projects/TxAgent/outputs/paper/l3_parent_disjoint_progressive_valid_20260914/paired_performance.json",
+      "paired_performance": "outputs/paper/l3_parent_disjoint_progressive_valid_20260914/paired_performance.json",
       "performance_comparison_figure": {
         "png": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/valid/performance.png",
         "svg": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/valid/performance.svg",

@@ -227,7 +227,7 @@ cards，独立重算各遍的 level 输出；progressive 只携带本遍的状�
 
 ```text
 provider_pools/deepseek_v4_flash_mixture.json
-provider_pools/deepseek_v4_flash_parcc_openrouter.json
+provider_pools/deepseek_v4_flash_hosted_openrouter.json
 provider_pools/deepseek_v4_flash_openrouter.json
 ```
 

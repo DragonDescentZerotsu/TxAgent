@@ -79,11 +79,11 @@ The source-file stem plus zero-based Parquet ordinal is the source identity;
 From the repository root, with existing project dependencies:
 
 ```sh
-/data1/tianang/anaconda3/condabin/conda run -n vllm python -m \
+conda run -n vllm python -m \
   tools.chembl_tool.tasks.ames.build_dataset --phase refresh-retrieval --workers 128
-/data1/tianang/anaconda3/condabin/conda run -n vllm python -m \
+conda run -n vllm python -m \
   tools.chembl_tool.tasks.ames.validate_retrieval
-/data1/tianang/anaconda3/condabin/conda run -n vllm python -m pytest \
+conda run -n vllm python -m pytest \
   tests/chembl_tool/tasks/ames
 ```
 

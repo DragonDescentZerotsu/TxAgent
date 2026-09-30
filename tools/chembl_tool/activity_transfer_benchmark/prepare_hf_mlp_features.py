@@ -25,9 +25,9 @@ from typing import Any
 import numpy as np
 
 
-DEFAULT_HF_REPO = "jiosephlee/proper_assay_transfer_no_prop_no_tanimoto"
+DEFAULT_HF_REPO = os.environ.get("TXAGENT_TRANSFER_HF_REPO")
 DEFAULT_VALIDATION_JSONL = (
-    "outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid20k/"
+    "outputs/chembl_tool/activity_transfer_benchmark/hf_transfer_valid20k/"
     "proper_assay_transfer_no_prop_no_tanimoto/validation.jsonl"
 )
 DEFAULT_OUT_DIR = (
@@ -338,7 +338,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--completion-a-label", default="similar")
     parser.add_argument("--completion-b-label", default="different")
     parser.add_argument("--progress-every", type=int, default=50000)
-    return parser.parse_args(argv)
+    args = parser.parse_args(argv)
+    if not args.train_jsonl and not args.hf_repo:
+        parser.error("provide --train-jsonl or --hf-repo (or TXAGENT_TRANSFER_HF_REPO)")
+    return args
 
 
 def ensure_output_dirs(out_dir: Path) -> None:

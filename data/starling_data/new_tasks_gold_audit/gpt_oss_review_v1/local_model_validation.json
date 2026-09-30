@@ -1,6 +1,6 @@
 {
   "host": "node001",
-  "path": "/local/tmp/tianang-gptoss-source-review/model",
+  "path": "/local/tmp/source-review/model",
   "verified_sha256": {
     "model-00002-of-00014.safetensors": "022478dd04398c5bdb545a5be0a6437ecc2eb53d1dbd29edafcfff4b3ddf0a41",
     "model-00007-of-00014.safetensors": "c8958c5f183c04f6ea959cfd90562b5128124154b2bbf979b8a22b9405b30ed8",

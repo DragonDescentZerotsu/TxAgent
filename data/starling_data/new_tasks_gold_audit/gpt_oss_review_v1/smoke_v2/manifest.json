@@ -1,12 +1,12 @@
 {
   "sources": {
     "dili": {
-      "path": "/data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/smoke_v2/dili.parquet",
+      "path": "data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/smoke_v2/dili.parquet",
       "sha256": "e12fc65564417effadbc00c2bc78263f6531662d1c5c22e99a38ccb595de5c46",
       "rows": 24
     },
     "carcinogens": {
-      "path": "/data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/smoke_v2/carcinogens.parquet",
+      "path": "data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/smoke_v2/carcinogens.parquet",
       "sha256": "22845cb232b94b40f4a6b441e6a8d863529536803772708e749b2980549ae11a",
       "rows": 24
     }

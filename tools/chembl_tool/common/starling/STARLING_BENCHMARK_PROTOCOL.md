@@ -65,10 +65,10 @@ annotation，因此当前状态是 reproducible high-precision build，不是最
 唯一重建和审计命令：
 
 ```bash
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+conda run -n vllm \
   python -m tools.chembl_tool.common.starling.build_bbb_experimental_meaningful_cns_access_v3
 
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+conda run -n vllm \
   python -m tools.chembl_tool.common.starling.audit_bbb_v3_migration
 ```
 
@@ -109,15 +109,15 @@ data/processed_starling_experimental_meaningful_cns_access_v4/BBB_Martins/
 ```
 
 ```bash
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+conda run -n vllm \
   python -m tools.chembl_tool.common.starling.audit_bbb_experimental_metric_direction \
   --source-arrow /path/to/pinned/bbb-train.arrow
 
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+conda run -n vllm \
   python -m tools.chembl_tool.common.starling.build_bbb_experimental_meaningful_cns_access_v4 \
   --source-arrow /path/to/pinned/bbb-train.arrow
 
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+conda run -n vllm \
   python -m tools.chembl_tool.common.starling.audit_bbb_v4_migration
 ```
 
@@ -359,14 +359,14 @@ tools/chembl_tool/tasks/skin_reaction/starling_benchmark.py
 运行：
 
 ```bash
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+conda run -n vllm \
   python -m tools.chembl_tool.common.starling.build_benchmark_datasets
 ```
 
 只重建聚合 summary、不重读原始数据：
 
 ```bash
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+conda run -n vllm \
   python -m tools.chembl_tool.common.starling.build_benchmark_datasets \
   --summarize-existing
 ```
@@ -410,7 +410,7 @@ PMIDs、raw value examples、identity metadata 和冲突信息放在 audit artif
 Historical v2 构建命令与输出（不得作为 current runner 输入）：
 
 ```bash
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+conda run -n vllm \
   python -m tools.chembl_tool.common.starling.build_record_supported_benchmark
 ```
 

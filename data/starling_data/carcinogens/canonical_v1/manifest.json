@@ -14,12 +14,12 @@
   "n_gold_voters": 12571,
   "gold_status": "source_votes_rebuilt_with_stratified_codex_semantic_review",
   "family_status": "actual_voter_direct_and_base_nonvoter_neardirect; mechanism_source_groups_pending_family_review",
-  "raw_manifest_sha256": "92c35397d61dfbbcc8f84d84f5a882eafd561fbd3f6a6aab883f19bdc8d4b9d2",
+  "raw_manifest_sha256": "85b433cc80e539b33fceea086b037e3fd442763833111029a6eadddcddde6103",
   "files": {
     "records.parquet": "3af576906c11327331ae4baddccda6cd21daa4ba9dbb53edcb1e43f961c2bfe6",
     "molecule_identities.parquet": "ef24bfa394dd2a0762ea6263ac449f2572ef341d5b36150ada693f219d146b74"
   },
-  "builder_sha256": "7d2a45ee653405ecb55b9ad65bf1111ffbed67b58cd39083c5218728c9ade933",
+  "builder_sha256": "8bdc9d0f60c11e599f33794b05f2064342aa7711fc93023716de7b0339691a92",
   "adapter_sha256": "c0430c8083dd2b638858f30bdf1027ca66637a8248a673de59d229d29e3e7975",
   "workers": 128,
   "elapsed_seconds": 230.26,

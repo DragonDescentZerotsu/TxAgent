@@ -1,6 +1,6 @@
 {
   "archive": {
-    "provided_path": "/vast/projects/myatskar/lab/shared_docs/clintox_send.tar.gz",
+    "provided_path": "external_source/clintox_send.tar.gz",
     "sha256": "5f34b79a9b8740ef2371b2f691644f52245bbc6903963abccc92e6000656170b",
     "size": 391531824
   },

@@ -74,7 +74,7 @@
       },
       "all_staged_files_byte_identical": true,
       "validation": "data/starling_data/dili/progressive_v1/validation_all.json",
-      "validation_sha256": "cbf106f8386ec6ab553c640f0a4f5a1715b3b23dfbed0de84ec394f7bcce7a90",
+      "validation_sha256": "f3912863956fab6d3176e60c0c44d8ea522d871b3ca2a1d7bb5c19f92e2f672d",
       "heldout_index_reuse": {
         "scaffold": {
           "canonical_path": "data/conditioned_benchmark/DILI/scaffold/heldout_molecule_condition_labels.jsonl",
@@ -90,7 +90,7 @@
         }
       },
       "former_builder_input_resolution": {
-        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/starling/build_tdc_augmented_benchmark.py": {
+        "tools/chembl_tool/common/starling/build_tdc_augmented_benchmark.py": {
           "sha256": "ff1b4c2d0c4dd042bbba4fe8ce26e46eb7b5b4b394d3340da02773f327505977",
           "frozen_path": "data/.build/conditioned_benchmark_sources/DILI/source_only_snapshot/publication_provenance/build_tdc_augmented_benchmark.py"
         }
@@ -166,7 +166,7 @@
       },
       "all_staged_files_byte_identical": true,
       "validation": "data/starling_data/carcinogens/progressive_v1/validation_all.json",
-      "validation_sha256": "9e8ae339d1849930c87d422ac5a748b3ff33a52f6db63c4b985acaf29bd8638c",
+      "validation_sha256": "e0c3cd4e3efe62342f1c3a0e916af0abdbac80a30b61e14014ce67937fc46656",
       "heldout_index_reuse": {
         "scaffold": {
           "canonical_path": "data/conditioned_benchmark/Carcinogens/scaffold/heldout_molecule_condition_labels.jsonl",
@@ -182,7 +182,7 @@
         }
       },
       "former_builder_input_resolution": {
-        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/starling/build_tdc_augmented_benchmark.py": {
+        "tools/chembl_tool/common/starling/build_tdc_augmented_benchmark.py": {
           "sha256": "ff1b4c2d0c4dd042bbba4fe8ce26e46eb7b5b4b394d3340da02773f327505977",
           "frozen_path": "data/.build/conditioned_benchmark_sources/Carcinogens/source_only_snapshot/publication_provenance/build_tdc_augmented_benchmark.py"
         }

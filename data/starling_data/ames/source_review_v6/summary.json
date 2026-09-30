@@ -127,7 +127,7 @@
     "individually_reviewed_raw_payloads_verified": 394,
     "individually_reviewed_actual_memberships_verified": 394,
     "tests_passed": 902,
-    "retrieval_validation_sha256": "bd8183cb1d72b006350270863b09c807b0fab0e0e1dfb470af3952a8bc96abf9"
+    "retrieval_validation_sha256": "4a0a87edc616171f94707a61be8306ad235d149003649a061e2613ff9a48322b"
   },
   "limitations": [
     "Risk-enriched individual review, not an exhaustive library review or population error-rate estimate.",
@@ -137,20 +137,20 @@
     "No new source authenticity, PMID, full-paper or name-resolution audit; no model evaluation."
   ],
   "input_hashes": {
-    "previous_source_manifest_sha256": "e227be2ba85890f46764666acd78e92663e37ed27c2974812a866a6e988b2998",
-    "previous_dataset_manifest_sha256": "1aa533645beac89e1ca945c660cfee900a930b3edb0a1e7703ede340d2778b81",
-    "source_manifest_sha256": "ded5ba04fffe9c0ce1362b34a2cd9438e50e51487e1cc6acee8270bedc953aa5",
-    "dataset_manifest_sha256": "c5154407f075ac9b455887991d71674031ee1d1921f7df5d360a0fe93f13382b",
+    "previous_source_manifest_sha256": "8f696b1701d3596eebb2de428ab364e764a1b5f1d3efa5153519ec1bc701947a",
+    "previous_dataset_manifest_sha256": "35f2786f078e53f1c0e5f41f0098a2452d3be6e10318ff81ddf713c982b36e72",
+    "source_manifest_sha256": "5fb5c5e16d37023a9f3f129713eba472d14f2a51a7bcfaae3ffd044497e3ea15",
+    "dataset_manifest_sha256": "27e83ee5a28ceadd01f067a9e178f5dcb3708d39e9939bd1cc80fac395addccf",
     "source_votes_sha256": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9"
   },
   "artifacts": {
     "placement_decisions.jsonl": "6bc83b1b0442afe02249601655a9608cd69b10c7f7bde053ebf696182cf425fc",
-    "previous_source_manifest.json": "e227be2ba85890f46764666acd78e92663e37ed27c2974812a866a6e988b2998",
-    "previous_dataset_manifest.json": "1aa533645beac89e1ca945c660cfee900a930b3edb0a1e7703ede340d2778b81",
+    "previous_source_manifest.json": "8f696b1701d3596eebb2de428ab364e764a1b5f1d3efa5153519ec1bc701947a",
+    "previous_dataset_manifest.json": "35f2786f078e53f1c0e5f41f0098a2452d3be6e10318ff81ddf713c982b36e72",
     "sample.jsonl": "d6df9522effa52bae4a82678d663ecdcc127991f26fa0976d0bf1f613b5d909a",
     "authored_judgments.tsv": "3e3b0b641f516446f7fce4e2f681f22e8ca7029d46046755082e598ec6297c23",
     "audit_annotations.jsonl": "089d8349c3e322e9e47bf0989efb16c51686d0fd66302aa371c8463d8340bc6d",
-    "README.md": "97cce656876f0db22b58f67b052a842ce8cdf56f07aa1700ce8eb767147b4975",
+    "README.md": "0d7195f4dadb843fb01247674beddebd64b098229abd9a6f780fb7ceb324acde",
     "family_changes.parquet": "6be7e76f3636d6ea9f4f19116062a9d5d1d5b0bb1e05fb6e55e403c3a61fe1a6",
     "retrieval_build_performance.json": "404a90fe0501615f6be01b9378201ee64495738e13ac2b64e1c90dbf6c3abc5b"
   },
@@ -165,7 +165,7 @@
       "current_combined_reviewed_records": 396,
       "current_audited_relocations": 97,
       "validation_status": "passed",
-      "retrieval_validation_sha256": "1846d154654b0dc9c8b5d38f28b51912e3816bca0cae2bae16d899b4c544392e"
+      "retrieval_validation_sha256": "85f144026ddd88e6b5031f64af06412401080317b420cebf4237b13451a9e126"
     }
   ]
 }

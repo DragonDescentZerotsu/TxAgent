@@ -5,7 +5,7 @@
   "local_restore_root": "outputs/chembl_tool/starling/current_records",
   "history": {
     "canonical_schema": "starling_canonical_record.v7",
-    "source_branch": "origin/joseph",
+    "source_branch": "source_snapshot",
     "source_commit": "70750c42035d6bde5ce9504211c4e22ac57e27f8",
     "source_stage": "starling_normalized_v7/03_records",
     "source_contract_sha256": {
@@ -113,25 +113,25 @@
       ]
     },
     "skin_reaction": {
-      "archive_sha256": "b4013671ddd935557c980b26bbdf8931313a8a47a5984432ca837b0926b0adee",
-      "archive_size": 224185146,
+      "archive_sha256": "92a1ea0804775e200d5f712d50e764a27518f2bd0daa55e6b106d91bec3dde1d",
+      "archive_size": 224185120,
       "records_sha256": "85b464d5ff7d89480b2cea4342d2f039515edf13d8840b33a254dd6db2f5df76",
       "records_size": 231535064,
       "parts": [
         {
           "path": "artifacts/chembl_tool/tasks/skin_reaction/identity_rebound_20260914/03_records/stage.tar.zst.part-0001",
-          "size": 90000000,
-          "sha256": "a7d2efc79d02b6108b682e02ad83355a90a324854dd01cb88138527527969ae5"
+          "sha256": "be6733242f1ad577e95a342b7541d20bb5d0308a630404db2634f61309669ae7",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/skin_reaction/identity_rebound_20260914/03_records/stage.tar.zst.part-0002",
-          "size": 90000000,
-          "sha256": "57a0164972e8a2caa98450ba6b1c06f610c8d4d195b112cf17c40f1c60860029"
+          "sha256": "63837a46f5848fb90208726fd53e24bf4255baf1294103c7dd5d014078ef887b",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/skin_reaction/identity_rebound_20260914/03_records/stage.tar.zst.part-0003",
-          "size": 44185146,
-          "sha256": "474ef9834db0c8aca81ef3ab8a1c4456da47d2b15c2b1983ed8c4f8baa8954d6"
+          "sha256": "00101b5ce171d5391b3fb5339de470e6de896eceecde23d233183eab2f541d33",
+          "size": 44185120
         }
       ],
       "files": [
@@ -149,47 +149,47 @@
       "source_release": "outputs/chembl_tool/starling/skin_reaction_identity_rebound_20260914/03_records"
     },
     "ames": {
-      "archive_sha256": "2f57468aad24f77ee4d6e63f08bee31bf06e8797f5312f38312230992c9fbb32",
-      "archive_size": 478749947,
+      "archive_sha256": "b042ad3b53b42229002b068f8fe19b275436a53d9bfd2644cb9ba31cde8bdfa3",
+      "archive_size": 478749856,
       "records_sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a",
       "records_size": 422824120,
       "parts": [
         {
           "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0001",
-          "size": 90000000,
-          "sha256": "7efe0de131d0d5b1c880bfd03c69202745c292386ef1ae6d9eb2cdcf5c506583"
+          "sha256": "d5c5b1716704b7ec9286780f3d9e8f8d7b2cfa4fd1710b8e9d59493cbbaf0ba3",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0002",
-          "size": 90000000,
-          "sha256": "5db27f2f8ab27b96e6b8d8a56fbe67a67c514abf196c0a306f53742fbcbd1ac1"
+          "sha256": "90901c291c11c730cd411b6f0b4966dc24b5ec8664e8e6ee2388bc8029e73ae2",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0003",
-          "size": 90000000,
-          "sha256": "807469b63e72ec4089c56f08de21fc9b9d3e2dcd0acedb17ed0ebb8aa4a99d26"
+          "sha256": "f841a7d5b72237e17fe574bd16e8a62f8b6946ce3edd1eba5b1294add6813241",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0004",
-          "size": 90000000,
-          "sha256": "a435240c7f37dbff2dab6706888a795ec61c2ce482879e4aa526f9a6e9339a9b"
+          "sha256": "cf9fb6dc159bac40654d0d7878e1dc5150ec5a14c6858a8365dc93fd9c76602b",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0005",
-          "size": 90000000,
-          "sha256": "f5c5d87644d404b0a5aa9941ea07c74beb9272d3bf6c2e46318a76a1720a8c63"
+          "sha256": "54c6b6e999aaa461ba0b87ac6715cb44b949504af01d7d64999775d628011ece",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0006",
-          "size": 28749947,
-          "sha256": "9bbe037652e31471555cd2308df2f04b01371c19658ab94c86222b132c40e0f1"
+          "sha256": "3b7b5835f0558143be62b23050ed2523ac4b5c613228266cfe108392ba5bf134",
+          "size": 28749856
         }
       ],
       "files": [
         {
           "path": "manifest.json",
           "size": 9120,
-          "sha256": "8ebf1e9ed0cb2e0eb7cca2904f9c1f863d8de180d7c2c24d6519ad6cfe81977b"
+          "sha256": "4188fa504d48ed9a2de2ae3b9f27f3bf48d6f2fb9012b5af41caac0c36476154"
         },
         {
           "path": "pending_identity.jsonl",
@@ -220,80 +220,80 @@
       "source_release": "data/starling_data/ames/canonical_v1"
     },
     "dili": {
-      "archive_sha256": "ec218249e1e93e41c486292d11c9c84e3ab7ebbda5c6fc3f1257a6b6a239a5c7",
-      "archive_size": 1204363677,
+      "archive_sha256": "a7a0f3b94c18f33dc991e1bb41b5054c8aa280cd6eac4fcf1ba570765e455cd6",
+      "archive_size": 1204363455,
       "records_sha256": "1bf53367624fbf5940014b372801aaa887b417e878251a76053def8783c0b0cf",
       "records_size": 948586630,
       "parts": [
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0001",
-          "size": 90000000,
-          "sha256": "30943f0c2ae83f7162e1be5d61f6d29722473cf89db54064a50db865b5e30cd1"
+          "sha256": "57f91104e84598340fef50d4379fc4eddf3b7244011d0e05fc695e19614d5869",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0002",
-          "size": 90000000,
-          "sha256": "4c75dbed66f540e09829084fa6b62b23a38fa07d07fa9e65ebbd399eb9b605b6"
+          "sha256": "a840c5cca3b7654042f552b412be59850f3ae3dfae73973c893e6b0615399233",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0003",
-          "size": 90000000,
-          "sha256": "4b78256cc4dd29693cb9f853d18c84e072d0169a47fb534491263fd6e8e7b0f8"
+          "sha256": "70055d61d966f81721fb6320d75efba628c6645153c3e7220fd68ff05afb71b9",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0004",
-          "size": 90000000,
-          "sha256": "bf3f70ae4edb24d35c89bf866d3a6c9510ed0d4a33a4be093c5245ab7d39a8e0"
+          "sha256": "307ce1c0408692d0e6c62ee0bb5debbeb5f3d0bf41bb663b0737fbe3ab36f5af",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0005",
-          "size": 90000000,
-          "sha256": "3298ae5a0838f235ab25027a46c0b85608e2a0e26b617778b505a0a2610db5ec"
+          "sha256": "717377cd02079cd1391dca72954093298fa91f7c66d7bb1de2648affb328bfaf",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0006",
-          "size": 90000000,
-          "sha256": "7be1913c8f7186ba4d172092ea491a0a1d07950c1a3a9d464860f8336bb18706"
+          "sha256": "202744304dcefc2cc0666d0a5b224df323bf9e9b094b8a77aa834905e8d547eb",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0007",
-          "size": 90000000,
-          "sha256": "09040193a2b36cdb0141a7be45c8c1ac2c57c07c3dc8d3e23a3ad095d31f2a0c"
+          "sha256": "2e07e63534a2809b17e8e42792c2aac2854bf243442d10bc055bbd9f8214f6bb",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0008",
-          "size": 90000000,
-          "sha256": "ba83d622879d64a12db648821df428ab501982d4c7ce3365695be1cd1b21de74"
+          "sha256": "4c47e323a7c53be17a0ae5b3a756c0970ac99e809cc803ae7c22f7c55968375f",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0009",
-          "size": 90000000,
-          "sha256": "076112d5fa74cb6e15131b332f95e3a589ae6dd9c310aba6cd9f69ebe5e02324"
+          "sha256": "3bf796d8ebfd3e904860559ae98c7f7888c42c3b4f5f91c99222a9d3d3e4c112",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0010",
-          "size": 90000000,
-          "sha256": "9c486fcc421feaa270be6ecbed80930434067a013a1af770d41a40e06731ea3e"
+          "sha256": "bf617bd0a56c5c03b9ac50a756683ef9ff50f34bce798223ea6785f7a4bdd936",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0011",
-          "size": 90000000,
-          "sha256": "8d622be8affe74408c016ac52d7bf45825a0d34684558805ae46f7e4ad0afbda"
+          "sha256": "b6f470537aa6e03a13aed36ced6edc354095ad0ce0b4f7d324cc06e53428f1eb",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0012",
-          "size": 90000000,
-          "sha256": "885ee9795ec2156e73946837be074981e4439e8d29e6c8c832975d3dc454fcfa"
+          "sha256": "268a50681e8f0268d413e7a7ff9a20158b1f28df91c8a220a1041ed8e896846b",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0013",
-          "size": 90000000,
-          "sha256": "0885331b4a2964a598cfc21f686803012383ac2e9827c03027ce5364c5ae511d"
+          "sha256": "986d697956223af2293062053918276ed86ee6d0c8cbe02992159cb1b92d7b47",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0014",
-          "size": 34363677,
-          "sha256": "7de60dffde80c52ba58d98979777985f3d4723eeb157be194bcd8e66959c94eb"
+          "sha256": "ac857c268c19079a8e23e4915ba74e1847e49277c2d3f2c1762b470de462abbc",
+          "size": 34363455
         }
       ],
       "files": [
@@ -407,135 +407,135 @@
       }
     },
     "carcinogens": {
-      "archive_sha256": "2d0830789ec5b8ac8388f8d35aaa6806a24dc1fae2d1b9cf89046a3d66bfe0a7",
-      "archive_size": 2227158949,
-      "records_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
-      "records_size": 2181252267,
+      "archive_sha256": "8e1f481f458f72b6a0de9387c69ccda18c87b6add1483e544a19da47f3efbbe9",
+      "archive_size": 2236352243,
+      "records_sha256": "245b9da971016595f9f85ef45fec68096fcc1990097348a9ca8342761be7b534",
+      "records_size": 2193164643,
       "parts": [
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0001",
-          "size": 90000000,
-          "sha256": "8ceb2c95df7e512b00bf4575731db7316405b1cc1a23b5959bc0746e71b1c62a"
+          "sha256": "73d40069e2a4f4d1d90fb611a09d67e4e1014a380807586bc81c464f4b7d5fdb",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0002",
-          "size": 90000000,
-          "sha256": "3bd9c0e116fb16ce280ec32a2aa5e996ace1b0f51aaa83462b21dc28a9c788b0"
+          "sha256": "8f10eac522d99a7c15f72eb554c88c2b3647b5c843ee5c9706766b7e32d0d67f",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0003",
-          "size": 90000000,
-          "sha256": "682b3a5d3d1611f8f3b41a09446f59ec9ce11eefda907fce1af21741963fd5e0"
+          "sha256": "925a64e37ada2743e14d9d95692cb7d34dce8dfb0481a5f019fe55fc8b586b40",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0004",
-          "size": 90000000,
-          "sha256": "f400537c25ee5ff12e52fddaa8fca56b73472e1ae7e8133b06bda42e06f1522e"
+          "sha256": "fc47810fdecb7e6942db0d539bd28834f3835feb12793f3ddaa69b501976158b",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0005",
-          "size": 90000000,
-          "sha256": "ca8b35dc42a134bdf3200352b946c612b09012d43bc2c17bcb8d09b1d7f755d0"
+          "sha256": "d02204f542d9e9761a374992fecf9c9fd8b67758a0e89c88735d6d54739842d0",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0006",
-          "size": 90000000,
-          "sha256": "a9dfaad48440232a0da477623cf70653699722401bf4767643d5d5571f8170b7"
+          "sha256": "11db856d1033a179774413595fc19d42e711da287645f86ed0b3306233d00cb9",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0007",
-          "size": 90000000,
-          "sha256": "3547ca6377fe6339a5d7cf3f9fdee9f8e9849233438895a85854b6fec39efbcd"
+          "sha256": "5f1baa080907135ec64efc9b27fbcd1b2889cd887eeaedb21673234c62a1119d",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0008",
-          "size": 90000000,
-          "sha256": "148f3d92eb248c6508429245b73579d846a24f08a86b1cd7923db86ba073ac76"
+          "sha256": "8f23c132cdf7c7ddc0f4e421f98840c66591bbbbea1339402a9aa5767f263ddf",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0009",
-          "size": 90000000,
-          "sha256": "a627340fffda707594be88c4c5d184cf1cc3e734fbd0d4b5745314cf3c509fd8"
+          "sha256": "824601b991017fcd8767874f582b77dccf662ca2e6c6373e3d17795b26e6aa70",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0010",
-          "size": 90000000,
-          "sha256": "debef807026f0af81c3f3909e8ea3db06fe1d341e00024c828c0807880201749"
+          "sha256": "16eef451a93d3c3b59f517ce53d5ea002e6d93e466ed0ce584e4ab608f186d5a",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0011",
-          "size": 90000000,
-          "sha256": "ae7fd5c9374c037bd85d01a09dc6be86287bcf6385f5a46fcbe34e794f6362ef"
+          "sha256": "f33622eef02cf228c0bf3edc67867c80799e4924a31e7792b925c27d1544d38d",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0012",
-          "size": 90000000,
-          "sha256": "18b0cdda8750ef7c84beab6725b49b04d916f2d5f3c295a36ce006914ca13ed6"
+          "sha256": "4ea8d199182c8bbbecf6c07562547ba3ad7477b16417e61800d0c005d62285c5",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0013",
-          "size": 90000000,
-          "sha256": "0f03b838b049a932ec1a41cf16575d5e19e26b3c131b8e017c69f205592e2970"
+          "sha256": "826baf397c39db9c279a2b2cd9a399028a891d16817c60dc0f63540849d15c01",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0014",
-          "size": 90000000,
-          "sha256": "4ea482d5b545c010aab775675049263f246e93a7678923b42ae586c896665624"
+          "sha256": "f873f3ce80af8746548101c135be2452f0f3a59c2c2a69c6bf0755ce4c9bcab4",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0015",
-          "size": 90000000,
-          "sha256": "0412c729e39ac987b87e046fa6c7e6c769d7c736e414876ffa4917ee633fb975"
+          "sha256": "06a5cac9dc824ff76f4ed313a1a0d39b2899792a1b02cc40d385599ac748dc97",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0016",
-          "size": 90000000,
-          "sha256": "dfab00c36ec04382373c5da1f1eaf39f065022fae5d16ccab3845d3579825b09"
+          "sha256": "8a629ee2ea8eb88a2c9599e094299d52c18fd6061cdabf1fe6b3f3e80fdbcf2e",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0017",
-          "size": 90000000,
-          "sha256": "1384faad551492be1b327517559b3d883b3b2e41923bf279805247a87629a3c7"
+          "sha256": "649528a82f4e355d4de3f2b00b9e220631a7cbf66128636793fa4cc7ce802b3e",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0018",
-          "size": 90000000,
-          "sha256": "c7ab1ac216df65ca369f572c243614a1b46e6b126e8cb4c901cb4aa1fd6eb56e"
+          "sha256": "0db53202c04ca6ffffbfa9e07fc4f0afa8aa5d5b49869256584293ff3a0bc927",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0019",
-          "size": 90000000,
-          "sha256": "e98e7636c70c4b15d56cd2ab071168a050e21106fde632a07ba78119b5b9e8ed"
+          "sha256": "726655c26c76ff6b8c26ba76adec254f07ace9080324d40afb62d6608d006da5",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0020",
-          "size": 90000000,
-          "sha256": "c5b675d6cfab4021d39a4439de6dd4ef8c98093b9d9c6fc06dcc6adeffaf9d6b"
+          "sha256": "505a34c9d83598f63eafb886a959f4acdbfc0d818b546a35409c46f52d71384e",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0021",
-          "size": 90000000,
-          "sha256": "f6529585a3149e14d83bce6563492ba849644a0ceec57fb91c2558989b8748b3"
+          "sha256": "82d3e1e0ee1062b269690972f124dcd4d65b6d966f200e9eae2d408b97e04b6a",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0022",
-          "size": 90000000,
-          "sha256": "0967c629ff38e222f5d60517352f9e8b1e8cae8f165bea334e7ee7981fe58912"
+          "sha256": "d4a7aabfe2f78d84905e66b6ce2f7aade5cfb8617ef83d9ac25e46a45d90b5ae",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0023",
-          "size": 90000000,
-          "sha256": "c1b6d0e8a4837f7792a6333b774368eeed3582ade55f806c3649c7d8631cf7de"
+          "sha256": "63282daeb50e02cbef5d97ce45e6e381a39c7a6b7e182c92f8fe3105482b03cb",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0024",
-          "size": 90000000,
-          "sha256": "0ec58eb16297eb05bdd20dd29265e34a9159d3462a99f6d891fed061b6c55530"
+          "sha256": "ef85ed2865f2789bd8579240528e3b23b142e7b6ab0cc96b704ef87af4faa523",
+          "size": 90000000
         },
         {
           "path": "artifacts/chembl_tool/tasks/carcinogens/retrieval_final/03_records/stage.tar.zst.part-0025",
-          "size": 67158949,
-          "sha256": "7c76b8d8422dd03e75a6acf5bede659376d3219fdb9b568b8e19c5186db7ba05"
+          "sha256": "367e56f86142f0ab0132d2386bfad5c99470210aef0baf47eac71887878d4fd4",
+          "size": 76352243
         }
       ],
       "files": [
@@ -586,8 +586,8 @@
         },
         {
           "path": "records.parquet",
-          "size": 2181252267,
-          "sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c"
+          "size": 2193164643,
+          "sha256": "245b9da971016595f9f85ef45fec68096fcc1990097348a9ca8342761be7b534"
         },
         {
           "path": "retrieval_identity_cache.jsonl",

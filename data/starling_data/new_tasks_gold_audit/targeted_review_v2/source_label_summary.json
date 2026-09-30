@@ -50,7 +50,7 @@
         "out_of_scope": 4
       },
       "codex_changed_direction": 82,
-      "output_path": "/data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/targeted_review_v2/dili_source_labels.parquet",
+      "output_path": "data/starling_data/new_tasks_gold_audit/targeted_review_v2/dili_source_labels.parquet",
       "output_sha256": "bd3fc98b419e851c1ab25264579dede9e954720c3793cc211c635aea7072c180"
     },
     "carcinogens": {
@@ -92,12 +92,12 @@
         "negative": 2
       },
       "codex_changed_direction": 29,
-      "output_path": "/data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/targeted_review_v2/carcinogens_source_labels.parquet",
+      "output_path": "data/starling_data/new_tasks_gold_audit/targeted_review_v2/carcinogens_source_labels.parquet",
       "output_sha256": "d23b2e9a2ad8774653b341a03e84f53b57d6dee69a32ec617cd75f83b5343e70"
     }
   },
   "inputs": {
-    "manifest.json": "193e526f70fda338fba2296877d24784259459f9c17213e97022e87c37d19ae4",
+    "manifest.json": "2f05cdd0db57ef2443f679a97e59aa16a09f5d8338c993aff09d4724e5fb615d",
     "reviews.jsonl": "430b0698556537fa8fd1fc5e1ac70649be340bdcef1764bb7eebc47676e41c8e",
     "codex_residual_review.jsonl": "957bd6e0a580d3971cd86adc137d2b9945079654d51dcfa66b2496d123c07888",
     "residual_review_inputs.jsonl": "b07845db07e8315a5d8009ea30ceb0c9f0c791d2958006da4897cbb29bab10bf"

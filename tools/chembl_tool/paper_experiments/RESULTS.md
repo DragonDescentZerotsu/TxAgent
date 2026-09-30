@@ -332,7 +332,7 @@ split-rename receipt path is historical and no longer exists in the active gold_
 `replicate_suites.dili_carcinogens_scaffold_4_2` is complete: eight
 task/organization/subset cells, 11,620 level predictions and 830 shared fresh
 single/None pairs, with zero remaining failures. Each setting has one Flash run
-(no repeat SD), using PARCC DeepSeek-V4-Flash-0731, matched prepared evidence,
+(no repeat SD), using Hosted DeepSeek-V4-Flash-0731, matched prepared evidence,
 4/2 cards, at most 256 requests per organization and 1,024 total. Failed-response
 six-way races remain within those budgets. Valid checks preceded test execution.
 Recovery and frozen-surface receipts are linked in the registry; no scientific
@@ -709,7 +709,7 @@ consistent mean pattern. No significance claim is made from SD-bar overlap.
 ### Scaffold test, default 4/2: replicate 1 and trace provenance
 
 All 903 scaffold-test rows are complete, with zero failed outputs at every level.
-PARCC served `deepseek-ai/DeepSeek-V4-Flash-0731`; the requested per-task
+Hosted served `deepseek-ai/DeepSeek-V4-Flash-0731`; the requested per-task
 concurrency cap was 256, with an explicitly authorized shared cap of 768.
 
 | Task | Test rows | Valid final outputs | Final level | Macro-F1 | Accuracy |

@@ -62,7 +62,7 @@ qualifying_conditions 生成，**不是已审核可用于 query 的 condition，
 在仓库根运行：
 
 ```sh
-PYTHONPATH=. /data1/tianang/anaconda3/envs/vllm/bin/python \
+PYTHONPATH=. python \
   data/starling_data/new_tasks_gold_audit/targeted_review_v2/carcinogens_condition_review/preview.py
 ```
 

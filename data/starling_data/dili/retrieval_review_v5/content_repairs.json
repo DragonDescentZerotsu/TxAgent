@@ -1,7 +1,7 @@
 {
   "task": "dili",
   "source_records_sha256": "969d0dc774f904cfbdfad5aba0c8d2d7e01910f4e2178102b874be27a3fc5d39",
-  "reference_source": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/source",
+  "reference_source": "data/starling_data/dili/retrieval_review_v4/source",
   "source_review": "outputs/paper/starling_conditioned_dili_retrieval_review_v4_no_prior_grounded_sim0/error_record_audit_20260912/source_findings.json",
   "decisions": [
     {

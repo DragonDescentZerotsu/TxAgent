@@ -1,6 +1,6 @@
 {
   "source_commit": "45663daaad7fd8392a0254bd78793a9e0a581a7a",
-  "source_branch": "joseph",
+  "source_branch": "source_snapshot",
   "original_root": "data/raw/starling/dili/",
   "format": "ordinary_lossless_parquet_parts",
   "uid_policy": "preserve_source_row_uid_verbatim",

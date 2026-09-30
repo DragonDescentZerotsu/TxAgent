@@ -141,7 +141,7 @@
     "data/starling_data/carcinogens/gold_v4/source_votes.jsonl": "e293ee49ff1a235f05593714add026f6f935584eda4dfee5ad3e9594888b2dc0",
     "data/starling_data/carcinogens/gold_v4/source_identity_holds.jsonl": "c9ce12e445e3f6c6c57b774b4473e09b4a192ec3df1fa9ef74f45f62d0e6a470",
     "data/starling_data/carcinogens/gold_v4/source_identity_clearances.jsonl": "5e2f06014e1f5d5a48d840b129345801b6a13fba261d00495a524f182940807f",
-    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/carcinogens/build_reviewed_starling.py": "355480f0800046905f88d8afd474934ea8e24291cbd76b38061187eb790e34a9",
-    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/carcinogens/reviewed_conditions.py": "27caeeb1411950dbc486a5afe23351ba0c98ab2e2a805edd20b8d156385fb34b"
+    "tools/chembl_tool/tasks/carcinogens/build_reviewed_starling.py": "355480f0800046905f88d8afd474934ea8e24291cbd76b38061187eb790e34a9",
+    "tools/chembl_tool/tasks/carcinogens/reviewed_conditions.py": "27caeeb1411950dbc486a5afe23351ba0c98ab2e2a805edd20b8d156385fb34b"
   }
 }

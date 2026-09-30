@@ -2,7 +2,7 @@
   "version": "openai_provider_pool.v1",
   "providers": [
     {
-      "name": "parcc_tunnel",
+      "name": "hosted_tunnel",
       "base_url": "http://127.0.0.1:50001/v1",
       "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
       "api_key_env": "DEEPSEEK_API_KEY",
@@ -11,10 +11,10 @@
       "timeout_s": 360
     },
     {
-      "name": "openrouter_mark_1",
+      "name": "openrouter",
       "base_url": "https://openrouter.ai/api/v1",
       "model": "deepseek/deepseek-v4-flash",
-      "api_key_env": "OPENROUTER_API_KEY_Mark_1",
+      "api_key_env": "OPENROUTER_API_KEY",
       "max_inflight": 128,
       "initial_latency_s": 120,
       "timeout_s": 600,

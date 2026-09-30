@@ -25,7 +25,7 @@ Artifacts: `codex_residual_review.jsonl` holds each of the 371 decisions, origin
 Reproduce with the vllm Python environment from the repository root:
 
 ```sh
-PYTHONPATH=. /data1/tianang/anaconda3/envs/vllm/bin/python data/starling_data/new_tasks_gold_audit/targeted_review_v2/finalize_source_labels.py
+PYTHONPATH=. python data/starling_data/new_tasks_gold_audit/targeted_review_v2/finalize_source_labels.py
 ```
 
 The report retains the balanced 300-per-task-per-direction QA transitions in the JSON summary. These are diagnostics against source labels, not an independent estimate of model accuracy.

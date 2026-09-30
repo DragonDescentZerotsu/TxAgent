@@ -3,7 +3,7 @@
   "exporter": "tools/chembl_tool/paper_experiments/export_current_starling_level_records.py",
   "exporter_sha256": "40686ab1dbfb15aff4b2d6c0832d3a9fe3ffbc32c563130bf168e16a65ad98ed",
   "current_retrieval_contract": "tools/chembl_tool/paper_experiments/current_starling_retrieval.json",
-  "current_retrieval_contract_sha256": "e75ae10d358c63ab7b789752dae539c4b402bdac5bd797ddf7adf3bef76881ec",
+  "current_retrieval_contract_sha256": "cc198c8b6c052d6e7f7bbb337db05c57052ae7631f74fff3878035a9446f6c7e",
   "verified_current_inputs": true,
   "interpretation": {
     "source_membership": "all retrieval-eligible overlay records assigned to a current level, before split-specific direct heldout filtering",

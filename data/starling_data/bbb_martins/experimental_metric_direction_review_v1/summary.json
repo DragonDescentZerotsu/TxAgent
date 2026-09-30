@@ -3,7 +3,7 @@
   "source": {
     "dataset": "starling-labs/BBB",
     "revision": "f50c638621fcc2dedfc9e00f7074f867640efc1b",
-    "local_arrow": "/data1/tianang/cache/datasets/starling-labs___bbb/default/0.0.0/f50c638621fcc2dedfc9e00f7074f867640efc1b/bbb-train.arrow",
+    "local_arrow": "${HF_HOME}/datasets/starling-labs___bbb/default/0.0.0/f50c638621fcc2dedfc9e00f7074f867640efc1b/bbb-train.arrow",
     "local_arrow_sha256": "faa63a4e2ecc234691c86bc63c2cd3a69db82387cfe0687cc930d9a5e458709c"
   },
   "v3_contract_version": "bbb_experimental_meaningful_cns_access_gold.v3",

@@ -53,10 +53,10 @@
     "sampling_replay": "200 reviewed rows byte-identical from the deterministic 800-candidate pool"
   },
   "input_lineage": {
-    "source_manifest_sha256": "e227be2ba85890f46764666acd78e92663e37ed27c2974812a866a6e988b2998",
+    "source_manifest_sha256": "8f696b1701d3596eebb2de428ab364e764a1b5f1d3efa5153519ec1bc701947a",
     "source_votes_sha256": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9",
     "source_policy_sha256": "95130f147328be1bed0c49f83ae5e73d2620c239544fa6991564908afc914db0",
-    "dataset_manifest_sha256": "1aa533645beac89e1ca945c660cfee900a930b3edb0a1e7703ede340d2778b81"
+    "dataset_manifest_sha256": "35f2786f078e53f1c0e5f41f0098a2452d3be6e10318ff81ddf713c982b36e72"
   },
   "limitations": [
     "Risk-enriched and endpoint-stratified sample, not a population error-rate estimate.",
@@ -72,11 +72,11 @@
     "Integrate accepted direct recall records through the existing identity, duplicate/conflict, condition and vote builder; preserve L1 as actual voters only."
   ],
   "artifacts": {
-    "README.md": "11aabcd39ac79650aff0eae7ce47984266a7520d958614124f2fc7fa9edec49b",
+    "README.md": "91be862b441ade1cb457d834c143e35845b7067b2aab78650ff707709b4939b4",
     "audit_annotations.jsonl": "636232bb9855565f4dbcbdf0199fce131b0ea330aa4312bd3fca32ad8a767661",
     "authored_judgments.tsv": "110283c019947908c1649d836a6991ddd6639e9932cf2afef3b3d6aa45397a9b",
     "placement_changes.jsonl": "fe92f73f8617fdb425b88b80bb41a6f42f42e7f815dc75157a0856d968f1414f",
-    "previous_source_manifest.json": "e227be2ba85890f46764666acd78e92663e37ed27c2974812a866a6e988b2998",
+    "previous_source_manifest.json": "8f696b1701d3596eebb2de428ab364e764a1b5f1d3efa5153519ec1bc701947a",
     "previous_source_votes.jsonl": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9",
     "prior_reviewed_source_ids.json": "d4d0339c2cb7f5043c0e936bcd8e7ac54b90fe53c6b435f3d72e80ca4040e69f",
     "review_plan.json": "a266c502f1f46e7f64b21b2e1355f4ad5ea0a656feecb5fd9f9f968c2db11a38",

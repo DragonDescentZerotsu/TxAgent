@@ -69,7 +69,7 @@ env \
   TXAGENT_TOOL_BATCH_WORKERS=8 \
   TXAGENT_TOOL_CACHE_MEMORY_ENTRIES=5000 \
   TXAGENT_TOOL_CACHE_PATH=/local/tmp/txagent-tool-cache.sqlite3 \
-  /data1/tianang/anaconda3/envs/vllm/bin/python -m uvicorn \
+  python -m uvicorn \
     tools.service.app:app --host 127.0.0.1 --port 8765 --workers 32
 ```
 
@@ -112,7 +112,7 @@ branches must not duplicate this logic.
 ## Verification
 
 ```bash
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+conda run -n vllm \
   python -m pytest -q tests/service tests/chembl_tool/common/test_identity_blind.py
 
 curl -fsS http://127.0.0.1:8765/health

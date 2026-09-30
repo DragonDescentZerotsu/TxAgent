@@ -22,15 +22,15 @@
       "sha256": "688f2b01337f95c5a8f2c9608fe1e2b2589c95634b8f459e8aed5b175f72ed9b"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/starling/source_gold_review.py",
+      "path": "tools/chembl_tool/common/starling/source_gold_review.py",
       "sha256": "61d08a31fc6193360dee0361a2a5c515e172b180b2147f7f508d3abd4050de30"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/starling/build_source_gold.py",
+      "path": "tools/chembl_tool/common/starling/build_source_gold.py",
       "sha256": "c4aa988f72f3af9e34c51921808249fc71427c6b7f28768be74068f804ffcc87"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/dili/starling_gold.py",
+      "path": "tools/chembl_tool/tasks/dili/starling_gold.py",
       "sha256": "87dab29b238264f1b4bcfd86dc013d86ea5a4a59cb37a530dd88e5b1f9e6b135"
     }
   ],

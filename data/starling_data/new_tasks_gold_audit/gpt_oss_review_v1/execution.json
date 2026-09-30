@@ -9,10 +9,10 @@
   "workers": 2048,
   "timeout": 600,
   "attempts": 3,
-  "concurrency_file": "/data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/concurrency.json",
+  "concurrency_file": "data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/concurrency.json",
   "limit": 0,
   "runner_sha256": "b4b8719aba06a7e241a57066878ce8cae016da87be45b274bc2e156f8ad01eed",
   "model_files_sha256": "82a29c6196d6df6436704467131320d6d70373e06751bf3081cdd85091791cc0",
-  "deployment_sha256": "185ce34d7c650f2f9c1fb0e902db2e780fb6ff4190cb3a551247f574969d3ab5",
+  "deployment_sha256": "a6b4cbeb1acc902574135ec61d30df0aff119ea3b776aa570ad67c2831fe7528",
   "client_sha256": "37a5d85ac5a179a76c4ec13e144b3d62f5fe5e311fa96171caf75d7a7b3ccbe6"
 }

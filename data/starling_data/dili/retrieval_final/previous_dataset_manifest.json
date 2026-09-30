@@ -15,9 +15,9 @@
   },
   "retrieval_status": "gold_v4_l1_only_indices_validated",
   "policy_files": {
-    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/starling/build_source_gold.py": "c4aa988f72f3af9e34c51921808249fc71427c6b7f28768be74068f804ffcc87",
-    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/dili/starling_gold.py": "87dab29b238264f1b4bcfd86dc013d86ea5a4a59cb37a530dd88e5b1f9e6b135",
-    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/starling/source_gold_review.py": "61d08a31fc6193360dee0361a2a5c515e172b180b2147f7f508d3abd4050de30"
+    "tools/chembl_tool/common/starling/build_source_gold.py": "c4aa988f72f3af9e34c51921808249fc71427c6b7f28768be74068f804ffcc87",
+    "tools/chembl_tool/tasks/dili/starling_gold.py": "87dab29b238264f1b4bcfd86dc013d86ea5a4a59cb37a530dd88e5b1f9e6b135",
+    "tools/chembl_tool/common/starling/source_gold_review.py": "61d08a31fc6193360dee0361a2a5c515e172b180b2147f7f508d3abd4050de30"
   },
   "progressive_retrieval": {
     "root": "data/starling_data/dili/gold_v4/retrieval",
@@ -127,7 +127,7 @@
       "audit_round1.jsonl": "eb612002e0af8a054b063a1e57b7446645dc9983ab7e2dc1e2673ff2368364de",
       "audit_transplant_context.jsonl": "b29b1d0ecee08f0e1dd2cc6dbffa9a5200ff487bba79fdbb70b0cbfded1f1b3e",
       "base_record_decisions.parquet": "f8f440d8ee2d35fe0e24dec124ccbe944f9d5a54623122726635671754f6ff76",
-      "benchmark_selection.json": "48680f928144e079a853ade496512c838cd3d9f7bc91f825c82d2817b53ecc17",
+      "benchmark_selection.json": "597793a40621f4a8f207d804575f9ac97726a7043479c612fc4c16398fa158bb",
       "candidate_dispositions.parquet": "c3ea04583401701152492b68c59b9e79ec8bb5898d6ac56863d8d88ceff422bc",
       "candidate_votes.jsonl": "8c466cc1d9a776cabee1e984013e44dd193ecb62252c73ee1e0369cfee4c1403",
       "condition_definitions.json": "2fb07d4dc23d2aa6f509814ea6a4589fd4a1b8e22a2585344a0ce0bd0217b7b3",

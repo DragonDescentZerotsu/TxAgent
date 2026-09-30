@@ -1,7 +1,7 @@
 {
   "status": "complete",
   "command": [
-    "/data1/tianang/anaconda3/envs/vllm/bin/python",
+    "python",
     "-m",
     "tools.chembl_tool.paper_experiments.plot_assay_retrieval_curve",
     "--conditioned-progressive-config-comparison",

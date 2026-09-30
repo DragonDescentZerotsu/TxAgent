@@ -21,11 +21,11 @@ from tools.chembl_tool.activity_transfer_benchmark.run_llm_benchmark import (
 
 
 DEFAULT_INPUT = (
-    "outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid10k/"
+    "outputs/chembl_tool/activity_transfer_benchmark/hf_transfer_valid10k/"
     "chembl-mol12-stdsep-assay-mol-disjoint-no-props-no-tanimoto/validation.jsonl"
 )
 DEFAULT_OUT_DIR = (
-    "outputs/chembl_tool/activity_transfer_benchmark/comparisons/hf_jiosephlee_valid10k/"
+    "outputs/chembl_tool/activity_transfer_benchmark/comparisons/hf_transfer_valid10k/"
     "chembl-mol12-stdsep-assay-mol-disjoint-no-props-no-tanimoto"
 )
 DEFAULT_GPT_RUN = (

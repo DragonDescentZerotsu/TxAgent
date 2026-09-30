@@ -1,7 +1,7 @@
 # ClinTox base raw source v1
 
 This directory contains the exact files supplied in
-`/vast/projects/myatskar/lab/shared_docs/clintox_base`. The Parquet is tracked
+`external_source/clintox_base`. The Parquet is tracked
 directly so downstream work can start from the original 338,780 source rows.
 No cleaning or normalization has been applied to either raw file.
 

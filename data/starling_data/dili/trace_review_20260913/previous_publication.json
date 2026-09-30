@@ -53,7 +53,7 @@
       "task": "dili",
       "scheme": "scaffold",
       "identity_contract": "new_task_tautomer_identity.v2",
-      "manifest_sha256": "d3c09d09528e172aba0d14987ec9dbab90af26984e3f00956d9be594f9281017",
+      "manifest_sha256": "df4b3eb69e49ba45f285758ff2a54e91cbe3c99c1175fe9dc9c33a871641a2c6",
       "artifacts": {
         "assay_neighbor_index.pkl": "14f72639ad51d35be3acf641b223ed7fedaa1ea8d0671672efde789065ec26ea",
         "assay_molecule_evidence.jsonl": "7bc55b055c170a05aaf7f8d2e4c01d3c5d69ee3ba97b612309787cd9bb6d0ebb"
@@ -194,7 +194,7 @@
       "task": "dili",
       "scheme": "random",
       "identity_contract": "new_task_tautomer_identity.v2",
-      "manifest_sha256": "0f1f4a71d5c509d26194d7293c58c6d9eb0bdff8250a9cc0103b171b1a7ae7f4",
+      "manifest_sha256": "c5169e6485385d7cc05b0765ca91b96c0f076e580d7dec06881f467f68191fbb",
       "artifacts": {
         "assay_neighbor_index.pkl": "5ecfbe24230d7458b1bdd309cbe5c1fbb262287ae5c7cbacc9a4390b48ad79df",
         "assay_molecule_evidence.jsonl": "acb2e2ff0d32c774e1680d2034554a800e56dfb16ee0d266e77c5ad0fcb23e80"
@@ -350,7 +350,7 @@
       "accepted_parent_conditions.jsonl": "fd2effa0c59a2ba5e70cf261d9d7feb5b74c1090143c3a80d5e222934d2c87d9",
       "rejected_parent_conditions.jsonl": "f9f8a15bfcbdf453029003c7b5e7cbfb92099c0d2f974925ead2e8049b310fa7",
       "group_distribution.csv": "6fd82b53cd5fe79f83ca511dac1ff51af9802435191ea8efe6224d0def2570e9",
-      "summary.json": "c442ab195000d0e845378b29e07c9042d48b3ce8b9561e1e33c9ce0cdf723269"
+      "summary.json": "cf96f7eeddefed3646544d240b072127213dc5f2cb9890684d2a524323615536"
     },
     "random": {
       "train_molecule_condition_labels.jsonl": "89442b35cc6503af53b40043fd115a0209c6a8d1debf3548dec33846ffd6c3d5",

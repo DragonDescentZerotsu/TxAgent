@@ -30,12 +30,12 @@
       "excluded_direct_source_records": 69003
     }
   },
-  "source_manifest_sha256": "fbf35ef19716798d22ba434d4bc73f2cda0cd124cce33264111a324261d73a7f",
+  "source_manifest_sha256": "46472910aa8f8d5ef800c4cbd30649f408d2bce0251ddfc372922198b0c7ab5a",
   "raw_uid_preservation_receipt": "data/starling_data/carcinogens/progressive_v1/identity_repair_overlay_receipt.json",
   "raw_uid_preservation_receipt_sha256": "5db674a73cb6978d7d035f120bb11d893fd05e5b9d14b64e404a0bb40f5f1929",
   "historical_semantic_source_validation": {
     "path": "data/starling_data/carcinogens/progressive_v1/validation_all.json",
-    "sha256": "9e8ae339d1849930c87d422ac5a748b3ff33a52f6db63c4b985acaf29bd8638c",
+    "sha256": "e0c3cd4e3efe62342f1c3a0e916af0abdbac80a30b61e14014ce67937fc46656",
     "status": "historical_before_tautomer_identity_v2",
     "reuse_scope": "unchanged source semantics and raw fields only; current identity/index checks are the new scheme receipts"
   },

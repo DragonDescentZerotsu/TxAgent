@@ -145,9 +145,9 @@
       "source_review": "data/starling_data/dili/retrieval_final/source_changes.jsonl"
     },
     "carcinogens": {
-      "canonical_records_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
+      "canonical_records_sha256": "245b9da971016595f9f85ef45fec68096fcc1990097348a9ca8342761be7b534",
       "overlay_is_canonical": true,
-      "overlay_records_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
+      "overlay_records_sha256": "245b9da971016595f9f85ef45fec68096fcc1990097348a9ca8342761be7b534",
       "source_records": "data/starling_data/carcinogens/retrieval_final/source/records.parquet",
       "catalog": "family_catalogs/carcinogens",
       "catalog_config": "STARLING",

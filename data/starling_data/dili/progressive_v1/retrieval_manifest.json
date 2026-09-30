@@ -15,11 +15,11 @@
   "catalog_sha256": "7de165ae979ead92c4bb29f7ae79703b4faf3188196085cc7060a9c79f0ef3f4",
   "identity_contract": "new_task_tautomer_identity.v2",
   "validation": "data/starling_data/dili/progressive_v1/validation_current.json",
-  "validation_sha256": "51a80e9f8d4a1ce6620200d58c06abb4b751a5802c7ea5574d64cea7db69dd7e",
+  "validation_sha256": "51c7dd88e1b56575aab496b04eff1946089c185e79e1681a566c2c8e4cd228f5",
   "validation_status": "passed",
   "historical_validation": {
     "path": "data/starling_data/dili/progressive_v1/validation_all.json",
-    "sha256": "cbf106f8386ec6ab553c640f0a4f5a1715b3b23dfbed0de84ec394f7bcce7a90",
+    "sha256": "f3912863956fab6d3176e60c0c44d8ea522d871b3ca2a1d7bb5c19f92e2f672d",
     "status": "historical_before_tautomer_identity_v2",
     "reuse_scope": "unchanged source semantics and raw fields only; current identity/index checks are the new scheme receipts"
   },

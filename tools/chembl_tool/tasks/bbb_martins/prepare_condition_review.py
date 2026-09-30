@@ -116,7 +116,7 @@ def _remove_non_conditions(
 
 
 def _load_source() -> pd.DataFrame:
-    cache_root = Path(os.environ.get("HF_HOME", "/data1/tianang/cache"))
+    cache_root = Path(os.environ.get("HF_HOME", Path.home() / ".cache" / "huggingface"))
     arrow = (
         cache_root
         / "datasets/starling-labs___bbb/default/0.0.0"

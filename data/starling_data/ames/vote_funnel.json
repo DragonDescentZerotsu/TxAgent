@@ -8,7 +8,7 @@
   "schema_version": "ames_vote_funnel.v2",
   "baseline_semantic_screen": {
     "path": "data/starling_data/ames/source_review_v4/previous_vote_funnel.json",
-    "sha256": "c46d29a7b9577e2dd63c590d86336466abdc4808fabcce04ab0b07bd352e8cfb",
+    "sha256": "afdb5a7c8a0fe459360b3b093c2818bb0e854fa6e2148395a2cb88e4d41dfcab",
     "scope": "historical deterministic base-only screen before the applied semantic review"
   },
   "review_actions": {
@@ -31,7 +31,7 @@
   "retrieval_parents": 34952,
   "source_eligibility": "Deterministic base-family screen plus individually reviewed payload-pinned direct claims from any source; identity and study-collapse gates apply to all.",
   "input_hashes": {
-    "data/starling_data/ames/canonical_v1/manifest.json": "e227be2ba85890f46764666acd78e92663e37ed27c2974812a866a6e988b2998",
+    "data/starling_data/ames/canonical_v1/manifest.json": "8f696b1701d3596eebb2de428ab364e764a1b5f1d3efa5153519ec1bc701947a",
     "data/starling_data/ames/canonical_v1/source_votes.jsonl": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9",
     "data/starling_data/ames/source_review_v4/applied_decisions.jsonl": "cecf331336d367cd9bf5df9f802dab8f1021285da4cde21990ac77d726d6f898"
   },

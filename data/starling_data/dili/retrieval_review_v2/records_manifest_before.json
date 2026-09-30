@@ -5,7 +5,7 @@
   "local_restore_root": "outputs/chembl_tool/starling/current_records",
   "history": {
     "canonical_schema": "starling_canonical_record.v7",
-    "source_branch": "origin/joseph",
+    "source_branch": "source_snapshot",
     "source_commit": "70750c42035d6bde5ce9504211c4e22ac57e27f8",
     "source_stage": "starling_normalized_v7/03_records",
     "source_contract_sha256": {
@@ -203,7 +203,7 @@
         {
           "path": "manifest.json",
           "size": 9119,
-          "sha256": "9b1617d1da7c2a877f9b21eae84afa1b6adab446bfbf837296dbc5bd556f2dfb"
+          "sha256": "37370fd4f456a60d0721cc2faf522d1b23de45b44c22b578363e1c85b7668ea7"
         },
         {
           "path": "pending_identity.jsonl",

@@ -44,7 +44,7 @@
       "manifests": [
         {
           "manifest": "data/starling_data/clintox/clintox_base_v1/SOURCE_MANIFEST.json",
-          "manifest_sha256": "5d4341d1abdb3c4f8d4d2466eb5f485317b66a59618d61f5687aa61abc174658",
+          "manifest_sha256": "e675a01ec15f3aa51b00e2440ddbbe7452fd0b1369fbbd80f7eedb7a26c1d8d1",
           "n_files_verified": 2,
           "files": [
             {
@@ -59,7 +59,7 @@
         },
         {
           "manifest": "data/starling_data/clintox/raw_v1/SOURCE_MANIFEST.json",
-          "manifest_sha256": "409425ee6c99ce8c719247a9c0e4cbfef1558cad842e475c0fda2f3d65f82662",
+          "manifest_sha256": "79ffb6e379b7bf788b43b64834d6f8bcc0516a6c955f8f613198ba54dd7bad91",
           "n_files_verified": 12,
           "files": [
             {

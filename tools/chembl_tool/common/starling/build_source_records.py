@@ -78,7 +78,7 @@ def restore(task, cache):
         rel = path.removeprefix(prefix)
         publish_file(cache / task / rel, root / rel)
     write_json_atomic(root / "manifest.json", {
-        "source_commit": COMMIT, "source_branch": "joseph", "original_root": prefix,
+        "source_commit": COMMIT, "source_branch": "source_snapshot", "original_root": prefix,
         "format": "ordinary_lossless_parquet_parts", "uid_policy": "preserve_source_row_uid_verbatim",
         "sources": manifest["sources"],
         "files": {p.removeprefix(prefix): {"sha256": sha256_file(cache / task / p.removeprefix(prefix)), "git_path": p} for p in paths},

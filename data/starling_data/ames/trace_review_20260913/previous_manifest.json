@@ -2,7 +2,7 @@
   "contract": "ames_bacterial_reverse_mutation.v1",
   "retrieval_contract": "ames_inclusive_retrieval.v3",
   "source_commit": "03e4c7c694b45bcfdf7776ac1045bc3e69936f0a",
-  "source_manifest_sha256": "7f5645c242f53447b3f0afac4102d6a2189db9482f9881212cea5634222b5021",
+  "source_manifest_sha256": "8f2223f854a5e4208a27d62a8ba3e702e99c8f91cbba3cc5232e02e64945f45b",
   "pubchem_name_responses_sha256": "ba4797eea2682e9629a085e1c868e79f2d5d5f2c8d2ae42c570f382ba9b23c77",
   "policy_source_sha256": "cd0796468c4007c8e3e9319826e641635850b774c57685e57001077ce6d7d732",
   "n_source_rows": 1510447,

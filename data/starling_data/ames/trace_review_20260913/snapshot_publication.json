@@ -6,47 +6,47 @@
     "ames_base:80868"
   ],
   "snapshot": {
-    "archive_sha256": "2f57468aad24f77ee4d6e63f08bee31bf06e8797f5312f38312230992c9fbb32",
-    "archive_size": 478749947,
+    "archive_sha256": "b042ad3b53b42229002b068f8fe19b275436a53d9bfd2644cb9ba31cde8bdfa3",
+    "archive_size": 478749856,
     "records_sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a",
     "records_size": 422824120,
     "parts": [
       {
         "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0001",
-        "size": 90000000,
-        "sha256": "7efe0de131d0d5b1c880bfd03c69202745c292386ef1ae6d9eb2cdcf5c506583"
+        "sha256": "d5c5b1716704b7ec9286780f3d9e8f8d7b2cfa4fd1710b8e9d59493cbbaf0ba3",
+        "size": 90000000
       },
       {
         "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0002",
-        "size": 90000000,
-        "sha256": "5db27f2f8ab27b96e6b8d8a56fbe67a67c514abf196c0a306f53742fbcbd1ac1"
+        "sha256": "90901c291c11c730cd411b6f0b4966dc24b5ec8664e8e6ee2388bc8029e73ae2",
+        "size": 90000000
       },
       {
         "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0003",
-        "size": 90000000,
-        "sha256": "807469b63e72ec4089c56f08de21fc9b9d3e2dcd0acedb17ed0ebb8aa4a99d26"
+        "sha256": "f841a7d5b72237e17fe574bd16e8a62f8b6946ce3edd1eba5b1294add6813241",
+        "size": 90000000
       },
       {
         "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0004",
-        "size": 90000000,
-        "sha256": "a435240c7f37dbff2dab6706888a795ec61c2ce482879e4aa526f9a6e9339a9b"
+        "sha256": "cf9fb6dc159bac40654d0d7878e1dc5150ec5a14c6858a8365dc93fd9c76602b",
+        "size": 90000000
       },
       {
         "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0005",
-        "size": 90000000,
-        "sha256": "f5c5d87644d404b0a5aa9941ea07c74beb9272d3bf6c2e46318a76a1720a8c63"
+        "sha256": "54c6b6e999aaa461ba0b87ac6715cb44b949504af01d7d64999775d628011ece",
+        "size": 90000000
       },
       {
         "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0006",
-        "size": 28749947,
-        "sha256": "9bbe037652e31471555cd2308df2f04b01371c19658ab94c86222b132c40e0f1"
+        "sha256": "3b7b5835f0558143be62b23050ed2523ac4b5c613228266cfe108392ba5bf134",
+        "size": 28749856
       }
     ],
     "files": [
       {
         "path": "manifest.json",
         "size": 9120,
-        "sha256": "8ebf1e9ed0cb2e0eb7cca2904f9c1f863d8de180d7c2c24d6519ad6cfe81977b"
+        "sha256": "4188fa504d48ed9a2de2ae3b9f27f3bf48d6f2fb9012b5af41caac0c36476154"
       },
       {
         "path": "pending_identity.jsonl",

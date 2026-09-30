@@ -1,7 +1,7 @@
 {
   "status": "requires_additional_manual_review",
   "phase": "actual_prepared_cards",
-  "ledger_sha256": "2619fc8a661e94d6a103f66f34eea03f260c39878d258a5d0c14f777fa33f6a3",
+  "ledger_sha256": "93175d786d2eb2d37daf618a3e1e080ec3ab9bd4105dc6827f1c4d42bfbc1b6f",
   "n_checked_changed_surfaces": 8,
   "n_reviewed_matching_surfaces": 3,
   "n_unreviewed_surfaces": 5,

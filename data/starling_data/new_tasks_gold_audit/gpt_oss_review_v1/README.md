@@ -51,7 +51,7 @@ node001 loopback 8001-8004; HAProxy binds loopback 9001 with least-connection ro
 least-connection counts; client keep-alive remains available. The change used a soft
 proxy reload with in-flight requests drained, recorded in `proxy_connection_rebalance.json`.
 All 22 model files are SHA256-verified against the frozen shared snapshot and staged
-at `/local/tmp/tianang-gptoss-source-review/model` to avoid shared-filesystem loading
+at `/local/tmp/source-review/model` to avoid shared-filesystem loading
 contention. Each backend uses two A100-80GB GPUs, max model length 32768 and GPU memory
 utilization 0.90, `max_num_seqs=1024` and `max_num_batched_tokens=8192`.
 The initial vLLM defaults limited each backend to 256 active sequences; the initial
@@ -65,9 +65,9 @@ servers and proxy are in `gptoss-source-review`. The verified node002 port 19001
 forward is used only for the isolated preflight.
 
 ```sh
-/data1/tianang/anaconda3/condabin/conda run -n vllm python -m tools.chembl_tool.common.starling.review_source_records prepare
+conda run -n vllm python -m tools.chembl_tool.common.starling.review_source_records prepare
 # On node001, after the separate preflight succeeds:
-tmux new-session -d -s gptoss-source-review-run 'sh /data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/run_review.sh'
+tmux new-session -d -s gptoss-source-review-run 'sh data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/run_review.sh'
 ```
 
 Run a separate smoke root before the full census; do not mix changed model or prompt

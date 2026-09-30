@@ -182,7 +182,7 @@
     },
     "carcinogens_starling_only_gold_v4": {
       "manifest": "data/starling_data/carcinogens/gold_v4/retrieval/manifest.json",
-      "manifest_sha256": "676936fa7c762723b37efa264ed5418ae2420a854f8dcc86289cb8d989a47a88",
+      "manifest_sha256": "354889a31701f5fe0a009e1b4d2c6b1f24199113d2c4642927f4d6ca1bded5cb",
       "status": "records_indices_and_card_links_validated",
       "canonical_experiment_defaults_changed": true,
       "publication_receipt": "data/starling_data/carcinogens/gold_v4/retrieval/canonical_publication.json"

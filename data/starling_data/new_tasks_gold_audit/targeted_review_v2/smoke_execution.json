@@ -5,7 +5,7 @@
   "temperature": 0,
   "max_tokens": 2048,
   "prompt_sha256": "3b692b2b32357430c8295712206431605a9fcca79c5d17d1b4838454528374ae",
-  "selection_manifest_sha256": "193e526f70fda338fba2296877d24784259459f9c17213e97022e87c37d19ae4",
+  "selection_manifest_sha256": "2f05cdd0db57ef2443f679a97e59aa16a09f5d8338c993aff09d4724e5fb615d",
   "execution_sha256": "d32c68b8f0b178564870275705d7feb34fdec312021a0c7ca09d0ff2d908a9f6",
   "workers": 32,
   "base_url": "http://127.0.0.1:19001/v1",

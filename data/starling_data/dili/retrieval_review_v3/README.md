@@ -20,4 +20,4 @@ source_validation.json 核对全部行：11 条按修订包改变，其他行逐
 
 发布复用共享 stage_new_task_retrieval.apply_content_repairs、rebuild_current_starling_retrieval、validate_new_task_retrieval_identity 和 export_current_starling_level_records，仅处理 DILI。publication.json 通过后为当前 source；保持 L1-only heldout 预排除、L2 保留及 query-time disjoint。其他任务和推理规则不变。
 
-新推理入口：outputs/paper/starling_conditioned_dili_retrieval_review_v3_no_prior_grounded_sim0/run_replay.py。先比较 valid/test 全部 804 行七层选卡，只重新准备发生变化的 queries；既有 query 和 common analog 的工具文本固定复用。完整实际 prompt、工具及 progressive 前缀 gate 决定哪些输出可复用。PARCC Flash-0731、每模式并发 256、最大同时两模式、失败六路竞速、max_tokens 20480；gold、prior、similarity、4/2 卡片预算与完整 level plan 不变。结果以 registry 和该 root 的 runtime_progress.json / completion_validation.json 为准；运行完成前不报告新性能。
+新推理入口：outputs/paper/starling_conditioned_dili_retrieval_review_v3_no_prior_grounded_sim0/run_replay.py。先比较 valid/test 全部 804 行七层选卡，只重新准备发生变化的 queries；既有 query 和 common analog 的工具文本固定复用。完整实际 prompt、工具及 progressive 前缀 gate 决定哪些输出可复用。Hosted Flash-0731、每模式并发 256、最大同时两模式、失败六路竞速、max_tokens 20480；gold、prior、similarity、4/2 卡片预算与完整 level plan 不变。结果以 registry 和该 root 的 runtime_progress.json / completion_validation.json 为准；运行完成前不报告新性能。

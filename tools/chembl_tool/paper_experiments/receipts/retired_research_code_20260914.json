@@ -12,7 +12,7 @@
   "retained_artifact_roots": [
     "outputs/paper/router_oof",
     "outputs/paper/rl_lora_gpt_oss_120b",
-    "/local/tianang/txagent_rl_lora"
+    "/local/retired_runs/txagent_rl_lora"
   ],
   "removed_files": [
     {

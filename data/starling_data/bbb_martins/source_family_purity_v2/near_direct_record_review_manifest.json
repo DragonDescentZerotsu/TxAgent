@@ -6,7 +6,7 @@
   "review_ledger_sha256": "2eea7be68bc455f73e3fc810d5d868bfc0e363771909b0a60975867150156ffc",
   "gold_root": "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins",
   "canonical_records_provenance": {
-    "source_branch": "origin/joseph",
+    "source_branch": "source_snapshot",
     "source_commit": "70750c42035d6bde5ce9504211c4e22ac57e27f8",
     "source_stage": "starling_normalized_v7/03_records",
     "current_manifest": "artifacts/chembl_tool/starling/current_records/manifest.json"

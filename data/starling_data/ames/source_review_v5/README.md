@@ -88,7 +88,7 @@ endpoint、context、support、identity 等字段均一致，L1 与 actual-voter
 source manifest 与 source votes 相比本轮开始均未改变。抽样重放输出到独立目录：
 
 ```bash
-/data1/tianang/anaconda3/envs/vllm/bin/python \
+python \
   data/starling_data/ames/source_review_v5/sample_selection.py \
   --output /local/tmp/ames-placement-replay
 ```

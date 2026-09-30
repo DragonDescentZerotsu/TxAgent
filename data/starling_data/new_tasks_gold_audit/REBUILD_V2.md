@@ -3,7 +3,7 @@
 # DILI / Carcinogens repaired source gold v2.1
 
 The active `gold_v2` files and both conditioned split schemes have been rebuilt
-with source contracts v2.1. The frozen acquisition remains Joseph commit
+with source contracts v2.1. The frozen acquisition remains reference source commit
 `45663daaad7fd8392a0254bd78793a9e0a581a7a`. No TDC labels were imported.
 The initial `gold_v1` and pre-repair TDC comparison are historical audit provenance.
 

@@ -1,5 +1,5 @@
 {
-  "source_repository": "https://github.com/DragonDescentZerotsu/TxAgent",
+  "source_repository": ".",
   "source_branch_at_acquisition": "codex/ames-compressed-parquets",
   "source_commit": "03e4c7c694b45bcfdf7776ac1045bc3e69936f0a",
   "files": {

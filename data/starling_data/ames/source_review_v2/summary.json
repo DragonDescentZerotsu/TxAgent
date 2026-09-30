@@ -4,7 +4,7 @@
   "prior_source_manifest": {
     "contract": "ames_bacterial_reverse_mutation.v1",
     "source_commit": "03e4c7c694b45bcfdf7776ac1045bc3e69936f0a",
-    "source_manifest_sha256": "7f5645c242f53447b3f0afac4102d6a2189db9482f9881212cea5634222b5021",
+    "source_manifest_sha256": "8f2223f854a5e4208a27d62a8ba3e702e99c8f91cbba3cc5232e02e64945f45b",
     "pubchem_name_responses_sha256": "ba4797eea2682e9629a085e1c868e79f2d5d5f2c8d2ae42c570f382ba9b23c77",
     "policy_source_sha256": "1c16205fd1fdeb8b4fcb1bb8b808a08919a8fc4464e418b90344294f6208aca3",
     "n_source_rows": 1510447,
@@ -124,7 +124,7 @@
       }
     }
   },
-  "current_source_manifest_sha256": "fc8e6f1badc7a414b59f47e07a6ca29e16c9ff96a4ec50d92244d9274cc53809",
+  "current_source_manifest_sha256": "33bb27db84650163533b092bd81e1c88cab277f89f31f9d94f42a994de9594bd",
   "raw_records": 1510447,
   "prior_retained": 257157,
   "current_retained": 1299510,
@@ -376,6 +376,6 @@
     "record_transitions.parquet": "e5ef8ca8c8492b1c2e6b2d74899313a6f141785a2e96c14001c80c8835ab741f",
     "sample.jsonl": "263289a2ff10156f83d4339fea102dc8ef5c50dda41088d606b2741341797e40",
     "audit_annotations.jsonl": "831bacb2c42e4f59cab3770be03cc383dd0910caefa3c00640a5a1408974866d",
-    "endpoint_alias_repair.json": "5c47e31698e7d057a74ecad408de120629b95a78e207ca235832972c9e5cdf76"
+    "endpoint_alias_repair.json": "a234c77fbed0d0d23741a98423cbca2ceffd61245053b1dda4ba2c7b9393773a"
   }
 }

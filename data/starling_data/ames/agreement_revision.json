@@ -86,7 +86,7 @@
         "sha256": "d20bdfac49502cfd75e70509fec4c2873a5df11ef175f1734b8c0efa572cacb9"
       },
       {
-        "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/experiment_config.py",
+        "path": "tools/chembl_tool/tasks/ames/experiment_config.py",
         "sha256": "945f7612b180aee8b8955c015a8a6d05f66d8019f728f09e6a7424036788317d"
       }
     ],
@@ -329,7 +329,7 @@
         "sha256": "d20bdfac49502cfd75e70509fec4c2873a5df11ef175f1734b8c0efa572cacb9"
       },
       {
-        "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/experiment_config.py",
+        "path": "tools/chembl_tool/tasks/ames/experiment_config.py",
         "sha256": "945f7612b180aee8b8955c015a8a6d05f66d8019f728f09e6a7424036788317d"
       }
     ],
@@ -470,10 +470,10 @@
     "data/conditioned_benchmark/ClinTox/random/summary.json": "b834299e5c3c0be45813531709ba8f4417499599950cde3439d588b1cad5a740"
   },
   "focused_tests_passed": 293,
-  "vote_funnel_sha256": "c46d29a7b9577e2dd63c590d86336466abdc4808fabcce04ab0b07bd352e8cfb",
+  "vote_funnel_sha256": "afdb5a7c8a0fe459360b3b093c2818bb0e854fa6e2148395a2cb88e4d41dfcab",
   "code_hashes": {
     "tools/chembl_tool/common/starling/fresh_conditioned_benchmark.py": "2119751689c554667a7ceb16ecf880f1a41d324d2773645f95d07f5f76c27504",
-    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/build_dataset.py": "1da6a1522e96e49e6572dbe849514b7799e635dce99f763ae8da8601d81715a2",
+    "tools/chembl_tool/tasks/ames/build_dataset.py": "1da6a1522e96e49e6572dbe849514b7799e635dce99f763ae8da8601d81715a2",
     "tools/chembl_tool/tasks/ames/validate_retrieval.py": "b8807ad74be7b41adbba18590c503533af0e0cd84e2c64492e6c8d43782a2578"
   }
 }

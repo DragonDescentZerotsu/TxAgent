@@ -58,15 +58,15 @@ Skin 当前 v7 使用单独发布的 identity-rebound canonical snapshot：7 条
 在项目根目录执行：
 
 ```bash
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+conda run -n vllm \
   python -m tools.chembl_tool.paper_experiments.rebuild_current_starling_retrieval \
   restore-records
 
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+conda run -n vllm \
   python -m tools.chembl_tool.paper_experiments.rebuild_current_starling_retrieval \
   build --workers 8
 
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
+conda run -n vllm \
   python -m tools.chembl_tool.paper_experiments.rebuild_current_starling_retrieval \
   verify
 ```
@@ -233,7 +233,7 @@ python -m tools.chembl_tool.paper_experiments.export_current_starling_level_reco
 仓库的 `artifacts/`，以便换 checkout 恢复。仅修正清单路径不改变 records 或 archive 字节，也不产生新实验。
 
 Stage-03 之前的 raw ingestion 与 normalized-v7 历史实现来自
-`origin/joseph@70750c42035d6bde5ce9504211c4e22ac57e27f8`，只说明 frozen snapshot 的来源，不是运行依赖。
+`source_snapshot@70750c42035d6bde5ce9504211c4e22ac57e27f8`，只说明 frozen snapshot 的来源，不是运行依赖。
 若以后从新 raw run 重新生成 Stage-03，必须作为 source-ingestion migration 审查。
 
 早期流程从 source-specific 列名逐步发展到 canonical records；随后从 assay-level earliest-level assignment 改为

@@ -39,6 +39,6 @@
     "artifacts/chembl_tool/starling/current_records/manifest.json": "99d100e2036a961b41e51cb99423b16373c17b127b8faeccdaf74a0c45d369f4",
     "data/starling_data/carcinogens/dataset_manifest.json": "aa75854fa1adc47f8760cb0cbc21d4a9853fd00553d0a2a4fa46b9b84da7670d",
     "data/starling_data/carcinogens/gold_v4/independent_gold_validation.json": "b1b4b8a2cc4a577579b4f815db2023f252d0ae38c0826b32261576f6fdafe00a",
-    "/data1/tianang/Projects/TxAgent/data/starling_data/carcinogens/gold_v4/retrieval/publish.py": "a4a8c5f745a573eb3bc4bf173f2b1eb5725ef174c1461209721a1bfad978fbc7"
+    "data/starling_data/carcinogens/gold_v4/retrieval/publish.py": "a4a8c5f745a573eb3bc4bf173f2b1eb5725ef174c1461209721a1bfad978fbc7"
   }
 }

@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from functools import lru_cache
 import json
+import sys
 from pathlib import Path
 from statistics import mean
 from typing import Any
@@ -623,7 +624,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--limit", type=int, default=0)
     parser.add_argument("--indices", nargs="*", default=None)
     parser.add_argument("--worst-case-smoke", action="store_true")
-    parser.add_argument("--python-executable", default="/data1/tianang/anaconda3/envs/vllm/bin/python")
+    parser.add_argument("--python-executable", default=sys.executable)
     parser.add_argument("--manifest-only", action="store_true")
     parser.add_argument(
         "--include-complete-batches",
@@ -634,7 +635,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.prefixes and any(value <= 0 for value in args.prefixes):
         parser.error("--prefixes must contain positive integers")
     if args.parallelism < 1 or args.parallelism > 128:
-        parser.error("PARCC DeepSeek assay curve parallelism must be between 1 and 128")
+        parser.error("Hosted DeepSeek assay curve parallelism must be between 1 and 128")
     contract = RETRIEVAL_CONTRACTS[args.retrieval_contract]
     if not args.output_root:
         args.output_root = contract.output_root

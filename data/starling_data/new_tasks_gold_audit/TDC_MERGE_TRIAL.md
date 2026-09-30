@@ -142,7 +142,7 @@ solvers. It does not rebuild the4.9M source records or call an LLM/PubChem endpo
 
 ```bash
 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 \
-/data1/tianang/anaconda3/envs/vllm/bin/python \
+python \
   -m tools.chembl_tool.common.starling.build_tdc_augmented_benchmark
 ```
 

@@ -1,6 +1,6 @@
-"""Keep a PARCC SSH tunnel and one resumable Python launcher alive.
+"""Keep a Hosted SSH tunnel and one resumable Python launcher alive.
 
-The watchdog deliberately never stores an SSH password.  When PARCC asks for
+The watchdog deliberately never stores an SSH password.  When Hosted asks for
 Duo, it selects the configured Push option and waits for the user to approve it.
 The historical Starling matrix CLI remains the default profile. Other resumable
 launchers can provide a module plus JSON-encoded arguments and use the generic
@@ -39,7 +39,7 @@ from tools.chembl_tool.tasks.skin_reaction.run_reasoning_batch import (
 
 LOGGER = logging.getLogger("resumable_tunnel_watchdog")
 MATRIX_MODULE = "tools.chembl_tool.paper_experiments.starling_benchmark_matrix"
-DEFAULT_PYTHON = "/data1/tianang/anaconda3/envs/vllm/bin/python"
+DEFAULT_PYTHON = sys.executable
 COMPLETION_MODES = (
     "starling_matrix",
     "recursive_reasoning_runs",
@@ -97,7 +97,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Attach to a matching live module that started with its default output root.",
     )
-    parser.add_argument("--ssh-host", default="parcc-glm")
+    parser.add_argument("--ssh-host", default=os.environ.get("TXAGENT_SSH_HOST", "llm-server"))
     parser.add_argument(
         "--ssh-local-forward",
         default="",

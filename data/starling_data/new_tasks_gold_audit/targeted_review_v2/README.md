@@ -62,7 +62,7 @@ study, conflict, condition and heldout-index checks; this runner publishes no go
 Historical launch command (the per-round script has been removed):
 
 ```sh
-sh /data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/targeted_review_v2/run_review.sh
+sh data/starling_data/new_tasks_gold_audit/targeted_review_v2/run_review.sh
 ```
 
 `manifest.json` pins original sources, selection ledgers, queues, prior reviews

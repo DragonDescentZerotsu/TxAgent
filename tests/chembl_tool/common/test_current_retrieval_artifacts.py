@@ -29,12 +29,15 @@ def test_current_record_contract_is_latest_only_and_repo_local() -> None:
         assert info["parts"]
         assert all(int(part["size"]) <= 90_000_000 for part in info["parts"])
         assert all(str(part["path"]).startswith("artifacts/") for part in info["parts"])
-        assert "/data1/joseph" not in json.dumps(info)
+        assert "/data1/" not in json.dumps(info)
         assert artifacts.current_records_path(task).is_relative_to(artifacts.PROJECT_ROOT)
 
 
 def test_published_snapshot_restores_after_checkout_move(tmp_path, monkeypatch):
+    import io
     import shutil
+    import subprocess
+    import tarfile
 
     project = tmp_path / "original"
     source = project / "data/source"
@@ -51,6 +54,15 @@ def test_published_snapshot_restores_after_checkout_move(tmp_path, monkeypatch):
     info = artifacts.publish_snapshot("dili", source, project / "artifacts/dili/03_records")
     assert info["source_release"] == "data/source"
     assert all(part["path"].startswith("artifacts/") for part in info["parts"])
+    compressed = b"".join((project / part["path"]).read_bytes() for part in info["parts"])
+    unpacked = subprocess.run(
+        ["zstd", "-q", "-d", "-c"], input=compressed, capture_output=True, check=True
+    ).stdout
+    with tarfile.open(fileobj=io.BytesIO(unpacked)) as archive:
+        assert all(
+            member.uid == member.gid == 0 and not member.uname and not member.gname
+            for member in archive
+        )
 
     moved = tmp_path / "moved"
     shutil.copytree(project / "artifacts", moved / "artifacts")
@@ -68,7 +80,7 @@ def test_active_source_defaults_do_not_depend_on_external_checkout() -> None:
     for task in ("dili", "carcinogens"):
         assert catalog.TASKS[task]["records"] == str(artifacts.current_records_path(task))
     for task in ("bbb_martins", "bioavailability_ma", "skin_reaction"):
-        assert "/data1/joseph" not in str(catalog.TASKS[task]["records"])
+        assert "/data1/" not in str(catalog.TASKS[task]["records"])
         assert "source_overlays" in str(catalog.TASKS[task]["records"])
 
 

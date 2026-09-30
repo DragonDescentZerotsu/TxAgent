@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
@@ -11,11 +12,8 @@ from typing import Any
 from datasets import load_dataset
 
 
-DEFAULT_REPOS = [
-    "jiosephlee/proper_assay_transfer_no_prop_no_tanimoto",
-    "jiosephlee/proper_assay_transfer_no_tanimoto",
-]
-DEFAULT_OUT_ROOT = "outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid20k"
+DEFAULT_REPOS = os.environ.get("TXAGENT_TRANSFER_DATASETS", "").split()
+DEFAULT_OUT_ROOT = "outputs/chembl_tool/activity_transfer_benchmark/hf_transfer_valid20k"
 
 
 def main() -> int:
@@ -28,7 +26,7 @@ def main() -> int:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--repos", nargs="+", default=DEFAULT_REPOS)
+    parser.add_argument("--repos", nargs="+", default=DEFAULT_REPOS or None, required=not DEFAULT_REPOS)
     parser.add_argument("--split", default="validation")
     parser.add_argument("--limit", type=int, default=20000)
     parser.add_argument("--out-root", default=DEFAULT_OUT_ROOT)

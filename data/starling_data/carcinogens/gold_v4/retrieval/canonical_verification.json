@@ -9,49 +9,49 @@
         "ok": true
       },
       "canonical_records": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/chembl_tool/starling/current_records/carcinogens/03_records/records.parquet",
+        "path": "outputs/chembl_tool/starling/current_records/carcinogens/03_records/records.parquet",
         "expected_sha256": "1ae4bea6126b5ea632774e87621e939bcd0d2a6d50aaed72e63dfabb4bfef569",
         "actual_sha256": "1ae4bea6126b5ea632774e87621e939bcd0d2a6d50aaed72e63dfabb4bfef569",
         "ok": true
       },
       "overlay_records": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/chembl_tool/starling/current_records/carcinogens/03_records/records.parquet",
+        "path": "outputs/chembl_tool/starling/current_records/carcinogens/03_records/records.parquet",
         "expected_sha256": "1ae4bea6126b5ea632774e87621e939bcd0d2a6d50aaed72e63dfabb4bfef569",
         "actual_sha256": "1ae4bea6126b5ea632774e87621e939bcd0d2a6d50aaed72e63dfabb4bfef569",
         "ok": true
       },
       "catalog": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/carcinogens/family_assays.jsonl",
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/carcinogens/family_assays.jsonl",
         "expected_sha256": "d4c1216c9ef6c48c4c22d9003a23ab5e7178a93d8d63122d4853cbe6c9050d10",
         "actual_sha256": "d4c1216c9ef6c48c4c22d9003a23ab5e7178a93d8d63122d4853cbe6c9050d10",
         "ok": true
       },
       "published_source_records": {
-        "path": "/data1/tianang/Projects/TxAgent/data/starling_data/carcinogens/gold_v4/retrieval/source/records.parquet",
+        "path": "data/starling_data/carcinogens/gold_v4/retrieval/source/records.parquet",
         "expected_sha256": "1ae4bea6126b5ea632774e87621e939bcd0d2a6d50aaed72e63dfabb4bfef569",
         "actual_sha256": "1ae4bea6126b5ea632774e87621e939bcd0d2a6d50aaed72e63dfabb4bfef569",
         "ok": true
       },
       "scaffold_index": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/carcinogens/scaffold/assay_neighbor_index.pkl",
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/carcinogens/scaffold/assay_neighbor_index.pkl",
         "expected_sha256": "328ef2c1a162dcc50045c1f905c988b1289b1c869fca4af39c2fc8ea644aa973",
         "actual_sha256": "328ef2c1a162dcc50045c1f905c988b1289b1c869fca4af39c2fc8ea644aa973",
         "ok": true
       },
       "scaffold_evidence": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/carcinogens/scaffold/assay_molecule_evidence.jsonl",
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/carcinogens/scaffold/assay_molecule_evidence.jsonl",
         "expected_sha256": "9945f7c5885e6d2e4a5cdc0a24d530727404c93356435a821000795a68a50de1",
         "actual_sha256": "9945f7c5885e6d2e4a5cdc0a24d530727404c93356435a821000795a68a50de1",
         "ok": true
       },
       "random_index": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/carcinogens/random/assay_neighbor_index.pkl",
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/carcinogens/random/assay_neighbor_index.pkl",
         "expected_sha256": "a48abb1dd7f88c80e331b5f9e0a3a4d061ca64bbfc3ea015f5811604b1543019",
         "actual_sha256": "a48abb1dd7f88c80e331b5f9e0a3a4d061ca64bbfc3ea015f5811604b1543019",
         "ok": true
       },
       "random_evidence": {
-        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/carcinogens/random/assay_molecule_evidence.jsonl",
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/carcinogens/random/assay_molecule_evidence.jsonl",
         "expected_sha256": "689bc42768ea6d35e21c4759a8e965aa5e70333f58e60967bca1cc81c08fe84f",
         "actual_sha256": "689bc42768ea6d35e21c4759a8e965aa5e70333f58e60967bca1cc81c08fe84f",
         "ok": true

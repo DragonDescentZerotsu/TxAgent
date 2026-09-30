@@ -1,7 +1,7 @@
 {
   "status": "passed",
   "scope": "All 804 frozen no_prior_grounded_sim0 rows, seven levels; selected evidence content and metadata compared, excluding frozen tool summaries. No LLM or tool calls. Not a full prompt-reuse receipt.",
-  "new_index": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/artifacts/indices/dili/scaffold/assay_neighbor_index.pkl",
+  "new_index": "data/starling_data/dili/retrieval_review_v4/artifacts/indices/dili/scaffold/assay_neighbor_index.pkl",
   "cells": {
     "valid": {
       "rows": 402,

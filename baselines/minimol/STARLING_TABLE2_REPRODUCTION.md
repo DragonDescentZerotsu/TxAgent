@@ -116,7 +116,7 @@ confidence filter，或论文表格与 released CSV 的 split/version 不一致�
 作者信息直接支持的训练加权命令：
 
 ```bash
-/data1/tianang/anaconda3/condabin/conda run -n intern \
+conda run -n intern \
   python -m baselines.minimol.run_starling_table2 \
   --task oral_bioavailability --device cuda \
   --extraction-weight sqrt

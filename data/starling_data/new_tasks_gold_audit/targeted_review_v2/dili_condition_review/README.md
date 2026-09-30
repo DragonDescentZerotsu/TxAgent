@@ -42,7 +42,7 @@
 完整分组映射见 `policy.json`，变更见 `condition_changes.jsonl`，汇总见 `summary.json`。复现：
 
 ```sh
-PYTHONPATH=. /data1/tianang/anaconda3/envs/vllm/bin/python data/starling_data/new_tasks_gold_audit/targeted_review_v2/review_dili_conditions.py
+PYTHONPATH=. python data/starling_data/new_tasks_gold_audit/targeted_review_v2/review_dili_conditions.py
 ```
 
 ## 医学依据

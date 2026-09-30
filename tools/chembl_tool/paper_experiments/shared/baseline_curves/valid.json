@@ -50,6 +50,6 @@
   "prompt_version": "budgeted_reasoning.v1",
   "raw_tools_visible": true,
   "source_csv_sha256": "8347a4db495d33f2ea71ff04ff806a6022b25ed1e12fda1ad2900f2622b1b396",
-  "note": "Completed historical tool-visible baselines; not the new Joseph-aligned scaling experiment.",
+  "note": "Completed historical tool-visible baselines; not the new Reference-aligned scaling experiment.",
   "published_csv_sha256": "85cab279ccb01af4c96018fe5d54d1babf3f021a55a854b913529ecc067cc8ea"
 }
