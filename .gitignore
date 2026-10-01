@@ -81,3 +81,6 @@ temp.tsv
 /data/starling_data/new_tasks_gold_audit/**/*.docx
 /data/starling_data/new_tasks_gold_audit/**/*.zip
 /data/starling_data/dili/retrieval_review_v4/CPC_supplement/
+
+# Local development notes, kept outside the review/release snapshot.
+/molgpka.md
