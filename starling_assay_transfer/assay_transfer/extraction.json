@@ -1,0 +1,77 @@
+[
+  {
+    "original": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer/assay_transfer/record_level/v24/sampling.py",
+    "sha256": "ba9ca3316e8faa9187379f8319ea99a0e7d80073199e61aec36011d133bde14c",
+    "destination": "sampling/balance.py"
+  },
+  {
+    "original": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer/assay_transfer/record_level/bbb_v24_1/sampling.py",
+    "sha256": "e56dbade4968737f87f8d26e383b89cc59effc96f0072eef9b811f6fa786ba93",
+    "destination": "sampling/bbb.py"
+  },
+  {
+    "original": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer/assay_transfer/record_level/v24/repair.py",
+    "sha256": "de99cb06c90ccc3f0beab39d9c7f166765dfaa3197fd6e2945894a513198af6f",
+    "destination": "sampling/bbb_repair.py"
+  },
+  {
+    "original": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer/assay_transfer/record_level/oral_v24_2/sampling.py",
+    "sha256": "3add45e9fc573c97c40798e6fa5d3aa7189a5d1a677ac87c0df6f97d438d8257",
+    "destination": "sampling/oral.py"
+  },
+  {
+    "original": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer/assay_transfer/record_level/oral_v24_2/repair.py",
+    "sha256": "2f019086f032e3c31dc52c75c3919f8a014553ab978ad5c6fd17fbf0a08f94aa",
+    "destination": "sampling/oral_repair.py"
+  },
+  {
+    "original": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer/assay_transfer/record_level/bbb_v24_1/pairs.py",
+    "sha256": "cb3315260ba8637e26c486183b7ba68783cec03159dcb245a7cf37d81327fe43",
+    "destination": "sampling/bbb_trim.py"
+  },
+  {
+    "original": "/vast/projects/myatskar/design-documents/joseph/TxAgent/predict/retrieval/policies.py",
+    "sha256": "8908b43fad020efbc5fd5b5d707d9a2b4e31f824bca912bc052ff8a34817acfb",
+    "destination": "chemistry.py"
+  },
+  {
+    "original": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer/assay_transfer/record_level/v24/oral_geometry.json",
+    "sha256": "01a01901f2b96ed6897fd08cbd84e4affc3cd8725e7dcf68377eca7db9bacb67",
+    "destination": "assets/oral_geometry.json"
+  },
+  {
+    "original": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer/assay_transfer/record_level/v20/logit_geometry_interventions.json",
+    "sha256": "27cfa95622622d9e4d4998c42871a91377875568403f52309e24c759d1c20b88",
+    "destination": "assets/bbb_geometry.json"
+  },
+  {
+    "original": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer/assay_transfer/record_level/v27_skin_geometry.json",
+    "sha256": "4a46a506a7a8b2f8eac7b42d44a4a5b86f3c8de3ad2345b05e0dec78c060ccef",
+    "destination": "assets/skin_geometry.json"
+  },
+  {
+    "original": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer/assay_transfer/record_level/v19/prompt_projection.json",
+    "sha256": "404d75c26b9ebd228d6459f6c57621701645eb5aed89b6d94dd03f261c40eceb",
+    "destination": "assets/prompt_projection.json"
+  },
+  {
+    "original": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer/assay_transfer/record_level/v20/prompt.jinja",
+    "sha256": "435d70f963d9b55ac9b13da6f8c32af5414ee402d2af3af08fc5be01c4c7203d",
+    "destination": "assets/record.jinja"
+  },
+  {
+    "original": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer/assay_transfer/record_level/v28_safety_geometry/ames.json",
+    "sha256": "37dd118cf576292b1ef45d673df8b397871848e0bc95c40709309872e348912b",
+    "destination": "assets/ames_geometry.json"
+  },
+  {
+    "original": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer/assay_transfer/record_level/v28_safety_geometry/carcinogens.json",
+    "sha256": "0b11c1d14dbcbeb9e9363a893cc3d215ee3f3aee7da9bb446a6dfb5dfc1f9107",
+    "destination": "assets/carcinogens_geometry.json"
+  },
+  {
+    "original": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer/assay_transfer/record_level/v28_safety_geometry/dili.json",
+    "sha256": "5454e562695511b31571d3537e5c82203a268e8af4a581b621b808c2c24c0899",
+    "destination": "assets/dili_geometry.json"
+  }
+]

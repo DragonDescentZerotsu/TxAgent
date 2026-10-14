@@ -1,0 +1,22 @@
+{
+  "bbb_permeability_binary.v1": [
+    "impermeable",
+    "permeable",
+    "BBB permeability"
+  ],
+  "passive_bbb_interpretation_binary.v1": [
+    "low",
+    "high",
+    "passive BBB permeability"
+  ],
+  "efflux_substrate_binary.v1": [
+    "non-substrate",
+    "substrate",
+    "efflux-transporter substrate status"
+  ],
+  "efflux_inhibitor_binary.v1": [
+    "non-inhibitor",
+    "inhibitor",
+    "efflux-transporter inhibition status"
+  ]
+}

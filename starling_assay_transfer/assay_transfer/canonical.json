@@ -1,0 +1,177 @@
+{
+  "schema_version": "assay_transfer.canonical_contract.v1",
+  "common": {
+    "evidence_library_version": "v10",
+    "gold_version": "v1",
+    "source_resolution": "immutable_manifest_and_file_hashes",
+    "record_pair_scope": "exact_task_assay_bucket_and_level",
+    "context_direct_pair_scope": "same_task_gold_context_records_different_parent",
+    "training_same_parent_pairs": false,
+    "record_degree_cap_scope": "each_record_role_within_level",
+    "context_direct_degree_scope": "degree_over_two_references_per_training_query",
+    "variance_ratio_statistic": "within_to_parent_mean_variance_ratio",
+    "variance_ratio_undefined": "reject",
+    "numeric_target": {
+      "center_sd": 0.4,
+      "temperature_sd": 0.1,
+      "clipped": false
+    },
+    "record_binary_target": "empirical_from_final_numeric_training_pairs_within_level",
+    "context_calibration_policy": "retained_gold_train_plus_validation",
+    "indirect_context_splits": [
+      "train"
+    ],
+    "query_measurement_visible": false,
+    "test_values_fit_targets": false,
+    "completion_requires": [
+      "input_hashes",
+      "effective_contract_hash",
+      "split_audit",
+      "artifact_hashes",
+      "coverage",
+      "verification_receipt"
+    ]
+  },
+  "tasks": {
+    "BBB_Martins": {
+      "slug": "bbb_martins",
+      "initialization_source": "bbb_v24_1_and_context_v10_2",
+      "record_levels": [
+        "L1",
+        "L2",
+        "L3",
+        "L4"
+      ],
+      "evaluation_levels": [
+        "L1",
+        "L2",
+        "L3",
+        "L4"
+      ],
+      "record_degree_cap": 96,
+      "record_degree_caps_by_level": {},
+      "context_direct_degree_cap": 96,
+      "context_indirect_degree_cap": 96,
+      "variance_ratio_maximum": 0.5,
+      "ood_bucket_records": [
+        9,
+        11
+      ],
+      "holdout_policy": "official_gold_valid_test_parent_memberships",
+      "calibration_policy": "v24_id_numeric_train_plus_validation_binary_train_only_ood_whole_non_test_bucket",
+      "variance_gate_fit": "non_test_plus_test_gate_records",
+      "record_sampling_policy": "v24_four_pass_minority_first_with_solver_repair_and_binary_75_25",
+      "evaluation_policy": "v24_1_per_level_panels_without_l5"
+    },
+    "Bioavailability_Ma": {
+      "slug": "bioavailability_ma",
+      "initialization_source": "oral_v25_and_context_v10_2",
+      "record_levels": [
+        "L2",
+        "L3",
+        "L4",
+        "L6"
+      ],
+      "evaluation_levels": [
+        "L2",
+        "L3",
+        "L4",
+        "L6"
+      ],
+      "record_degree_cap": 6,
+      "record_degree_caps_by_level": {},
+      "context_direct_degree_cap": 48,
+      "context_indirect_degree_cap": 2,
+      "variance_ratio_maximum": 0.5,
+      "ood_bucket_records": [
+        9,
+        11
+      ],
+      "holdout_policy": "official_gold_valid_test_parent_memberships",
+      "calibration_policy": "v24_id_numeric_train_plus_validation_binary_train_only_ood_whole_non_test_bucket",
+      "variance_gate_fit": "non_test_plus_test_gate_records",
+      "record_sampling_policy": "v25_four_pass_minority_first_with_solver_repair_and_binary_75_25",
+      "evaluation_policy": "v25_500_total_queries_per_level_split_top50_id_complete_ood"
+    },
+    "Skin_Reaction": {
+      "slug": "skin_reaction",
+      "initialization_source": "v27_skin_and_context_v10_3",
+      "record_levels": [
+        "L1",
+        "L2",
+        "L3",
+        "L4",
+        "EXPOSURE"
+      ],
+      "evaluation_levels": [
+        "L2",
+        "L3"
+      ],
+      "record_degree_cap": 96,
+      "record_degree_caps_by_level": {},
+      "context_direct_degree_cap": 96,
+      "context_indirect_degree_cap": 96,
+      "variance_ratio_maximum": 0.65,
+      "ood_bucket_records": [
+        8,
+        75
+      ],
+      "holdout_policy": "task_wide_gold_v1_holdout_memberships",
+      "calibration_policy": "v27_skin_train_plus_validation_exact_bucket",
+      "variance_gate_fit": "non_test_records",
+      "record_sampling_policy": "v27_skin_balanced_parent_morgan_first_with_donor_bucket_rounds",
+      "evaluation_policy": "v27_skin_targeted_minimum_cost_ood_and_separate_id_ood_query_caps"
+    },
+    "Ames": {
+      "slug": "ames",
+      "initialization_source": "v28_safety_and_context_v10_3_safety",
+      "record_levels": null,
+      "evaluation_levels": [],
+      "record_degree_cap": 96,
+      "record_degree_caps_by_level": {},
+      "context_direct_degree_cap": 96,
+      "context_indirect_degree_cap": 96,
+      "variance_ratio_maximum": 0.65,
+      "ood_bucket_records": null,
+      "holdout_policy": "task_wide_gold_v1_valid_test_parents_gate_only",
+      "calibration_policy": "v28_train_only_exact_bucket_level",
+      "variance_gate_fit": "train_plus_gate_only_records",
+      "record_sampling_policy": "v28_limited_balanced_parent_morgan_first",
+      "evaluation_policy": "context_direct_gold_panels_only"
+    },
+    "Carcinogens": {
+      "slug": "carcinogens",
+      "initialization_source": "v28_safety_and_context_v10_3_safety",
+      "record_levels": null,
+      "evaluation_levels": [],
+      "record_degree_cap": 96,
+      "record_degree_caps_by_level": {},
+      "context_direct_degree_cap": 96,
+      "context_indirect_degree_cap": 96,
+      "variance_ratio_maximum": 0.65,
+      "ood_bucket_records": null,
+      "holdout_policy": "task_wide_gold_v1_valid_test_parents_gate_only",
+      "calibration_policy": "v28_train_only_exact_bucket_level",
+      "variance_gate_fit": "train_plus_gate_only_records",
+      "record_sampling_policy": "v28_limited_balanced_parent_morgan_first",
+      "evaluation_policy": "context_direct_gold_panels_only"
+    },
+    "DILI": {
+      "slug": "dili",
+      "initialization_source": "v28_safety_and_context_v10_3_safety",
+      "record_levels": null,
+      "evaluation_levels": [],
+      "record_degree_cap": 96,
+      "record_degree_caps_by_level": {},
+      "context_direct_degree_cap": 48,
+      "context_indirect_degree_cap": 96,
+      "variance_ratio_maximum": 0.65,
+      "ood_bucket_records": null,
+      "holdout_policy": "task_wide_gold_v1_valid_test_parents_gate_only",
+      "calibration_policy": "v28_train_only_exact_bucket_level",
+      "variance_gate_fit": "train_plus_gate_only_records",
+      "record_sampling_policy": "v28_limited_balanced_parent_morgan_first",
+      "evaluation_policy": "context_direct_gold_panels_only"
+    }
+  }
+}

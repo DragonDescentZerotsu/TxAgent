@@ -1,0 +1,28 @@
+{
+  "schema_version": "safety_v28_geometry_policy.v1",
+  "task": "Carcinogens",
+  "geometry_alerts_sha256": "f5111eae2b9523e214ae048a313de476b455d7aef0401de7941e97280b8b27ae",
+  "default_positive_transform": "log10",
+  "identity_units": [
+    "%",
+    "% lethals",
+    "revertants/plate",
+    "SCE/cell",
+    "SCEs/cell",
+    "spots/wing",
+    "grains/nucleus",
+    "µm",
+    "tail moment"
+  ],
+  "bucket_overrides": {
+    "[\"carcinogens_v1\",\"proliferation or DNA synthesis\",\"\\u00b5M\",\"__unknown__\",\"GI50 growth-inhibition assay\",\"L3\"]": {
+      "transform": "reject",
+      "rationale": "A molar concentration cannot be negative; this bucket cannot receive a valid log10 geometry."
+    },
+    "[\"carcinogens_v1\",\"proliferation or DNA synthesis\",\"\\u00b5M\",\"__unknown__\",\"antiproliferative/cytotoxicity IC50\",\"L3\"]": {
+      "transform": "reject",
+      "rationale": "A molar concentration cannot be negative; this bucket cannot receive a valid log10 geometry."
+    }
+  },
+  "review_summary": "Positive concentration, amount, and kinetic scales use log10. Percent, mutation-count, SCE, wing-spot, grain, length, and tail-moment readouts retain bounded/count/additive identity geometry. Two concentration buckets with negative values are rejected."
+}

@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "starling-assay-transfer"
+version = "1.2.0"
+description = "Canonical six-task assay-transfer construction from pinned V10 evidence and Gold-v1"
+requires-python = ">=3.11"
+dependencies = ["numpy==2.2.6", "pyarrow==23.0.0", "duckdb==1.5.3", "Jinja2==3.1.6", "rdkit==2025.9.4", "scipy==1.17.1"]
+
+[project.optional-dependencies]
+upload = ["huggingface-hub==0.36.2"]
+
+[project.scripts]
+assay-transfer-pin = "assay_transfer.build:main"
+assay-transfer-record = "assay_transfer.build_record:main"
+assay-transfer-context = "assay_transfer.build_context:main"
+
+[tool.setuptools.packages.find]
+include = ["assay_transfer*"]
+
+[tool.setuptools.package-data]
+assay_transfer = ["canonical.json", "extraction.json", "assets/*.json", "templates/*.jinja"]

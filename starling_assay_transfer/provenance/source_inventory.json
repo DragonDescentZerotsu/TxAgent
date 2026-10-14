@@ -1,0 +1,202 @@
+{
+  "copied_at_utc": "2026-10-14T14:03:02.393094+00:00",
+  "files": {
+    "README.md": {
+      "bytes": 4299,
+      "sha256": "5a994137fb40a96c5fffd3674012f3da96f8077a9a805e89627ed46258035f14"
+    },
+    "assay_transfer/__init__.py": {
+      "bytes": 71,
+      "sha256": "b6c6881272d01b7433fc31e31b4623c00048dc71be9a453dcf1ef157a494eb58"
+    },
+    "assay_transfer/assets/ames_geometry.json": {
+      "bytes": 981,
+      "sha256": "37dd118cf576292b1ef45d673df8b397871848e0bc95c40709309872e348912b"
+    },
+    "assay_transfer/assets/bbb_display.json": {
+      "bytes": 443,
+      "sha256": "ebdd216a90daf48bde301ef63ee91c5dbfbf730aa12339b83871da7ec281cca6"
+    },
+    "assay_transfer/assets/bbb_geometry.json": {
+      "bytes": 15938,
+      "sha256": "27cfa95622622d9e4d4998c42871a91377875568403f52309e24c759d1c20b88"
+    },
+    "assay_transfer/assets/carcinogens_geometry.json": {
+      "bytes": 1276,
+      "sha256": "0b11c1d14dbcbeb9e9363a893cc3d215ee3f3aee7da9bb446a6dfb5dfc1f9107"
+    },
+    "assay_transfer/assets/dili_geometry.json": {
+      "bytes": 481,
+      "sha256": "5454e562695511b31571d3537e5c82203a268e8af4a581b621b808c2c24c0899"
+    },
+    "assay_transfer/assets/oral_geometry.json": {
+      "bytes": 310858,
+      "sha256": "01a01901f2b96ed6897fd08cbd84e4affc3cd8725e7dcf68377eca7db9bacb67"
+    },
+    "assay_transfer/assets/prompt_projection.json": {
+      "bytes": 5446,
+      "sha256": "404d75c26b9ebd228d6459f6c57621701645eb5aed89b6d94dd03f261c40eceb"
+    },
+    "assay_transfer/assets/release_schema.json": {
+      "bytes": 10093,
+      "sha256": "1327c362bca60f06b3924746e7d03ca52df6a05379f6b890a5dff0a4ce9ab4af"
+    },
+    "assay_transfer/assets/scientific_policies.json": {
+      "bytes": 11471,
+      "sha256": "768a51c4d2d0e5ef05c8548a0ec7f7ccc18cbbf3adc208147015eeadeb327fcb"
+    },
+    "assay_transfer/assets/skin_geometry.json": {
+      "bytes": 2238,
+      "sha256": "4a46a506a7a8b2f8eac7b42d44a4a5b86f3c8de3ad2345b05e0dec78c060ccef"
+    },
+    "assay_transfer/augmentation.py": {
+      "bytes": 8457,
+      "sha256": "f77a60075991d30eb9aff36989bd40abbc96c3959a8cf62a3c9413538b1725ad"
+    },
+    "assay_transfer/build.py": {
+      "bytes": 6164,
+      "sha256": "ec62e0fb4c506eec887708952baa865d37277515144b3ec732e2a3957f82051a"
+    },
+    "assay_transfer/build_context.py": {
+      "bytes": 2788,
+      "sha256": "c64c68524fee1b88299835ddf70c38d761079a34f74e49c1772d05bef16288a4"
+    },
+    "assay_transfer/build_record.py": {
+      "bytes": 2646,
+      "sha256": "c9a699c1d5e6ac6706136267ea35b0aa528b65204a1ac9502d0497b2639f9334"
+    },
+    "assay_transfer/canonical.json": {
+      "bytes": 6351,
+      "sha256": "b9b584fe8ea35f4db3401447eb68f4d061afa530b90959424331e8734ee9e418"
+    },
+    "assay_transfer/canonical.py": {
+      "bytes": 8727,
+      "sha256": "ff001c960db31a408e35d17de0f573380db3990cc618b6c2944fd818094856f2"
+    },
+    "assay_transfer/chemistry.py": {
+      "bytes": 3976,
+      "sha256": "d54029df6e1d6368d0d31caf499306bef77e15988ce125b996607880a6fcc5a6"
+    },
+    "assay_transfer/dataset.py": {
+      "bytes": 16881,
+      "sha256": "a4eaef2229f7e90d867cb06aa8f800454c79410c025f16f7d48a12faeadd9241"
+    },
+    "assay_transfer/evaluation.py": {
+      "bytes": 13485,
+      "sha256": "ce621f07747f9aee0a841b0461d9ca27a4be6c345e43b03df3f7da1ec990783d"
+    },
+    "assay_transfer/extraction.json": {
+      "bytes": 4140,
+      "sha256": "4d15a66db89519ae56f68813be8413d47066dfde7e9c470eb3757ee8308db639"
+    },
+    "assay_transfer/filtering.py": {
+      "bytes": 19286,
+      "sha256": "0d6e6cff779321fe3777e01d33d990200be2c78084d9e8e176e75c2e421ddcf2"
+    },
+    "assay_transfer/inputs.py": {
+      "bytes": 9383,
+      "sha256": "0ca63afe8ddac3999c388d01260e18fe889e370c732bf9e82d25361486c4dbe5"
+    },
+    "assay_transfer/sampling/__init__.py": {
+      "bytes": 12056,
+      "sha256": "de9ec7bd93b195f996efb0fe7adc0e5f61d3a5f67c05fd62cadf82f8d9a45194"
+    },
+    "assay_transfer/sampling/balance.py": {
+      "bytes": 2876,
+      "sha256": "e556f302f0cf2ff36e8a766544ca1804ece581e2d152e42cc8f95d4ad4cf34a4"
+    },
+    "assay_transfer/sampling/bbb.py": {
+      "bytes": 10099,
+      "sha256": "12c83ec625c6a3c758c9e6c8685d5db018ac6434f80bbb0fad1ab05d6d6df658"
+    },
+    "assay_transfer/sampling/bbb_repair.py": {
+      "bytes": 12452,
+      "sha256": "de99cb06c90ccc3f0beab39d9c7f166765dfaa3197fd6e2945894a513198af6f"
+    },
+    "assay_transfer/sampling/bbb_trim.py": {
+      "bytes": 1246,
+      "sha256": "ee815ed21272fafce2fc11f0e8b8b3c8b5c86c1408ef3b3454bb2780d3a13cb8"
+    },
+    "assay_transfer/sampling/oral.py": {
+      "bytes": 10039,
+      "sha256": "30e8ca16916fc6c9151f15fab4d098c104470ddce42536ebdd81e936d86e6ca4"
+    },
+    "assay_transfer/sampling/oral_repair.py": {
+      "bytes": 12123,
+      "sha256": "2f019086f032e3c31dc52c75c3919f8a014553ab978ad5c6fd17fbf0a08f94aa"
+    },
+    "assay_transfer/sampling/oral_trim.py": {
+      "bytes": 1076,
+      "sha256": "5a3b5671eac2f8544a1fdd22417de6d56b3cf9510eaa3ec3e099ea962c110c29"
+    },
+    "assay_transfer/sampling/safety.py": {
+      "bytes": 5147,
+      "sha256": "ff319f5913c3b7180abac277c87cf90751bb555d492debdf5ab44e412e5f8204"
+    },
+    "assay_transfer/split.py": {
+      "bytes": 2249,
+      "sha256": "7de89b397574ec7aed51aa3ae066856d46858cd2d2a2932bdb5d21a0a8bbebfe"
+    },
+    "assay_transfer/storage.py": {
+      "bytes": 3969,
+      "sha256": "c2bfb05d3c1c7a9cdf718111e810e5de6fa5cbb3fa202df46047f716d614bd53"
+    },
+    "assay_transfer/targets.py": {
+      "bytes": 4423,
+      "sha256": "76c17e00542e8c18ffbf5d952ac44d947a8441c3e04dab09666f100f87745e70"
+    },
+    "assay_transfer/templates/context.jinja": {
+      "bytes": 394,
+      "sha256": "33e48f919237a6aeaff28f4c77c6dd9635e54bf859c990af4ad0323952ab05f1"
+    },
+    "assay_transfer/templates/record.jinja": {
+      "bytes": 575,
+      "sha256": "435d70f963d9b55ac9b13da6f8c32af5414ee402d2af3af08fc5be01c4c7203d"
+    },
+    "assay_transfer/transporters.py": {
+      "bytes": 19821,
+      "sha256": "e1f8a00f3bd94ea99eb973dee8634bfa43d2732e16a9959424f7eb5c66f03fdb"
+    },
+    "assay_transfer/verify.py": {
+      "bytes": 9143,
+      "sha256": "418ead19e9503a94f981b5598cd8ff9f7073bd90d2a810511b438f3b0d788aaa"
+    },
+    "docs/canonical_contract.md": {
+      "bytes": 10258,
+      "sha256": "7e5a880ed8cbe14b99f22055cfb3bcc9ae142f9b6520056a7129eb98e46884e6"
+    },
+    "docs/filesystem.md": {
+      "bytes": 2471,
+      "sha256": "9982555abf579da6d3ba164bac11779219ebfe66a9628d5a4044b4a4dc5e5087"
+    },
+    "docs/migration.md": {
+      "bytes": 2771,
+      "sha256": "a0eab4bddae451bada4aa9cc3cac4a9c4ef7ef8eca4ebc448dea8d03305b889a"
+    },
+    "docs/verification.md": {
+      "bytes": 7118,
+      "sha256": "af3504cdb3e6fc9c9df10a04295a4a502b209fc0b33decc7604e4594a42e388a"
+    },
+    "pyproject.toml": {
+      "bytes": 841,
+      "sha256": "b4aeaeea0cbaaf5761f924e6cd2c347fb391ff177dfa9154c86e0eb52cf3f441"
+    },
+    "tests/test_builders.py": {
+      "bytes": 16083,
+      "sha256": "a3e9208b72908cdb8436b15ffd08815488190051c5df6d7fae750b1ce9525b83"
+    },
+    "tests/test_contract.py": {
+      "bytes": 4786,
+      "sha256": "3276dd8fd2f130d391dec50753c41dba96366d551de07fc2379a1cb744b4fd25"
+    },
+    "tests/test_science.py": {
+      "bytes": 4727,
+      "sha256": "d5746101b60765839b5de69b79cf678352d416c6bb988bed5c39d4a87937111b"
+    }
+  },
+  "schema_version": "starling_assay_transfer.source_copy.v1",
+  "scientific_inputs": "../data; external to this package, already in TxAgent",
+  "source_commit": "717d529d268d853eee2570d8fec239dec7d12d46",
+  "source_root": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer",
+  "source_tree": "working_files_including_uncommitted_changes"
+}

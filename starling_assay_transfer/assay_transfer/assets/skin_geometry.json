@@ -1,0 +1,21 @@
+{
+  "schema_version": "skin_v27_geometry_review.v1",
+  "gate": {
+    "minimum_records": 20,
+    "outer_tukey_multiplier": 3.0,
+    "raw_sd_inflation_minimum": 2.0
+  },
+  "decisions": {
+    "[\"direct_skin_reaction\",\"allergic_contact_dermatitis_contact_allergy\",\"fraction\",\"case report\",\"human\",\"__unknown__\",\"L1\"]": {"transform": "identity", "reason": "bounded fraction"},
+    "[\"direct_skin_reaction\",\"sensitization\",\"fraction\",\"prick test\",\"human\",\"__unknown__\",\"L1\"]": {"transform": "identity", "reason": "bounded fraction"},
+    "[\"direct_skin_reaction\",\"allergic_contact_dermatitis_contact_allergy\",\"%\",\"human patch test\",\"human\",\"__unknown__\",\"L1\"]": {"transform": "identity", "reason": "bounded percentage"},
+    "[\"direct_skin_reaction\",\"sensitization\",\"fraction\",\"maximization test\",\"human\",\"__unknown__\",\"L1\"]": {"transform": "identity", "reason": "bounded fraction"},
+    "[\"phototoxicity_irritation_local_damage\",\"phototoxicity_or_photosensitivity\",\"MPE\",\"3t3 nru\",\"in vitro cells\",\"__unknown__\",\"L4\"]": {"transform": "identity", "reason": "signed MPE scale"},
+    "[\"skin_exposure\",\"dermal_absorption\",\"%\",\"calculated estimate\",\"human\",\"EXPOSURE\"]": {"transform": "identity", "reason": "percentage scale"},
+    "[\"skin_exposure\",\"cumulative_permeated_amount\",\"%\",\"in vitro diffusion cell\",\"human\",\"EXPOSURE\"]": {"transform": "identity", "reason": "percentage scale"},
+    "[\"skin_exposure\",\"cumulative_permeated_amount\",\"%\",\"in vitro diffusion cell\",\"rat\",\"EXPOSURE\"]": {"transform": "identity", "reason": "reported percentage scale"},
+    "[\"skin_exposure\",\"cumulative_permeated_amount\",\"%\",\"ex vivo\",\"__unknown__\",\"EXPOSURE\"]": {"transform": "identity", "reason": "percentage scale"},
+    "[\"sensitization_aop\",\"clinical_sensitization\",\"patients\",\"adverse_outcome_skin_sensitization\",\"human patch test\",\"human\",\"L2\"]": {"transform": "identity", "reason": "patient count includes zero"},
+    "[\"sensitization_aop\",\"clinical_sensitization\",\"%\",\"adverse_outcome_skin_sensitization\",\"human patch test\",\"human\",\"L2\"]": {"transform": "identity", "reason": "bounded percentage"}
+  }
+}

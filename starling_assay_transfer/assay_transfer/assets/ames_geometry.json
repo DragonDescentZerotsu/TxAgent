@@ -1,0 +1,22 @@
+{
+  "schema_version": "safety_v28_geometry_policy.v1",
+  "task": "Ames",
+  "geometry_alerts_sha256": "352a44e5cde7c184f43ab7398b70d491329b761053c7897158390d954ac407a9",
+  "default_positive_transform": "log10",
+  "identity_units": [
+    "%",
+    "fraction of DNA eluted",
+    "Olive tail moment",
+    "tail moment",
+    "µm",
+    "grains per nucleus",
+    "net nuclear grains"
+  ],
+  "bucket_overrides": {
+    "[\"mutagenicity_mechanism\",\"ros_or_redox_assay\",\"\\u00b5M\",\"__unknown__\",\"DPPH radical scavenging assay\",\"L5\"]": {
+      "transform": "reject",
+      "rationale": "The positive concentration scale remains beyond the 2.0 tail-inflation gate after log10 transformation."
+    }
+  },
+  "review_summary": "Positive concentration, amount, rate, and adduct scales use log10. Bounded percentages/fractions and additive or signed physical readouts retain identity geometry. One DPPH concentration bucket is rejected because log10 does not repair its tail geometry."
+}

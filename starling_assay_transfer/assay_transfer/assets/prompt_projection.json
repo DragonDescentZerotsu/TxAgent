@@ -1,0 +1,107 @@
+{
+  "schema_version": "assay_transfer_prompt_projection.v19",
+  "labels": {
+    "endpoint_name": "Endpoint",
+    "measurement_text": "Known reported measurement",
+    "unit_text": "Reported unit",
+    "support_text": "Supporting evidence",
+    "extra_details": "Additional details",
+    "qualifying_conditions": "Qualifying conditions",
+    "needs_more_context": "Needs more context",
+    "statistic_type": "Statistic type",
+    "oral_dose": "Oral dose",
+    "study_context": "Study context",
+    "comparator_exposure": "Comparator exposure",
+    "assay_system": "Assay system",
+    "condition_medium": "Condition or medium",
+    "biological_context": "Biological context",
+    "formulation_or_solid_form": "Formulation or solid form",
+    "transporter_or_enzyme": "Transporter or enzyme",
+    "intestinal_site": "Intestinal site",
+    "substrate_status": "Substrate status",
+    "species": "Species",
+    "molecular_form": "Molecular form",
+    "enzyme_or_pathway": "Enzyme or pathway",
+    "assay_type": "Assay type",
+    "biological_system": "Biological system",
+    "metric_uncertainty": "Metric uncertainty",
+    "passive_bbb_interpretation": "Passive BBB interpretation",
+    "transporter_identifier": "Transporter identifier",
+    "perturbation": "Perturbation",
+    "evidence_type": "Evidence type",
+    "interaction_conclusion": "Interaction conclusion",
+    "mediator_name": "Mediator name",
+    "mediator_identifier": "Mediator identifier",
+    "transport_mechanism": "Transport mechanism",
+    "evidence_basis": "Evidence basis",
+    "assay_model": "Assay model",
+    "aop_event": "AOP event",
+    "experimental_conditions": "Experimental conditions",
+    "result_label": "Result label",
+    "evidence_system": "Evidence system",
+    "assay_method": "Assay method",
+    "light_conditions": "Light conditions",
+    "study_design": "Study design",
+    "skin_source": "Skin source",
+    "formulation_vehicle": "Formulation or vehicle",
+    "exposure_time": "Exposure time",
+    "assay_or_test": "Assay or test",
+    "dose_or_concentration": "Dose or concentration",
+    "species_or_population": "Species or population",
+    "outcome_label": "Outcome label",
+    "positive_count": "Positive count",
+    "total_tested": "Total tested"
+  },
+  "tasks": {
+    "bioavailability_ma": {
+      "oral_exposure": {
+        "query": ["endpoint_name", "unit_text", "statistic_type", "oral_dose", "study_context", "qualifying_conditions"],
+        "known_only": ["measurement_text", "comparator_exposure", "support_text", "extra_details"]
+      },
+      "fa": {
+        "query": ["endpoint_name", "unit_text", "assay_system", "condition_medium", "biological_context", "formulation_or_solid_form", "qualifying_conditions"],
+        "known_only": ["measurement_text", "support_text", "extra_details"]
+      },
+      "fg": {
+        "query": ["endpoint_name", "unit_text", "transporter_or_enzyme", "assay_system", "intestinal_site", "qualifying_conditions"],
+        "known_only": ["measurement_text", "substrate_status", "support_text", "extra_details"]
+      },
+      "fh": {
+        "query": ["endpoint_name", "unit_text", "assay_system", "species", "molecular_form", "enzyme_or_pathway", "qualifying_conditions"],
+        "known_only": ["measurement_text", "support_text", "extra_details"]
+      }
+    },
+    "bbb_martins": {
+      "passive_permeability": {
+        "query": ["endpoint_name", "unit_text", "assay_type", "biological_system", "metric_uncertainty", "qualifying_conditions", "needs_more_context"],
+        "known_only": ["measurement_text", "passive_bbb_interpretation", "support_text", "extra_details"]
+      },
+      "efflux_transport": {
+        "query": ["endpoint_name", "unit_text", "transporter_identifier", "assay_system", "perturbation", "qualifying_conditions", "needs_more_context"],
+        "known_only": ["measurement_text", "evidence_type", "interaction_conclusion", "support_text", "extra_details"]
+      },
+      "influx_transport": {
+        "query": ["endpoint_name", "unit_text", "mediator_name", "mediator_identifier", "transport_mechanism", "evidence_basis", "assay_model", "qualifying_conditions", "needs_more_context"],
+        "known_only": ["measurement_text", "support_text", "extra_details"]
+      }
+    },
+    "skin_reaction": {
+      "direct_skin_reaction": {
+        "query": ["endpoint_name", "unit_text", "assay_or_test", "dose_or_concentration", "species_or_population"],
+        "known_only": ["measurement_text", "outcome_label", "positive_count", "total_tested", "support_text", "extra_details"]
+      },
+      "sensitization_aop": {
+        "query": ["endpoint_name", "unit_text", "assay_type", "aop_event", "experimental_conditions", "qualifying_conditions", "needs_more_context"],
+        "known_only": ["measurement_text", "result_label", "support_text", "extra_details"]
+      },
+      "phototoxicity_irritation_local_damage": {
+        "query": ["endpoint_name", "unit_text", "evidence_system", "assay_method", "experimental_conditions", "light_conditions", "qualifying_conditions", "needs_more_context"],
+        "known_only": ["measurement_text", "result_label", "support_text", "extra_details"]
+      },
+      "skin_exposure": {
+        "query": ["endpoint_name", "unit_text", "study_design", "skin_source", "formulation_vehicle", "exposure_time", "qualifying_conditions", "needs_more_context"],
+        "known_only": ["measurement_text", "support_text", "extra_details"]
+      }
+    }
+  }
+}

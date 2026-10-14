@@ -1,0 +1,9 @@
+{
+  "schema_version": "safety_v28_geometry_policy.v1",
+  "task": "DILI",
+  "geometry_alerts_sha256": "f4cda01cf6ec4974797a0ce1cefb9fe259b31b35f0b2b2ef208a5f9ec9f0276a",
+  "default_positive_transform": "log10",
+  "identity_units": [],
+  "bucket_overrides": {},
+  "review_summary": "All 34 alerts are strictly positive concentration, activity, amount, or ratio scales. Their multiplicative geometry is represented in log10 space, and every post-transform tail ratio is below 2.0."
+}

@@ -1,0 +1,17 @@
+{{ description }}
+
+Molecule A
+<SMILES>{{ a_smiles }}</SMILES>
+{% if a_context %}Reported context:
+{{ a_context }}
+{% endif %}{{ known_label }}: {{ known_value }}
+
+Molecule B
+<SMILES>{{ b_smiles }}</SMILES>
+{% if b_context %}Reported context:
+{{ b_context }}
+{% endif %}
+Does the known {{ property_name }} value transfer from Molecule A to Molecule B?
+(A) Transfer
+(B) Does not transfer
+Answer:
