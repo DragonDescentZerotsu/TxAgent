@@ -15,7 +15,7 @@ from data.processing.evidence_library.shared.v1.normalization.measurements impor
     separate_measurement_unit,
     standardize_measurement_pair,
 )
-from tools.chembl_tool.common.units import canonicalize_unit, clean_unit, units_compatible
+from data.processing.evidence_library.units import canonicalize_unit, clean_unit, units_compatible
 from data.processing.evidence_library.versions.v8.tasks.bbb_martins.starling_measurement_semantics import (
     load_measurement_semantics_policy,
     resolve_measurement_semantics,

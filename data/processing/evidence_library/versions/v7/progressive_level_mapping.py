@@ -95,11 +95,7 @@ def build_mapping(
             DIRECT_MAPPING_INPUTS,
             build_direct_record_mapping,
         )
-        from tools.chembl_tool.tasks.bbb_martins.source_family_purity import (
-            BBBSourceFamilyClassifier,
-            PURITY_VERSION,
-            load_near_direct_reviews,
-        )
+        from data.processing.evidence_library.bbb_source_family_purity import BBBSourceFamilyClassifier, PURITY_VERSION, load_near_direct_reviews
         direct_inputs = DIRECT_MAPPING_INPUTS
         direct_rows = build_direct_record_mapping(records)
         current_votes = {
@@ -120,11 +116,7 @@ def build_mapping(
             DIRECT_MAPPING_INPUTS,
             build_direct_record_mapping,
         )
-        from tools.chembl_tool.tasks.bioavailability_ma.source_family_purity import (
-            VOTE_PURITY_VERSION,
-            upstream_record_key,
-            vote_pure_family_move,
-        )
+        from data.processing.evidence_library.oral_source_family_purity import VOTE_PURITY_VERSION, upstream_record_key, vote_pure_family_move
 
         direct_inputs = DIRECT_MAPPING_INPUTS
         direct_rows = build_direct_record_mapping(records)
@@ -299,9 +291,7 @@ def build_mapping(
     write_parquet(output_path, mapped_rows)
     input_paths = [source, *direct_inputs]
     if task_id == "bbb_martins":
-        from tools.chembl_tool.tasks.bbb_martins.source_family_purity import (
-            DEFAULT_REVIEW_LEDGER,
-        )
+        from data.processing.evidence_library.bbb_source_family_purity import DEFAULT_REVIEW_LEDGER
 
         input_paths.append(DEFAULT_REVIEW_LEDGER)
     manifest = {

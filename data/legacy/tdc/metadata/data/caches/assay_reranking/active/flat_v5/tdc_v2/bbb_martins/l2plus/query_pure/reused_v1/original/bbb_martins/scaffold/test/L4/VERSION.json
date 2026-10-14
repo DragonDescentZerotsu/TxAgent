@@ -1,0 +1,2504 @@
+{
+  "capacity": 100,
+  "content_id": "8fcec4b6df4c924d54c7d8655be99d0be36c43de05a7d4aa10a3372caf100e9b",
+  "database": "rankings.sqlite3",
+  "database_sha256": "cbdb6d25f5d9f659a3454120df5ab6e6be062c0c29436c442b021d20f1577cac",
+  "inputs": {
+    "evidence_manifest_sha256": "0481e9ab3dc262243cedc65dd76eb5828f22dc52195e9f586b1eb75665f1eb15",
+    "query_sha256": "f1f8560a0aefb332f770966b5581f9796ef7107f03167fbb935d69dd79bca948"
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v2"
+  },
+  "level": "L4",
+  "model": {
+    "dataset": "jiosephlee/assay-transfer-record-level-v24-1-bbb-martins-l4-intern",
+    "dataset_revision": "e208d6f50982333c0df0f40291d08bd181e5a1db",
+    "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v24-1-bbb-martins-l4-best",
+    "revision": "595f5958d30512bd29e21ead4e130a5c44545d44"
+  },
+  "neighbor_identity_policy": "parent_disjoint",
+  "parent_capacity": 100,
+  "parent_universe_source": "level_morgan_100",
+  "pool": "all",
+  "query_count": 406,
+  "query_counts": {
+    "TDC_BBB_MARTINS_018312AF270FC5391B01": {
+      "candidate_parents": 100,
+      "candidate_records": 2745,
+      "missing_scores": 0,
+      "scored_records": 2745
+    },
+    "TDC_BBB_MARTINS_01D1DAD53B1DE624A06B": {
+      "candidate_parents": 100,
+      "candidate_records": 3454,
+      "missing_scores": 0,
+      "scored_records": 3454
+    },
+    "TDC_BBB_MARTINS_02268B1DDF97A89493E7": {
+      "candidate_parents": 100,
+      "candidate_records": 1063,
+      "missing_scores": 0,
+      "scored_records": 1063
+    },
+    "TDC_BBB_MARTINS_039310549004CB7B6138": {
+      "candidate_parents": 100,
+      "candidate_records": 1144,
+      "missing_scores": 0,
+      "scored_records": 1144
+    },
+    "TDC_BBB_MARTINS_046A20CEDA8EDD0C0474": {
+      "candidate_parents": 100,
+      "candidate_records": 687,
+      "missing_scores": 0,
+      "scored_records": 687
+    },
+    "TDC_BBB_MARTINS_04BD9BA4E17C5C78E86F": {
+      "candidate_parents": 100,
+      "candidate_records": 756,
+      "missing_scores": 0,
+      "scored_records": 756
+    },
+    "TDC_BBB_MARTINS_05A4AC1CE75C06097770": {
+      "candidate_parents": 100,
+      "candidate_records": 1276,
+      "missing_scores": 0,
+      "scored_records": 1276
+    },
+    "TDC_BBB_MARTINS_07BEB0DECBE7AE971CD6": {
+      "candidate_parents": 100,
+      "candidate_records": 1412,
+      "missing_scores": 0,
+      "scored_records": 1412
+    },
+    "TDC_BBB_MARTINS_09F69C39528C1A3421A4": {
+      "candidate_parents": 100,
+      "candidate_records": 1070,
+      "missing_scores": 0,
+      "scored_records": 1070
+    },
+    "TDC_BBB_MARTINS_0A59F67933EE31223DC4": {
+      "candidate_parents": 100,
+      "candidate_records": 1444,
+      "missing_scores": 0,
+      "scored_records": 1444
+    },
+    "TDC_BBB_MARTINS_0AB2A8D83CEBB6B6ECA6": {
+      "candidate_parents": 100,
+      "candidate_records": 1351,
+      "missing_scores": 0,
+      "scored_records": 1351
+    },
+    "TDC_BBB_MARTINS_0AEFBA59956579914983": {
+      "candidate_parents": 100,
+      "candidate_records": 954,
+      "missing_scores": 0,
+      "scored_records": 954
+    },
+    "TDC_BBB_MARTINS_0B6D7B96D38848C24F79": {
+      "candidate_parents": 100,
+      "candidate_records": 988,
+      "missing_scores": 0,
+      "scored_records": 988
+    },
+    "TDC_BBB_MARTINS_0C774E09EAD5F0AF6421": {
+      "candidate_parents": 100,
+      "candidate_records": 636,
+      "missing_scores": 0,
+      "scored_records": 636
+    },
+    "TDC_BBB_MARTINS_0C88C345FDFD59E0726E": {
+      "candidate_parents": 100,
+      "candidate_records": 500,
+      "missing_scores": 0,
+      "scored_records": 500
+    },
+    "TDC_BBB_MARTINS_0CE383CD3C603EBC333D": {
+      "candidate_parents": 100,
+      "candidate_records": 891,
+      "missing_scores": 0,
+      "scored_records": 891
+    },
+    "TDC_BBB_MARTINS_0DF1E0E0A9A0795B4AF0": {
+      "candidate_parents": 100,
+      "candidate_records": 1838,
+      "missing_scores": 0,
+      "scored_records": 1838
+    },
+    "TDC_BBB_MARTINS_0EBB4EB19C2B8AAA082F": {
+      "candidate_parents": 100,
+      "candidate_records": 531,
+      "missing_scores": 0,
+      "scored_records": 531
+    },
+    "TDC_BBB_MARTINS_0F4F83C1AF83A582A140": {
+      "candidate_parents": 100,
+      "candidate_records": 355,
+      "missing_scores": 0,
+      "scored_records": 355
+    },
+    "TDC_BBB_MARTINS_0F7EEF5CEB95692AECC3": {
+      "candidate_parents": 100,
+      "candidate_records": 640,
+      "missing_scores": 0,
+      "scored_records": 640
+    },
+    "TDC_BBB_MARTINS_0F908F7232FCC1816E05": {
+      "candidate_parents": 100,
+      "candidate_records": 1648,
+      "missing_scores": 0,
+      "scored_records": 1648
+    },
+    "TDC_BBB_MARTINS_11A76656346FCE4B1161": {
+      "candidate_parents": 100,
+      "candidate_records": 410,
+      "missing_scores": 0,
+      "scored_records": 410
+    },
+    "TDC_BBB_MARTINS_1201E318145B2D5089C0": {
+      "candidate_parents": 100,
+      "candidate_records": 780,
+      "missing_scores": 0,
+      "scored_records": 780
+    },
+    "TDC_BBB_MARTINS_133102A7DD238196FEFE": {
+      "candidate_parents": 100,
+      "candidate_records": 958,
+      "missing_scores": 0,
+      "scored_records": 958
+    },
+    "TDC_BBB_MARTINS_13877255E01EB0B331D0": {
+      "candidate_parents": 100,
+      "candidate_records": 2369,
+      "missing_scores": 0,
+      "scored_records": 2369
+    },
+    "TDC_BBB_MARTINS_13A16191150ADA2E22AB": {
+      "candidate_parents": 100,
+      "candidate_records": 1437,
+      "missing_scores": 0,
+      "scored_records": 1437
+    },
+    "TDC_BBB_MARTINS_14F0CE826ACEC4F3EC3D": {
+      "candidate_parents": 100,
+      "candidate_records": 758,
+      "missing_scores": 0,
+      "scored_records": 758
+    },
+    "TDC_BBB_MARTINS_153BC5D62B6BB2B6A446": {
+      "candidate_parents": 100,
+      "candidate_records": 385,
+      "missing_scores": 0,
+      "scored_records": 385
+    },
+    "TDC_BBB_MARTINS_1623437A59C7187B30DA": {
+      "candidate_parents": 100,
+      "candidate_records": 1432,
+      "missing_scores": 0,
+      "scored_records": 1432
+    },
+    "TDC_BBB_MARTINS_17455025B1133E95445F": {
+      "candidate_parents": 100,
+      "candidate_records": 814,
+      "missing_scores": 0,
+      "scored_records": 814
+    },
+    "TDC_BBB_MARTINS_1787F94AF46F7FAAC50C": {
+      "candidate_parents": 100,
+      "candidate_records": 1152,
+      "missing_scores": 0,
+      "scored_records": 1152
+    },
+    "TDC_BBB_MARTINS_17F8CAC224C93A159DE3": {
+      "candidate_parents": 100,
+      "candidate_records": 1291,
+      "missing_scores": 0,
+      "scored_records": 1291
+    },
+    "TDC_BBB_MARTINS_17FF6AA869EB336C6EF9": {
+      "candidate_parents": 100,
+      "candidate_records": 2835,
+      "missing_scores": 0,
+      "scored_records": 2835
+    },
+    "TDC_BBB_MARTINS_184F3130D4EF264FEC02": {
+      "candidate_parents": 100,
+      "candidate_records": 585,
+      "missing_scores": 0,
+      "scored_records": 585
+    },
+    "TDC_BBB_MARTINS_196CD83425B4CEAB21FD": {
+      "candidate_parents": 100,
+      "candidate_records": 1690,
+      "missing_scores": 0,
+      "scored_records": 1690
+    },
+    "TDC_BBB_MARTINS_199718BE0A11C0241544": {
+      "candidate_parents": 100,
+      "candidate_records": 965,
+      "missing_scores": 0,
+      "scored_records": 965
+    },
+    "TDC_BBB_MARTINS_19E53303AD03B470910D": {
+      "candidate_parents": 100,
+      "candidate_records": 4385,
+      "missing_scores": 0,
+      "scored_records": 4385
+    },
+    "TDC_BBB_MARTINS_19FD35F6E1F73D08579D": {
+      "candidate_parents": 100,
+      "candidate_records": 1064,
+      "missing_scores": 0,
+      "scored_records": 1064
+    },
+    "TDC_BBB_MARTINS_1AD5035BB8E82A9CF422": {
+      "candidate_parents": 100,
+      "candidate_records": 1075,
+      "missing_scores": 0,
+      "scored_records": 1075
+    },
+    "TDC_BBB_MARTINS_1B29F53BBF70E287BDFA": {
+      "candidate_parents": 100,
+      "candidate_records": 2905,
+      "missing_scores": 0,
+      "scored_records": 2905
+    },
+    "TDC_BBB_MARTINS_1CDF038A286A151D44C5": {
+      "candidate_parents": 100,
+      "candidate_records": 4682,
+      "missing_scores": 0,
+      "scored_records": 4682
+    },
+    "TDC_BBB_MARTINS_1DD7AF11BFA497053C37": {
+      "candidate_parents": 100,
+      "candidate_records": 3373,
+      "missing_scores": 0,
+      "scored_records": 3373
+    },
+    "TDC_BBB_MARTINS_1E43D67F9223C3433ED6": {
+      "candidate_parents": 100,
+      "candidate_records": 1004,
+      "missing_scores": 0,
+      "scored_records": 1004
+    },
+    "TDC_BBB_MARTINS_1E67CFAC944661B605D9": {
+      "candidate_parents": 100,
+      "candidate_records": 2410,
+      "missing_scores": 0,
+      "scored_records": 2410
+    },
+    "TDC_BBB_MARTINS_1F09FE7E3BDEC72531B4": {
+      "candidate_parents": 100,
+      "candidate_records": 1647,
+      "missing_scores": 0,
+      "scored_records": 1647
+    },
+    "TDC_BBB_MARTINS_1FCCFE30AB4D455300FB": {
+      "candidate_parents": 100,
+      "candidate_records": 2553,
+      "missing_scores": 0,
+      "scored_records": 2553
+    },
+    "TDC_BBB_MARTINS_20C783CFC39024046D7C": {
+      "candidate_parents": 100,
+      "candidate_records": 2648,
+      "missing_scores": 0,
+      "scored_records": 2648
+    },
+    "TDC_BBB_MARTINS_20F02269AF56C72030DF": {
+      "candidate_parents": 100,
+      "candidate_records": 1730,
+      "missing_scores": 0,
+      "scored_records": 1730
+    },
+    "TDC_BBB_MARTINS_2196BF4B251EFA8B32BA": {
+      "candidate_parents": 100,
+      "candidate_records": 2055,
+      "missing_scores": 2055,
+      "scored_records": 0
+    },
+    "TDC_BBB_MARTINS_21DA7C0A0C9E78DFF2F1": {
+      "candidate_parents": 100,
+      "candidate_records": 4850,
+      "missing_scores": 0,
+      "scored_records": 4850
+    },
+    "TDC_BBB_MARTINS_22113A1D528121148C01": {
+      "candidate_parents": 100,
+      "candidate_records": 1492,
+      "missing_scores": 0,
+      "scored_records": 1492
+    },
+    "TDC_BBB_MARTINS_2281ECF60100F96A3E15": {
+      "candidate_parents": 100,
+      "candidate_records": 587,
+      "missing_scores": 0,
+      "scored_records": 587
+    },
+    "TDC_BBB_MARTINS_2293E2714A3F38D3D765": {
+      "candidate_parents": 100,
+      "candidate_records": 1371,
+      "missing_scores": 0,
+      "scored_records": 1371
+    },
+    "TDC_BBB_MARTINS_23C990A3B9A806C270B8": {
+      "candidate_parents": 100,
+      "candidate_records": 1330,
+      "missing_scores": 0,
+      "scored_records": 1330
+    },
+    "TDC_BBB_MARTINS_247EE82DF17152DDEBAD": {
+      "candidate_parents": 100,
+      "candidate_records": 260,
+      "missing_scores": 0,
+      "scored_records": 260
+    },
+    "TDC_BBB_MARTINS_24B7A7EECB170A7F3086": {
+      "candidate_parents": 100,
+      "candidate_records": 1590,
+      "missing_scores": 0,
+      "scored_records": 1590
+    },
+    "TDC_BBB_MARTINS_2506B3A3190B5781E1AA": {
+      "candidate_parents": 100,
+      "candidate_records": 454,
+      "missing_scores": 0,
+      "scored_records": 454
+    },
+    "TDC_BBB_MARTINS_251321464B0400F6E4DE": {
+      "candidate_parents": 100,
+      "candidate_records": 4141,
+      "missing_scores": 0,
+      "scored_records": 4141
+    },
+    "TDC_BBB_MARTINS_255A00C1014FED94EC3F": {
+      "candidate_parents": 100,
+      "candidate_records": 960,
+      "missing_scores": 0,
+      "scored_records": 960
+    },
+    "TDC_BBB_MARTINS_25F01BE02FCD4B005136": {
+      "candidate_parents": 100,
+      "candidate_records": 423,
+      "missing_scores": 0,
+      "scored_records": 423
+    },
+    "TDC_BBB_MARTINS_26062B265D0F33DD7EAF": {
+      "candidate_parents": 100,
+      "candidate_records": 647,
+      "missing_scores": 0,
+      "scored_records": 647
+    },
+    "TDC_BBB_MARTINS_2694DF2D97A95F2AA7DF": {
+      "candidate_parents": 100,
+      "candidate_records": 1060,
+      "missing_scores": 0,
+      "scored_records": 1060
+    },
+    "TDC_BBB_MARTINS_28B3B819DB44A2526811": {
+      "candidate_parents": 100,
+      "candidate_records": 976,
+      "missing_scores": 0,
+      "scored_records": 976
+    },
+    "TDC_BBB_MARTINS_2B006D808183B37ECBE9": {
+      "candidate_parents": 100,
+      "candidate_records": 1591,
+      "missing_scores": 0,
+      "scored_records": 1591
+    },
+    "TDC_BBB_MARTINS_2B85B4CF018D3B876F89": {
+      "candidate_parents": 100,
+      "candidate_records": 1200,
+      "missing_scores": 0,
+      "scored_records": 1200
+    },
+    "TDC_BBB_MARTINS_2CD6457FEEEA345F26D4": {
+      "candidate_parents": 100,
+      "candidate_records": 1778,
+      "missing_scores": 0,
+      "scored_records": 1778
+    },
+    "TDC_BBB_MARTINS_2D0650A06B12AF47C12F": {
+      "candidate_parents": 100,
+      "candidate_records": 908,
+      "missing_scores": 0,
+      "scored_records": 908
+    },
+    "TDC_BBB_MARTINS_2E97C72A75ABCCAC2F7B": {
+      "candidate_parents": 100,
+      "candidate_records": 1464,
+      "missing_scores": 0,
+      "scored_records": 1464
+    },
+    "TDC_BBB_MARTINS_2EA3B9F6E824D280CF77": {
+      "candidate_parents": 100,
+      "candidate_records": 2500,
+      "missing_scores": 0,
+      "scored_records": 2500
+    },
+    "TDC_BBB_MARTINS_2F2419FF070E870342A7": {
+      "candidate_parents": 100,
+      "candidate_records": 1526,
+      "missing_scores": 0,
+      "scored_records": 1526
+    },
+    "TDC_BBB_MARTINS_2F9273F593F6CF3C4915": {
+      "candidate_parents": 100,
+      "candidate_records": 658,
+      "missing_scores": 0,
+      "scored_records": 658
+    },
+    "TDC_BBB_MARTINS_3019E178C3DD8B61E1AE": {
+      "candidate_parents": 100,
+      "candidate_records": 1671,
+      "missing_scores": 0,
+      "scored_records": 1671
+    },
+    "TDC_BBB_MARTINS_303A2C8633FB60DBB47D": {
+      "candidate_parents": 100,
+      "candidate_records": 1225,
+      "missing_scores": 0,
+      "scored_records": 1225
+    },
+    "TDC_BBB_MARTINS_3103B49307B54BCDC274": {
+      "candidate_parents": 100,
+      "candidate_records": 4533,
+      "missing_scores": 0,
+      "scored_records": 4533
+    },
+    "TDC_BBB_MARTINS_31E68B6E84054C5C8533": {
+      "candidate_parents": 100,
+      "candidate_records": 1465,
+      "missing_scores": 0,
+      "scored_records": 1465
+    },
+    "TDC_BBB_MARTINS_31EE65390A08E2D52DFA": {
+      "candidate_parents": 100,
+      "candidate_records": 1210,
+      "missing_scores": 0,
+      "scored_records": 1210
+    },
+    "TDC_BBB_MARTINS_35EAADA43F650DDDDC72": {
+      "candidate_parents": 100,
+      "candidate_records": 1987,
+      "missing_scores": 0,
+      "scored_records": 1987
+    },
+    "TDC_BBB_MARTINS_3649EA5D02E3D103FE89": {
+      "candidate_parents": 100,
+      "candidate_records": 1309,
+      "missing_scores": 0,
+      "scored_records": 1309
+    },
+    "TDC_BBB_MARTINS_36A798EED02F4D082B13": {
+      "candidate_parents": 100,
+      "candidate_records": 7285,
+      "missing_scores": 0,
+      "scored_records": 7285
+    },
+    "TDC_BBB_MARTINS_36DD8032005249995988": {
+      "candidate_parents": 100,
+      "candidate_records": 2342,
+      "missing_scores": 0,
+      "scored_records": 2342
+    },
+    "TDC_BBB_MARTINS_37F4346F05C3007883AB": {
+      "candidate_parents": 100,
+      "candidate_records": 2717,
+      "missing_scores": 0,
+      "scored_records": 2717
+    },
+    "TDC_BBB_MARTINS_384BCAAC226E8A4CB8C7": {
+      "candidate_parents": 100,
+      "candidate_records": 3302,
+      "missing_scores": 0,
+      "scored_records": 3302
+    },
+    "TDC_BBB_MARTINS_3891EE340E354B70620A": {
+      "candidate_parents": 100,
+      "candidate_records": 2163,
+      "missing_scores": 2163,
+      "scored_records": 0
+    },
+    "TDC_BBB_MARTINS_3904437252DED6D019E1": {
+      "candidate_parents": 100,
+      "candidate_records": 1267,
+      "missing_scores": 0,
+      "scored_records": 1267
+    },
+    "TDC_BBB_MARTINS_393B15D8DD05FB518C90": {
+      "candidate_parents": 100,
+      "candidate_records": 1752,
+      "missing_scores": 0,
+      "scored_records": 1752
+    },
+    "TDC_BBB_MARTINS_3A17421BE8CCA56180E1": {
+      "candidate_parents": 100,
+      "candidate_records": 1403,
+      "missing_scores": 0,
+      "scored_records": 1403
+    },
+    "TDC_BBB_MARTINS_3AAC925DC0CEE735D9F1": {
+      "candidate_parents": 100,
+      "candidate_records": 5247,
+      "missing_scores": 0,
+      "scored_records": 5247
+    },
+    "TDC_BBB_MARTINS_3B87671C418BCA2B2FFA": {
+      "candidate_parents": 100,
+      "candidate_records": 1962,
+      "missing_scores": 0,
+      "scored_records": 1962
+    },
+    "TDC_BBB_MARTINS_3BD2F7CEEC3EE853CACE": {
+      "candidate_parents": 100,
+      "candidate_records": 3920,
+      "missing_scores": 0,
+      "scored_records": 3920
+    },
+    "TDC_BBB_MARTINS_3C6B6A209B66B9C0EB29": {
+      "candidate_parents": 100,
+      "candidate_records": 601,
+      "missing_scores": 0,
+      "scored_records": 601
+    },
+    "TDC_BBB_MARTINS_3CAA86F0369EB5EB4D78": {
+      "candidate_parents": 100,
+      "candidate_records": 1682,
+      "missing_scores": 0,
+      "scored_records": 1682
+    },
+    "TDC_BBB_MARTINS_3CFB8A1BF633E12CF43D": {
+      "candidate_parents": 100,
+      "candidate_records": 977,
+      "missing_scores": 0,
+      "scored_records": 977
+    },
+    "TDC_BBB_MARTINS_3EC9FE7C7A9842847AF7": {
+      "candidate_parents": 100,
+      "candidate_records": 2517,
+      "missing_scores": 0,
+      "scored_records": 2517
+    },
+    "TDC_BBB_MARTINS_4036E8F7106FD9E060D4": {
+      "candidate_parents": 100,
+      "candidate_records": 2381,
+      "missing_scores": 0,
+      "scored_records": 2381
+    },
+    "TDC_BBB_MARTINS_41AAEFBC1CA60FC37CE3": {
+      "candidate_parents": 100,
+      "candidate_records": 973,
+      "missing_scores": 0,
+      "scored_records": 973
+    },
+    "TDC_BBB_MARTINS_41EAE2D470EF4030F287": {
+      "candidate_parents": 100,
+      "candidate_records": 1602,
+      "missing_scores": 0,
+      "scored_records": 1602
+    },
+    "TDC_BBB_MARTINS_43A3235922E5B238FABF": {
+      "candidate_parents": 100,
+      "candidate_records": 1058,
+      "missing_scores": 0,
+      "scored_records": 1058
+    },
+    "TDC_BBB_MARTINS_43DCE8A220A2AB9D19F5": {
+      "candidate_parents": 100,
+      "candidate_records": 359,
+      "missing_scores": 0,
+      "scored_records": 359
+    },
+    "TDC_BBB_MARTINS_4463C7D084267049E0A4": {
+      "candidate_parents": 100,
+      "candidate_records": 2270,
+      "missing_scores": 0,
+      "scored_records": 2270
+    },
+    "TDC_BBB_MARTINS_449C1E2862BF8B858966": {
+      "candidate_parents": 100,
+      "candidate_records": 2553,
+      "missing_scores": 0,
+      "scored_records": 2553
+    },
+    "TDC_BBB_MARTINS_461A66150FACCD960C54": {
+      "candidate_parents": 100,
+      "candidate_records": 4576,
+      "missing_scores": 0,
+      "scored_records": 4576
+    },
+    "TDC_BBB_MARTINS_461F3BAFE895BA620F13": {
+      "candidate_parents": 100,
+      "candidate_records": 1628,
+      "missing_scores": 0,
+      "scored_records": 1628
+    },
+    "TDC_BBB_MARTINS_485772DB02C73F5CF290": {
+      "candidate_parents": 100,
+      "candidate_records": 1554,
+      "missing_scores": 0,
+      "scored_records": 1554
+    },
+    "TDC_BBB_MARTINS_4938E86E38785854A3C6": {
+      "candidate_parents": 100,
+      "candidate_records": 448,
+      "missing_scores": 0,
+      "scored_records": 448
+    },
+    "TDC_BBB_MARTINS_49546AA73C131C617CB8": {
+      "candidate_parents": 100,
+      "candidate_records": 2831,
+      "missing_scores": 0,
+      "scored_records": 2831
+    },
+    "TDC_BBB_MARTINS_4A9EC8F08F2906CD6914": {
+      "candidate_parents": 100,
+      "candidate_records": 704,
+      "missing_scores": 0,
+      "scored_records": 704
+    },
+    "TDC_BBB_MARTINS_4AADB6653546B7F1B568": {
+      "candidate_parents": 100,
+      "candidate_records": 2910,
+      "missing_scores": 0,
+      "scored_records": 2910
+    },
+    "TDC_BBB_MARTINS_4AFA10F018DF996FDBEF": {
+      "candidate_parents": 100,
+      "candidate_records": 647,
+      "missing_scores": 0,
+      "scored_records": 647
+    },
+    "TDC_BBB_MARTINS_4B033C81B70F9DE69EF2": {
+      "candidate_parents": 100,
+      "candidate_records": 1210,
+      "missing_scores": 0,
+      "scored_records": 1210
+    },
+    "TDC_BBB_MARTINS_4BC53048D15433D4DB7F": {
+      "candidate_parents": 100,
+      "candidate_records": 1793,
+      "missing_scores": 0,
+      "scored_records": 1793
+    },
+    "TDC_BBB_MARTINS_4BF6D6E4C2E3B52F14B1": {
+      "candidate_parents": 100,
+      "candidate_records": 1886,
+      "missing_scores": 0,
+      "scored_records": 1886
+    },
+    "TDC_BBB_MARTINS_4CC941D7064813614D6F": {
+      "candidate_parents": 100,
+      "candidate_records": 1345,
+      "missing_scores": 0,
+      "scored_records": 1345
+    },
+    "TDC_BBB_MARTINS_4D3DBF928101A74173EC": {
+      "candidate_parents": 100,
+      "candidate_records": 3323,
+      "missing_scores": 0,
+      "scored_records": 3323
+    },
+    "TDC_BBB_MARTINS_4E2FB99D55489C5DF0C4": {
+      "candidate_parents": 100,
+      "candidate_records": 1172,
+      "missing_scores": 0,
+      "scored_records": 1172
+    },
+    "TDC_BBB_MARTINS_4E819E41332CC8887405": {
+      "candidate_parents": 100,
+      "candidate_records": 3064,
+      "missing_scores": 0,
+      "scored_records": 3064
+    },
+    "TDC_BBB_MARTINS_4E8717794E822ED9C74A": {
+      "candidate_parents": 100,
+      "candidate_records": 2918,
+      "missing_scores": 0,
+      "scored_records": 2918
+    },
+    "TDC_BBB_MARTINS_4E8CF9A69E2B5461C53E": {
+      "candidate_parents": 100,
+      "candidate_records": 2849,
+      "missing_scores": 0,
+      "scored_records": 2849
+    },
+    "TDC_BBB_MARTINS_4EA52BB9B89E8B1FC45E": {
+      "candidate_parents": 100,
+      "candidate_records": 4653,
+      "missing_scores": 0,
+      "scored_records": 4653
+    },
+    "TDC_BBB_MARTINS_4F165F79710A99D2094C": {
+      "candidate_parents": 100,
+      "candidate_records": 800,
+      "missing_scores": 0,
+      "scored_records": 800
+    },
+    "TDC_BBB_MARTINS_4F609F4AABB4D2455680": {
+      "candidate_parents": 100,
+      "candidate_records": 346,
+      "missing_scores": 0,
+      "scored_records": 346
+    },
+    "TDC_BBB_MARTINS_4FA548081D7322BE936C": {
+      "candidate_parents": 100,
+      "candidate_records": 3005,
+      "missing_scores": 0,
+      "scored_records": 3005
+    },
+    "TDC_BBB_MARTINS_502CA4F91EEAA4BF92BE": {
+      "candidate_parents": 100,
+      "candidate_records": 3565,
+      "missing_scores": 0,
+      "scored_records": 3565
+    },
+    "TDC_BBB_MARTINS_508DC02F3A53FD00D433": {
+      "candidate_parents": 100,
+      "candidate_records": 2606,
+      "missing_scores": 0,
+      "scored_records": 2606
+    },
+    "TDC_BBB_MARTINS_51A302AEC27FEF2E484D": {
+      "candidate_parents": 100,
+      "candidate_records": 2454,
+      "missing_scores": 0,
+      "scored_records": 2454
+    },
+    "TDC_BBB_MARTINS_5349B3ED2501F49DF1B5": {
+      "candidate_parents": 100,
+      "candidate_records": 1394,
+      "missing_scores": 0,
+      "scored_records": 1394
+    },
+    "TDC_BBB_MARTINS_53861DEF3DD635600338": {
+      "candidate_parents": 100,
+      "candidate_records": 667,
+      "missing_scores": 0,
+      "scored_records": 667
+    },
+    "TDC_BBB_MARTINS_538FA94AD25828C6CBA4": {
+      "candidate_parents": 100,
+      "candidate_records": 4651,
+      "missing_scores": 0,
+      "scored_records": 4651
+    },
+    "TDC_BBB_MARTINS_53C10657E41B9E6A0CA7": {
+      "candidate_parents": 100,
+      "candidate_records": 1331,
+      "missing_scores": 0,
+      "scored_records": 1331
+    },
+    "TDC_BBB_MARTINS_54DF8FBB27B31339A47C": {
+      "candidate_parents": 100,
+      "candidate_records": 574,
+      "missing_scores": 0,
+      "scored_records": 574
+    },
+    "TDC_BBB_MARTINS_55A3FFD7949927F16225": {
+      "candidate_parents": 100,
+      "candidate_records": 1077,
+      "missing_scores": 0,
+      "scored_records": 1077
+    },
+    "TDC_BBB_MARTINS_55B65473C0ED9003F638": {
+      "candidate_parents": 100,
+      "candidate_records": 1321,
+      "missing_scores": 0,
+      "scored_records": 1321
+    },
+    "TDC_BBB_MARTINS_55DBD50AB93E649D6245": {
+      "candidate_parents": 100,
+      "candidate_records": 1275,
+      "missing_scores": 0,
+      "scored_records": 1275
+    },
+    "TDC_BBB_MARTINS_56214896E910A86B7AD7": {
+      "candidate_parents": 100,
+      "candidate_records": 762,
+      "missing_scores": 0,
+      "scored_records": 762
+    },
+    "TDC_BBB_MARTINS_56F01B0FC943D865F1EE": {
+      "candidate_parents": 100,
+      "candidate_records": 1011,
+      "missing_scores": 0,
+      "scored_records": 1011
+    },
+    "TDC_BBB_MARTINS_570DFC6421BB3E4C2D32": {
+      "candidate_parents": 100,
+      "candidate_records": 2200,
+      "missing_scores": 0,
+      "scored_records": 2200
+    },
+    "TDC_BBB_MARTINS_576B142350CDBEC70070": {
+      "candidate_parents": 100,
+      "candidate_records": 783,
+      "missing_scores": 0,
+      "scored_records": 783
+    },
+    "TDC_BBB_MARTINS_584EED3502E6E8E03425": {
+      "candidate_parents": 100,
+      "candidate_records": 4107,
+      "missing_scores": 0,
+      "scored_records": 4107
+    },
+    "TDC_BBB_MARTINS_58E8E8500BFD4BA97A72": {
+      "candidate_parents": 100,
+      "candidate_records": 541,
+      "missing_scores": 0,
+      "scored_records": 541
+    },
+    "TDC_BBB_MARTINS_59669B7C318AC48645A6": {
+      "candidate_parents": 100,
+      "candidate_records": 776,
+      "missing_scores": 0,
+      "scored_records": 776
+    },
+    "TDC_BBB_MARTINS_59B2E1A71018F1BE21A7": {
+      "candidate_parents": 100,
+      "candidate_records": 1907,
+      "missing_scores": 0,
+      "scored_records": 1907
+    },
+    "TDC_BBB_MARTINS_5AE8D2C70ABE1C5A307E": {
+      "candidate_parents": 100,
+      "candidate_records": 1298,
+      "missing_scores": 0,
+      "scored_records": 1298
+    },
+    "TDC_BBB_MARTINS_5B16A8E72B3237B45492": {
+      "candidate_parents": 100,
+      "candidate_records": 1208,
+      "missing_scores": 0,
+      "scored_records": 1208
+    },
+    "TDC_BBB_MARTINS_5B4A3A55D9925F16F10A": {
+      "candidate_parents": 100,
+      "candidate_records": 3700,
+      "missing_scores": 0,
+      "scored_records": 3700
+    },
+    "TDC_BBB_MARTINS_5B89C22985C7226327C7": {
+      "candidate_parents": 100,
+      "candidate_records": 2336,
+      "missing_scores": 0,
+      "scored_records": 2336
+    },
+    "TDC_BBB_MARTINS_5C27E3B9894B69BF2697": {
+      "candidate_parents": 100,
+      "candidate_records": 346,
+      "missing_scores": 0,
+      "scored_records": 346
+    },
+    "TDC_BBB_MARTINS_5CA2092D42CC5F43EE3E": {
+      "candidate_parents": 100,
+      "candidate_records": 983,
+      "missing_scores": 0,
+      "scored_records": 983
+    },
+    "TDC_BBB_MARTINS_5D1F22F0FC21C95718F4": {
+      "candidate_parents": 100,
+      "candidate_records": 2006,
+      "missing_scores": 0,
+      "scored_records": 2006
+    },
+    "TDC_BBB_MARTINS_5D5640A49AD1A18A90A4": {
+      "candidate_parents": 100,
+      "candidate_records": 1003,
+      "missing_scores": 0,
+      "scored_records": 1003
+    },
+    "TDC_BBB_MARTINS_5D7FF5519ACC605A3C03": {
+      "candidate_parents": 100,
+      "candidate_records": 3121,
+      "missing_scores": 0,
+      "scored_records": 3121
+    },
+    "TDC_BBB_MARTINS_5D81A0F871C712176B37": {
+      "candidate_parents": 100,
+      "candidate_records": 7619,
+      "missing_scores": 0,
+      "scored_records": 7619
+    },
+    "TDC_BBB_MARTINS_5F9F533C9AD35F9E840B": {
+      "candidate_parents": 100,
+      "candidate_records": 1247,
+      "missing_scores": 0,
+      "scored_records": 1247
+    },
+    "TDC_BBB_MARTINS_612723252A7A57E98275": {
+      "candidate_parents": 100,
+      "candidate_records": 1777,
+      "missing_scores": 0,
+      "scored_records": 1777
+    },
+    "TDC_BBB_MARTINS_6151D6196D89B8427A85": {
+      "candidate_parents": 100,
+      "candidate_records": 1307,
+      "missing_scores": 0,
+      "scored_records": 1307
+    },
+    "TDC_BBB_MARTINS_616DBBF07BB817687F16": {
+      "candidate_parents": 100,
+      "candidate_records": 411,
+      "missing_scores": 0,
+      "scored_records": 411
+    },
+    "TDC_BBB_MARTINS_618AA241A665CEBEC2FC": {
+      "candidate_parents": 100,
+      "candidate_records": 1107,
+      "missing_scores": 0,
+      "scored_records": 1107
+    },
+    "TDC_BBB_MARTINS_618E84F021257CB57C33": {
+      "candidate_parents": 100,
+      "candidate_records": 1230,
+      "missing_scores": 0,
+      "scored_records": 1230
+    },
+    "TDC_BBB_MARTINS_61A9660F092C751A86B7": {
+      "candidate_parents": 100,
+      "candidate_records": 2490,
+      "missing_scores": 0,
+      "scored_records": 2490
+    },
+    "TDC_BBB_MARTINS_61D0E38204DC4A1F5FE5": {
+      "candidate_parents": 100,
+      "candidate_records": 1632,
+      "missing_scores": 0,
+      "scored_records": 1632
+    },
+    "TDC_BBB_MARTINS_62442EF38F91EFAABA8A": {
+      "candidate_parents": 100,
+      "candidate_records": 2909,
+      "missing_scores": 0,
+      "scored_records": 2909
+    },
+    "TDC_BBB_MARTINS_63A5CDF632A3527F86F9": {
+      "candidate_parents": 100,
+      "candidate_records": 3606,
+      "missing_scores": 0,
+      "scored_records": 3606
+    },
+    "TDC_BBB_MARTINS_642B2780A3ADAB13200E": {
+      "candidate_parents": 100,
+      "candidate_records": 523,
+      "missing_scores": 0,
+      "scored_records": 523
+    },
+    "TDC_BBB_MARTINS_64664EC7BA1CAC659262": {
+      "candidate_parents": 100,
+      "candidate_records": 626,
+      "missing_scores": 0,
+      "scored_records": 626
+    },
+    "TDC_BBB_MARTINS_6542B1833189C68B51D5": {
+      "candidate_parents": 100,
+      "candidate_records": 280,
+      "missing_scores": 0,
+      "scored_records": 280
+    },
+    "TDC_BBB_MARTINS_654E3455D2BBDD56E1AA": {
+      "candidate_parents": 100,
+      "candidate_records": 1543,
+      "missing_scores": 0,
+      "scored_records": 1543
+    },
+    "TDC_BBB_MARTINS_65BD2A316C7C5FD03410": {
+      "candidate_parents": 100,
+      "candidate_records": 2357,
+      "missing_scores": 0,
+      "scored_records": 2357
+    },
+    "TDC_BBB_MARTINS_660B6CEF68799111FD90": {
+      "candidate_parents": 100,
+      "candidate_records": 1286,
+      "missing_scores": 0,
+      "scored_records": 1286
+    },
+    "TDC_BBB_MARTINS_66E0F6E4B11A5F456E4F": {
+      "candidate_parents": 100,
+      "candidate_records": 587,
+      "missing_scores": 0,
+      "scored_records": 587
+    },
+    "TDC_BBB_MARTINS_68907A9246D8E3CF5B47": {
+      "candidate_parents": 100,
+      "candidate_records": 2460,
+      "missing_scores": 0,
+      "scored_records": 2460
+    },
+    "TDC_BBB_MARTINS_68DB790773F9B9303243": {
+      "candidate_parents": 100,
+      "candidate_records": 2163,
+      "missing_scores": 2163,
+      "scored_records": 0
+    },
+    "TDC_BBB_MARTINS_69346E4AB47A024BA613": {
+      "candidate_parents": 100,
+      "candidate_records": 838,
+      "missing_scores": 0,
+      "scored_records": 838
+    },
+    "TDC_BBB_MARTINS_698194BD817C989D0205": {
+      "candidate_parents": 100,
+      "candidate_records": 1413,
+      "missing_scores": 0,
+      "scored_records": 1413
+    },
+    "TDC_BBB_MARTINS_6A6C0211D589D29A1159": {
+      "candidate_parents": 100,
+      "candidate_records": 454,
+      "missing_scores": 0,
+      "scored_records": 454
+    },
+    "TDC_BBB_MARTINS_6B214FD8AF7F80441993": {
+      "candidate_parents": 100,
+      "candidate_records": 1102,
+      "missing_scores": 0,
+      "scored_records": 1102
+    },
+    "TDC_BBB_MARTINS_6B6EBAEF8D83E9B8AE46": {
+      "candidate_parents": 100,
+      "candidate_records": 1167,
+      "missing_scores": 0,
+      "scored_records": 1167
+    },
+    "TDC_BBB_MARTINS_6C22A4F691D0693598BB": {
+      "candidate_parents": 100,
+      "candidate_records": 2939,
+      "missing_scores": 0,
+      "scored_records": 2939
+    },
+    "TDC_BBB_MARTINS_6CA54AC3E571E9C7AD9D": {
+      "candidate_parents": 100,
+      "candidate_records": 1964,
+      "missing_scores": 0,
+      "scored_records": 1964
+    },
+    "TDC_BBB_MARTINS_6E732D7D278D53E83C20": {
+      "candidate_parents": 100,
+      "candidate_records": 716,
+      "missing_scores": 0,
+      "scored_records": 716
+    },
+    "TDC_BBB_MARTINS_6E864AB27635DAA1EADF": {
+      "candidate_parents": 100,
+      "candidate_records": 1697,
+      "missing_scores": 0,
+      "scored_records": 1697
+    },
+    "TDC_BBB_MARTINS_6ED5B7C0666C5E1D8D8D": {
+      "candidate_parents": 100,
+      "candidate_records": 3581,
+      "missing_scores": 0,
+      "scored_records": 3581
+    },
+    "TDC_BBB_MARTINS_6EF9A5E50D1B083B0940": {
+      "candidate_parents": 100,
+      "candidate_records": 4784,
+      "missing_scores": 0,
+      "scored_records": 4784
+    },
+    "TDC_BBB_MARTINS_703ADDEE847C90F12A81": {
+      "candidate_parents": 100,
+      "candidate_records": 845,
+      "missing_scores": 0,
+      "scored_records": 845
+    },
+    "TDC_BBB_MARTINS_704DF5BFB784AA6B010A": {
+      "candidate_parents": 100,
+      "candidate_records": 1177,
+      "missing_scores": 0,
+      "scored_records": 1177
+    },
+    "TDC_BBB_MARTINS_70621D0C6B4537C7B97E": {
+      "candidate_parents": 100,
+      "candidate_records": 1034,
+      "missing_scores": 0,
+      "scored_records": 1034
+    },
+    "TDC_BBB_MARTINS_7087C20C618AD821F791": {
+      "candidate_parents": 100,
+      "candidate_records": 1712,
+      "missing_scores": 0,
+      "scored_records": 1712
+    },
+    "TDC_BBB_MARTINS_70EF02394BAC08A3635B": {
+      "candidate_parents": 100,
+      "candidate_records": 1488,
+      "missing_scores": 0,
+      "scored_records": 1488
+    },
+    "TDC_BBB_MARTINS_7226122AF73E53308325": {
+      "candidate_parents": 100,
+      "candidate_records": 1846,
+      "missing_scores": 0,
+      "scored_records": 1846
+    },
+    "TDC_BBB_MARTINS_72B3089DF47CE9F88210": {
+      "candidate_parents": 100,
+      "candidate_records": 456,
+      "missing_scores": 0,
+      "scored_records": 456
+    },
+    "TDC_BBB_MARTINS_733D8AC4B9CD3AF16855": {
+      "candidate_parents": 100,
+      "candidate_records": 1261,
+      "missing_scores": 0,
+      "scored_records": 1261
+    },
+    "TDC_BBB_MARTINS_7392ED071751FA407DE7": {
+      "candidate_parents": 100,
+      "candidate_records": 4280,
+      "missing_scores": 0,
+      "scored_records": 4280
+    },
+    "TDC_BBB_MARTINS_754E9CF9C05CDF6E2CA9": {
+      "candidate_parents": 100,
+      "candidate_records": 3224,
+      "missing_scores": 0,
+      "scored_records": 3224
+    },
+    "TDC_BBB_MARTINS_75CE294A7428F75C2962": {
+      "candidate_parents": 100,
+      "candidate_records": 1907,
+      "missing_scores": 0,
+      "scored_records": 1907
+    },
+    "TDC_BBB_MARTINS_75CE3C465BF11DF729A7": {
+      "candidate_parents": 100,
+      "candidate_records": 2688,
+      "missing_scores": 0,
+      "scored_records": 2688
+    },
+    "TDC_BBB_MARTINS_76902303CD12E3CAAF6E": {
+      "candidate_parents": 100,
+      "candidate_records": 1176,
+      "missing_scores": 0,
+      "scored_records": 1176
+    },
+    "TDC_BBB_MARTINS_7729F13A316C75AEE204": {
+      "candidate_parents": 100,
+      "candidate_records": 494,
+      "missing_scores": 0,
+      "scored_records": 494
+    },
+    "TDC_BBB_MARTINS_77DE380D34E66FECBCD4": {
+      "candidate_parents": 100,
+      "candidate_records": 2106,
+      "missing_scores": 0,
+      "scored_records": 2106
+    },
+    "TDC_BBB_MARTINS_77E6F6AB766991FD04B2": {
+      "candidate_parents": 100,
+      "candidate_records": 1564,
+      "missing_scores": 0,
+      "scored_records": 1564
+    },
+    "TDC_BBB_MARTINS_77F71C069932736DE5E0": {
+      "candidate_parents": 100,
+      "candidate_records": 888,
+      "missing_scores": 0,
+      "scored_records": 888
+    },
+    "TDC_BBB_MARTINS_78127D3C964B5D3D983B": {
+      "candidate_parents": 100,
+      "candidate_records": 894,
+      "missing_scores": 0,
+      "scored_records": 894
+    },
+    "TDC_BBB_MARTINS_781565566CA138E3B07E": {
+      "candidate_parents": 100,
+      "candidate_records": 1662,
+      "missing_scores": 0,
+      "scored_records": 1662
+    },
+    "TDC_BBB_MARTINS_786ECAB57837022306A3": {
+      "candidate_parents": 100,
+      "candidate_records": 1159,
+      "missing_scores": 0,
+      "scored_records": 1159
+    },
+    "TDC_BBB_MARTINS_7B1F87CF1387221E0018": {
+      "candidate_parents": 100,
+      "candidate_records": 1392,
+      "missing_scores": 0,
+      "scored_records": 1392
+    },
+    "TDC_BBB_MARTINS_7BCEFDBAFF8672070132": {
+      "candidate_parents": 100,
+      "candidate_records": 1031,
+      "missing_scores": 0,
+      "scored_records": 1031
+    },
+    "TDC_BBB_MARTINS_7D2CBB05106F00D4683E": {
+      "candidate_parents": 100,
+      "candidate_records": 3014,
+      "missing_scores": 0,
+      "scored_records": 3014
+    },
+    "TDC_BBB_MARTINS_7D65B814105CBA59F5EF": {
+      "candidate_parents": 100,
+      "candidate_records": 2489,
+      "missing_scores": 0,
+      "scored_records": 2489
+    },
+    "TDC_BBB_MARTINS_7E65AF37C1692056F404": {
+      "candidate_parents": 100,
+      "candidate_records": 3000,
+      "missing_scores": 0,
+      "scored_records": 3000
+    },
+    "TDC_BBB_MARTINS_7EF0B73E655CD91BD4E7": {
+      "candidate_parents": 100,
+      "candidate_records": 2076,
+      "missing_scores": 0,
+      "scored_records": 2076
+    },
+    "TDC_BBB_MARTINS_7F0DF09AB31A52180040": {
+      "candidate_parents": 100,
+      "candidate_records": 320,
+      "missing_scores": 0,
+      "scored_records": 320
+    },
+    "TDC_BBB_MARTINS_7F22B2C5F860279A30B7": {
+      "candidate_parents": 100,
+      "candidate_records": 3108,
+      "missing_scores": 0,
+      "scored_records": 3108
+    },
+    "TDC_BBB_MARTINS_801F796E4F822F778E6A": {
+      "candidate_parents": 100,
+      "candidate_records": 1060,
+      "missing_scores": 0,
+      "scored_records": 1060
+    },
+    "TDC_BBB_MARTINS_80B33C01CD2EC3888643": {
+      "candidate_parents": 100,
+      "candidate_records": 1002,
+      "missing_scores": 0,
+      "scored_records": 1002
+    },
+    "TDC_BBB_MARTINS_81058954A7EDE70FA437": {
+      "candidate_parents": 100,
+      "candidate_records": 5828,
+      "missing_scores": 0,
+      "scored_records": 5828
+    },
+    "TDC_BBB_MARTINS_823DD3F1AEEB95FCCBD3": {
+      "candidate_parents": 100,
+      "candidate_records": 968,
+      "missing_scores": 0,
+      "scored_records": 968
+    },
+    "TDC_BBB_MARTINS_847E84E60854331F6C43": {
+      "candidate_parents": 100,
+      "candidate_records": 1080,
+      "missing_scores": 0,
+      "scored_records": 1080
+    },
+    "TDC_BBB_MARTINS_8503EBFCE92815519C38": {
+      "candidate_parents": 100,
+      "candidate_records": 1169,
+      "missing_scores": 0,
+      "scored_records": 1169
+    },
+    "TDC_BBB_MARTINS_851FD9F4940FB9C653FD": {
+      "candidate_parents": 100,
+      "candidate_records": 2198,
+      "missing_scores": 0,
+      "scored_records": 2198
+    },
+    "TDC_BBB_MARTINS_859DEF2C88DCC023BE09": {
+      "candidate_parents": 100,
+      "candidate_records": 1816,
+      "missing_scores": 0,
+      "scored_records": 1816
+    },
+    "TDC_BBB_MARTINS_86097A161F7160A6EADA": {
+      "candidate_parents": 100,
+      "candidate_records": 1372,
+      "missing_scores": 0,
+      "scored_records": 1372
+    },
+    "TDC_BBB_MARTINS_861B1E754C74241E45A2": {
+      "candidate_parents": 100,
+      "candidate_records": 3618,
+      "missing_scores": 0,
+      "scored_records": 3618
+    },
+    "TDC_BBB_MARTINS_86CA1886C244F79167E6": {
+      "candidate_parents": 100,
+      "candidate_records": 1817,
+      "missing_scores": 0,
+      "scored_records": 1817
+    },
+    "TDC_BBB_MARTINS_88CEC0400079FD5B2F7D": {
+      "candidate_parents": 100,
+      "candidate_records": 2898,
+      "missing_scores": 0,
+      "scored_records": 2898
+    },
+    "TDC_BBB_MARTINS_8A73A1CCFCDB9C57A943": {
+      "candidate_parents": 100,
+      "candidate_records": 674,
+      "missing_scores": 0,
+      "scored_records": 674
+    },
+    "TDC_BBB_MARTINS_8C6B03AEDC041716E506": {
+      "candidate_parents": 100,
+      "candidate_records": 1523,
+      "missing_scores": 0,
+      "scored_records": 1523
+    },
+    "TDC_BBB_MARTINS_8C6C06E66EE23E67A2B6": {
+      "candidate_parents": 100,
+      "candidate_records": 1107,
+      "missing_scores": 0,
+      "scored_records": 1107
+    },
+    "TDC_BBB_MARTINS_8D45673FEC95226316E8": {
+      "candidate_parents": 100,
+      "candidate_records": 1054,
+      "missing_scores": 0,
+      "scored_records": 1054
+    },
+    "TDC_BBB_MARTINS_8EAE3FCB8A5DDE84D77C": {
+      "candidate_parents": 100,
+      "candidate_records": 4029,
+      "missing_scores": 0,
+      "scored_records": 4029
+    },
+    "TDC_BBB_MARTINS_8EF5DFDCA53B7BBB65C9": {
+      "candidate_parents": 100,
+      "candidate_records": 2357,
+      "missing_scores": 0,
+      "scored_records": 2357
+    },
+    "TDC_BBB_MARTINS_8EFFC8C0302C4A1199F7": {
+      "candidate_parents": 100,
+      "candidate_records": 2382,
+      "missing_scores": 0,
+      "scored_records": 2382
+    },
+    "TDC_BBB_MARTINS_8F4F219F152EA03DB6DD": {
+      "candidate_parents": 100,
+      "candidate_records": 3304,
+      "missing_scores": 0,
+      "scored_records": 3304
+    },
+    "TDC_BBB_MARTINS_8F640C7FD8F5547E2608": {
+      "candidate_parents": 100,
+      "candidate_records": 1916,
+      "missing_scores": 0,
+      "scored_records": 1916
+    },
+    "TDC_BBB_MARTINS_91A8CFAB5D07B5AABAF8": {
+      "candidate_parents": 100,
+      "candidate_records": 1865,
+      "missing_scores": 0,
+      "scored_records": 1865
+    },
+    "TDC_BBB_MARTINS_9216D071C941CF541A8A": {
+      "candidate_parents": 100,
+      "candidate_records": 1506,
+      "missing_scores": 0,
+      "scored_records": 1506
+    },
+    "TDC_BBB_MARTINS_92DAA1B71FB2A3A2F1EF": {
+      "candidate_parents": 100,
+      "candidate_records": 760,
+      "missing_scores": 0,
+      "scored_records": 760
+    },
+    "TDC_BBB_MARTINS_93E8B343EE0722D3CE9A": {
+      "candidate_parents": 100,
+      "candidate_records": 1111,
+      "missing_scores": 0,
+      "scored_records": 1111
+    },
+    "TDC_BBB_MARTINS_9428AC61E2F76CB90876": {
+      "candidate_parents": 100,
+      "candidate_records": 1686,
+      "missing_scores": 0,
+      "scored_records": 1686
+    },
+    "TDC_BBB_MARTINS_9556227D0770D7CE27FA": {
+      "candidate_parents": 100,
+      "candidate_records": 4020,
+      "missing_scores": 0,
+      "scored_records": 4020
+    },
+    "TDC_BBB_MARTINS_96A181AF90F2B7E0B1E6": {
+      "candidate_parents": 100,
+      "candidate_records": 775,
+      "missing_scores": 0,
+      "scored_records": 775
+    },
+    "TDC_BBB_MARTINS_970BC85F4EE5D5611EB0": {
+      "candidate_parents": 100,
+      "candidate_records": 3838,
+      "missing_scores": 0,
+      "scored_records": 3838
+    },
+    "TDC_BBB_MARTINS_97BC0962D511D68F7E2D": {
+      "candidate_parents": 100,
+      "candidate_records": 5369,
+      "missing_scores": 0,
+      "scored_records": 5369
+    },
+    "TDC_BBB_MARTINS_97BCFA1244A52C76560C": {
+      "candidate_parents": 100,
+      "candidate_records": 1737,
+      "missing_scores": 0,
+      "scored_records": 1737
+    },
+    "TDC_BBB_MARTINS_980D757E81FF57E66734": {
+      "candidate_parents": 100,
+      "candidate_records": 4616,
+      "missing_scores": 0,
+      "scored_records": 4616
+    },
+    "TDC_BBB_MARTINS_9896E2DBD0F149314AB2": {
+      "candidate_parents": 100,
+      "candidate_records": 793,
+      "missing_scores": 0,
+      "scored_records": 793
+    },
+    "TDC_BBB_MARTINS_993802D351967E07C630": {
+      "candidate_parents": 100,
+      "candidate_records": 1613,
+      "missing_scores": 0,
+      "scored_records": 1613
+    },
+    "TDC_BBB_MARTINS_995F02AD4E6E5A7BF9ED": {
+      "candidate_parents": 100,
+      "candidate_records": 2095,
+      "missing_scores": 0,
+      "scored_records": 2095
+    },
+    "TDC_BBB_MARTINS_99D210BF173AF0CBD100": {
+      "candidate_parents": 100,
+      "candidate_records": 1645,
+      "missing_scores": 0,
+      "scored_records": 1645
+    },
+    "TDC_BBB_MARTINS_9ABEFD7D21D67169D075": {
+      "candidate_parents": 100,
+      "candidate_records": 493,
+      "missing_scores": 0,
+      "scored_records": 493
+    },
+    "TDC_BBB_MARTINS_9AF1C9FCFA90F27B8C6E": {
+      "candidate_parents": 100,
+      "candidate_records": 984,
+      "missing_scores": 0,
+      "scored_records": 984
+    },
+    "TDC_BBB_MARTINS_9B7B541A65F2B3039932": {
+      "candidate_parents": 100,
+      "candidate_records": 2864,
+      "missing_scores": 0,
+      "scored_records": 2864
+    },
+    "TDC_BBB_MARTINS_9BEF6DDA4EB713B3BA81": {
+      "candidate_parents": 100,
+      "candidate_records": 11566,
+      "missing_scores": 0,
+      "scored_records": 11566
+    },
+    "TDC_BBB_MARTINS_9CD5742E94BCA629F48A": {
+      "candidate_parents": 100,
+      "candidate_records": 1452,
+      "missing_scores": 0,
+      "scored_records": 1452
+    },
+    "TDC_BBB_MARTINS_9E2A60FFD97948FDC558": {
+      "candidate_parents": 100,
+      "candidate_records": 821,
+      "missing_scores": 0,
+      "scored_records": 821
+    },
+    "TDC_BBB_MARTINS_9E5805E86548D4436E94": {
+      "candidate_parents": 100,
+      "candidate_records": 3026,
+      "missing_scores": 0,
+      "scored_records": 3026
+    },
+    "TDC_BBB_MARTINS_9E91C21F43FDCE3652C9": {
+      "candidate_parents": 100,
+      "candidate_records": 1186,
+      "missing_scores": 0,
+      "scored_records": 1186
+    },
+    "TDC_BBB_MARTINS_9F0127C5B333F9110B63": {
+      "candidate_parents": 100,
+      "candidate_records": 1043,
+      "missing_scores": 0,
+      "scored_records": 1043
+    },
+    "TDC_BBB_MARTINS_A040B8D39D16B0CEBEA8": {
+      "candidate_parents": 100,
+      "candidate_records": 883,
+      "missing_scores": 0,
+      "scored_records": 883
+    },
+    "TDC_BBB_MARTINS_A20F4AD78AFAD9068321": {
+      "candidate_parents": 100,
+      "candidate_records": 892,
+      "missing_scores": 0,
+      "scored_records": 892
+    },
+    "TDC_BBB_MARTINS_A2CD41E22D3CC375F044": {
+      "candidate_parents": 100,
+      "candidate_records": 952,
+      "missing_scores": 0,
+      "scored_records": 952
+    },
+    "TDC_BBB_MARTINS_A37FF80749F80002784D": {
+      "candidate_parents": 100,
+      "candidate_records": 583,
+      "missing_scores": 0,
+      "scored_records": 583
+    },
+    "TDC_BBB_MARTINS_A50CDB0D7AFE3E453621": {
+      "candidate_parents": 100,
+      "candidate_records": 604,
+      "missing_scores": 0,
+      "scored_records": 604
+    },
+    "TDC_BBB_MARTINS_A556CDB78B53023DB4C4": {
+      "candidate_parents": 100,
+      "candidate_records": 349,
+      "missing_scores": 0,
+      "scored_records": 349
+    },
+    "TDC_BBB_MARTINS_A5EDC284C84D4799C6B9": {
+      "candidate_parents": 100,
+      "candidate_records": 1046,
+      "missing_scores": 0,
+      "scored_records": 1046
+    },
+    "TDC_BBB_MARTINS_A721C1EB2041735E5455": {
+      "candidate_parents": 100,
+      "candidate_records": 2912,
+      "missing_scores": 0,
+      "scored_records": 2912
+    },
+    "TDC_BBB_MARTINS_A7D3C58703296B694608": {
+      "candidate_parents": 100,
+      "candidate_records": 10446,
+      "missing_scores": 0,
+      "scored_records": 10446
+    },
+    "TDC_BBB_MARTINS_A7EA5832596C3108DC21": {
+      "candidate_parents": 100,
+      "candidate_records": 2293,
+      "missing_scores": 0,
+      "scored_records": 2293
+    },
+    "TDC_BBB_MARTINS_A7FDA5B0A84FD36F8228": {
+      "candidate_parents": 100,
+      "candidate_records": 1205,
+      "missing_scores": 0,
+      "scored_records": 1205
+    },
+    "TDC_BBB_MARTINS_A8D33C93241AB0640BED": {
+      "candidate_parents": 100,
+      "candidate_records": 385,
+      "missing_scores": 0,
+      "scored_records": 385
+    },
+    "TDC_BBB_MARTINS_AA085F7AFA7470866003": {
+      "candidate_parents": 100,
+      "candidate_records": 1410,
+      "missing_scores": 0,
+      "scored_records": 1410
+    },
+    "TDC_BBB_MARTINS_AA24DAE05B1A53B29689": {
+      "candidate_parents": 100,
+      "candidate_records": 1383,
+      "missing_scores": 0,
+      "scored_records": 1383
+    },
+    "TDC_BBB_MARTINS_AA920B92709BBB90AD22": {
+      "candidate_parents": 100,
+      "candidate_records": 329,
+      "missing_scores": 0,
+      "scored_records": 329
+    },
+    "TDC_BBB_MARTINS_AB089CDAE4C3BE80CB43": {
+      "candidate_parents": 100,
+      "candidate_records": 354,
+      "missing_scores": 0,
+      "scored_records": 354
+    },
+    "TDC_BBB_MARTINS_AC8EDAA3FC10BD6B8C47": {
+      "candidate_parents": 100,
+      "candidate_records": 1414,
+      "missing_scores": 0,
+      "scored_records": 1414
+    },
+    "TDC_BBB_MARTINS_AD3FA34D1DDC5EC75B54": {
+      "candidate_parents": 100,
+      "candidate_records": 554,
+      "missing_scores": 0,
+      "scored_records": 554
+    },
+    "TDC_BBB_MARTINS_AEC83530126E8EB8C0ED": {
+      "candidate_parents": 100,
+      "candidate_records": 1411,
+      "missing_scores": 0,
+      "scored_records": 1411
+    },
+    "TDC_BBB_MARTINS_AEDC39F76BDD84BAAD51": {
+      "candidate_parents": 100,
+      "candidate_records": 720,
+      "missing_scores": 0,
+      "scored_records": 720
+    },
+    "TDC_BBB_MARTINS_B0BFFA6ED277A439F368": {
+      "candidate_parents": 100,
+      "candidate_records": 1736,
+      "missing_scores": 0,
+      "scored_records": 1736
+    },
+    "TDC_BBB_MARTINS_B13A0208CE6A7C7A7A45": {
+      "candidate_parents": 100,
+      "candidate_records": 4080,
+      "missing_scores": 0,
+      "scored_records": 4080
+    },
+    "TDC_BBB_MARTINS_B1599B68EAE79C2C51F0": {
+      "candidate_parents": 100,
+      "candidate_records": 1672,
+      "missing_scores": 0,
+      "scored_records": 1672
+    },
+    "TDC_BBB_MARTINS_B1985371162736C23E71": {
+      "candidate_parents": 100,
+      "candidate_records": 718,
+      "missing_scores": 0,
+      "scored_records": 718
+    },
+    "TDC_BBB_MARTINS_B1D1CA57193787315C6E": {
+      "candidate_parents": 100,
+      "candidate_records": 838,
+      "missing_scores": 0,
+      "scored_records": 838
+    },
+    "TDC_BBB_MARTINS_B1D740663D7860851CBC": {
+      "candidate_parents": 100,
+      "candidate_records": 1280,
+      "missing_scores": 0,
+      "scored_records": 1280
+    },
+    "TDC_BBB_MARTINS_B2AD3BCCE895DD20FBC0": {
+      "candidate_parents": 100,
+      "candidate_records": 359,
+      "missing_scores": 0,
+      "scored_records": 359
+    },
+    "TDC_BBB_MARTINS_B70105C7EE7DB225BEAE": {
+      "candidate_parents": 100,
+      "candidate_records": 797,
+      "missing_scores": 0,
+      "scored_records": 797
+    },
+    "TDC_BBB_MARTINS_B73058E23BD75CC6E6DE": {
+      "candidate_parents": 100,
+      "candidate_records": 1563,
+      "missing_scores": 0,
+      "scored_records": 1563
+    },
+    "TDC_BBB_MARTINS_B8326C58D093C2B53B0D": {
+      "candidate_parents": 100,
+      "candidate_records": 760,
+      "missing_scores": 0,
+      "scored_records": 760
+    },
+    "TDC_BBB_MARTINS_B9DAD0A363E8DCF7D4E5": {
+      "candidate_parents": 100,
+      "candidate_records": 626,
+      "missing_scores": 0,
+      "scored_records": 626
+    },
+    "TDC_BBB_MARTINS_BA27CEF32E2DA2860896": {
+      "candidate_parents": 100,
+      "candidate_records": 1105,
+      "missing_scores": 0,
+      "scored_records": 1105
+    },
+    "TDC_BBB_MARTINS_BA45781F7A77020463DB": {
+      "candidate_parents": 100,
+      "candidate_records": 693,
+      "missing_scores": 0,
+      "scored_records": 693
+    },
+    "TDC_BBB_MARTINS_BAD1C77DBD2C1335E98A": {
+      "candidate_parents": 100,
+      "candidate_records": 1323,
+      "missing_scores": 0,
+      "scored_records": 1323
+    },
+    "TDC_BBB_MARTINS_BC4CA4FC0E02EBC1EA39": {
+      "candidate_parents": 100,
+      "candidate_records": 2718,
+      "missing_scores": 0,
+      "scored_records": 2718
+    },
+    "TDC_BBB_MARTINS_BC73CFD544A9F6D293F2": {
+      "candidate_parents": 100,
+      "candidate_records": 690,
+      "missing_scores": 0,
+      "scored_records": 690
+    },
+    "TDC_BBB_MARTINS_BCC36BB71C861FB227F0": {
+      "candidate_parents": 100,
+      "candidate_records": 982,
+      "missing_scores": 0,
+      "scored_records": 982
+    },
+    "TDC_BBB_MARTINS_BD62194CDE0A3CD5EA2D": {
+      "candidate_parents": 100,
+      "candidate_records": 2491,
+      "missing_scores": 0,
+      "scored_records": 2491
+    },
+    "TDC_BBB_MARTINS_BF0CABFF62376B01451C": {
+      "candidate_parents": 100,
+      "candidate_records": 2439,
+      "missing_scores": 0,
+      "scored_records": 2439
+    },
+    "TDC_BBB_MARTINS_BF6DC951149F90A2B290": {
+      "candidate_parents": 100,
+      "candidate_records": 2540,
+      "missing_scores": 0,
+      "scored_records": 2540
+    },
+    "TDC_BBB_MARTINS_BFF267CC77EF2A16EA41": {
+      "candidate_parents": 100,
+      "candidate_records": 1175,
+      "missing_scores": 0,
+      "scored_records": 1175
+    },
+    "TDC_BBB_MARTINS_C0719B85CCA4F8C2DD99": {
+      "candidate_parents": 100,
+      "candidate_records": 657,
+      "missing_scores": 0,
+      "scored_records": 657
+    },
+    "TDC_BBB_MARTINS_C09E6ED69E162204E647": {
+      "candidate_parents": 100,
+      "candidate_records": 2494,
+      "missing_scores": 0,
+      "scored_records": 2494
+    },
+    "TDC_BBB_MARTINS_C161735261788251C343": {
+      "candidate_parents": 100,
+      "candidate_records": 951,
+      "missing_scores": 0,
+      "scored_records": 951
+    },
+    "TDC_BBB_MARTINS_C184E072B75DBA010F2A": {
+      "candidate_parents": 100,
+      "candidate_records": 2835,
+      "missing_scores": 0,
+      "scored_records": 2835
+    },
+    "TDC_BBB_MARTINS_C2386DEAE6F684E46832": {
+      "candidate_parents": 100,
+      "candidate_records": 2004,
+      "missing_scores": 0,
+      "scored_records": 2004
+    },
+    "TDC_BBB_MARTINS_C261A8289EC19AA9098B": {
+      "candidate_parents": 100,
+      "candidate_records": 3690,
+      "missing_scores": 0,
+      "scored_records": 3690
+    },
+    "TDC_BBB_MARTINS_C309E1E801D75001BD38": {
+      "candidate_parents": 100,
+      "candidate_records": 2125,
+      "missing_scores": 0,
+      "scored_records": 2125
+    },
+    "TDC_BBB_MARTINS_C34F353F5DC9DC113F9D": {
+      "candidate_parents": 100,
+      "candidate_records": 1152,
+      "missing_scores": 0,
+      "scored_records": 1152
+    },
+    "TDC_BBB_MARTINS_C35DC8CB9245CB338DE6": {
+      "candidate_parents": 100,
+      "candidate_records": 1436,
+      "missing_scores": 0,
+      "scored_records": 1436
+    },
+    "TDC_BBB_MARTINS_C403629840EF984344CD": {
+      "candidate_parents": 100,
+      "candidate_records": 1142,
+      "missing_scores": 0,
+      "scored_records": 1142
+    },
+    "TDC_BBB_MARTINS_C50C4150C340063F6176": {
+      "candidate_parents": 100,
+      "candidate_records": 1797,
+      "missing_scores": 0,
+      "scored_records": 1797
+    },
+    "TDC_BBB_MARTINS_C66D6558B7926B1A72EE": {
+      "candidate_parents": 100,
+      "candidate_records": 1846,
+      "missing_scores": 0,
+      "scored_records": 1846
+    },
+    "TDC_BBB_MARTINS_C7CE958BEFD5BDE214EB": {
+      "candidate_parents": 100,
+      "candidate_records": 4515,
+      "missing_scores": 0,
+      "scored_records": 4515
+    },
+    "TDC_BBB_MARTINS_C859F310A14D17CD6173": {
+      "candidate_parents": 100,
+      "candidate_records": 531,
+      "missing_scores": 0,
+      "scored_records": 531
+    },
+    "TDC_BBB_MARTINS_C886005166F9B4D23B13": {
+      "candidate_parents": 100,
+      "candidate_records": 531,
+      "missing_scores": 0,
+      "scored_records": 531
+    },
+    "TDC_BBB_MARTINS_C8E26EA02617AE757185": {
+      "candidate_parents": 100,
+      "candidate_records": 1084,
+      "missing_scores": 0,
+      "scored_records": 1084
+    },
+    "TDC_BBB_MARTINS_C911B03853F0F0069474": {
+      "candidate_parents": 100,
+      "candidate_records": 208,
+      "missing_scores": 0,
+      "scored_records": 208
+    },
+    "TDC_BBB_MARTINS_CB7FB5FB6A5B65B9665E": {
+      "candidate_parents": 100,
+      "candidate_records": 513,
+      "missing_scores": 0,
+      "scored_records": 513
+    },
+    "TDC_BBB_MARTINS_CD16E01FBBB3D88CA4A9": {
+      "candidate_parents": 100,
+      "candidate_records": 1447,
+      "missing_scores": 0,
+      "scored_records": 1447
+    },
+    "TDC_BBB_MARTINS_CD46C6F7C98E9CCC4BFB": {
+      "candidate_parents": 100,
+      "candidate_records": 1555,
+      "missing_scores": 0,
+      "scored_records": 1555
+    },
+    "TDC_BBB_MARTINS_CD7ABED977E4B4842B60": {
+      "candidate_parents": 100,
+      "candidate_records": 2199,
+      "missing_scores": 0,
+      "scored_records": 2199
+    },
+    "TDC_BBB_MARTINS_CDF1F6815F40997D5A13": {
+      "candidate_parents": 100,
+      "candidate_records": 1339,
+      "missing_scores": 0,
+      "scored_records": 1339
+    },
+    "TDC_BBB_MARTINS_CE5DB38B28998F0DBBB6": {
+      "candidate_parents": 100,
+      "candidate_records": 1752,
+      "missing_scores": 0,
+      "scored_records": 1752
+    },
+    "TDC_BBB_MARTINS_CE7B98086219E8495C84": {
+      "candidate_parents": 100,
+      "candidate_records": 342,
+      "missing_scores": 0,
+      "scored_records": 342
+    },
+    "TDC_BBB_MARTINS_CE8228D84209CC8C9F8D": {
+      "candidate_parents": 100,
+      "candidate_records": 1662,
+      "missing_scores": 0,
+      "scored_records": 1662
+    },
+    "TDC_BBB_MARTINS_CFECAAE24E8368401E49": {
+      "candidate_parents": 100,
+      "candidate_records": 1802,
+      "missing_scores": 0,
+      "scored_records": 1802
+    },
+    "TDC_BBB_MARTINS_D0CDD1DC386BB2942AC8": {
+      "candidate_parents": 100,
+      "candidate_records": 1325,
+      "missing_scores": 0,
+      "scored_records": 1325
+    },
+    "TDC_BBB_MARTINS_D0CF2030842AE8059307": {
+      "candidate_parents": 100,
+      "candidate_records": 1503,
+      "missing_scores": 0,
+      "scored_records": 1503
+    },
+    "TDC_BBB_MARTINS_D11751EBA8A0DF3A6C3C": {
+      "candidate_parents": 100,
+      "candidate_records": 4571,
+      "missing_scores": 0,
+      "scored_records": 4571
+    },
+    "TDC_BBB_MARTINS_D1604C4087C123F97E59": {
+      "candidate_parents": 100,
+      "candidate_records": 2214,
+      "missing_scores": 0,
+      "scored_records": 2214
+    },
+    "TDC_BBB_MARTINS_D1DE67EEB821FB35A2FD": {
+      "candidate_parents": 100,
+      "candidate_records": 2416,
+      "missing_scores": 0,
+      "scored_records": 2416
+    },
+    "TDC_BBB_MARTINS_D34263D6AF3B96C05F36": {
+      "candidate_parents": 100,
+      "candidate_records": 2644,
+      "missing_scores": 0,
+      "scored_records": 2644
+    },
+    "TDC_BBB_MARTINS_D3B4950093931609BCA2": {
+      "candidate_parents": 100,
+      "candidate_records": 3024,
+      "missing_scores": 0,
+      "scored_records": 3024
+    },
+    "TDC_BBB_MARTINS_D4C5204075B520BB918A": {
+      "candidate_parents": 100,
+      "candidate_records": 1060,
+      "missing_scores": 0,
+      "scored_records": 1060
+    },
+    "TDC_BBB_MARTINS_D591717537B3C05E807B": {
+      "candidate_parents": 100,
+      "candidate_records": 791,
+      "missing_scores": 0,
+      "scored_records": 791
+    },
+    "TDC_BBB_MARTINS_D5CF8AA7F94BA8EC1C1E": {
+      "candidate_parents": 100,
+      "candidate_records": 3648,
+      "missing_scores": 0,
+      "scored_records": 3648
+    },
+    "TDC_BBB_MARTINS_D6BD144E451F92067DEE": {
+      "candidate_parents": 100,
+      "candidate_records": 4616,
+      "missing_scores": 0,
+      "scored_records": 4616
+    },
+    "TDC_BBB_MARTINS_D7847D0234EF313DE63E": {
+      "candidate_parents": 100,
+      "candidate_records": 789,
+      "missing_scores": 0,
+      "scored_records": 789
+    },
+    "TDC_BBB_MARTINS_D7941677B736C1A4EB6F": {
+      "candidate_parents": 100,
+      "candidate_records": 314,
+      "missing_scores": 0,
+      "scored_records": 314
+    },
+    "TDC_BBB_MARTINS_D86DDD6353C132A99734": {
+      "candidate_parents": 100,
+      "candidate_records": 975,
+      "missing_scores": 0,
+      "scored_records": 975
+    },
+    "TDC_BBB_MARTINS_D969D3A6A2AE31907A31": {
+      "candidate_parents": 100,
+      "candidate_records": 527,
+      "missing_scores": 0,
+      "scored_records": 527
+    },
+    "TDC_BBB_MARTINS_DA83114998C78F26D311": {
+      "candidate_parents": 100,
+      "candidate_records": 1804,
+      "missing_scores": 0,
+      "scored_records": 1804
+    },
+    "TDC_BBB_MARTINS_DB6E7D0D363A9E42DDF0": {
+      "candidate_parents": 100,
+      "candidate_records": 3877,
+      "missing_scores": 0,
+      "scored_records": 3877
+    },
+    "TDC_BBB_MARTINS_DC183FB7B78F7C8460C5": {
+      "candidate_parents": 100,
+      "candidate_records": 4169,
+      "missing_scores": 0,
+      "scored_records": 4169
+    },
+    "TDC_BBB_MARTINS_DC4470E4C300C1234CC8": {
+      "candidate_parents": 100,
+      "candidate_records": 640,
+      "missing_scores": 0,
+      "scored_records": 640
+    },
+    "TDC_BBB_MARTINS_DC6994015CB696A61C5C": {
+      "candidate_parents": 100,
+      "candidate_records": 2990,
+      "missing_scores": 0,
+      "scored_records": 2990
+    },
+    "TDC_BBB_MARTINS_DE0C3E3E06756D27603A": {
+      "candidate_parents": 100,
+      "candidate_records": 995,
+      "missing_scores": 0,
+      "scored_records": 995
+    },
+    "TDC_BBB_MARTINS_DE5B95C1C0364766CDA1": {
+      "candidate_parents": 100,
+      "candidate_records": 1491,
+      "missing_scores": 0,
+      "scored_records": 1491
+    },
+    "TDC_BBB_MARTINS_DEE0A56B8C1FBCEFD87D": {
+      "candidate_parents": 100,
+      "candidate_records": 838,
+      "missing_scores": 0,
+      "scored_records": 838
+    },
+    "TDC_BBB_MARTINS_DF1F0F5AA8ED4F7D6559": {
+      "candidate_parents": 100,
+      "candidate_records": 856,
+      "missing_scores": 0,
+      "scored_records": 856
+    },
+    "TDC_BBB_MARTINS_E066F582CD8FDE241333": {
+      "candidate_parents": 100,
+      "candidate_records": 1256,
+      "missing_scores": 0,
+      "scored_records": 1256
+    },
+    "TDC_BBB_MARTINS_E10F3CE2B3BE7BF983DE": {
+      "candidate_parents": 100,
+      "candidate_records": 4321,
+      "missing_scores": 0,
+      "scored_records": 4321
+    },
+    "TDC_BBB_MARTINS_E16BDAB8B69B8877DFC5": {
+      "candidate_parents": 100,
+      "candidate_records": 1012,
+      "missing_scores": 0,
+      "scored_records": 1012
+    },
+    "TDC_BBB_MARTINS_E29B585BE02CF3E55FA8": {
+      "candidate_parents": 100,
+      "candidate_records": 898,
+      "missing_scores": 0,
+      "scored_records": 898
+    },
+    "TDC_BBB_MARTINS_E32900AEA9E86CC39356": {
+      "candidate_parents": 100,
+      "candidate_records": 1397,
+      "missing_scores": 0,
+      "scored_records": 1397
+    },
+    "TDC_BBB_MARTINS_E3A25A9FF864C1B77959": {
+      "candidate_parents": 100,
+      "candidate_records": 2095,
+      "missing_scores": 0,
+      "scored_records": 2095
+    },
+    "TDC_BBB_MARTINS_E4E6F5BC07688CE5D17D": {
+      "candidate_parents": 100,
+      "candidate_records": 1819,
+      "missing_scores": 0,
+      "scored_records": 1819
+    },
+    "TDC_BBB_MARTINS_E5D82711447540E9346C": {
+      "candidate_parents": 100,
+      "candidate_records": 698,
+      "missing_scores": 0,
+      "scored_records": 698
+    },
+    "TDC_BBB_MARTINS_E5F1FB7423D45452B956": {
+      "candidate_parents": 100,
+      "candidate_records": 1849,
+      "missing_scores": 0,
+      "scored_records": 1849
+    },
+    "TDC_BBB_MARTINS_E64FFEAEE501A02E3D3F": {
+      "candidate_parents": 100,
+      "candidate_records": 2149,
+      "missing_scores": 0,
+      "scored_records": 2149
+    },
+    "TDC_BBB_MARTINS_E698ED844EB60C7A6BAE": {
+      "candidate_parents": 100,
+      "candidate_records": 1544,
+      "missing_scores": 0,
+      "scored_records": 1544
+    },
+    "TDC_BBB_MARTINS_E6A6995E13C04427FEED": {
+      "candidate_parents": 100,
+      "candidate_records": 2024,
+      "missing_scores": 0,
+      "scored_records": 2024
+    },
+    "TDC_BBB_MARTINS_E6CC3742CFF5934C9E51": {
+      "candidate_parents": 100,
+      "candidate_records": 2853,
+      "missing_scores": 0,
+      "scored_records": 2853
+    },
+    "TDC_BBB_MARTINS_E6FB36A6636D363BE5BA": {
+      "candidate_parents": 100,
+      "candidate_records": 3486,
+      "missing_scores": 0,
+      "scored_records": 3486
+    },
+    "TDC_BBB_MARTINS_E7583C54B1F3232F1359": {
+      "candidate_parents": 100,
+      "candidate_records": 795,
+      "missing_scores": 0,
+      "scored_records": 795
+    },
+    "TDC_BBB_MARTINS_E7B7C8842C5104E53DBA": {
+      "candidate_parents": 100,
+      "candidate_records": 1819,
+      "missing_scores": 0,
+      "scored_records": 1819
+    },
+    "TDC_BBB_MARTINS_E8D28F350D910ECD7A8B": {
+      "candidate_parents": 100,
+      "candidate_records": 826,
+      "missing_scores": 0,
+      "scored_records": 826
+    },
+    "TDC_BBB_MARTINS_E974D76D6201521503AE": {
+      "candidate_parents": 100,
+      "candidate_records": 1394,
+      "missing_scores": 0,
+      "scored_records": 1394
+    },
+    "TDC_BBB_MARTINS_E9FB3DAF82ED30A37B59": {
+      "candidate_parents": 100,
+      "candidate_records": 1090,
+      "missing_scores": 0,
+      "scored_records": 1090
+    },
+    "TDC_BBB_MARTINS_EA9AF240ECEBDE84A8B8": {
+      "candidate_parents": 100,
+      "candidate_records": 1059,
+      "missing_scores": 0,
+      "scored_records": 1059
+    },
+    "TDC_BBB_MARTINS_EAB831ABF9B84C679A8D": {
+      "candidate_parents": 100,
+      "candidate_records": 519,
+      "missing_scores": 0,
+      "scored_records": 519
+    },
+    "TDC_BBB_MARTINS_EADDC2BF2DD99548F5FD": {
+      "candidate_parents": 100,
+      "candidate_records": 1017,
+      "missing_scores": 0,
+      "scored_records": 1017
+    },
+    "TDC_BBB_MARTINS_EB9D464698F8D0722520": {
+      "candidate_parents": 100,
+      "candidate_records": 1279,
+      "missing_scores": 0,
+      "scored_records": 1279
+    },
+    "TDC_BBB_MARTINS_EBDDE6C2F31157A7E00E": {
+      "candidate_parents": 100,
+      "candidate_records": 451,
+      "missing_scores": 0,
+      "scored_records": 451
+    },
+    "TDC_BBB_MARTINS_ECCC4A829EFF1C69A429": {
+      "candidate_parents": 100,
+      "candidate_records": 517,
+      "missing_scores": 0,
+      "scored_records": 517
+    },
+    "TDC_BBB_MARTINS_ED4AC0435D5BAEDB217A": {
+      "candidate_parents": 100,
+      "candidate_records": 2330,
+      "missing_scores": 0,
+      "scored_records": 2330
+    },
+    "TDC_BBB_MARTINS_EE183FAABA65CDED302B": {
+      "candidate_parents": 100,
+      "candidate_records": 1516,
+      "missing_scores": 0,
+      "scored_records": 1516
+    },
+    "TDC_BBB_MARTINS_EE37F46308F7CE2DD29E": {
+      "candidate_parents": 100,
+      "candidate_records": 3014,
+      "missing_scores": 0,
+      "scored_records": 3014
+    },
+    "TDC_BBB_MARTINS_EE3C18539A573AC34542": {
+      "candidate_parents": 100,
+      "candidate_records": 3226,
+      "missing_scores": 0,
+      "scored_records": 3226
+    },
+    "TDC_BBB_MARTINS_EE53849BC568694324A5": {
+      "candidate_parents": 100,
+      "candidate_records": 1570,
+      "missing_scores": 0,
+      "scored_records": 1570
+    },
+    "TDC_BBB_MARTINS_EE7843FA7D703FA31F1F": {
+      "candidate_parents": 100,
+      "candidate_records": 1132,
+      "missing_scores": 0,
+      "scored_records": 1132
+    },
+    "TDC_BBB_MARTINS_EEABCB084CC73A5DC6F2": {
+      "candidate_parents": 100,
+      "candidate_records": 1369,
+      "missing_scores": 0,
+      "scored_records": 1369
+    },
+    "TDC_BBB_MARTINS_EF661EA951C08D52E0DA": {
+      "candidate_parents": 100,
+      "candidate_records": 1613,
+      "missing_scores": 0,
+      "scored_records": 1613
+    },
+    "TDC_BBB_MARTINS_EFF32404CDBC4BE6893E": {
+      "candidate_parents": 100,
+      "candidate_records": 1065,
+      "missing_scores": 0,
+      "scored_records": 1065
+    },
+    "TDC_BBB_MARTINS_F01DA0BBEDE1C5D25F73": {
+      "candidate_parents": 100,
+      "candidate_records": 699,
+      "missing_scores": 699,
+      "scored_records": 0
+    },
+    "TDC_BBB_MARTINS_F0E5CBAC6F3CA1696DCC": {
+      "candidate_parents": 100,
+      "candidate_records": 3309,
+      "missing_scores": 0,
+      "scored_records": 3309
+    },
+    "TDC_BBB_MARTINS_F123830A7AED83BB047F": {
+      "candidate_parents": 100,
+      "candidate_records": 2643,
+      "missing_scores": 0,
+      "scored_records": 2643
+    },
+    "TDC_BBB_MARTINS_F1C61953823F3A13CC5B": {
+      "candidate_parents": 100,
+      "candidate_records": 733,
+      "missing_scores": 0,
+      "scored_records": 733
+    },
+    "TDC_BBB_MARTINS_F2CFA3DD5F80E19D7029": {
+      "candidate_parents": 100,
+      "candidate_records": 1080,
+      "missing_scores": 0,
+      "scored_records": 1080
+    },
+    "TDC_BBB_MARTINS_F2D2C5987B8E0DB4A3F7": {
+      "candidate_parents": 100,
+      "candidate_records": 1512,
+      "missing_scores": 0,
+      "scored_records": 1512
+    },
+    "TDC_BBB_MARTINS_F383F6080811FC41B226": {
+      "candidate_parents": 100,
+      "candidate_records": 4783,
+      "missing_scores": 0,
+      "scored_records": 4783
+    },
+    "TDC_BBB_MARTINS_F3F72A62DF9CD190ED1F": {
+      "candidate_parents": 100,
+      "candidate_records": 329,
+      "missing_scores": 0,
+      "scored_records": 329
+    },
+    "TDC_BBB_MARTINS_F4488BC90FA598294FC7": {
+      "candidate_parents": 100,
+      "candidate_records": 2055,
+      "missing_scores": 2055,
+      "scored_records": 0
+    },
+    "TDC_BBB_MARTINS_F48ED60C75466BA0B7A8": {
+      "candidate_parents": 100,
+      "candidate_records": 1069,
+      "missing_scores": 0,
+      "scored_records": 1069
+    },
+    "TDC_BBB_MARTINS_F4D7B03D476F85053E2E": {
+      "candidate_parents": 100,
+      "candidate_records": 621,
+      "missing_scores": 0,
+      "scored_records": 621
+    },
+    "TDC_BBB_MARTINS_F7F3AF11B201057DC82A": {
+      "candidate_parents": 100,
+      "candidate_records": 1721,
+      "missing_scores": 0,
+      "scored_records": 1721
+    },
+    "TDC_BBB_MARTINS_F7FC2F5AEE0BCD4596AB": {
+      "candidate_parents": 100,
+      "candidate_records": 1056,
+      "missing_scores": 0,
+      "scored_records": 1056
+    },
+    "TDC_BBB_MARTINS_F83FD769CBCD8935BAC2": {
+      "candidate_parents": 100,
+      "candidate_records": 3152,
+      "missing_scores": 0,
+      "scored_records": 3152
+    },
+    "TDC_BBB_MARTINS_F9A3632FFB68C759F09C": {
+      "candidate_parents": 100,
+      "candidate_records": 1906,
+      "missing_scores": 0,
+      "scored_records": 1906
+    },
+    "TDC_BBB_MARTINS_F9FCF4AB1E789BCCD6A4": {
+      "candidate_parents": 100,
+      "candidate_records": 2397,
+      "missing_scores": 0,
+      "scored_records": 2397
+    },
+    "TDC_BBB_MARTINS_FA50BD1E865B8CFC0708": {
+      "candidate_parents": 100,
+      "candidate_records": 668,
+      "missing_scores": 0,
+      "scored_records": 668
+    },
+    "TDC_BBB_MARTINS_FAE15C40B249A588A1FE": {
+      "candidate_parents": 100,
+      "candidate_records": 1530,
+      "missing_scores": 0,
+      "scored_records": 1530
+    },
+    "TDC_BBB_MARTINS_FB0E2B7F7D9473584EE5": {
+      "candidate_parents": 100,
+      "candidate_records": 934,
+      "missing_scores": 0,
+      "scored_records": 934
+    },
+    "TDC_BBB_MARTINS_FBB347E27C36EF449E08": {
+      "candidate_parents": 100,
+      "candidate_records": 538,
+      "missing_scores": 0,
+      "scored_records": 538
+    },
+    "TDC_BBB_MARTINS_FDA007A270A8D66E1933": {
+      "candidate_parents": 100,
+      "candidate_records": 2658,
+      "missing_scores": 0,
+      "scored_records": 2658
+    },
+    "TDC_BBB_MARTINS_FDD5624C691402BE1AE6": {
+      "candidate_parents": 100,
+      "candidate_records": 987,
+      "missing_scores": 0,
+      "scored_records": 987
+    },
+    "TDC_BBB_MARTINS_FE5414BF53DB8749CDBF": {
+      "candidate_parents": 100,
+      "candidate_records": 3269,
+      "missing_scores": 0,
+      "scored_records": 3269
+    },
+    "TDC_BBB_MARTINS_FEC9B8A2763DAF81E631": {
+      "candidate_parents": 100,
+      "candidate_records": 4272,
+      "missing_scores": 0,
+      "scored_records": 4272
+    },
+    "TDC_BBB_MARTINS_FF3CEB5373695165CC96": {
+      "candidate_parents": 100,
+      "candidate_records": 1390,
+      "missing_scores": 0,
+      "scored_records": 1390
+    },
+    "TDC_BBB_MARTINS_FFB1F7D81CD7BB1E8978": {
+      "candidate_parents": 100,
+      "candidate_records": 647,
+      "missing_scores": 0,
+      "scored_records": 647
+    },
+    "TDC_BBB_MARTINS_FFBC78D2C84846239D13": {
+      "candidate_parents": 100,
+      "candidate_records": 874,
+      "missing_scores": 0,
+      "scored_records": 874
+    },
+    "TDC_BBB_MARTINS_FFD53034D5AA44C91D4E": {
+      "candidate_parents": 100,
+      "candidate_records": 2242,
+      "missing_scores": 0,
+      "scored_records": 2242
+    }
+  },
+  "query_pure_policy": {
+    "complete_order": "assay_transfer",
+    "incomplete_order": "morgan",
+    "incomplete_prompt_scores": "hidden",
+    "schema_version": "tdc_v2_query_pure.v1",
+    "scope": "query_level"
+  },
+  "query_pure_summary": {
+    "assay_pure_queries": 401,
+    "assay_pure_records": 714418,
+    "morgan_pure_queries": 5,
+    "morgan_pure_records": 9135,
+    "queries": 406
+  },
+  "query_smiles_policy": "frozen_parent_else_source_smiles",
+  "ranking_rows_sha256": "e666878aeeb5a094039630e15100b53a0336e8dce34c03bf5eb3676161c1f7d6",
+  "schema_version": "ranked_uid_retrieval.v1",
+  "score_counts": {
+    "exact_reuse": 714418
+  },
+  "score_coverage": "query_pure",
+  "score_reuse_sources": [
+    {
+      "database_sha256": "c6b3a0a773e2ec81f543427eccf2b4dfe8162d1489ac4b329d20d3bba42ed1d8",
+      "manifest_sha256": "2d8e9011e38f5cb6570e7e8504559f6f480705918d119d1094102fb381d90df7",
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/valid/L4/VERSION.json"
+    },
+    {
+      "database_sha256": "ce28646e0c7c9821ad8bf9f5ac3cca3f964eb50c597f64fb8ba5fe5d12b9b450",
+      "manifest_sha256": "443b9716828c6b2074e63c05f610e989768f9bacc7fc76aa49fa43a105e5d0b3",
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/test/L4/VERSION.json"
+    }
+  ],
+  "shared_candidate_universe": true,
+  "source_smiles_fallback_queries": 0,
+  "status": "complete",
+  "stored_rows": 723553,
+  "subset": "test",
+  "task_id": "bbb_martins",
+  "trusted_predecessor_row_reuse": false
+}

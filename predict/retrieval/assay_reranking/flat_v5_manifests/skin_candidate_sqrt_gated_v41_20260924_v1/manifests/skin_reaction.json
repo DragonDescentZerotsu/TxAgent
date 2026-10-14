@@ -1,0 +1,121 @@
+{
+  "schema_version": "flat_v5_artifact_bundle.v1",
+  "status": "complete",
+  "bundle_id": "flat_v5/gold_v1/skin_reaction",
+  "task": "skin_reaction",
+  "benchmark": "gold_v1",
+  "harness_version": "full-flat-context-v5",
+  "max_level": null,
+  "cache_config": {
+    "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_gold_v1_v27_successors_v1.yaml",
+    "sha256": "f37acab2562db28c2d6ea095cba1d206b37f31a6138277ebc3b9009fadf597f8"
+  },
+  "artifacts": [
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2/skin_reaction/RELEASE_INDEX.json",
+      "size": 2567,
+      "sha256": "b3ebea001eb2dfbe673ce431875b95885d86abe1393f1028766a9f4ecb2c5a92"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2/skin_reaction/scaffold/test/L2/VERSION.json",
+      "size": 27850,
+      "sha256": "339f35d8c90e7c0e6911ff40cf26120d837f58260289ac947a057a6709814653"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2/skin_reaction/scaffold/test/L2/rankings.sqlite3",
+      "size": 39772160,
+      "sha256": "2a36526c5d508869c61c04b055b125bfb786ab062bcaa2a814ab8ceb91a10611"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2/skin_reaction/scaffold/test/L3/VERSION.json",
+      "size": 27845,
+      "sha256": "442395ccad6901813cea396bc8b454d53e9930ea7eff96f3a6f1bd335c4256f3"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2/skin_reaction/scaffold/test/L3/rankings.sqlite3",
+      "size": 36581376,
+      "sha256": "680d444f42fbb073a5e5abab3ccc56a0d8e3307ae0bba608e1c45693b2598949"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2/skin_reaction/scaffold/test/PARENT_UNIVERSE.json",
+      "size": 2122474,
+      "sha256": "29f7c0a122c9606a7ab4e33b44f55adec03f34f1280c10f474098fa6e83d2ad9"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2/skin_reaction/scaffold/valid/L2/VERSION.json",
+      "size": 27539,
+      "sha256": "38c5922cf5bc93fc31f31e26ebb071872392a120c7b26d653092f2ecbd23ceff"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2/skin_reaction/scaffold/valid/L2/rankings.sqlite3",
+      "size": 40239104,
+      "sha256": "cefb595f2ab34fc71239ac3b7506dfe46bafcbdc9415968275909457dab8772e"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2/skin_reaction/scaffold/valid/L3/VERSION.json",
+      "size": 27951,
+      "sha256": "33836716acd8092ae3ad0f96ae61b16d74eaa60bfa0218a1a42485aacfad99d4"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2/skin_reaction/scaffold/valid/L3/rankings.sqlite3",
+      "size": 39882752,
+      "sha256": "475a6710e098fbc9badf7abc7501e3802332616e40e0f3406cb74d95714f5e1a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2/skin_reaction/scaffold/valid/PARENT_UNIVERSE.json",
+      "size": 2109616,
+      "sha256": "beba18695283ecb41d8f212063976e2679eb238c038be221a4a3bbdca47dab6f"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_skin_gold_v1_l1_adapter_v2/skin_reaction/RELEASE_INDEX.json",
+      "size": 1420,
+      "sha256": "8b821cc1be2a2d3b28cbae7fc12073b6a3c3b3911ac5a8fec526f975fe8d5e79"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_skin_gold_v1_l1_adapter_v2/skin_reaction/evidence/VERSION.json",
+      "size": 519,
+      "sha256": "7c61775370de8b38693c2efff388286558dac984c06ac90cab2e04e2c809a7c0"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_skin_gold_v1_l1_adapter_v2/skin_reaction/evidence/records.parquet",
+      "size": 693938,
+      "sha256": "3bf0bbbf9b908aa28394ec97ba09f8e020a025bd4578a53f4a15b78cffc08b76"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_skin_gold_v1_l1_adapter_v2/skin_reaction/scaffold/test/L1/VERSION.json",
+      "size": 37395,
+      "sha256": "822fb7fd7d15764fd7484b30e69068b8107ac87c07fdab8552de97878583ce97"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_skin_gold_v1_l1_adapter_v2/skin_reaction/scaffold/test/L1/rankings.sqlite3",
+      "size": 15065088,
+      "sha256": "fdb0d3b50226b471589d4d7cee4c843806c39c97a4b3ac905ed65f49a2114dd0"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_skin_gold_v1_l1_adapter_v2/skin_reaction/scaffold/valid/L1/VERSION.json",
+      "size": 37084,
+      "sha256": "8e5ed754e7459a0e6615cafc0990fd6aad896b60d307c3cff5d129d43e901f84"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_skin_gold_v1_l1_adapter_v2/skin_reaction/scaffold/valid/L1/rankings.sqlite3",
+      "size": 14647296,
+      "sha256": "41cac375792f79e5d3abb76afdf49554521d52c66d11b5e8d3d6e3b111e1a3c7"
+    },
+    {
+      "path": "data/evidence_libraries/skin_reaction/v10_main_universe_v5/retrieval_projection/ranked_evidence_v27_training_v1/VERSION.json",
+      "size": 1947,
+      "sha256": "7c0f173e92bbc4d380424e6ec4d10a199a531008ee456d27f5aba8655f53e368"
+    },
+    {
+      "path": "data/evidence_libraries/skin_reaction/v10_main_universe_v5/retrieval_projection/ranked_evidence_v27_training_v1/records.parquet",
+      "size": 10723088,
+      "sha256": "78ece678d98ef388ed396f496362daff62bad6347f15c46488d6002aa0bf72ad"
+    },
+    {
+      "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_gold_v1_v27_successors_v1.yaml",
+      "size": 1822,
+      "sha256": "f37acab2562db28c2d6ea095cba1d206b37f31a6138277ebc3b9009fadf597f8"
+    }
+  ],
+  "missing": []
+}

@@ -1,0 +1,121 @@
+{
+  "schema_version": "flat_v5_artifact_bundle.v1",
+  "status": "complete",
+  "bundle_id": "flat_v5/tdc_v2/skin_reaction",
+  "task": "skin_reaction",
+  "benchmark": "tdc_v2",
+  "harness_version": "full-flat-context-v5",
+  "max_level": null,
+  "cache_config": {
+    "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v2_query_pure_v1.yaml",
+    "sha256": "be1d72217588ac0c706ee0adbc7e7e56927aa52b7924265c902f56c2deaa95d3"
+  },
+  "artifacts": [
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l1/assay_transfer/reused_task_best_v1/original/RELEASE_INDEX.json",
+      "size": 2178,
+      "sha256": "42eb240e3204b694d9657062cf4935e37a3433e7aa84ec321513861b6753f488"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l1/assay_transfer/reused_task_best_v1/original/evidence/VERSION.json",
+      "size": 630,
+      "sha256": "9c56d120e36e6ed4e0ec0cd13b3de3d0cf4cf3fd0fcf2805a9ccf9532a57abc6"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l1/assay_transfer/reused_task_best_v1/original/evidence/records.parquet",
+      "size": 58775,
+      "sha256": "07bda10930ea85176da61851e2d4a695768d58ea5b8a93cdffd675117092de97"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l1/assay_transfer/reused_task_best_v1/original/scaffold/test/L1/VERSION.json",
+      "size": 15335,
+      "sha256": "ba6ea1fe1fd865d7329ea1aed9ff46b20c99dd31d3a725a50530f13a88f32769"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l1/assay_transfer/reused_task_best_v1/original/scaffold/test/L1/rankings.sqlite3",
+      "size": 4263936,
+      "sha256": "96b138cbc341fd8d6f435dad8a045748f927b16df81dd67d13f95de0c5f6df45"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l1/assay_transfer/reused_task_best_v1/original/scaffold/valid/L1/VERSION.json",
+      "size": 8490,
+      "sha256": "3900aff65eb7f86d688fb3d1e4fd4bfed741fb4d339f895a436e5f774e00b78a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l1/assay_transfer/reused_task_best_v1/original/scaffold/valid/L1/rankings.sqlite3",
+      "size": 2203648,
+      "sha256": "ae0d5d076200b43bb558051a95389796f76ac804f9a73c336bcd1865992b5cbf"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l2plus/query_pure/reused_v1/original/skin_reaction/RELEASE_INDEX.json",
+      "size": 3229,
+      "sha256": "032f23c8939d64b314cc4899cece376b9f4b9c730c8f434cc175e342f9a8df2f"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l2plus/query_pure/reused_v1/original/skin_reaction/scaffold/test/L2/VERSION.json",
+      "size": 17922,
+      "sha256": "9543137332154ffd12861534bdbea304513ae117c223dffaa54b26c54d59621d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l2plus/query_pure/reused_v1/original/skin_reaction/scaffold/test/L2/rankings.sqlite3",
+      "size": 17133568,
+      "sha256": "30099894c05a59f9cee70a50501617d4b54b5366881aeab219a5ccdafea595f0"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l2plus/query_pure/reused_v1/original/skin_reaction/scaffold/test/L3/VERSION.json",
+      "size": 17924,
+      "sha256": "5fa5d08ae1d4a3041a16d27a36c2410739bfdd38399f5d6f2ce03551dc5773d3"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l2plus/query_pure/reused_v1/original/skin_reaction/scaffold/test/L3/rankings.sqlite3",
+      "size": 16818176,
+      "sha256": "25b2064fc1f11289bb3ab06a0d00628498395dbbb4d8de4cd83930607f506427"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l2plus/query_pure/reused_v1/original/skin_reaction/scaffold/test/PARENT_UNIVERSE.json",
+      "size": 684797,
+      "sha256": "f9da1f445448125f31c634fce769225736500d8afe763b4bb658c43efdc3b01b"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l2plus/query_pure/reused_v1/original/skin_reaction/scaffold/valid/L2/VERSION.json",
+      "size": 10655,
+      "sha256": "bc5f9c948df0d728ca2d60aeb5a13eb8435455bd04f9ece947a4c6ead8f3338b"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l2plus/query_pure/reused_v1/original/skin_reaction/scaffold/valid/L2/rankings.sqlite3",
+      "size": 7372800,
+      "sha256": "030ba5118520a4d53d20165e0beee455bdec086e17cbc3d33a62d62e806cb28b"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l2plus/query_pure/reused_v1/original/skin_reaction/scaffold/valid/L3/VERSION.json",
+      "size": 10663,
+      "sha256": "192eeba528161ef96620be8456895a083ef2c345ecd0ca4ea5ef4ddf4d025954"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l2plus/query_pure/reused_v1/original/skin_reaction/scaffold/valid/L3/rankings.sqlite3",
+      "size": 10579968,
+      "sha256": "5cb54de382009c6bc3c8e03d2473f23546fed6282a864e631d73e1e2e7d4f99d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l2plus/query_pure/reused_v1/original/skin_reaction/scaffold/valid/PARENT_UNIVERSE.json",
+      "size": 331487,
+      "sha256": "4b72d4f02563101d0700bb600b180f39e6a8238c3fe1b898b2d6c63260ded68f"
+    },
+    {
+      "path": "data/evidence_libraries/skin_reaction/v10_main_universe_v5/retrieval_projection/ranked_evidence_v27_training_v1/VERSION.json",
+      "size": 1947,
+      "sha256": "7c0f173e92bbc4d380424e6ec4d10a199a531008ee456d27f5aba8655f53e368"
+    },
+    {
+      "path": "data/evidence_libraries/skin_reaction/v10_main_universe_v5/retrieval_projection/ranked_evidence_v27_training_v1/records.parquet",
+      "size": 10723088,
+      "sha256": "78ece678d98ef388ed396f496362daff62bad6347f15c46488d6002aa0bf72ad"
+    },
+    {
+      "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v2_query_pure_v1.yaml",
+      "size": 1844,
+      "sha256": "be1d72217588ac0c706ee0adbc7e7e56927aa52b7924265c902f56c2deaa95d3"
+    }
+  ],
+  "missing": []
+}

@@ -9,6 +9,8 @@ from predict.harnesses.branches.flat import resolve_default_cache_bundle
 from predict.retrieval.assay_reranking.runtime import cache_profile_root
 from predict.retrieval.assay_reranking.artifact_bundle import (
     ArtifactBundleError,
+    benchmark_id,
+    bundle_manifest_path,
     build_bundle_manifest,
     canonical_cache_alias,
     canonical_cache_id,
@@ -18,6 +20,11 @@ from predict.retrieval.assay_reranking.artifact_bundle import (
     restore_archive,
     verify_bundle,
 )
+
+
+def test_tdc_v2_artifacts_have_their_own_identity() -> None:
+    assert benchmark_id("tdc_v2") == "tdc_v2"
+    assert bundle_manifest_path("ames", "tdc_v2").parts[-2:] == ("tdc_v2", "ames.json")
 
 
 def _fixture_repo(tmp_path: Path) -> tuple[Path, Path]:
@@ -94,6 +101,42 @@ def test_inventory_and_receipt_are_reusable(tmp_path: Path) -> None:
         require_receipt(manifest_path, receipt_path=repo / "receipt.json", repo_root=repo)
 
 
+def test_explicit_tdc_v1_inventory_preserves_benchmark_identity(tmp_path: Path) -> None:
+    repo, config = _fixture_repo(tmp_path)
+    path = repo / "tdc_v1.json"
+    manifest = build_bundle_manifest(
+        task="bbb_martins", benchmark="tdc_v1", cache_config=config, output=path, repo_root=repo,
+    )
+    assert manifest["benchmark"] == "tdc_v1"
+    receipt = repo / "receipt.json"
+    verify_bundle(path, repo_root=repo, receipt_path=receipt)
+    assert require_receipt(path, repo_root=repo, receipt_path=receipt,
+                           expected_benchmark="tdc_v1")["bundle_id"] == "flat_v5/tdc_v1/bbb_martins"
+    with pytest.raises(ArtifactBundleError, match="benchmark differs"):
+        require_receipt(path, repo_root=repo, receipt_path=receipt, expected_benchmark="tdc_v2")
+
+
+def test_inventory_excludes_audit_only_score_and_source_provenance(tmp_path: Path) -> None:
+    repo, config = _fixture_repo(tmp_path)
+    evidence = repo / "data/evidence/VERSION.json"
+    document = json.loads(evidence.read_text())
+    document["source_paths"] = {"records": "raw.parquet"}
+    evidence.write_text(json.dumps(document))
+    (evidence.parent / "raw.parquet").write_bytes(b"raw")
+    index = repo / "data/cache/bbb/RELEASE_INDEX.json"
+    document = json.loads(index.read_text())
+    document["score_reuse_sources"] = [{"path": "old-score-manifest.json"}]
+    index.write_text(json.dumps(document))
+    (index.parent / "old-score-manifest.json").write_text("{}")
+    manifest = build_bundle_manifest(
+        task="bbb_martins", benchmark="tdc_v2", cache_config=config, repo_root=repo,
+    )
+    paths = {entry["path"] for entry in manifest["artifacts"]}
+    assert manifest["status"] == "complete"
+    assert "data/evidence/raw.parquet" not in paths
+    assert "data/cache/bbb/old-score-manifest.json" not in paths
+
+
 def test_direct_only_bundle_does_not_require_later_cache(tmp_path: Path) -> None:
     repo, config = _fixture_repo(tmp_path)
     config.write_text(
@@ -147,7 +190,9 @@ def test_default_cache_bundle_is_task_and_benchmark_scoped(tmp_path: Path) -> No
         "tdc",
         Path("predict/retrieval/assay_reranking/ranked_level_retrieval_v4.yaml"),
     )
-    assert tdc.name == "ranked_level_retrieval_tdc_v1.yaml"
+    assert tdc == Path("data/gold_labels/TDC/manifest.json").resolve()
+    with pytest.raises(TypeError):
+        resolve_default_cache_bundle("bbb_martins", "tdc", Path("predict/retrieval/assay_reranking/ranked_level_retrieval_v4.yaml"), tdc_version="v1")
     safety = resolve_default_cache_bundle(
         "ames",
         "gold",

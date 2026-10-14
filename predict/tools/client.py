@@ -8,6 +8,20 @@ from typing import Any
 import requests
 
 
+def retry_failed_tool_calls(
+    client: ToolServiceClient,
+    calls: list[tuple[str, dict[str, Any]]],
+    results: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Keep ordered successes and retry each failed tool result once."""
+    if len(results) != len(calls):
+        raise ValueError(f"tool result count mismatch: {len(results)} != {len(calls)}")
+    for position, ((tool_name, arguments), result) in enumerate(zip(calls, results)):
+        if result.get("status") != "ok":
+            results[position] = client.invoke(tool_name, arguments)
+    return results
+
+
 class ToolServiceClient:
     """Invoke allowlisted functions through the persistent molecular tool service."""
 
@@ -81,11 +95,13 @@ class ToolServiceClient:
             if len(payloads) != len(calls):
                 raise ValueError(f"batch response count mismatch: {len(payloads)} != {len(calls)}")
         except (requests.RequestException, ValueError, TypeError, json.JSONDecodeError):
-            return [self.invoke(tool_name, arguments) for tool_name, arguments in calls]
-        return [
-            self._format_result(tool_name, arguments, payload)
-            for (tool_name, arguments), payload in zip(calls, payloads)
-        ]
+            results = [self.invoke(tool_name, arguments) for tool_name, arguments in calls]
+        else:
+            results = [
+                self._format_result(tool_name, arguments, payload)
+                for (tool_name, arguments), payload in zip(calls, payloads)
+            ]
+        return retry_failed_tool_calls(self, calls, results)
 
     @staticmethod
     def _format_result(

@@ -23,7 +23,7 @@ from data.processing.evidence_library.versions.v10.tasks.dili.starling_measureme
     DEFAULT_CLEANED_RECORDS,
     DEFAULT_MAPPING_PATH,
 )
-from tools.chembl_tool.common.units import canonicalize_unit
+from data.processing.evidence_library.units import canonicalize_unit
 
 TASK = "dili"
 INVENTORY_VERSION = "dili_unit_inventory.v1"

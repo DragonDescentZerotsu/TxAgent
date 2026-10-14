@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 from pathlib import Path
 from typing import Iterable
+
+from predict.harnesses.branches.manifests import read_record, read_run
 
 
 def prompt_profile_from_manifest(
@@ -14,6 +15,7 @@ def prompt_profile_from_manifest(
     historical_profile: str,
 ) -> str:
     """Read current profile fields, mapping old manifests to a frozen legacy profile."""
+    manifest = manifest.get("settings", manifest)
     return str(
         manifest.get("task_prompt_profile")
         or manifest.get("skin_prompt_profile")
@@ -37,7 +39,7 @@ def require_matching_prompt_profiles(
             raise ValueError(
                 f"Prompt-profile reuse source lacks manifest: {source_dir}"
             )
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest = read_run(source_dir) if source_dir.parent.name == "runs" else read_record(manifest_path)
         source_profile = prompt_profile_from_manifest(
             manifest,
             historical_profile=historical_profile,
@@ -51,14 +53,7 @@ def require_matching_prompt_profiles(
         if manifest.get("schema_version") == "branch_query_prior_overlay.v1":
             for entry in manifest.get("sources") or []:
                 profile_manifest = Path(str(entry["prompt_profile_manifest"]))
-                digest = hashlib.sha256(profile_manifest.read_bytes()).hexdigest()
-                if digest != entry.get("prompt_profile_manifest_sha256"):
-                    raise ValueError(
-                        f"Query-prior source prompt manifest changed: {profile_manifest}"
-                    )
-                source_manifest = json.loads(
-                    profile_manifest.read_text(encoding="utf-8")
-                )
+                source_manifest = read_record(profile_manifest)
                 nested_profile = prompt_profile_from_manifest(
                     source_manifest,
                     historical_profile=historical_profile,
@@ -83,7 +78,7 @@ def _reuse_manifest_path(source_dir: Path) -> Path:
     """
     run_manifest = source_dir / "manifest.json"
     if run_manifest.exists():
-        manifest = json.loads(run_manifest.read_text(encoding="utf-8"))
+        manifest = read_record(run_manifest)
         if manifest.get("task_prompt_profile") or manifest.get("skin_prompt_profile"):
             return run_manifest
     if source_dir.parent.name == "runs":

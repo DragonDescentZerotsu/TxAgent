@@ -688,7 +688,7 @@ class ClientHolder:
         if self.base_url:
             with self.lock:
                 if "compatible" not in self.clients:
-                    from data.processing.llm_api import openai_compatible_client
+                    from predict.api_client.transport import openai_compatible_client
 
                     client_kwargs: dict[str, Any] = {
                         "base_url": self.base_url,
@@ -714,9 +714,9 @@ class ClientHolder:
                     raise RuntimeError(
                         f"environment variable {self.api_key_env} is unset; its value is never read from a file"
                     )
-                from openai import OpenAI
+                from predict.api_client.transport import openai_compatible_client
 
-                self.clients[client_kind] = OpenAI(api_key=api_key)
+                self.clients[client_kind] = openai_compatible_client(base_url="https://api.openai.com/v1", api_key=api_key)[0]
                 return self.clients[client_kind]
             if self.api_key_env and not os.environ.get(self.api_key_env):
                 raise RuntimeError(

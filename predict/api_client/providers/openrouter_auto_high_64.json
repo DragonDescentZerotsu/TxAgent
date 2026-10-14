@@ -1,0 +1,21 @@
+{
+  "version": "openai_provider_pool.v1",
+  "providers": [
+    {
+      "name": "openrouter_auto",
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "openrouter/auto",
+      "api_key_env": "OPEN_ROUTER_KEY",
+      "max_inflight": 64,
+      "initial_latency_s": 120,
+      "timeout_s": 7200,
+      "request_extra_body": {
+        "provider": {"require_parameters": true},
+        "reasoning_effort_override": "high"
+      }
+    }
+  ],
+  "failure_threshold": 64,
+  "cooldown_seconds": 0,
+  "max_failovers": 0
+}

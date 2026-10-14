@@ -27,7 +27,7 @@ from data.processing.paths import (
     REPO_ROOT,
     evidence_library_root,
 )
-from tools.chembl_tool.common.json_utils import write_json_atomic
+from predict.utils.json import write_json_atomic
 
 
 STAGE_PARTS = (

@@ -23,7 +23,7 @@ cleaning. Built data is separate under
 `views.py`, `evidence_library.py`, `heldout_index.py`, `compact_artifacts.py`, and
 `assay_catalog.py` are version-independent consumers of completed libraries.
 Reviewed semantic/readout grouping and filtering live under the repository-top-level
-`semantic_buckets/` owner;
+`optimization/semantic_buckets/` owner;
 exploratory relevance and informativeness workflows remain under
 `analysis/evidence_library/`. `stage_artifact_store.py` packages completed stages.
 Gold-label dataset and conditioned-benchmark construction lives under

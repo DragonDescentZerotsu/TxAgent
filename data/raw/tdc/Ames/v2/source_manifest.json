@@ -1,0 +1,30 @@
+{
+  "contract": "tdc_raw_source.v2",
+  "task": "ames",
+  "dataset": "AMES",
+  "source_repository_commit": "f409ff3673498f0b16efc4c05d8a027815c08f0e",
+  "source_location": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/AMES",
+  "files": [
+    {
+      "split": "train",
+      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/AMES/train.csv",
+      "path": "data/raw/tdc/Ames/v2/train.csv",
+      "sha256": "f467268ea5460913870897110e04225309dc699b6499b8c91dbdad0342d7e298",
+      "rows": 5094
+    },
+    {
+      "split": "valid",
+      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/AMES/val.csv",
+      "path": "data/raw/tdc/Ames/v2/valid.csv",
+      "sha256": "35d5364efcde763f13fc9426322ffc0ff1e98eb1e91c5d275d69dd29d49d0784",
+      "rows": 727
+    },
+    {
+      "split": "test",
+      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/AMES/test.csv",
+      "path": "data/raw/tdc/Ames/v2/test.csv",
+      "sha256": "d87e29ad1f188d6ee4fcdd5c3c3aa4ba15e4fec657553353d0d951ad8df02d3f",
+      "rows": 1457
+    }
+  ]
+}

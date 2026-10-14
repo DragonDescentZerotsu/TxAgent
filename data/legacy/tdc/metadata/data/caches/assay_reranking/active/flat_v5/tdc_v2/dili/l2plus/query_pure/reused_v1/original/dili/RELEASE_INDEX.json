@@ -1,0 +1,122 @@
+{
+  "evidence": {
+    "content_id": "29e0430275fdb7bf6453aa7d32906a2cb78a943eee871aef03d6fbbfed5436f9",
+    "manifest": "../../../../../../../../../../../evidence_libraries/dili/v10_main_universe_v3/retrieval_projection/ranked_evidence_safety_v27_v1/VERSION.json",
+    "manifest_sha256": "1876c9e92ae695174e69f153e0c2bfaaf67d84ded9d36a1fc57d144e5ba4d4b1",
+    "record_count": 1384007
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v2"
+  },
+  "later_candidate_universe": "all_uids_under_shared_l2plus_morgan_top_100_parents",
+  "levels_independent": false,
+  "neighbor_identity_policy_by_level": {
+    "L2": "parent_disjoint",
+    "L3": "parent_disjoint",
+    "L4": "parent_disjoint",
+    "L5": "parent_disjoint",
+    "L6": "parent_disjoint",
+    "L7": "parent_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original",
+  "query_pure_policy": {
+    "complete_order": "assay_transfer",
+    "incomplete_order": "morgan",
+    "incomplete_prompt_scores": "hidden",
+    "schema_version": "tdc_v2_query_pure.v1",
+    "scope": "query_level"
+  },
+  "ranking_modes": [
+    "morgan",
+    "query-pure"
+  ],
+  "score_coverage": "query_pure",
+  "selection_coverage": "complete",
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "score_source_release_index": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v1/dili/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2/dili/RELEASE_INDEX.json",
+  "score_source_release_index_sha256": "2799f70513265e677d18472fcf0ec29e001a7a20354b6975a16377f22ce4fe18",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L2": {
+          "content_id": "c880c4ab770548a717c3e37e9beb6e651b7b0edafee573241c1fb7ab91e9d2e3",
+          "manifest": "scaffold/test/L2/VERSION.json",
+          "manifest_sha256": "3ed3bdf1b965c37df3c48a795b463c908f8b238b0b131c3de778313a3174fb6c"
+        },
+        "L3": {
+          "content_id": "ec6269dbd0d86a74b225019ea5dc0fed45546719ea98ce76d22e9124b9a0747a",
+          "manifest": "scaffold/test/L3/VERSION.json",
+          "manifest_sha256": "ec2378f02fec0c09c0f1817c9dca73987a2369f913720829ecf474c185d154fe"
+        },
+        "L4": {
+          "content_id": "c7325e1e38dbb2744543d1372c99c8b72d2e0169481d350e616196309640e7e7",
+          "manifest": "scaffold/test/L4/VERSION.json",
+          "manifest_sha256": "fed493618eb27ee089b2ef37b76aa0d00bbc6fd49219783663f70a577f15483a"
+        },
+        "L5": {
+          "content_id": "7ee75dbdec5513c681c734ce9e7c4ae8312cc41d6ded0279c3d5cdc65674c028",
+          "manifest": "scaffold/test/L5/VERSION.json",
+          "manifest_sha256": "c3b552e6539474efe28bcdffa3ac2b53c446d170e2d66648c2a1b89a006a01e0"
+        },
+        "L6": {
+          "content_id": "894e03b4012b152bf61f7acd26d3152aeb60eec6f3c3ead3fb89ce5e6132da1a",
+          "manifest": "scaffold/test/L6/VERSION.json",
+          "manifest_sha256": "b64a82dc16554fe0c4e740328544a25952381887c930d8a21c7d2244c43a67a8"
+        },
+        "L7": {
+          "content_id": "b3a9d2162d47aa6b81117630a2b26f4c55ecb7485fdd3d2abb2369297c74c77f",
+          "manifest": "scaffold/test/L7/VERSION.json",
+          "manifest_sha256": "7495f339b0cb02043077d0fd1cfb9bfb81491b138857bb489f84caf0b7d28d05"
+        }
+      },
+      "parent_universe": {
+        "file": "scaffold/test/PARENT_UNIVERSE.json",
+        "sha256": "881e9a4652c80f83718bbd36ee332acd93d0d63bdb290d1408c47239c0e910cd"
+      }
+    },
+    "valid": {
+      "levels": {
+        "L2": {
+          "content_id": "a82dc208adeec707dbce95700875722f1cbec7fef1b6b5b7aea940490139b7e2",
+          "manifest": "scaffold/valid/L2/VERSION.json",
+          "manifest_sha256": "5ccb5ea2a8631728804c99b1abfb01f802845f74d0c81e2a2cff3e682edd7a8e"
+        },
+        "L3": {
+          "content_id": "2153d706766b344334e6c0dc8db41075ff8641dd742ed9a69a210c3970aae982",
+          "manifest": "scaffold/valid/L3/VERSION.json",
+          "manifest_sha256": "e523308d9007ce73dc55c2d9c5d3869b8e4d950246239e794613a2e02bf236c6"
+        },
+        "L4": {
+          "content_id": "33c659b0ea4411f6f2ceb6ecc698a5838c6eb84074d9f715fad44a14091dfe46",
+          "manifest": "scaffold/valid/L4/VERSION.json",
+          "manifest_sha256": "a383a721415a7b19a2e78c5c0c7b16ef2b76cfb0f381c920d4234f6753c4041a"
+        },
+        "L5": {
+          "content_id": "11418a4e807bb442c3c193fd09e9af516fe25515a262c45f5bb3cd6bae71916b",
+          "manifest": "scaffold/valid/L5/VERSION.json",
+          "manifest_sha256": "06127cbf5de8c8ba2b0657506a3e4b930c869008edd4b842e7ab222d4679ebeb"
+        },
+        "L6": {
+          "content_id": "73330d9ffe5b4ffb22167b9d6e6f352303949201329a382f9f2bca4faf0a3491",
+          "manifest": "scaffold/valid/L6/VERSION.json",
+          "manifest_sha256": "d37ae5db81feb12fce7cbf8008c12ad970a6e4d70ff681f2c4d5d3c861ffbe10"
+        },
+        "L7": {
+          "content_id": "ef78525639052269b0da8bafbbc35262d9805f5c661c1c382e7bd891eb27ec21",
+          "manifest": "scaffold/valid/L7/VERSION.json",
+          "manifest_sha256": "9cce2726a9d959a870cd13eea10fe516c4f17764a7879f80a9dc85b047b9d3d2"
+        }
+      },
+      "parent_universe": {
+        "file": "scaffold/valid/PARENT_UNIVERSE.json",
+        "sha256": "4d8f2229010edff8a172ed129030ef1691534f977d591b6650b562907df71026"
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "dili"
+}

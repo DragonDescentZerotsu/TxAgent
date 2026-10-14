@@ -365,10 +365,8 @@ def cancel_run(run_dir: Path) -> None:
     update_run(run_dir, status="cancelled", cancelled_at=_now())
 
 
-def launch_saved(run_dir: Path, *, prompt_version: str = "") -> Path:
+def launch_saved(run_dir: Path) -> Path:
     document = _read_json(run_dir / "run.json")
-    if prompt_version and document.get("harness") != "progressive":
-        raise SystemExit("prompt relaunch currently supports progressive runs")
     command = list(document.get("resume_command") or document.get("command") or [])
     if not command:
         raise SystemExit("run has no saved resume command")
@@ -380,25 +378,10 @@ def launch_saved(run_dir: Path, *, prompt_version: str = "") -> Path:
         except (OSError, subprocess.SubprocessError) as exc:
             update_run(run_dir, status="publication_failed", publication_error=str(exc))
             raise SystemExit("live publication failed; the run was not continued") from exc
-    if prompt_version:
-        command = _replace_option(command, "--prompt-version", prompt_version)
-        command = _remove_option(command, "--live-run-id")
-        command = _remove_option(command, "--execution-mode")
-        command = [item for item in command if item != "--continue-after-pilot"]
-        old_output = str(document.get("output_root") or "")
-        if old_output:
-            new_output = f"{old_output}_{safe_name(prompt_version)}_{minute_id()}"
-            command = _replace_option(command, "--output-root", new_output)
-        new_run = ""
-    else:
-        command = _replace_option(command, "--live-run-id", run_dir.name)
-        new_run = run_dir.name
-    if new_run:
-        command = _add_flag(command, "--continue-after-pilot")
-        if "predict.harnesses.progressive" not in command:
-            command = _add_flag(command, "--skip-existing")
-    log_dir = run_dir if new_run else run_dir.parent
-    log_path = log_dir / ("continue.log" if new_run else f"relaunch_{minute_id()}.log")
+    command = _replace_option(command, "--live-run-id", run_dir.name)
+    command = _add_flag(command, "--continue-after-pilot")
+    command = _add_flag(command, "--skip-existing")
+    log_path = run_dir / "continue.log"
     with log_path.open("ab") as log:
         process = subprocess.Popen(
             command,
@@ -407,44 +390,14 @@ def launch_saved(run_dir: Path, *, prompt_version: str = "") -> Path:
             stderr=subprocess.STDOUT,
             start_new_session=True,
         )
-    if new_run:
-        update_run(
-            run_dir,
-            status="running",
-            pid=process.pid,
-            process_group=process.pid,
-            process_started_at=_process_start(process.pid),
-        )
+    update_run(
+        run_dir,
+        status="running",
+        pid=process.pid,
+        process_group=process.pid,
+        process_started_at=_process_start(process.pid),
+    )
     return log_path
-
-
-def clone_prompt(run_dir: Path, version: str) -> Path:
-    document = _read_json(run_dir / "run.json")
-    source_version = str(document.get("prompt_version") or "")
-    if not source_version:
-        raise SystemExit("this run does not record a versioned progressive prompt")
-    from predict.harnesses.progressive.prompt import (
-        PROMPT_DIR,
-        behavior_version,
-        prompt_directory,
-    )
-
-    source = prompt_directory(source_version)
-    destination = PROMPT_DIR / safe_name(version)
-    if destination.exists():
-        raise SystemExit(f"prompt bundle already exists: {destination}")
-    shutil.copytree(source, destination)
-    provenance_path = destination / "provenance.json"
-    provenance = _read_json(provenance_path) if provenance_path.exists() else {}
-    provenance.update(
-        version=version,
-        parent_version=source_version,
-        runtime_parent_version=behavior_version(source_version),
-        cloned_at=_now(),
-        cloned_from_run=str(run_dir.relative_to(_live_root(run_dir, document))),
-    )
-    write_json_atomic(provenance_path, provenance)
-    return destination
 
 
 def _write_public_run(run_dir: Path) -> None:
@@ -611,12 +564,6 @@ def main(argv: list[str] | None = None) -> int:
     for name in ("show", "cancel", "continue", "promote"):
         child = subparsers.add_parser(name)
         child.add_argument("run_id")
-    clone = subparsers.add_parser("clone-prompt")
-    clone.add_argument("run_id")
-    clone.add_argument("--to", required=True)
-    relaunch = subparsers.add_parser("relaunch")
-    relaunch.add_argument("run_id")
-    relaunch.add_argument("--prompt-version", required=True)
     subparsers.add_parser("list")
     publish = subparsers.add_parser("publish")
     publish.add_argument("--once", action="store_true")
@@ -639,10 +586,6 @@ def main(argv: list[str] | None = None) -> int:
     elif args.action == "promote":
         promote_run(run_dir)
         print(run_dir)
-    elif args.action == "clone-prompt":
-        print(clone_prompt(run_dir, args.to))
-    elif args.action == "relaunch":
-        print(launch_saved(run_dir, prompt_version=args.prompt_version))
     return 0
 
 

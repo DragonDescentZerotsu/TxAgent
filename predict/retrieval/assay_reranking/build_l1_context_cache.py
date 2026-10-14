@@ -15,11 +15,22 @@ from typing import Any
 import pyarrow.parquet as pq
 
 from data.processing.gold_labels.conditioned_benchmark import split_path
-from predict.harnesses.progressive._records import (
-    BIOAVAILABILITY_CLAIMS,
-    BIOAVAILABILITY_CLAIMS_MANIFEST,
-    _bioavailability_source_id,
+BIOAVAILABILITY_CLAIMS = Path(
+    "data/artifacts/starling/bioavailability_ma/canonical_sources/"
+    "canonical_direct_v2/direct_claims.parquet"
 )
+
+BIOAVAILABILITY_CLAIMS_MANIFEST = BIOAVAILABILITY_CLAIMS.with_name(
+    "merge_manifest.json"
+)
+
+def _bioavailability_source_id(row: Mapping[str, Any]) -> str:
+    source = str(row.get("source_id") or "")
+    if source == "hf_bioavailability":
+        return f"hf:{row.get('source_record_id')}"
+    if source == "oral_exposure" and row.get("source_row_number") is not None:
+        return f"local:{int(row['source_row_number']) - 1}:{row.get('source_record_id')}"
+    return ""
 from predict.retrieval.policies import normalize_molecule_identity
 from predict.retrieval.assay_reranking.runtime import cache_profile_root
 from predict.utils.json import read_jsonl, sha256_file

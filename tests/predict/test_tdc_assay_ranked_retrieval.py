@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from pathlib import Path
 
 import pytest
 
-from data.processing.gold_labels.conditioned_benchmark import tdc_task_root
+from data.processing.gold_labels.conditioned_benchmark import TASK_DIRECTORIES
 from predict.retrieval.assay_reranking.ranked_uid_retrieval import load_candidates
 from predict.retrieval.assay_reranking.runtime import cache_profile_root
 from predict.retrieval.assay_reranking.score_tdc_ranked_retrieval import (
@@ -59,7 +60,7 @@ def test_tdc_assay_release_preserves_morgan_and_adds_dense_assay_ranks(task: str
 def test_generic_reader_loads_both_tdc_rankings(method: str) -> None:
     task, subset = "bbb_martins", "valid"
     root = cache_profile_root(PROFILE) / task
-    query = read_jsonl(tdc_task_root(task) / f"{subset}_molecule_condition_labels.jsonl")[0]
+    query = read_jsonl((Path("data/gold_labels/TDC") / TASK_DIRECTORIES[task] / "v1/scaffold") / f"{subset}_molecule_condition_labels.jsonl")[0]
     query_id = str(query["benchmark_row_id"])
     molecules, later, audit = load_candidates(
         {query_id: str(query["drug"])},

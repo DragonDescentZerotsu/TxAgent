@@ -1,0 +1,60 @@
+{
+  "task": "dili",
+  "task_directory": "DILI",
+  "benchmark": "tdc",
+  "version": "v2",
+  "release_id": "tdc_v2_original",
+  "contract": "tdc_original_source_splits.v2",
+  "layout": "original",
+  "status": "complete",
+  "source_repository_commit": "f409ff3673498f0b16efc4c05d8a027815c08f0e",
+  "source_files": [
+    {
+      "split": "train",
+      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/DILI/train.csv",
+      "path": "data/raw/tdc/DILI/v2/train.csv",
+      "sha256": "333382209f248057348267d70ecea0769b0f5cade2b4abf97e10f9b57b50e64e",
+      "rows": 332
+    },
+    {
+      "split": "valid",
+      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/DILI/val.csv",
+      "path": "data/raw/tdc/DILI/v2/valid.csv",
+      "sha256": "3c965a793efe70d3327a3f18d08b47d98883a4b7e1565fecab88e2a419d4c2c7",
+      "rows": 47
+    },
+    {
+      "split": "test",
+      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/DILI/test.csv",
+      "path": "data/raw/tdc/DILI/v2/test.csv",
+      "sha256": "eb4cacff67a3f25d1d5e6a4c15ada68239af630ec19979097c4c832b185478e8",
+      "rows": 96
+    }
+  ],
+  "source_rows": 475,
+  "preserved_rows": 475,
+  "splits": {
+    "train": {
+      "n": 332,
+      "positive": 156
+    },
+    "valid": {
+      "n": 47,
+      "positive": 30
+    },
+    "test": {
+      "n": 96,
+      "positive": 50
+    }
+  },
+  "outputs": {
+    "train_molecule_condition_labels.jsonl": "c7f12cbbd0b4c7cbef3ede0bb65a45ff431a329de5251c81133fde1f4b592af7",
+    "train.jsonl": "9db572688a00dfed205c49f7539607463927ae7c1f7d0baf1249e56925020ce3",
+    "valid_molecule_condition_labels.jsonl": "62b9f857889717dc95e8087cf5688fe29c6277371bb83f7dcbc1e1738cfda674",
+    "valid.jsonl": "3a12a2f920b17d77ae7099fe3962781d328fc9b6b6db58a265b4461cec1b7efc",
+    "test_molecule_condition_labels.jsonl": "2bfb45d3672256351e076f5cb27997b5571c047541c2928c2cf20dfe39090353",
+    "test.jsonl": "1d2d86fdf91b8e97667fc1159c05ee876c1ddc3ea5e86fe3930d753ca5996a73",
+    "heldout_molecule_condition_labels.jsonl": "c142d91043c627842c991f2dfeab830d7c9176425e1340b5fbf4e616fa504a6f"
+  },
+  "summary_sha256": "c1b62f99ae0fefd4daa31e2d82239c9f504f9567c7e7f6131fe2d8b7dce29fcd"
+}

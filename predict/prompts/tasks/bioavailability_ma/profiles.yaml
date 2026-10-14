@@ -1,0 +1,147 @@
+task: bioavailability_ma
+flat:
+  prompt_profile: f20_evidence_calibrated_v2
+  system_role: You are a chemist expert in oral bioavailability and you reason via analogies, taking evidence
+    from related molecules to support your prediction.
+  endpoint_name: absolute oral bioavailability at the F >= 20% threshold
+  label_scope: absolute_oral_bioavailability_f20.v2
+  prediction_field: final_prediction
+  positive_prediction: pass
+  negative_prediction: fail
+  required_fields:
+  - claims
+  - final_prediction
+  required_json_schema:
+    claims:
+    - claim: concise evidence-grounded statement
+      molecule_ids:
+      - Molecule N
+      record_ids:
+      - Record N-N
+      evidence_role: supportive | contradictory
+  task_instructions:
+  - Predict pass when F >= 20% is better supported and fail when F < 20% is better supported.
+  - Keep evidence direction separate from transferability; low transferability lowers weight but does
+    not reverse direction.
+  - Missing, neutral, uncertain, or weak evidence is not evidence for low bioavailability.
+  - Predict fail only when affirmative threshold-relevant evidence supports it, not from generic drug-likeness
+    concerns alone.
+  - Compare directness, endpoint match, conditions, transferability, and uncertainty without counting
+    repeated records independently.
+default: f20_evidence_calibrated_v2
+historical: legacy_bioavailability_v1
+profiles:
+  legacy_bioavailability_v1:
+    name: legacy_bioavailability_v1
+    label_scope: absolute_oral_bioavailability_f20_legacy.v1
+    single_system_role: 'You are a medicinal chemistry oral bioavailability single-molecule analyst. Only
+      analyze the query molecule itself, without analog evidence. '
+    single_task: Single-molecule oral bioavailability plausibility analysis.
+    single_instructions:
+    - Assess oral bioavailability prior from molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa,
+      charge, rotatable bonds, and functional groups.
+    - Return JSON with oral_bioavailability_prior, absorption_prior, solubility_or_dissolution_prior,
+      metabolism_or_clearance_prior, confidence, reasoning_summary, property_drivers, caveats.
+    group_system_role: 'You are a medicinal chemistry oral bioavailability analog evidence analyst. Reason
+      about whether analog evidence in one endpoint group is transferable to the query molecule. '
+    group_task: Group-level oral bioavailability analog transferability analysis.
+    group_instructions:
+    - Assess structural transferability from neighbors to the query.
+    - Low-similarity analogs are intentionally included. You must explicitly judge whether they are transferable.
+    - Do not use distant_analog or very_distant_analog neighbors as positive or negative oral bioavailability
+      evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.
+    final_system_role: 'You are a senior oral bioavailability reasoning model. Integrate group-level analog
+      evidence into one final oral bioavailability assessment. '
+    final_task: Final oral bioavailability prediction from analog evidence.
+    final_instructions:
+    - Use the single-molecule analysis as the physicochemical prior.
+    - Use group analyses as analog evidence; downweight groups marked low confidence or low transferability.
+    - Do not use distant_analog or very_distant_analog neighbors as positive or negative oral bioavailability
+      evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.
+    - 'You must choose exactly one bioavailability_prediction: high or low. If evidence is mixed or weak,
+      choose the better-supported class and express uncertainty through confidence, caveats, and evidence_gaps.'
+    single_schema:
+      oral_bioavailability_prior: high | low | mixed_or_unclear
+      absorption_prior: favorable | unfavorable | mixed_or_unclear
+      solubility_or_dissolution_prior: favorable | unfavorable | mixed_or_unclear
+      metabolism_or_clearance_prior: favorable | unfavorable | mixed_or_unclear
+      exact_chembl_evidence_assessment: string
+      confidence: high | moderate | low
+      reasoning_summary: string
+      property_drivers:
+      - string
+      caveats:
+      - string
+    exact_context_instruction: If exact_query_chembl_context is found, distinguish direct same-molecule
+      ChEMBL bioavailability evidence from the physicochemical prior.
+  f20_evidence_calibrated_v2:
+    name: f20_evidence_calibrated_v2
+    label_scope: absolute_oral_bioavailability_f20.v2
+    single_system_role: 'You are an absolute oral bioavailability F-threshold analyst. Only assess whether
+      the query is plausibly above or below F=20%, without analog evidence. '
+    single_task: Single-molecule prior for absolute oral bioavailability F >= 20% versus F < 20%.
+    single_instructions:
+    - 'Calibrate every conclusion to the modest binary threshold: high means absolute oral bioavailability
+      F >= 20%, not ideal exposure or general drug-likeness; low means F < 20%.'
+    - Use molecular weight, logP/logD, TPSA, HBD/HBA, ionization/pKa, charge, rotatable bonds, and functional
+      groups only as uncertain physicochemical priors.
+    - Lipinski or QED violations, high molecular weight, ionization, polarity, lipophilicity, flexibility,
+      or absence of a favorable property are not individually sufficient to support F < 20%.
+    - Do not infer metabolic instability, first-pass clearance, or transporter efflux from structure alone
+      without direct supporting evidence.
+    - Choose oral_bioavailability_prior='low' only when multiple threshold-relevant liabilities coherently
+      and specifically support F < 20%; otherwise use mixed_or_unclear rather than converting uncertainty
+      into low.
+    - Return JSON with oral_bioavailability_prior, absorption_prior, solubility_or_dissolution_prior,
+      metabolism_or_clearance_prior, confidence, reasoning_summary, property_drivers, caveats.
+    group_system_role: 'You are an absolute oral bioavailability analog evidence analyst. Keep observed
+      evidence direction separate from query-specific transferability and weight. '
+    group_task: Group-level evidence direction and transferability for absolute oral F >= 20% versus F
+      < 20%.
+    group_instructions:
+    - Assess structural and property transferability explicitly, but report evidence direction from the
+      observed endpoint separately from transferability.
+    - Low or not-applicable transferability lowers evidence weight; it does not reverse the observed direction
+      and is not evidence for the opposite class.
+    - For direct oral-bioavailability outcomes, consistently high analog outcomes remain supports_high_bioavailability
+      even when distant; consistently low outcomes remain argues_against_high_bioavailability. Express
+      distance through transferability, confidence, caveats, and effect_on_bioavailability_reasoning.
+    - Use neutral_or_unclear only when the underlying endpoint direction is genuinely mixed, missing,
+      ambiguous, out of scope, or non-directional—not merely because the analog is distant.
+    - Missing quantitative F, species, formulation, or assay context is uncertainty, not negative evidence.
+      Do not invent F < 20% support from missing context.
+    - Do not flip a direct observed outcome because the query has generic MW, logP, QED, Lipinski, ionization,
+      polarity, or flexibility liabilities.
+    final_system_role: 'You are a senior absolute oral bioavailability F-threshold reasoning model. Integrate
+      evidence direction and transferability without converting uncertainty into a negative outcome. '
+    final_task: Final absolute oral bioavailability prediction at the F=20% threshold.
+    final_instructions:
+    - Use the single-molecule analysis only as an uncertain physicochemical prior calibrated to F=20%,
+      not as a general drug-likeness verdict.
+    - 'For every group, keep evidence direction separate from transferability: low transferability lowers
+      weight but cannot turn positive evidence into negative evidence or vice versa.'
+    - Insufficient, neutral, low-confidence, low-transferability, or missing evidence is not evidence
+      for F < 20% and must not default to bioavailability_prediction='low'.
+    - Predict low only when affirmative threshold-relevant evidence supports F < 20%, such as transferable
+      direct low outcomes or coherent measured absorption, solubility, first-pass, clearance, or efflux
+      evidence. Generic descriptor liabilities or speculative mechanisms alone are insufficient.
+    - A high prediction means only that F >= 20% is better supported; it does not assert optimal exposure,
+      formulation independence, or high confidence.
+    - When evidence conflicts, compare source directness, endpoint match, direction, transferability,
+      and uncertainty explicitly; express unresolved uncertainty through confidence and evidence_gaps
+      rather than treating it as low.
+    - 'You must choose exactly one bioavailability_prediction: high or low.'
+    single_schema:
+      oral_bioavailability_prior: high | low | mixed_or_unclear
+      absorption_prior: favorable | unfavorable | mixed_or_unclear
+      solubility_or_dissolution_prior: favorable | unfavorable | mixed_or_unclear
+      metabolism_or_clearance_prior: favorable | unfavorable | mixed_or_unclear
+      exact_chembl_evidence_assessment: string
+      confidence: high | moderate | low
+      reasoning_summary: string
+      property_drivers:
+      - string
+      caveats:
+      - string
+    exact_context_instruction: If exact_query_chembl_context is found, distinguish direct same-molecule
+      ChEMBL bioavailability evidence from the physicochemical prior.

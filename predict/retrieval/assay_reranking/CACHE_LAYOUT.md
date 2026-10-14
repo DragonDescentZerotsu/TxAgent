@@ -98,6 +98,41 @@ The reader exposes the same three stages directly:
 
 ## Rebuild and use
 
+### Scaffold-disjoint L2+ successors
+
+The opt-in `ranked_level_retrieval_*_scaffold_disjoint_v1.yaml` configurations
+cover all six Gold-v1 tasks, Oral/Skin TDC-v1, and BBB/Ames/DILI/Carcinogens
+TDC-v2. Each release uses variant `scaffold_disjoint_parent100_v1` under its
+actual benchmark identity; existing L1 references and defaults are preserved.
+
+Use `build_ranked_uid_retrieval` with `--neighbor-identity-policy scaffold_disjoint`,
+an explicit `--benchmark gold|tdc`, and the pinned evidence manifest.
+The builder retains V24.1 BBB, V25 Oral, V27 Skin training-template, and V27
+general safety scoring. BBB/Oral L5 remain explicitly Morgan-only. BBB/Oral
+select 100 parents independently per level; Skin/safety select 100 across L2+,
+then expand every physical UID at each level. Shared levels may contain fewer
+than 100 represented parents when selected parents have no records at that level.
+
+Scaffold filtering uses `predict.retrieval.policies`: matching nonempty
+scaffolds, parent identities, and connectivity variants are excluded per query.
+Acyclic molecules retain the existing empty-scaffold behavior. Replenishment
+ranks the complete eligible evidence pool rather than trimming a predecessor.
+`--score-reuse-root` can repeat; both source splits are searched by exact scoring
+key, and incompatible models or conflicting values fail. With explicit
+`--rescore-conflicting-reuse`, conflicting values are rejected, recorded in
+`score_reuse_conflicts.json`, and their keys are queued for fresh scoring.
+`--query-identity-root` reads frozen query identities from the matching predecessor
+without inheriting its candidate pool; this preserves synthetic identities for
+wildcard SMILES in Gold Skin. Preparation checks
+published database identity metadata; full hashing belongs to final validation.
+
+For shared pools, run `prepare-universe` before `prepare-level`. Run all test
+levels before validation scoring. `pretokenize --tokenized-root ... --num-shards N`
+freezes CPU tokenization for `score` with the same shard count. Finalize only
+closed, complete journals, then run `index`, `validate`, and artifact inventory
+and verification with the matching benchmark and new output paths. A prepared
+or partial index is not a published complete cache.
+
 Active preparation may use node-local storage, but it is not durable there. As
 soon as a writer finishes, move the closed stage to `/vast`, validate and publish
 the `/vast` copy, then remove local staging. First publish the display-ready
@@ -149,3 +184,11 @@ query's expanded UID count; a larger request fails before prompt rendering.
 Retrieval opens the task release index, the selected level databases, and the
 evidence-owned Parquet projection directly. It does not construct a replacement
 database or rescore prompts.
+
+Canonical TDC uses `data/gold_labels/TDC/manifest.json` and cache paths
+`flat_v5/tdc/<task>/{l1,l2plus,scores,l1_cards}/`. The manifest binds all six
+tasks and preserves their selected split/ranking policies. `l1_cards` is the
+optimizer full-molecule candidate universe and has no computed assay scores;
+`l1` retains frozen parent-grouped retrieval. The edition-specific YAMLs are
+archived in `data/legacy/tdc/configs/`. Historical path reads use explicit
+relocations; they never choose a current cohort.

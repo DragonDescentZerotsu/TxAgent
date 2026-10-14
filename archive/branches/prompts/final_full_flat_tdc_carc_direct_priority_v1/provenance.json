@@ -1,0 +1,140 @@
+{
+  "version": "final_full_flat_tdc_carc_direct_priority_v1",
+  "parent": "final_full_flat",
+  "status": "experimental",
+  "supports_tasks": [
+    "bbb_martins",
+    "bioavailability_ma",
+    "skin_reaction",
+    "ames",
+    "dili",
+    "carcinogens"
+  ],
+  "layouts": [
+    "global",
+    "level-grouped"
+  ],
+  "query_prior_modes": [
+    "cached",
+    "none"
+  ],
+  "source_prompt_versions": {
+    "gold_v1": {
+      "bbb_martins": "full_flat_context_v5_six_tasks_upstream_v2",
+      "bioavailability_ma": "full_flat_context_v5_six_tasks_upstream_v2",
+      "skin_reaction": "full_flat_context_v5_six_tasks_upstream_v2",
+      "ames": "full_flat_context_v5_six_tasks_upstream_v3",
+      "dili": "full_flat_context_v5_six_tasks_upstream_v3",
+      "carcinogens": "full_flat_context_v5_six_tasks_upstream_v2"
+    },
+    "tdc_v2": {
+      "bbb_martins": "full_flat_context_v5_six_tasks_upstream_v3",
+      "bioavailability_ma": "full_flat_context_v5_six_tasks_upstream_v2",
+      "skin_reaction": "full_flat_context_v5_six_tasks_upstream_v2",
+      "ames": "full_flat_context_v5_six_tasks_upstream_v3",
+      "dili": "full_flat_context_v5_six_tasks_dili_tdc_v2_polarized_v1",
+      "carcinogens": "full_flat_context_v5_six_tasks_tdc_v2_mixed_v1"
+    }
+  },
+  "source_asset_sha256": {
+    "full_flat_context_v5_six_tasks_dili_tdc_v2_polarized_v1": {
+      "tasks.yaml": "e2662212c85e340e17273f1fa7b0bdac7e068ec8401b58b2c99e259b5ae7313c",
+      "system.jinja": "ea127ed9d06a1b41957bc07930187ec8d121bc544316920fadc6191322f97247",
+      "user.jinja": "a51498268e8ff75c78a056dfcab128502c3a33299f2c22174fcae068fce3e16d",
+      "provenance.json": "962260c132f5e9dc815126ca3a13786607ef91c8536eb2153b9c7b0f30661b38"
+    },
+    "full_flat_context_v5_six_tasks_tdc_v2_mixed_v1": {
+      "tasks.yaml": "0992ef50690f9df385d4979adc7589117c6f85a5511814d4c4d2f5e85cd3bc41",
+      "system.jinja": "0f9e27955e5c6ee13550861b580565fd76e09d01f1fdf32d249aaa5e9598086a",
+      "user.jinja": "a51498268e8ff75c78a056dfcab128502c3a33299f2c22174fcae068fce3e16d",
+      "provenance.json": "e7ecc4b27edeadfc714550efaafc564d91235e1f00e85e5264e96ce76f9fe8e0"
+    },
+    "full_flat_context_v5_six_tasks_upstream_v2": {
+      "tasks.yaml": "6e2cbc445fed3c9df2f069fe35489cbb997b81fe70243ee8713aaef11211979c",
+      "system.jinja": "3267fec5b714527b552c789e9b0c055c8c91b2af6225302a067eb456ed67a4b1",
+      "user.jinja": "a51498268e8ff75c78a056dfcab128502c3a33299f2c22174fcae068fce3e16d",
+      "provenance.json": "317e502481274c2ef41781324d23e6cada47ae0b88b6124cb5788011aefefb63"
+    },
+    "full_flat_context_v5_six_tasks_upstream_v3": {
+      "tasks.yaml": "5d59a8baa5356253d8642e635368d232a84db83c4f64a78a4c2f6f3d73fe23ef",
+      "system.jinja": "3267fec5b714527b552c789e9b0c055c8c91b2af6225302a067eb456ed67a4b1",
+      "user.jinja": "a51498268e8ff75c78a056dfcab128502c3a33299f2c22174fcae068fce3e16d",
+      "provenance.json": "3ac9ad651ade33941beebe3e9836b77e09ec5f5a02b3357aced4927231b0f5d2"
+    }
+  },
+  "adaptations": [
+    "tdc_carcinogens_direct_evidence_priority_with_strong_indirect_override",
+    "show_exact_morgan_and_assay_scores_where_available",
+    "remove_whole_query_score_visibility_bands",
+    "retain_benchmark_specific_task_instructions"
+  ],
+  "reasoning_reference_contracts": {
+    "global": {
+      "schema_version": "progressive_reasoning_references.v1",
+      "layout": "flat_global",
+      "required_mentions": false,
+      "matching": "case_insensitive_exact_visible_id"
+    },
+    "level-grouped": {
+      "schema_version": "progressive_reasoning_references.v1",
+      "layout": "flat_level_grouped",
+      "required_mentions": false,
+      "matching": "case_insensitive_exact_visible_id"
+    }
+  },
+  "tasks": {
+    "bbb_martins": {
+      "prompt_profile": "meaningful_cns_access_v1"
+    },
+    "bioavailability_ma": {
+      "prompt_profile": "f20_evidence_calibrated_v2"
+    },
+    "skin_reaction": {
+      "prompt_profile": "skin_sensitization_contact_allergy.v2"
+    },
+    "ames": {
+      "prompt_profile": "ames_bacterial_reverse_mutation.v1"
+    },
+    "dili": {
+      "prompt_profile": "dili_conditioned_or_source_molecule_outcome.v1"
+    },
+    "carcinogens": {
+      "prompt_profile": "carcinogens_starling_only_five_organism_groups.v1"
+    }
+  },
+  "final_source_arms": {
+    "gold_v1/ames/direct": "9e5aedf397dc42ee459db7b9f2545b6d1e73eb5593e1c560c54032bcaddf8d87",
+    "gold_v1/ames/direct_plus_indirect": "07c4a4e62b0f3260d3b3d5032f09bce2be48e010d434729d1ae4eef20434eb16",
+    "gold_v1/bbb_martins/direct": "6d8039401d7f859ee463a86db42fe88b7a992a7ed334406a0aadd7c66d03c71c",
+    "gold_v1/bbb_martins/direct_plus_indirect": "8f47740e34dc82867642f4dc7090b6c074edb493337a1081afd9500e4d48f59e",
+    "gold_v1/bioavailability_ma/direct": "761729107dba3c31c3beeb2617a387b2f4c68047ecf293123660a4d2e2ae8850",
+    "gold_v1/bioavailability_ma/direct_plus_indirect": "5cd7b0aeaf979c59cb9f0db91b2e1b3fc578ca7c09932677394d6e9393f085dd",
+    "gold_v1/carcinogens/direct": "0b61b14667780a748601c5bd314d7e644ee42a4e4c32cec686656c091f482ef7",
+    "gold_v1/carcinogens/direct_plus_indirect": "00b41a4d1109b7a4ea3c9c586a5304340a8f08ceed03211dfafcb3ad8170de8b",
+    "gold_v1/dili/direct": "d194a6e5dc6cbcbd646dadc8e4a3d8903dc7a8655b8b6e9f38c7ae1d4a724c59",
+    "gold_v1/dili/direct_plus_indirect": "c5eed1c569f2a5886ab4832f90ece8dcf6515c83e1e42c8e2bb6bc12f08cb579",
+    "gold_v1/skin_reaction/direct": "5dcdb6d2f7792450ed71e4c0ec195f19c02e34fc8f08b45c66a48d7ccd6def16",
+    "gold_v1/skin_reaction/direct_plus_indirect": "d01c31f3e97b6e995ed869ffa5395564192ca9e2d6e32f799207cac473743399",
+    "tdc_v1/bioavailability_ma/direct": "9a8f5d427a4f766b0f944edb9518ddef40e2184913661a6560976d583ee05946",
+    "tdc_v1/bioavailability_ma/direct_plus_indirect": "bec85665f60f7929bd59cdeab3d11e650eb442d7f9b27fba6a2bd2d14ad45e34",
+    "tdc_v1/skin_reaction/direct": "5bc6854d664f01e65f02b284c9c98220c3d50683f364ceacb59716defcb4c113",
+    "tdc_v1/skin_reaction/direct_plus_indirect": "6f863dc4bc961bc9372d818ec223f93ee9d114de0446288acebc11d45680fada",
+    "tdc_v2/ames/direct": "cadf190f51132bd1f8be416d498ecfc540951e3fb19cd9b249564888e45046eb",
+    "tdc_v2/ames/direct_plus_indirect": "fc24120cbcb24a0f395f62a16c99c7c360bb7dd46f395a6fabe3b599920830cc",
+    "tdc_v2/bbb_martins/direct": "29839c46dc92df5b84762d2425906034e94ff01e90638fb47a48e3b62350db6e",
+    "tdc_v2/bbb_martins/direct_plus_indirect": "b258df06ceb51150f12c54d916398cb9eb6e5dac025540778b76464bf6d0938a",
+    "tdc_v2/carcinogens/direct": "a9c2b90f32b896e9382958344423d48aa9c088262e06667f62263ca27d8d8a8d",
+    "tdc_v2/carcinogens/direct_plus_indirect": "288a1d94a209bad00a0fd4b7b4fd2df18e9e3283693f126539a954556dae4168",
+    "tdc_v2/dili/direct": "f1501d27952637ba7d2f2e252bc1cc62fcac63c7ba9fad7978e2dbf0751f9f71",
+    "tdc_v2/dili/direct_plus_indirect": "9fbf3d090615c42d30694cdeb92f5555c2eba3bd2cb8ba04815f2fff07608450"
+  },
+  "new_dili_source": {
+    "prompt_version": "full_flat_context_v5_six_tasks_dili_tdc_v2_polarized_v1",
+    "validation_study": "dili_tdc_v2_polarized_valid_20260924_v1",
+    "test_study": "dili_tdc_v2_polarized_test_20260924_v1"
+  },
+  "tdc_v2_wording_adapted_from_tdc_v1_final": [
+    "bioavailability_ma",
+    "skin_reaction"
+  ]
+}

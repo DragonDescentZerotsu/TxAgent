@@ -1,17 +1,11 @@
-"""Read branch inputs and write the historical branch trace artifact.
-
-The three task pipelines use this module to stream one requested JSONL row and
-to preserve their existing single/group/final trace format. It does not select
-evidence, construct prompts, or call a model.
-"""
+"""Write branch traces and read or compare saved retrieval artifacts."""
 
 from __future__ import annotations
 
+from predict.harnesses.branches.manifests import read_run
+
 import json
-import hashlib
-import os
 from pathlib import Path
-import shutil
 from typing import Any
 
 from predict.llm_io.evidence import evidence_for_group_llm
@@ -20,15 +14,6 @@ from predict.retrieval.policies import (
     SIMILARITY_SELECTOR,
     selector_metadata,
 )
-
-
-def read_jsonl_record(path: Path, index: int) -> dict[str, Any]:
-    """Read one zero-based JSONL record without materializing the full file."""
-    with path.open(encoding="utf-8") as handle:
-        for row_index, line in enumerate(handle):
-            if row_index == index:
-                return json.loads(line)
-    raise SystemExit(f"No record at index {index}: {path}")
 
 
 def write_trace_jsonl(
@@ -282,16 +267,6 @@ def _prompt_neighbor_contract(
     return payload
 
 
-def retrieval_prompt_hash(retrieval: dict[str, Any]) -> str:
-    serialized = json.dumps(
-        retrieval_prompt_contract(retrieval),
-        ensure_ascii=False,
-        sort_keys=True,
-        separators=(",", ":"),
-    )
-    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
-
-
 def changed_group_ids(baseline: dict[str, Any], target: dict[str, Any]) -> list[str]:
     baseline_groups = _group_contracts(baseline)
     target_groups = _group_contracts(target)
@@ -300,23 +275,6 @@ def changed_group_ids(baseline: dict[str, Any], target: dict[str, Any]) -> list[
         for group_id in set(baseline_groups) | set(target_groups)
         if baseline_groups.get(group_id) != target_groups.get(group_id)
     )
-
-
-def materialize_reused_run(source_run: Path, target_run: Path, provenance: dict[str, Any]) -> None:
-    """Hard-link an immutable completed run and add target-local provenance."""
-    if not target_run.exists():
-        target_run.parent.mkdir(parents=True, exist_ok=True)
-        try:
-            shutil.copytree(source_run, target_run, copy_function=os.link)
-        except OSError:
-            if target_run.exists():
-                shutil.rmtree(target_run)
-            shutil.copytree(source_run, target_run)
-    (target_run / "reuse.json").write_text(
-        json.dumps(provenance, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
-    _write_target_manifest(source_run, target_run, provenance)
 
 
 def load_reusable_group_outputs(
@@ -333,12 +291,7 @@ def load_reusable_group_outputs(
     outputs_path = source_dir / "group_reasoning_outputs.jsonl"
     if not baseline_path.exists() or not outputs_path.exists():
         raise FileNotFoundError(f"Missing reusable group artifacts in {source_dir}")
-    manifest_path = source_dir / "manifest.json"
-    manifest = (
-        json.loads(manifest_path.read_text(encoding="utf-8"))
-        if manifest_path.exists()
-        else {}
-    )
+    manifest = read_run(source_dir)
     if str(manifest.get("neighbor_context_profile") or "standard") != target_neighbor_context_profile:
         return []
     baseline = json.loads(baseline_path.read_text(encoding="utf-8"))
@@ -366,21 +319,3 @@ def _group_contracts(retrieval: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return {str(group.get("group_id") or ""): group for group in contract["groups"]}
 
 
-def _write_target_manifest(source_run: Path, target_run: Path, provenance: dict[str, Any]) -> None:
-    source_manifest = source_run / "manifest.json"
-    if not source_manifest.exists():
-        return
-    payload = json.loads(source_manifest.read_text(encoding="utf-8"))
-    if provenance.get("neighbor_identity_policy"):
-        payload["neighbor_identity_policy"] = provenance["neighbor_identity_policy"]
-    payload["artifact_reuse"] = {
-        "reused_from": provenance.get("reused_from"),
-        "reuse_reason": provenance.get("reuse_reason"),
-        "baseline_prompt_hash": provenance.get("baseline_prompt_hash"),
-        "target_prompt_hash": provenance.get("target_prompt_hash"),
-    }
-    target_manifest = target_run / "manifest.json"
-    target_manifest.unlink(missing_ok=True)
-    target_manifest.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )

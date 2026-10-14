@@ -1,0 +1,48 @@
+{
+  "task": "bbb_martins",
+  "task_directory": "BBB_Martins",
+  "benchmark": "tdc",
+  "version": "v1",
+  "release_id": "tdc_v1",
+  "contract": "tdc_conditioned_benchmark.v1",
+  "status": "complete",
+  "target_definition": "TDC BBB penetration label; 1 is BBB-positive and 0 is BBB-negative.",
+  "source_rows": 1956,
+  "normalized_rows": 1956,
+  "accepted_source_rows": 1954,
+  "accepted_parents": 1950,
+  "rejected_source_rows": 0,
+  "conflicting_source_rows": 2,
+  "conflicting_parents": 1,
+  "split_repairs": 141,
+  "splits": {
+    "train": {
+      "n": 1223,
+      "positive": 922
+    },
+    "valid": {
+      "n": 197,
+      "positive": 161
+    },
+    "test": {
+      "n": 530,
+      "positive": 408
+    }
+  },
+  "source_manifest": "data/raw/tdc/BBB_Martins/v1/source_manifest.json",
+  "source_manifest_sha256": "e715ba16bd4399fd2473022ad316f3a63cec69411a92f1df4c7e22351095aea1",
+  "outputs": {
+    "conflicting_parent_labels.jsonl": "e412e5ac8bca49d751afa93419b1363cf9e3b76dea75c591e5916bfe27f45784",
+    "heldout_molecule_condition_labels.jsonl": "09f23d45532b0dfe5ae00b26199bff9f7cc4f502ec5b03c25bfb0ad13f6689cb",
+    "rejected_source_rows.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "split_repairs.jsonl": "69da062eb48a82db778129a4623e8759562fe4b1f8630967645bddcdf2edfb0d",
+    "test.jsonl": "89ffc9ed97b672b17500962d604fa24cefd3b74d75b66ac30fd41811b5d8db64",
+    "test_molecule_condition_labels.jsonl": "a7adf92c14353833bf0d5e199256c5d0e83cb1c7bc5e9d08dd14263cab431e21",
+    "train.jsonl": "b9c612b885773bdfdca4c7ec3db28078d847387bb14e04a7cfab1b11716f7f2c",
+    "train_molecule_condition_labels.jsonl": "8d01b36fde9e18e9d0bf11da5ac73b73441dbf886337b10619a6ff2eb9651e53",
+    "valid.jsonl": "a722cc745e4c16c523853291dcf475bf330b2c130f407453e0db11c13b77aed7",
+    "valid_molecule_condition_labels.jsonl": "323749058a5ac0c8ef753780b88c5a6ffdded32b5712fb4b91638d7de4b57737"
+  },
+  "current_pointer_changed": false,
+  "summary_sha256": "009ac42f81d8eff1c9310657163af5b4ede4e97d01a08d349d156ec609046de3"
+}

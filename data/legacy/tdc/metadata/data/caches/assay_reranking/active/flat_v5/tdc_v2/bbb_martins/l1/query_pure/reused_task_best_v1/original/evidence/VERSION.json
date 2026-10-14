@@ -1,0 +1,12 @@
+{
+  "content_id": "a6e5880be371d9c4fd1758475fbfca33ef57d112b88b349a0d120140c5968787",
+  "input_sha256": "38358d35479029a6aa03d8d71eeacee12215e03ff0bb23b3a0bf52fa53933b5f",
+  "record_count": 1421,
+  "records": "records.parquet",
+  "records_sha256": "3d4d80fcbdcad4ff96740f02612998c53af38758f7b7ceaf447cdb198f754c85",
+  "schema_version": "ranked_evidence_projection.v1",
+  "source_identity": "tdc_v2_source_row_uid",
+  "source_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/TDC/BBB_Martins/v2/original/train_molecule_condition_labels.jsonl",
+  "status": "complete",
+  "task_id": "bbb_martins"
+}

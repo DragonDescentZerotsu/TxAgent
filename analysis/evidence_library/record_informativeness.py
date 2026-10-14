@@ -22,11 +22,11 @@ import pandas as pd
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 from openai import APIStatusError, AsyncOpenAI
 
-from data.processing.llm_api import DEFAULT_ENV_FILE, resolve_api_key
+from predict.api_client.transport import DEFAULT_ENV_FILE, resolve_api_key, async_openai_compatible_client
 from data.processing.evidence_library.shared.v1.normalization.cleaning import (
     file_sha256,
 )
-from tools.chembl_tool.common.json_utils import atomic_output_path, write_json_atomic
+from predict.utils.json import atomic_output_path, write_json_atomic
 
 
 VERSION = "record_informativeness.v1"
@@ -912,15 +912,9 @@ async def _run_requests(
     token_budget: int | None,
 ) -> tuple[dict[str, int], dict[str, Any], bool]:
     endpoint = await preflight(base_url, model)
-    limits = httpx.Limits(
-        max_connections=concurrency, max_keepalive_connections=concurrency
-    )
-    http_client = httpx.AsyncClient(limits=limits, timeout=timeout_s)
-    client = AsyncOpenAI(
-        api_key=api_key,
-        base_url=base_url.rstrip("/"),
-        http_client=http_client,
-        max_retries=0,
+    client, _ = async_openai_compatible_client(
+        api_key=api_key, base_url=base_url, max_connections=concurrency,
+        timeout_s=timeout_s, max_retries=0,
     )
     completed = _completed_requests(connection)
     progress = {

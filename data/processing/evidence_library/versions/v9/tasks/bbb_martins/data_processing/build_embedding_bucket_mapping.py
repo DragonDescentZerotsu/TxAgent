@@ -6,7 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
-from tools.chembl_tool.common.llm_client import load_distillation_secret
+from predict.api_client.transport import load_distillation_secret
 from data.processing.evidence_library.shared.v2.clustered_auxiliary_mapping import (
     AuxiliaryExtractionSpec,
     DEFAULT_EMBEDDING_MODEL,

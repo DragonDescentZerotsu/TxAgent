@@ -9,8 +9,8 @@ import socket
 
 import pyarrow.parquet as pq
 
-from semantic_buckets.artifacts import semantic_bucket_root
-from tools.chembl_tool.common.json_utils import write_json_atomic
+from optimization.semantic_buckets.artifacts import semantic_bucket_root
+from predict.utils.json import write_json_atomic
 
 
 ROOT = Path(__file__).resolve().parents[5]

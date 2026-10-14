@@ -16,6 +16,7 @@ from predict.baselines.conditioned_knn import (
     CONDITION_POLICIES,
     NO_REPORTED_CONDITION,
     benchmark_row_metadata,
+    condition_metrics,
     select_conditioned_ranked_indices,
 )
 from predict.baselines.structure_knn.run import (
@@ -219,6 +220,8 @@ def main(argv: list[str] | None = None) -> int:
         },
     }
 
+    if any("condition_group" in row for row in predictions):
+        metrics["condition_metrics"] = condition_metrics(predictions)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     _write_jsonl(
         args.output_dir / f"{args.evaluation_split}_predictions.jsonl",

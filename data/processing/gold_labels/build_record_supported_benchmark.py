@@ -19,10 +19,7 @@ from typing import Any
 import numpy as np
 from scipy.optimize import Bounds, LinearConstraint, milp
 
-from tools.chembl_tool.common.json_utils import (
-    write_json_atomic,
-    write_jsonl_atomic,
-)
+from predict.utils.json import write_json_atomic, write_jsonl_atomic
 
 
 LINEAGE = "record_supported_v2"

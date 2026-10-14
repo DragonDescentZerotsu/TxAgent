@@ -15,12 +15,8 @@ import time
 from collections.abc import Callable, Mapping
 from typing import Any
 
-from tools.chembl_tool.common.evidence_contract import attach_minimal_evidence
-from tools.chembl_tool.common.task_workflows.evidence_library import (
-    build_neighbor_index,
-    fingerprint_metadata,
-    standardize_smiles,
-)
+from predict.llm_io.evidence import attach_minimal_evidence
+from data.processing.evidence_library.index_builder import build_neighbor_index, fingerprint_metadata, standardize_smiles
 
 
 RecordFilter = Callable[[Mapping[str, Any]], bool]

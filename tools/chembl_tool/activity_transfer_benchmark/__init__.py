@@ -1,2 +1,0 @@
-"""Activity transferability benchmark utilities."""
-

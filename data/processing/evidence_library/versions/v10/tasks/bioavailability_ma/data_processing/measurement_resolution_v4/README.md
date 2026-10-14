@@ -40,7 +40,7 @@ python -u -m data.processing.evidence_library.versions.v10.build_measurement_res
 The cache retains authentic API responses, requested/returned model, actual
 provider, request ID and usage. Its input contract pins the source records,
 endpoint profile and prompt; incompatible inputs cannot resume that cache.
-Credential values are loaded only through `data/processing/llm_api.py`.
+Credential values are loaded only through `predict/api_client/transport.py`.
 
 The mapping is published only after every extraction candidate has a valid
 terminal answer. A transport or schema failure is never a scientific

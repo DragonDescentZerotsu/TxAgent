@@ -5,430 +5,430 @@
   "arms": [
     {
       "path": "deepseek/test/gold_v1/bbb_martins/direct_plus_indirect_coverage_control_20260925_v1",
-      "manifest_sha256": "4f092019903ac52f4365294652e30ad434d01198f983cace8d550b249d2a6dfc",
       "n_queries": 393,
       "macro_f1": 0.732966,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "0446414e-6c42-46d3-a3c9-f94064c2355d"
     },
     {
       "path": "deepseek/test/gold_v1/carcinogens/direct_plus_indirect_repeated_control_20260925_v1",
-      "manifest_sha256": "e5e2b8239ae9574ce898cf331e5fc64b6de9e6bb5654a717feb6a2817b24bc77",
       "n_queries": 469,
       "macro_f1": 0.658598,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "41cc379b-a7fc-45b5-91dc-061f8aed11bc"
     },
     {
       "path": "deepseek/test/gold_v1/dili/direct",
-      "manifest_sha256": "a6ed48822218522741b48c189477921c57d82250a47f2e93dfacc546adaaee97",
       "n_queries": 402,
       "macro_f1": 0.639755,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "008c4ff8-4d8b-473b-b376-2f6b34254921"
     },
     {
       "path": "deepseek/test/gold_v1/dili/direct_plus_indirect",
-      "manifest_sha256": "3042eb5e0c643d1bb895f8ced0296e9e18ab4d8bdf923a727b0f0441ae6b5738",
       "n_queries": 402,
       "macro_f1": 0.659233,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "fce2360b-c863-47f7-8fb9-2b2762ba1364"
     },
     {
       "path": "deepseek/test/gold_v1/dili/direct_plus_indirect_sr000_v3_control",
-      "manifest_sha256": "a3a15caee004e1a54beb77151d9abf0f44d2526334a1c2a39e22500ca41a5225",
       "n_queries": 402,
       "macro_f1": 0.680085,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "c9e4c3b1-ea6b-4806-913b-47c85e2d724a"
     },
     {
       "path": "deepseek/test/gold_v1/skin_reaction/direct_plus_indirect_sr005_control_20260925_v1",
-      "manifest_sha256": "9c040b1f87c805e5790a7f00cf7130a5fbff1a0dea4fc694512466dffbb58209",
       "n_queries": 241,
       "macro_f1": 0.618458,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "596f33ba-54cb-467a-81e7-2c8511ed5f00"
     },
     {
       "path": "deepseek/test/tdc_v2/carcinogens/direct",
-      "manifest_sha256": "1eee1a70c2c3936b5221a2481cf66aa382251e38aac8c3d99af9d04c9a101135",
       "n_queries": 56,
       "macro_f1": 0.817392,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "3c0dddfc-35b0-43aa-8f71-e2b1f04eaada"
     },
     {
       "path": "deepseek/test/tdc_v2/carcinogens/direct_plus_indirect",
-      "manifest_sha256": "7e84d372d03134aae3c733671cde3baecbd901612425cd1ed961ddd3f137e10d",
       "n_queries": 56,
       "macro_f1": 0.790611,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "a7d4c322-4cf2-40d2-bce2-eb1a4cc478dd"
     },
     {
       "path": "deepseek/test/tdc_v2/dili/direct",
-      "manifest_sha256": "574214bc30e7bda6fb205b2d245f5147d76796a0eeeebd5f679fcaaed6c6255c",
       "n_queries": 96,
       "macro_f1": 0.819609,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "714aca9b-b25e-4967-a189-22ee8b757448"
     },
     {
       "path": "deepseek/test/tdc_v2/dili/direct_plus_indirect",
-      "manifest_sha256": "480f572e476e98d549a5233c3eb2ca3173816851ab821669611ca7837595941c",
       "n_queries": 96,
       "macro_f1": 0.821346,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "b0b718ae-f2e7-41b7-b674-bcef161e3da5"
     },
     {
       "path": "gemini38/test/tdc_v2/carcinogens/ga075_mc025_sr050_sd025_ld025_rd025",
-      "manifest_sha256": "38c39d32ead183f7cda0c7478563091bfe698fb84a64c1403860bd2afe3b1149",
       "n_queries": 56,
       "macro_f1": 0.787879,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "d18d0a05-95dc-4f31-a988-5df703770611"
     },
     {
       "path": "gold_v1/ames/direct",
-      "manifest_sha256": "9e5aedf397dc42ee459db7b9f2545b6d1e73eb5593e1c560c54032bcaddf8d87",
       "n_queries": 274,
       "macro_f1": 0.708578,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "eefaba2e-8434-42de-9bbf-e4d3378f85b0"
     },
     {
       "path": "gold_v1/ames/direct_plus_indirect",
-      "manifest_sha256": "07c4a4e62b0f3260d3b3d5032f09bce2be48e010d434729d1ae4eef20434eb16",
       "n_queries": 274,
       "macro_f1": 0.774211,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "35de5bb6-14c2-4e1d-a008-b022d3eded16"
     },
     {
       "path": "gold_v1/bbb_martins/direct",
-      "manifest_sha256": "6d8039401d7f859ee463a86db42fe88b7a992a7ed334406a0aadd7c66d03c71c",
       "n_queries": 393,
       "macro_f1": 0.673178,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "848c08c0-e961-4cba-8ee5-686e847b0ac2"
     },
     {
       "path": "gold_v1/bbb_martins/direct_plus_indirect",
-      "manifest_sha256": "8f47740e34dc82867642f4dc7090b6c074edb493337a1081afd9500e4d48f59e",
       "n_queries": 393,
       "macro_f1": 0.72534,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "7e993671-243c-47b8-836c-e6147e5d9314"
     },
     {
       "path": "gold_v1/bioavailability_ma/direct",
-      "manifest_sha256": "761729107dba3c31c3beeb2617a387b2f4c68047ecf293123660a4d2e2ae8850",
       "n_queries": 269,
       "macro_f1": 0.768091,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "750f6478-f83f-40ba-b169-435637fbe92d"
     },
     {
       "path": "gold_v1/bioavailability_ma/direct_plus_indirect",
-      "manifest_sha256": "5cd7b0aeaf979c59cb9f0db91b2e1b3fc578ca7c09932677394d6e9393f085dd",
       "n_queries": 269,
       "macro_f1": 0.86134,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "5c38acc0-f8b2-405e-b695-7aa1d6e0290d"
     },
     {
       "path": "gold_v1/carcinogens/direct",
-      "manifest_sha256": "0b61b14667780a748601c5bd314d7e644ee42a4e4c32cec686656c091f482ef7",
       "n_queries": 469,
       "macro_f1": 0.532669,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "ad6103d4-4368-46f4-97b0-7b2a91a1d8ee"
     },
     {
       "path": "gold_v1/carcinogens/direct_plus_indirect",
-      "manifest_sha256": "00b41a4d1109b7a4ea3c9c586a5304340a8f08ceed03211dfafcb3ad8170de8b",
       "n_queries": 469,
       "macro_f1": 0.647253,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "ac3c74b7-e649-42c2-9a95-4325cafd8112"
     },
     {
       "path": "gold_v1/dili/direct",
-      "manifest_sha256": "d194a6e5dc6cbcbd646dadc8e4a3d8903dc7a8655b8b6e9f38c7ae1d4a724c59",
       "n_queries": 402,
       "macro_f1": 0.627614,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "050153e9-d533-4079-af65-b7c9c83b7dea"
     },
     {
       "path": "gold_v1/dili/direct_plus_indirect",
-      "manifest_sha256": "c5eed1c569f2a5886ab4832f90ece8dcf6515c83e1e42c8e2bb6bc12f08cb579",
       "n_queries": 402,
       "macro_f1": 0.650819,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "620574b1-415d-4619-8741-c832c0332143"
     },
     {
       "path": "gold_v1/skin_reaction/direct",
-      "manifest_sha256": "5dcdb6d2f7792450ed71e4c0ec195f19c02e34fc8f08b45c66a48d7ccd6def16",
       "n_queries": 241,
       "macro_f1": 0.59932,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "b34f3a84-78da-4fa2-80d8-d546809853d4"
     },
     {
       "path": "gold_v1/skin_reaction/direct_plus_indirect",
-      "manifest_sha256": "d01c31f3e97b6e995ed869ffa5395564192ca9e2d6e32f799207cac473743399",
       "n_queries": 241,
       "macro_f1": 0.615042,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "d340d3d7-7efe-4ff6-b3c3-b8541e667440"
     },
     {
       "path": "luna/test/gold_v1/ames/direct",
-      "manifest_sha256": "59662c0327c8c93bc694e74b64c5f320ab4ca2f70a8d8da3dab0eceb5e05370d",
       "n_queries": 274,
       "macro_f1": 0.66773,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "8503de8c-407e-4747-bb1d-24102ebd16c0"
     },
     {
       "path": "luna/test/gold_v1/ames/direct_plus_indirect",
-      "manifest_sha256": "1f51cf74359a4dc7fb2f6c95e46ce60c8d10ff890c18c37a2a92cfe78a8be2a4",
       "n_queries": 274,
       "macro_f1": 0.706003,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "21ba6772-f628-4b4f-92c4-ce7c4d65a416"
     },
     {
       "path": "luna/test/gold_v1/bbb_martins/direct",
-      "manifest_sha256": "6daeb752c37c3e9b3ffc18eb30bb04ddb30ad2125a80ebdf0547ce796de6c79a",
       "n_queries": 393,
       "macro_f1": 0.666929,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "f24fef36-c2dc-452a-8588-58216c13215e"
     },
     {
       "path": "luna/test/gold_v1/bbb_martins/direct_plus_indirect",
-      "manifest_sha256": "8f0509a20c21ead991b4d13d47117bc088b79025b618b08829a881617f0f4baf",
       "n_queries": 393,
       "macro_f1": 0.72261,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "1e081784-1656-4303-9ac0-606bf0eb8468"
     },
     {
       "path": "luna/test/gold_v1/bioavailability_ma/direct",
-      "manifest_sha256": "22f5db89f18aab1d790fdaa63d466cf340ea7d63b0391692ea8602660b938c64",
       "n_queries": 269,
       "macro_f1": 0.760093,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "0e86b630-0283-497a-a3ba-489bb922eaf3"
     },
     {
       "path": "luna/test/gold_v1/bioavailability_ma/direct_plus_indirect",
-      "manifest_sha256": "fb87062b3d1eef425afc64d0801baa058e507c3038d8095fe7b992349071c925",
       "n_queries": 269,
       "macro_f1": 0.856127,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "282ba3fd-8a05-45c0-b639-43b8f8fc7db2"
     },
     {
       "path": "luna/test/gold_v1/carcinogens/direct",
-      "manifest_sha256": "8ff0adb12d5c5c4d98fa00d0e883ffb79334c0c7fff7d8db1f7d1cc5466377f4",
       "n_queries": 469,
       "macro_f1": 0.482328,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "528a253f-c710-4e50-b646-9eb934bce090"
     },
     {
       "path": "luna/test/gold_v1/carcinogens/direct_plus_indirect",
-      "manifest_sha256": "ef0624937f05e751bb7ad60d94d8bef6a235b1fc452fa760c0d564d34a2f4d2f",
       "n_queries": 469,
       "macro_f1": 0.623776,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "69674883-143b-480e-b9e7-07f861058309"
     },
     {
       "path": "luna/test/gold_v1/dili/direct",
-      "manifest_sha256": "c1b849ff35cb587ecf044c5c347b8ea34051d883a501def5439f36ff31e283bc",
       "n_queries": 402,
       "macro_f1": 0.621456,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "9a86f8ea-8ac6-4d2a-955f-74d863616697"
     },
     {
       "path": "luna/test/gold_v1/dili/direct_plus_indirect",
-      "manifest_sha256": "6457f0aae0ac7996e99565499377d9dd5169f23f9fe5a4d7c54f044505fa5c08",
       "n_queries": 402,
       "macro_f1": 0.665266,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "7560ed16-d27d-4e0b-9bb6-9c3eb7f1056f"
     },
     {
       "path": "luna/test/gold_v1/skin_reaction/direct",
-      "manifest_sha256": "af7a88d9c9387b45a306571a6fa1ca8917be7f0db89cf39cc8a2c71e7d147bf7",
       "n_queries": 241,
       "macro_f1": 0.559252,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "816e86d1-020c-4795-8c2c-e2def17670b6"
     },
     {
       "path": "luna/test/gold_v1/skin_reaction/direct_plus_indirect",
-      "manifest_sha256": "88e859161a53ce87f19a184f1b504cba89f8328c20c105b5644380fb3a33c62b",
       "n_queries": 241,
       "macro_f1": 0.564175,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "72ba7fd1-037d-4289-9811-d0f63b96600f"
     },
     {
       "path": "luna/test/tdc_v2/ames/direct",
-      "manifest_sha256": "613dd3df303309f3742974aa3dcde9ca1438691d59478b1ce7c6252823ef3318",
       "n_queries": 1457,
       "macro_f1": 0.787868,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "60257676-3aa1-43ff-b1ae-2c2b50f540a2"
     },
     {
       "path": "luna/test/tdc_v2/ames/direct_plus_indirect",
-      "manifest_sha256": "4d31eae55e430205687c51d7ee5fc69b8a492366a85ac4e2a1419aaa848eca97",
       "n_queries": 1457,
       "macro_f1": 0.811343,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "3caa83d7-2a75-4517-bd62-693383b0d4be"
     },
     {
       "path": "luna/test/tdc_v2/bbb_martins/direct",
-      "manifest_sha256": "ce545f59642bc7793a9e250e7fd65ae7f53eac8615cffd38f400f0100f13b6a9",
       "n_queries": 406,
       "macro_f1": 0.828823,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "6b91d6c6-5cd7-4dcb-8896-f47f9aa04edb"
     },
     {
       "path": "luna/test/tdc_v2/bbb_martins/direct_plus_indirect",
-      "manifest_sha256": "e730f058344ff9175c8c5351a7eaa68c91ba4c8ddb8b1451cf2f05f355797655",
       "n_queries": 406,
       "macro_f1": 0.84633,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "5caa957e-16eb-4034-afb0-73d84c182b4a"
     },
     {
       "path": "luna/test/tdc_v2/bioavailability_ma/direct",
-      "manifest_sha256": "1fb30b02073b3508f7787ffbdebee908640336185ca72a334b2e1e32fa44d626",
       "n_queries": 128,
       "macro_f1": 0.718372,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "4f976da8-b220-4a67-8fb5-77169e012ece"
     },
     {
       "path": "luna/test/tdc_v2/bioavailability_ma/direct_plus_indirect",
-      "manifest_sha256": "2a4dc43ad0457d59137e342e3e5bc0cb4229f98ac07798eacdd3901c2a8bdb63",
       "n_queries": 128,
       "macro_f1": 0.774023,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "a2e10c87-eea2-474b-9cae-24d5eefd3411"
     },
     {
       "path": "luna/test/tdc_v2/carcinogens/direct",
-      "manifest_sha256": "ca5ae6b80991e1b5c19b156423bc239006ce645ac63fd3bf3bf366cc90ce6ccd",
       "n_queries": 56,
       "macro_f1": 0.841539,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "ad9954fd-6cba-47d6-9e2e-9fcfdf8e81d9"
     },
     {
       "path": "luna/test/tdc_v2/carcinogens/direct_plus_indirect",
-      "manifest_sha256": "e36804427a7fc2f905556ed31f5b69823c3650df7e391a4888dc43b525052b6e",
       "n_queries": 56,
       "macro_f1": 0.7375,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "7a42999f-ad74-4498-a995-cec4a0ba038a"
     },
     {
       "path": "luna/test/tdc_v2/carcinogens/direct_plus_indirect_positive_gate_v1",
-      "manifest_sha256": "eda8cc330f12e20381ef414cfeb09c4e43b05595e37788eb0ba27c7b04b7c909",
       "n_queries": 56,
       "macro_f1": 0.878261,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "e513da53-3924-4667-8fb1-68e54a68c596"
     },
     {
       "path": "luna/test/tdc_v2/dili/direct",
-      "manifest_sha256": "cf20c631e4cef7ca67819852430d19d4f2ef84f09611a5e8d8234cd971daaa83",
       "n_queries": 96,
       "macro_f1": 0.79085,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "705c3fa1-49ed-4858-bf6e-b58ce40162d9"
     },
     {
       "path": "luna/test/tdc_v2/dili/direct_plus_indirect",
-      "manifest_sha256": "319d6414da3cfd08651819abec1796bd81424bf3fbc115cdd2f0af45b2e22c02",
       "n_queries": 96,
       "macro_f1": 0.801545,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "63a6bac7-55cd-42ae-aaaa-d0f573381388"
     },
     {
       "path": "luna/test/tdc_v2/skin_reaction/direct",
-      "manifest_sha256": "9ee0dda27526fd2235877567e2bfc63ade93c80dc7d8186fad2e1388140da16f",
       "n_queries": 82,
       "macro_f1": 0.700912,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "65a1854a-c7b4-4b11-95f3-1404180e10c9"
     },
     {
       "path": "luna/test/tdc_v2/skin_reaction/direct_plus_indirect",
-      "manifest_sha256": "1b5b2b01e767bbc475e362c12a7ee30d48be541a9a67b56c0ea13d936e988241",
       "n_queries": 82,
       "macro_f1": 0.60577,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "a03e14d3-bafa-42ad-abe5-91e5a60ce292"
     },
     {
       "path": "luna/test/tdc_v2/skin_reaction/direct_plus_indirect_valid_selected_v2",
-      "manifest_sha256": "cad4ef3965d261aecafab7e3098494c6583e27faa230850b0104899ebc501f19",
       "n_queries": 82,
       "macro_f1": 0.611005,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "52383a73-6107-415b-b3ec-66ab2ee490b7"
     },
     {
       "path": "tdc_v1/bioavailability_ma/direct",
-      "manifest_sha256": "9a8f5d427a4f766b0f944edb9518ddef40e2184913661a6560976d583ee05946",
       "n_queries": 128,
       "macro_f1": 0.746709,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "9b14abb0-3034-4284-b23f-a455eca5cd9d"
     },
     {
       "path": "tdc_v1/bioavailability_ma/direct_plus_indirect",
-      "manifest_sha256": "bec85665f60f7929bd59cdeab3d11e650eb442d7f9b27fba6a2bd2d14ad45e34",
       "n_queries": 128,
       "macro_f1": 0.830732,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "23c3d114-5b4a-4443-ba9f-d97b24470c77"
     },
     {
       "path": "tdc_v1/skin_reaction/direct",
-      "manifest_sha256": "5bc6854d664f01e65f02b284c9c98220c3d50683f364ceacb59716defcb4c113",
       "n_queries": 82,
       "macro_f1": 0.634097,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "79b90723-e95f-48fb-b561-8e63e9dd6c86"
     },
     {
       "path": "tdc_v1/skin_reaction/direct_plus_indirect",
-      "manifest_sha256": "6f863dc4bc961bc9372d818ec223f93ee9d114de0446288acebc11d45680fada",
       "n_queries": 82,
       "macro_f1": 0.666875,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "cb2c6413-de77-4c28-b5d4-56d8abf8399f"
     },
     {
       "path": "tdc_v2/ames/direct",
-      "manifest_sha256": "cadf190f51132bd1f8be416d498ecfc540951e3fb19cd9b249564888e45046eb",
       "n_queries": 1457,
       "macro_f1": 0.782289,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "eee9b9ed-5a4e-4f61-8db2-4aed9fae6c7e"
     },
     {
       "path": "tdc_v2/ames/direct_plus_indirect",
-      "manifest_sha256": "fc24120cbcb24a0f395f62a16c99c7c360bb7dd46f395a6fabe3b599920830cc",
       "n_queries": 1457,
       "macro_f1": 0.79935,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "a243b5a5-1bea-40bc-9c4b-276ef752154a"
     },
     {
       "path": "tdc_v2/bbb_martins/direct",
-      "manifest_sha256": "29839c46dc92df5b84762d2425906034e94ff01e90638fb47a48e3b62350db6e",
       "n_queries": 406,
       "macro_f1": 0.865673,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "4075659e-7b1e-4749-a546-bd612bc0eae0"
     },
     {
       "path": "tdc_v2/bbb_martins/direct_plus_indirect",
-      "manifest_sha256": "b258df06ceb51150f12c54d916398cb9eb6e5dac025540778b76464bf6d0938a",
       "n_queries": 406,
       "macro_f1": 0.880814,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "4b0e99fc-2e82-4d57-8bf3-5f1c60a094f5"
     },
     {
       "path": "tdc_v2/carcinogens/direct",
-      "manifest_sha256": "a9c2b90f32b896e9382958344423d48aa9c088262e06667f62263ca27d8d8a8d",
       "n_queries": 56,
       "macro_f1": 0.695652,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "cb79b154-38c9-4447-8a0d-2a1689db5fca"
     },
     {
       "path": "tdc_v2/carcinogens/direct_plus_indirect",
-      "manifest_sha256": "288a1d94a209bad00a0fd4b7b4fd2df18e9e3283693f126539a954556dae4168",
       "n_queries": 56,
       "macro_f1": 0.72683,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "de109f1e-ef6a-4781-830e-bc29b6bd6705"
     },
     {
       "path": "tdc_v2/dili/direct",
-      "manifest_sha256": "f1501d27952637ba7d2f2e252bc1cc62fcac63c7ba9fad7978e2dbf0751f9f71",
       "n_queries": 96,
       "macro_f1": 0.829711,
-      "mixed_route": true
+      "mixed_route": true,
+      "run_uid": "f756de25-c859-484b-8d74-46a43b9b7b79"
     },
     {
       "path": "tdc_v2/dili/direct_plus_indirect",
-      "manifest_sha256": "9fbf3d090615c42d30694cdeb92f5555c2eba3bd2cb8ba04815f2fff07608450",
       "n_queries": 96,
       "macro_f1": 0.760436,
-      "mixed_route": false
+      "mixed_route": false,
+      "run_uid": "c044bebb-a8c9-4307-baf8-857db1e9c00f"
     }
   ],
   "n_queries": 19899,

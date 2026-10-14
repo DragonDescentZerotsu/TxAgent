@@ -24,8 +24,8 @@ from data.processing.gold_labels.reviewed_conditioned_benchmark import (
 from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_benchmark import (
     load_label_decisions,
 )
-from tools.chembl_tool.common.json_utils import write_json_atomic, write_jsonl_atomic
-from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
+from predict.utils.json import write_json_atomic, write_jsonl_atomic
+from predict.retrieval.policies import normalize_molecule_identity
 
 
 VERSION = "gold_v1_physical_voter_lineage.v1"

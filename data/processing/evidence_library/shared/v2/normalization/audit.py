@@ -11,7 +11,7 @@ from typing import Any
 
 from .cleaning import file_sha256
 from .contracts import MeasurementPair, STAGE_REQUIRED_COLUMNS
-from tools.chembl_tool.common.units import canonicalize_unit
+from data.processing.evidence_library.units import canonicalize_unit
 
 from .measurements import (
     EndpointStandardizer,

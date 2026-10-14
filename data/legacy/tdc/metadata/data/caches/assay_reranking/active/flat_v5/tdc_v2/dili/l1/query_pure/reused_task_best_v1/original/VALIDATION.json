@@ -1,0 +1,22 @@
+{
+  "assay_transfer_status": "not_computed",
+  "content_id": "4bf31c80994702085c97f00ff3f928f48764a33960b3ad0c75c09ab8ec76f37e",
+  "ranking_modes": [
+    "morgan"
+  ],
+  "schema_version": "ranked_uid_release_validation.v1",
+  "splits": {
+    "test": {
+      "content_id": "8bedff10c71268ed17a50983444c9f4ab6d25e56eb2eb2bf787b5cb1a9777faa",
+      "queries": 96,
+      "stored_rows": 9600
+    },
+    "valid": {
+      "content_id": "724a018b167fa226deb843cd41e762bb91bb657ebf9879e203c2f2a110cb7387",
+      "queries": 47,
+      "stored_rows": 4700
+    }
+  },
+  "status": "complete",
+  "task_id": "dili"
+}

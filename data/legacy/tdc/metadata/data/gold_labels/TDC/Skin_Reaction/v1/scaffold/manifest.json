@@ -1,0 +1,48 @@
+{
+  "task": "skin_reaction",
+  "task_directory": "Skin_Reaction",
+  "benchmark": "tdc",
+  "version": "v1",
+  "release_id": "tdc_v1",
+  "contract": "tdc_conditioned_benchmark.v1",
+  "status": "complete",
+  "target_definition": "TDC skin-reaction label; 1 is reaction-positive and 0 is reaction-negative.",
+  "source_rows": 404,
+  "normalized_rows": 404,
+  "accepted_source_rows": 404,
+  "accepted_parents": 404,
+  "rejected_source_rows": 0,
+  "conflicting_source_rows": 0,
+  "conflicting_parents": 0,
+  "split_repairs": 0,
+  "splits": {
+    "train": {
+      "n": 282,
+      "positive": 205
+    },
+    "valid": {
+      "n": 40,
+      "positive": 22
+    },
+    "test": {
+      "n": 82,
+      "positive": 47
+    }
+  },
+  "source_manifest": "data/raw/tdc/Skin_Reaction/v1/source_manifest.json",
+  "source_manifest_sha256": "5d1f0f302d47e76bf1c9be9a3f9db5c639637622ad572415bbfcab9f1c9c18a2",
+  "outputs": {
+    "conflicting_parent_labels.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "heldout_molecule_condition_labels.jsonl": "b618aa5b7ff180ce5bc27917ed74bc2ba5472bb06c8893e6f68d1ffdb62729d1",
+    "rejected_source_rows.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "split_repairs.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "test.jsonl": "6b5354f18ee6ab4721ada0cd69af7c9a75f5262982c335fb5d507ec6fe122f6f",
+    "test_molecule_condition_labels.jsonl": "cb1edfb3118bbe56828a3492fe19142c623bcd3f83640a737baab528b836b719",
+    "train.jsonl": "b7330ade0f3b3c4a2b73e61fe96d030ee2084500d1da58bf5ea7a22672dfb87c",
+    "train_molecule_condition_labels.jsonl": "2102f6288d63ede7e23fa6f5f294ab6f912c6a3b25bba781eee9b6e72965c823",
+    "valid.jsonl": "4c319667c95bb56d0b68d7b9bc5019c2ad52d1001e91978d0aa6e957fe53e796",
+    "valid_molecule_condition_labels.jsonl": "96a23fd1b662f035e8f16b2e4168e9ee10338f5b1fbf8cde5a7023d3ab7a8060"
+  },
+  "current_pointer_changed": false,
+  "summary_sha256": "f8a5a7adac715101b9e7db2ba6434ec0e214ca5921d3b9a2a3a593869665e6e3"
+}

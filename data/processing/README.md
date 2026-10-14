@@ -9,5 +9,5 @@ runners:
 - `evidence_library/versions/vN/prompts/` contains that release's LLM prompts.
 
 Construction imports must use these canonical packages directly. Reasoning and
-retrieval workflows remain under `tools/chembl_tool/`; they do not host
+retrieval workflows live under `predict/`; they do not host
 evidence-library construction modules.

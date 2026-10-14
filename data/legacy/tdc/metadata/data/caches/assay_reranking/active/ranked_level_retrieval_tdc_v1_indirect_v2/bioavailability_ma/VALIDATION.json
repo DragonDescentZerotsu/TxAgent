@@ -1,0 +1,64 @@
+{
+  "content_id": "37039e5d5d0bc5c1d2a32ca9e8e28cb6f46d74434243264d2cc4f97f9675ff9d",
+  "evidence_content_id": "bf40734607eeb51bc9f7602763e837451f88199a350127ed5c5124d89b58f759",
+  "evidence_records_sha256": "03df7a952ab877b21adf7833b1e8657a834ce9c58d5083c008ebce15d7a9e6b1",
+  "schema_version": "ranked_uid_release_validation.v1",
+  "splits": {
+    "test": {
+      "L2": {
+        "content_id": "daba378b706ff39315740ff7e109498d7d28d58208ffd1065fb26e1be09eab91",
+        "database_sha256": "532d7a52996c87b2f46b100d826af0ad898086cf900f898f6433e4bcea8d5793",
+        "stored_rows": 214635
+      },
+      "L3": {
+        "content_id": "85cc727db8494680244e13105feaba3ff3cf9d913154bdfdfe49d3662224b2e5",
+        "database_sha256": "8c21f368a4a256c83967487876df6f2a7f1aa9841fe670695e2e27c1dfce361c",
+        "stored_rows": 484811
+      },
+      "L4": {
+        "content_id": "1f76894f46e250964fc6d921e7ed5ce21de04ae3da02b67cea1c499c8117f85b",
+        "database_sha256": "18921459b76d6b07f6abd3d6f2dfd910a7f5190997828622d530a591f1d3e91e",
+        "stored_rows": 228090
+      },
+      "L5": {
+        "content_id": "443d8b0e532fd31c0e0821649175d0e4a7543868daa7b1275ab40e3b031b52e6",
+        "database_sha256": "09c392c664f9ff8d2455cb9eae683dc48ec2eb1ea86b19ed1ff7fbf2da146216",
+        "stored_rows": 131614
+      },
+      "L6": {
+        "content_id": "2f0554fdf7c8ccb2737d39964cfb07566bcebc10f4673db2d8761e4dcc39728a",
+        "database_sha256": "b319a9ac3d972caa0790cfe3846b208b187ff37f00825bd3ce5f6e1de5e2097d",
+        "stored_rows": 173141
+      }
+    },
+    "valid": {
+      "L2": {
+        "content_id": "aad14abec00c63511e1a17ef0c10b83ba5e958c5e97bf49bc9a7b9bc20a9c157",
+        "database_sha256": "0d627fefeb84412f08223b20e1cc3676492c1a38175cb600bdbc7e7a9b5e7600",
+        "stored_rows": 88480
+      },
+      "L3": {
+        "content_id": "e04a79a972f1385f90e0e2811d379f0d19b9f9db79ddb9a0109e4374a7ad650d",
+        "database_sha256": "b056c73b4d2417e9fc0bfb7c4c7ee62bf5fdbacf44bae87fd50de9ae764b6884",
+        "stored_rows": 221368
+      },
+      "L4": {
+        "content_id": "94aa5262b61fffb76ea5c282cbf2583e3073d54eb80bc8b16893b1bc5e12ed3c",
+        "database_sha256": "0f42b860bb3f18799cb572b5717f2354b70ddb0095927170277b47a8cafeaf8d",
+        "stored_rows": 113486
+      },
+      "L5": {
+        "content_id": "e3497be06d1bb41da29e7b5f75a2d1cf3eca8a86ce67ac200cc79464be4467a7",
+        "database_sha256": "c821ab50bf405430ad86b0b7c6b1c4c254465e60f9a9c93378eb04375942a7d2",
+        "stored_rows": 55166
+      },
+      "L6": {
+        "content_id": "4d60e419984f8dc37464536ef86b2230bd2a1ead181b1fa21b83d22cdf18b599",
+        "database_sha256": "22e3951d977a75f1ea0e16e24e98040b4c0056a41c42a2971529794fad17c41d",
+        "stored_rows": 72856
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "bioavailability_ma"
+}

@@ -1,0 +1,92 @@
+{
+  "evidence": {
+    "content_id": "bf40734607eeb51bc9f7602763e837451f88199a350127ed5c5124d89b58f759",
+    "manifest": "../../../../../evidence_libraries/bioavailability_ma/v10_main_universe_v3/retrieval_projection/ranked_evidence_v2/VERSION.json",
+    "manifest_sha256": "762e0a12de27425a597260817990494e7ec78f6e12dea09a2d69f4f289c82461",
+    "record_count": 431457
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v1"
+  },
+  "later_candidate_universe": "all_uids_under_morgan_top_100_parents",
+  "levels_independent": true,
+  "neighbor_identity_policy_by_level": {
+    "L2": "parent_disjoint",
+    "L3": "parent_disjoint",
+    "L4": "parent_disjoint",
+    "L5": "parent_disjoint",
+    "L6": "parent_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "ranked_level_retrieval_tdc_v1_indirect_v2",
+  "ranking_modes": [
+    "morgan",
+    "assay-transfer"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L2": {
+          "content_id": "daba378b706ff39315740ff7e109498d7d28d58208ffd1065fb26e1be09eab91",
+          "manifest": "scaffold/test/L2/VERSION.json",
+          "manifest_sha256": "0a101408b1adc7436a17bf3fe86178b8a2a96c11507df5d17b3941ae3bd29665"
+        },
+        "L3": {
+          "content_id": "85cc727db8494680244e13105feaba3ff3cf9d913154bdfdfe49d3662224b2e5",
+          "manifest": "scaffold/test/L3/VERSION.json",
+          "manifest_sha256": "670ff4b453c0a608b4b14930b534cf832af78e33d9d7058d6e41a5ac7c9f4e13"
+        },
+        "L4": {
+          "content_id": "1f76894f46e250964fc6d921e7ed5ce21de04ae3da02b67cea1c499c8117f85b",
+          "manifest": "scaffold/test/L4/VERSION.json",
+          "manifest_sha256": "a9c580f0a0e15a86e0490a7ee07866798d210b4680171d17eb362f58096c6b1b"
+        },
+        "L5": {
+          "content_id": "443d8b0e532fd31c0e0821649175d0e4a7543868daa7b1275ab40e3b031b52e6",
+          "manifest": "scaffold/test/L5/VERSION.json",
+          "manifest_sha256": "4b6a95a6001e48876102b487e83888630253a79ee0e762dfd2b5ce0b75cce495"
+        },
+        "L6": {
+          "content_id": "2f0554fdf7c8ccb2737d39964cfb07566bcebc10f4673db2d8761e4dcc39728a",
+          "manifest": "scaffold/test/L6/VERSION.json",
+          "manifest_sha256": "f177039ddd2f546b11c84465cf8dd06fb806293eee7c1ee145f60302bc064211"
+        }
+      }
+    },
+    "valid": {
+      "levels": {
+        "L2": {
+          "content_id": "aad14abec00c63511e1a17ef0c10b83ba5e958c5e97bf49bc9a7b9bc20a9c157",
+          "manifest": "scaffold/valid/L2/VERSION.json",
+          "manifest_sha256": "9563b40e4aea02978f9b20c18e637bad98ab8a381131bd2b5bc457d2cf07642a"
+        },
+        "L3": {
+          "content_id": "e04a79a972f1385f90e0e2811d379f0d19b9f9db79ddb9a0109e4374a7ad650d",
+          "manifest": "scaffold/valid/L3/VERSION.json",
+          "manifest_sha256": "869f461f82b88a6178d593a87ff187e90fc07265d07886b7d044b3ca374032c1"
+        },
+        "L4": {
+          "content_id": "94aa5262b61fffb76ea5c282cbf2583e3073d54eb80bc8b16893b1bc5e12ed3c",
+          "manifest": "scaffold/valid/L4/VERSION.json",
+          "manifest_sha256": "b90f90555057134986483831d775dd33118984dd267901e03dac0233fe69d5af"
+        },
+        "L5": {
+          "content_id": "e3497be06d1bb41da29e7b5f75a2d1cf3eca8a86ce67ac200cc79464be4467a7",
+          "manifest": "scaffold/valid/L5/VERSION.json",
+          "manifest_sha256": "dcd4aa61d53a192eb940e32bbca5cb91a54812d8b4210641ccc2972e3120554c"
+        },
+        "L6": {
+          "content_id": "4d60e419984f8dc37464536ef86b2230bd2a1ead181b1fa21b83d22cdf18b599",
+          "manifest": "scaffold/valid/L6/VERSION.json",
+          "manifest_sha256": "8f8aa23f51af6068f8a6b1100f5f3c1286143c4f84c10ef7549282398cc72c09"
+        }
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "bioavailability_ma"
+}

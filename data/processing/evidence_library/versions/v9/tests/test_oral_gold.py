@@ -11,12 +11,12 @@ import pyarrow.parquet as pq
 
 from data.processing.evidence_library.versions.v9.tasks.bioavailability_ma.starling_measurement_resolution import MAX_MEASUREMENTS_PER_ROW, route_measurement, render_prompt, SOURCE_IDS
 from data.processing.evidence_library.versions.v9.build_measurement_resolution_mapping import validate_row
-from tests.chembl_tool.common.measurement_resolution_quality.evaluate_mapping import _score_case
+from tests.data.evidence_library.measurement_resolution_quality.evaluate_mapping import _score_case
 
 
 class OralGoldTests(unittest.TestCase):
     def test_complete_current_source_bound_corpus(self):
-        path = Path('tests/chembl_tool/common/measurement_resolution_quality/gold/bioavailability_ma.v9.2.jsonl')
+        path = Path('tests/data/evidence_library/measurement_resolution_quality/gold/bioavailability_ma.v9.2.jsonl')
         manifest, *cases = [json.loads(line) for line in path.read_text().splitlines()]
         previous = Path(manifest['previous_gold_path'])
         self.assertEqual(hashlib.sha256(previous.read_bytes()).hexdigest(), manifest['previous_gold_sha256'])
@@ -71,7 +71,7 @@ class OralGoldTests(unittest.TestCase):
             self.assertEqual(rendered, render_prompt(source_id, endpoint_profiles=('unrelated batch statistics',)))
 
     def test_reviewed_unit_equivalence_is_case_specific(self):
-        path = Path('tests/chembl_tool/common/measurement_resolution_quality/gold/bioavailability_ma.v9.2.jsonl')
+        path = Path('tests/data/evidence_library/measurement_resolution_quality/gold/bioavailability_ma.v9.2.jsonl')
         cases = [json.loads(line) for line in path.read_text().splitlines()[1:]]
         case = next(c for c in cases if c['input']['measurement_text'] == 'Papp 151 nm/s')
         prediction = {'cleaned_record_id':case['audit_case_id'].split(':',1)[1], 'status':'ok'}

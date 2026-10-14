@@ -8,11 +8,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from tools.chembl_tool.common.molecule_identity import (
-    IDENTITY_NORMALIZER_VERSION,
-    identity_from_record,
-    normalize_molecule_identity,
-)
+from predict.retrieval.policies import IDENTITY_NORMALIZER_VERSION, identity_from_record, normalize_molecule_identity
 from data.processing.evidence_library.evidence_library import (
     build_and_write_starling_index,
 )

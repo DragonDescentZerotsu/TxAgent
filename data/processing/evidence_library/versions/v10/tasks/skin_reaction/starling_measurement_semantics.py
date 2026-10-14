@@ -32,7 +32,7 @@ from data.processing.evidence_library.shared.v2.normalization.measurements impor
     render_point_measurement,
     standardize_measurement_pair,
 )
-from tools.chembl_tool.common.units import canonicalize_unit
+from data.processing.evidence_library.units import canonicalize_unit
 from data.processing.evidence_library.versions.v10.tasks.skin_reaction.data_processing.auxiliary_mapping_helpers.reconciliation import (
     MAPPING_VERSION,
 )

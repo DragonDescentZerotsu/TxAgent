@@ -15,7 +15,7 @@ from . import build_ranked_uid_retrieval as builder
 from .runtime import cache_profile_root
 
 
-PROFILE = "ranked_level_retrieval_tdc_v1_indirect_v2"
+PROFILE = "canonical_tdc_indirect"
 TASKS = ("bbb_martins", "bioavailability_ma")
 LEVELS = {
     "bbb_martins": ("L2", "L3", "L4", "L5"),
@@ -31,7 +31,7 @@ def _configure(
 ) -> None:
     builder.PROFILE = profile
     builder.QUERY_BENCHMARK = "tdc"
-    builder.LABEL_RELEASE = {"benchmark": "tdc", "version": "v1"}
+    builder.LABEL_RELEASE = {"benchmark": "tdc"}
     builder.TASK_LEVELS = LEVELS
     builder.EVIDENCE_RELEASE = evidence_release
     builder.SCORE_REUSE_ROOTS = score_reuse_roots

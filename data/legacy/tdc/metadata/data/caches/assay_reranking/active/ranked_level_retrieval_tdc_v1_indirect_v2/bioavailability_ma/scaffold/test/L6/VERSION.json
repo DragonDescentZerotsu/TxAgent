@@ -1,0 +1,557 @@
+{
+  "capacity": 100,
+  "content_id": "2f0554fdf7c8ccb2737d39964cfb07566bcebc10f4673db2d8761e4dcc39728a",
+  "database": "rankings.sqlite3",
+  "database_sha256": "b319a9ac3d972caa0790cfe3846b208b187ff37f00825bd3ce5f6e1de5e2097d",
+  "inputs": {
+    "evidence_manifest_sha256": "762e0a12de27425a597260817990494e7ec78f6e12dea09a2d69f4f289c82461",
+    "query_sha256": "a66c10e01809c624bf215f9f0683147f0b9ee3bb2a42f53b5a8119b46268b4c2"
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v1"
+  },
+  "level": "L6",
+  "model": {
+    "dataset": "jiosephlee/assay-transfer-record-level-v25-bioavailability-ma-l6-intern",
+    "dataset_revision": "7df75e575fb60c297f02b4b21c75b470ae1ec261",
+    "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v25-bioavailability-ma-l6-best",
+    "revision": "6c5f76d6afafd0517c7630e8fc374915d4c2b98a"
+  },
+  "neighbor_identity_policy": "parent_disjoint",
+  "parent_capacity": 100,
+  "pool": "all",
+  "query_count": 128,
+  "query_counts": {
+    "TDC_BIOAVAILABILITY_MA_04CF1591AEF3B88AF88A": {
+      "candidate_parents": 100,
+      "candidate_records": 1192
+    },
+    "TDC_BIOAVAILABILITY_MA_058A264B3490F032659C": {
+      "candidate_parents": 100,
+      "candidate_records": 3167
+    },
+    "TDC_BIOAVAILABILITY_MA_087A3995B82E1F4E540E": {
+      "candidate_parents": 100,
+      "candidate_records": 478
+    },
+    "TDC_BIOAVAILABILITY_MA_0D949C7BE8412817D094": {
+      "candidate_parents": 100,
+      "candidate_records": 713
+    },
+    "TDC_BIOAVAILABILITY_MA_10DD438EE2FF11ABF693": {
+      "candidate_parents": 100,
+      "candidate_records": 587
+    },
+    "TDC_BIOAVAILABILITY_MA_11FBE15C9F5FD2B76679": {
+      "candidate_parents": 100,
+      "candidate_records": 1359
+    },
+    "TDC_BIOAVAILABILITY_MA_12001199581B02CB71BD": {
+      "candidate_parents": 100,
+      "candidate_records": 571
+    },
+    "TDC_BIOAVAILABILITY_MA_1C41EC90B975E02BC61D": {
+      "candidate_parents": 100,
+      "candidate_records": 3492
+    },
+    "TDC_BIOAVAILABILITY_MA_1D7042D5307F97D2EDE3": {
+      "candidate_parents": 100,
+      "candidate_records": 1582
+    },
+    "TDC_BIOAVAILABILITY_MA_1E44DE9833F8DFD70166": {
+      "candidate_parents": 100,
+      "candidate_records": 2080
+    },
+    "TDC_BIOAVAILABILITY_MA_1E543A8D3D7A9339CA29": {
+      "candidate_parents": 100,
+      "candidate_records": 1226
+    },
+    "TDC_BIOAVAILABILITY_MA_1EAC1F972CEA142FC5D4": {
+      "candidate_parents": 100,
+      "candidate_records": 1995
+    },
+    "TDC_BIOAVAILABILITY_MA_1FE85C309229A7077489": {
+      "candidate_parents": 100,
+      "candidate_records": 810
+    },
+    "TDC_BIOAVAILABILITY_MA_20E27C626CB4A0C72DE6": {
+      "candidate_parents": 100,
+      "candidate_records": 1033
+    },
+    "TDC_BIOAVAILABILITY_MA_2471AD84E91AD62DAE47": {
+      "candidate_parents": 100,
+      "candidate_records": 588
+    },
+    "TDC_BIOAVAILABILITY_MA_24E6D1E546208C0937D4": {
+      "candidate_parents": 100,
+      "candidate_records": 1529
+    },
+    "TDC_BIOAVAILABILITY_MA_25D5B0D1B1C2EE04B85E": {
+      "candidate_parents": 100,
+      "candidate_records": 1007
+    },
+    "TDC_BIOAVAILABILITY_MA_2605864EA90C7454F513": {
+      "candidate_parents": 100,
+      "candidate_records": 1330
+    },
+    "TDC_BIOAVAILABILITY_MA_2758D8D947143021EACB": {
+      "candidate_parents": 100,
+      "candidate_records": 2161
+    },
+    "TDC_BIOAVAILABILITY_MA_282E1135940184C85462": {
+      "candidate_parents": 100,
+      "candidate_records": 662
+    },
+    "TDC_BIOAVAILABILITY_MA_2889ABDF8537B9ACF7CB": {
+      "candidate_parents": 100,
+      "candidate_records": 2259
+    },
+    "TDC_BIOAVAILABILITY_MA_28DF3C719C15DC02CF1E": {
+      "candidate_parents": 100,
+      "candidate_records": 735
+    },
+    "TDC_BIOAVAILABILITY_MA_2BC3A943989A7BACE7B4": {
+      "candidate_parents": 100,
+      "candidate_records": 1670
+    },
+    "TDC_BIOAVAILABILITY_MA_2F07E9D3B8E36131AD82": {
+      "candidate_parents": 100,
+      "candidate_records": 1597
+    },
+    "TDC_BIOAVAILABILITY_MA_2FE650B15BB27E98C028": {
+      "candidate_parents": 100,
+      "candidate_records": 1267
+    },
+    "TDC_BIOAVAILABILITY_MA_30CB5C71FA39672154A1": {
+      "candidate_parents": 100,
+      "candidate_records": 1476
+    },
+    "TDC_BIOAVAILABILITY_MA_31E45E32DE4E7BFD9EF3": {
+      "candidate_parents": 100,
+      "candidate_records": 3545
+    },
+    "TDC_BIOAVAILABILITY_MA_3BFC001C951DA9AAAAEA": {
+      "candidate_parents": 100,
+      "candidate_records": 1081
+    },
+    "TDC_BIOAVAILABILITY_MA_3CE679CB92C2193C45CB": {
+      "candidate_parents": 100,
+      "candidate_records": 1566
+    },
+    "TDC_BIOAVAILABILITY_MA_3F801254ABA9A74FFF99": {
+      "candidate_parents": 100,
+      "candidate_records": 2112
+    },
+    "TDC_BIOAVAILABILITY_MA_40BF3C028BB1CA0F1BD4": {
+      "candidate_parents": 100,
+      "candidate_records": 1465
+    },
+    "TDC_BIOAVAILABILITY_MA_48AD56CE827D6AD27D77": {
+      "candidate_parents": 100,
+      "candidate_records": 1081
+    },
+    "TDC_BIOAVAILABILITY_MA_48F0887FC98ED1F0FBAC": {
+      "candidate_parents": 100,
+      "candidate_records": 894
+    },
+    "TDC_BIOAVAILABILITY_MA_49E0D94BB81AF0F0FA46": {
+      "candidate_parents": 100,
+      "candidate_records": 1073
+    },
+    "TDC_BIOAVAILABILITY_MA_4DA3E0B6D4F4707B354F": {
+      "candidate_parents": 100,
+      "candidate_records": 1006
+    },
+    "TDC_BIOAVAILABILITY_MA_4E2717FC15933D6F6CCE": {
+      "candidate_parents": 100,
+      "candidate_records": 428
+    },
+    "TDC_BIOAVAILABILITY_MA_514A572223D66BAED303": {
+      "candidate_parents": 100,
+      "candidate_records": 536
+    },
+    "TDC_BIOAVAILABILITY_MA_52F5E190481F132019F9": {
+      "candidate_parents": 100,
+      "candidate_records": 579
+    },
+    "TDC_BIOAVAILABILITY_MA_59E9EEA21D97A6748A15": {
+      "candidate_parents": 100,
+      "candidate_records": 1853
+    },
+    "TDC_BIOAVAILABILITY_MA_5B6EC1860D479B2EDF78": {
+      "candidate_parents": 100,
+      "candidate_records": 490
+    },
+    "TDC_BIOAVAILABILITY_MA_5C164D417743AC1AD6CD": {
+      "candidate_parents": 100,
+      "candidate_records": 3470
+    },
+    "TDC_BIOAVAILABILITY_MA_5C9AB6B4C24920337036": {
+      "candidate_parents": 100,
+      "candidate_records": 1893
+    },
+    "TDC_BIOAVAILABILITY_MA_5DFC354F8EED612EFD5E": {
+      "candidate_parents": 100,
+      "candidate_records": 661
+    },
+    "TDC_BIOAVAILABILITY_MA_5EA0807953CFD4AD1017": {
+      "candidate_parents": 100,
+      "candidate_records": 381
+    },
+    "TDC_BIOAVAILABILITY_MA_5F3C9E7A09BC3955E782": {
+      "candidate_parents": 100,
+      "candidate_records": 1506
+    },
+    "TDC_BIOAVAILABILITY_MA_6115F3436A5A0388166B": {
+      "candidate_parents": 100,
+      "candidate_records": 2007
+    },
+    "TDC_BIOAVAILABILITY_MA_61D0AD9B9CBBC8845251": {
+      "candidate_parents": 100,
+      "candidate_records": 1691
+    },
+    "TDC_BIOAVAILABILITY_MA_635F29092B371C3BC50F": {
+      "candidate_parents": 100,
+      "candidate_records": 1151
+    },
+    "TDC_BIOAVAILABILITY_MA_6580464B1DA291FD9AAB": {
+      "candidate_parents": 100,
+      "candidate_records": 1603
+    },
+    "TDC_BIOAVAILABILITY_MA_688162A412951D27E084": {
+      "candidate_parents": 100,
+      "candidate_records": 1460
+    },
+    "TDC_BIOAVAILABILITY_MA_692A63A064C002B01615": {
+      "candidate_parents": 100,
+      "candidate_records": 886
+    },
+    "TDC_BIOAVAILABILITY_MA_7049ADFF59839EB7563F": {
+      "candidate_parents": 100,
+      "candidate_records": 737
+    },
+    "TDC_BIOAVAILABILITY_MA_713A291129EA0FF313D5": {
+      "candidate_parents": 100,
+      "candidate_records": 1482
+    },
+    "TDC_BIOAVAILABILITY_MA_72B781039550BD7F386B": {
+      "candidate_parents": 100,
+      "candidate_records": 1195
+    },
+    "TDC_BIOAVAILABILITY_MA_72F53251A0F6EDBE2FCE": {
+      "candidate_parents": 100,
+      "candidate_records": 1077
+    },
+    "TDC_BIOAVAILABILITY_MA_735450540A35A3A9DBA6": {
+      "candidate_parents": 100,
+      "candidate_records": 1214
+    },
+    "TDC_BIOAVAILABILITY_MA_73695F0F5FF422E0EE99": {
+      "candidate_parents": 100,
+      "candidate_records": 471
+    },
+    "TDC_BIOAVAILABILITY_MA_74E15448724BE0D50F52": {
+      "candidate_parents": 100,
+      "candidate_records": 771
+    },
+    "TDC_BIOAVAILABILITY_MA_759841A342D482EF8863": {
+      "candidate_parents": 100,
+      "candidate_records": 1182
+    },
+    "TDC_BIOAVAILABILITY_MA_76A69AD889C74B5A6E8F": {
+      "candidate_parents": 100,
+      "candidate_records": 940
+    },
+    "TDC_BIOAVAILABILITY_MA_77DCB5ADF4A7D8F7BAC6": {
+      "candidate_parents": 100,
+      "candidate_records": 1321
+    },
+    "TDC_BIOAVAILABILITY_MA_794556C67FB5DFD33936": {
+      "candidate_parents": 100,
+      "candidate_records": 1515
+    },
+    "TDC_BIOAVAILABILITY_MA_79B504857DFA8505F16E": {
+      "candidate_parents": 100,
+      "candidate_records": 2030
+    },
+    "TDC_BIOAVAILABILITY_MA_7B5BB32DC6DFCD4E3D35": {
+      "candidate_parents": 100,
+      "candidate_records": 1930
+    },
+    "TDC_BIOAVAILABILITY_MA_7E0BE33FA73C2F8AB5CC": {
+      "candidate_parents": 100,
+      "candidate_records": 448
+    },
+    "TDC_BIOAVAILABILITY_MA_7FA009B07E18F7766E8B": {
+      "candidate_parents": 100,
+      "candidate_records": 1813
+    },
+    "TDC_BIOAVAILABILITY_MA_80AFE952919F2A03AC14": {
+      "candidate_parents": 100,
+      "candidate_records": 912
+    },
+    "TDC_BIOAVAILABILITY_MA_82E4E43590F4046735E4": {
+      "candidate_parents": 100,
+      "candidate_records": 546
+    },
+    "TDC_BIOAVAILABILITY_MA_83F5803B2E2FE7599F60": {
+      "candidate_parents": 100,
+      "candidate_records": 1497
+    },
+    "TDC_BIOAVAILABILITY_MA_859FDEBEBB16BF69D3D5": {
+      "candidate_parents": 100,
+      "candidate_records": 1036
+    },
+    "TDC_BIOAVAILABILITY_MA_8656F6E51B4ED71CC4A5": {
+      "candidate_parents": 100,
+      "candidate_records": 3402
+    },
+    "TDC_BIOAVAILABILITY_MA_87FDFB34941B73BCC013": {
+      "candidate_parents": 100,
+      "candidate_records": 3890
+    },
+    "TDC_BIOAVAILABILITY_MA_8C672A3A311A387F04D6": {
+      "candidate_parents": 100,
+      "candidate_records": 2061
+    },
+    "TDC_BIOAVAILABILITY_MA_8D6F0C4408C92C03D95B": {
+      "candidate_parents": 100,
+      "candidate_records": 688
+    },
+    "TDC_BIOAVAILABILITY_MA_8EB238534043D80F071F": {
+      "candidate_parents": 100,
+      "candidate_records": 476
+    },
+    "TDC_BIOAVAILABILITY_MA_8F0B9FF593648C138949": {
+      "candidate_parents": 100,
+      "candidate_records": 3562
+    },
+    "TDC_BIOAVAILABILITY_MA_90213217B6318D6EE1BE": {
+      "candidate_parents": 100,
+      "candidate_records": 3680
+    },
+    "TDC_BIOAVAILABILITY_MA_90AA7AFFBABEC0CC4A83": {
+      "candidate_parents": 100,
+      "candidate_records": 1198
+    },
+    "TDC_BIOAVAILABILITY_MA_930B96BF31C6E067A175": {
+      "candidate_parents": 100,
+      "candidate_records": 2058
+    },
+    "TDC_BIOAVAILABILITY_MA_98A61E8A310F0C10E375": {
+      "candidate_parents": 100,
+      "candidate_records": 1586
+    },
+    "TDC_BIOAVAILABILITY_MA_98C68E6988E2948492E0": {
+      "candidate_parents": 100,
+      "candidate_records": 1295
+    },
+    "TDC_BIOAVAILABILITY_MA_990904003B5362358A94": {
+      "candidate_parents": 100,
+      "candidate_records": 2644
+    },
+    "TDC_BIOAVAILABILITY_MA_9A2A4F866E8FAB7AAD78": {
+      "candidate_parents": 100,
+      "candidate_records": 3543
+    },
+    "TDC_BIOAVAILABILITY_MA_9AC77C197323526B95B1": {
+      "candidate_parents": 100,
+      "candidate_records": 1113
+    },
+    "TDC_BIOAVAILABILITY_MA_9BFF32E42257BAE05F5C": {
+      "candidate_parents": 100,
+      "candidate_records": 1090
+    },
+    "TDC_BIOAVAILABILITY_MA_9EDEBA4655A732289FC1": {
+      "candidate_parents": 100,
+      "candidate_records": 1662
+    },
+    "TDC_BIOAVAILABILITY_MA_A06611ACF1DC5F4EA914": {
+      "candidate_parents": 100,
+      "candidate_records": 1223
+    },
+    "TDC_BIOAVAILABILITY_MA_A2E3E829E7CAD5C581AA": {
+      "candidate_parents": 100,
+      "candidate_records": 954
+    },
+    "TDC_BIOAVAILABILITY_MA_A51E1E53B83A974E24D2": {
+      "candidate_parents": 100,
+      "candidate_records": 925
+    },
+    "TDC_BIOAVAILABILITY_MA_A61C742C3F26B0850D94": {
+      "candidate_parents": 100,
+      "candidate_records": 632
+    },
+    "TDC_BIOAVAILABILITY_MA_A9EE991CFE8BBBBCB5F8": {
+      "candidate_parents": 100,
+      "candidate_records": 1097
+    },
+    "TDC_BIOAVAILABILITY_MA_AB909ED41CD5874D4896": {
+      "candidate_parents": 100,
+      "candidate_records": 1068
+    },
+    "TDC_BIOAVAILABILITY_MA_ABCA90D0DE981E5140D2": {
+      "candidate_parents": 100,
+      "candidate_records": 1200
+    },
+    "TDC_BIOAVAILABILITY_MA_AE70A450E27BED81F3CC": {
+      "candidate_parents": 100,
+      "candidate_records": 607
+    },
+    "TDC_BIOAVAILABILITY_MA_B338AB125B8F55319C72": {
+      "candidate_parents": 100,
+      "candidate_records": 762
+    },
+    "TDC_BIOAVAILABILITY_MA_B4CEAED2853A0D5BE073": {
+      "candidate_parents": 100,
+      "candidate_records": 612
+    },
+    "TDC_BIOAVAILABILITY_MA_B4F383CD1CCC1C9B6BD5": {
+      "candidate_parents": 100,
+      "candidate_records": 1808
+    },
+    "TDC_BIOAVAILABILITY_MA_B5CB2261754D84F2A2A7": {
+      "candidate_parents": 100,
+      "candidate_records": 1545
+    },
+    "TDC_BIOAVAILABILITY_MA_BA19D7E8D6DF6C266DA2": {
+      "candidate_parents": 100,
+      "candidate_records": 1015
+    },
+    "TDC_BIOAVAILABILITY_MA_BAD1B8C84A3DF23FB113": {
+      "candidate_parents": 100,
+      "candidate_records": 2126
+    },
+    "TDC_BIOAVAILABILITY_MA_BAFA727185FAB02A286B": {
+      "candidate_parents": 100,
+      "candidate_records": 1667
+    },
+    "TDC_BIOAVAILABILITY_MA_C03F0ADBD448C9B15C7E": {
+      "candidate_parents": 100,
+      "candidate_records": 1167
+    },
+    "TDC_BIOAVAILABILITY_MA_C839B06AD64F75A49150": {
+      "candidate_parents": 100,
+      "candidate_records": 2198
+    },
+    "TDC_BIOAVAILABILITY_MA_C9D30A958A2E8E8B4151": {
+      "candidate_parents": 100,
+      "candidate_records": 931
+    },
+    "TDC_BIOAVAILABILITY_MA_C9DF45DBB0250CCE6A8D": {
+      "candidate_parents": 100,
+      "candidate_records": 1091
+    },
+    "TDC_BIOAVAILABILITY_MA_CA25F76490677407F26D": {
+      "candidate_parents": 100,
+      "candidate_records": 1096
+    },
+    "TDC_BIOAVAILABILITY_MA_CAA2474DCB55FBBD635D": {
+      "candidate_parents": 100,
+      "candidate_records": 925
+    },
+    "TDC_BIOAVAILABILITY_MA_CAA51E41593A5A90B68D": {
+      "candidate_parents": 100,
+      "candidate_records": 1482
+    },
+    "TDC_BIOAVAILABILITY_MA_CB64B9ADAEE17D98B654": {
+      "candidate_parents": 100,
+      "candidate_records": 1098
+    },
+    "TDC_BIOAVAILABILITY_MA_CE970FBD7C2F372F0B91": {
+      "candidate_parents": 100,
+      "candidate_records": 631
+    },
+    "TDC_BIOAVAILABILITY_MA_D4E40BD6ACD6EEB117BE": {
+      "candidate_parents": 100,
+      "candidate_records": 766
+    },
+    "TDC_BIOAVAILABILITY_MA_D50E76B231C86FC8848F": {
+      "candidate_parents": 100,
+      "candidate_records": 533
+    },
+    "TDC_BIOAVAILABILITY_MA_D6566C79AE0D47BF605C": {
+      "candidate_parents": 100,
+      "candidate_records": 327
+    },
+    "TDC_BIOAVAILABILITY_MA_DED6EDC138F00742553B": {
+      "candidate_parents": 100,
+      "candidate_records": 1337
+    },
+    "TDC_BIOAVAILABILITY_MA_E6C178486EA53B12017E": {
+      "candidate_parents": 100,
+      "candidate_records": 1689
+    },
+    "TDC_BIOAVAILABILITY_MA_E6CC98353D861904EF70": {
+      "candidate_parents": 100,
+      "candidate_records": 914
+    },
+    "TDC_BIOAVAILABILITY_MA_E7BC3BE3745FB59E2D24": {
+      "candidate_parents": 100,
+      "candidate_records": 940
+    },
+    "TDC_BIOAVAILABILITY_MA_E987E6D294095ECDA55C": {
+      "candidate_parents": 100,
+      "candidate_records": 1865
+    },
+    "TDC_BIOAVAILABILITY_MA_E9E0450B05E25C221785": {
+      "candidate_parents": 100,
+      "candidate_records": 1322
+    },
+    "TDC_BIOAVAILABILITY_MA_E9F49303C16D1138C4C2": {
+      "candidate_parents": 100,
+      "candidate_records": 1349
+    },
+    "TDC_BIOAVAILABILITY_MA_EB401D46AB5F3258DADD": {
+      "candidate_parents": 100,
+      "candidate_records": 683
+    },
+    "TDC_BIOAVAILABILITY_MA_EBF432608A6DB8E3E628": {
+      "candidate_parents": 100,
+      "candidate_records": 910
+    },
+    "TDC_BIOAVAILABILITY_MA_EC77779E0E068781EDB4": {
+      "candidate_parents": 100,
+      "candidate_records": 1041
+    },
+    "TDC_BIOAVAILABILITY_MA_F5B651543A245C1FAB4C": {
+      "candidate_parents": 100,
+      "candidate_records": 1023
+    },
+    "TDC_BIOAVAILABILITY_MA_F9B9C882BF5F7598F8A5": {
+      "candidate_parents": 100,
+      "candidate_records": 1307
+    },
+    "TDC_BIOAVAILABILITY_MA_FA7325926895560E26C5": {
+      "candidate_parents": 100,
+      "candidate_records": 475
+    },
+    "TDC_BIOAVAILABILITY_MA_FC772B51D60A00C6453A": {
+      "candidate_parents": 100,
+      "candidate_records": 1301
+    },
+    "TDC_BIOAVAILABILITY_MA_FCD4F3E48FBBF9F0FC62": {
+      "candidate_parents": 100,
+      "candidate_records": 450
+    }
+  },
+  "ranking_rows_sha256": "458a25480542374b20634371ef3173e110d53b543a29ff19c1bd26f3da68c509",
+  "schema_version": "ranked_uid_retrieval.v1",
+  "score_counts": {
+    "exact_reuse": 170964,
+    "fresh": 2177
+  },
+  "score_reuse_sources": [
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v1",
+      "release_index_sha256": "486084388fc55504f8513f51d6ae506d39119a939aad23182c423b257c757c0d"
+    }
+  ],
+  "shared_candidate_universe": true,
+  "status": "complete",
+  "stored_rows": 173141,
+  "subset": "test",
+  "task_id": "bioavailability_ma",
+  "trusted_predecessor_row_reuse": true
+}

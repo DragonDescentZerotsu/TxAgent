@@ -1,0 +1,87 @@
+task: dili
+flat:
+  prompt_profile: dili_conditioned_or_source_molecule_outcome.v1
+  system_role: Assess human drug-induced liver injury using molecular evidence.
+  endpoint_name: clinically meaningful human drug-induced liver injury
+  label_scope: dili_conditioned_or_source_molecule_outcome.v1
+  task_instructions: &id001
+  - Predict dili_risk for clinically meaningful human DILI risk and no_dili_risk for its absence under
+    the task definition.
+  - Ensure final_prediction agrees with your overall evidence assessment.
+  - Predict clinically meaningful human drug-induced liver injury under the query's reported exposure
+    and population when these are supplied.
+  - When the query has no reported external condition, assess the molecule-level DILI endpoint without
+    inventing a dose, route, population or duration. Missing conditions do not imply a universal claim
+    across all exposure settings.
+  - Separate observed human DILI from animal liver injury, hepatocyte toxicity, generic cytotoxicity,
+    mechanistic liabilities and model predictions. Those endpoints are not interchangeable measurements.
+  - Evidence from hepatic cell function, bile-acid transport, bioactivation, mitochondria, immune interactions
+    and cellular stress may change the prediction when the mechanistic link and structural transferability
+    are strong. Explain their limitations; new direct outcome evidence is not required for a justified
+    prediction.
+  - Preserve the tested molecule's role and co-exposure context. A protectant, modifier, metabolite or
+    probe is not automatically the substance causing the reported injury.
+  - A negative clinical observation applies to its reported population and exposure; absence of published
+    reports or an isolated negative mechanism assay does not establish absence of DILI risk.
+  - Keep mixed outcomes, predictions, missing context and uncertainty explicit. Family placement does
+    not establish a new experiment or independent evidence support.
+  prediction_field: final_prediction
+  positive_prediction: dili_risk
+  negative_prediction: no_dili_risk
+  required_fields: &id002
+  - claims
+  - final_prediction
+  required_json_schema: &id003
+    claims:
+    - claim: concise evidence-grounded statement
+      molecule_ids:
+      - Molecule N
+      record_ids:
+      - Record N-N
+      evidence_role: supportive | contradictory
+  tdc_task_instructions: &id004
+  - For TDC DILI, distinguish the source benchmark's high-DILI-risk class from its no-DILI-risk class;
+    the low-risk group was excluded from this binary task. These are concern categories, not grades of
+    injury severity.
+  - Predict dili_risk when the evidence best supports high clinically meaningful human DILI risk for the
+    query molecule, and no_dili_risk when it best supports the no-risk class. Make the best-supported
+    binary choice when evidence is mixed; do not automatically assign either label because the evidence
+    is uncertain.
+  - Assess whether human outcomes, exposure, and the tested compound's role apply to the query. Animal,
+    cell, transporter, and reactive-metabolite findings are supporting evidence whose clinical and molecular
+    transfer must be justified; an isolated mechanistic signal or an absence of reports decides neither
+    class.
+  - Ensure final_prediction agrees with your overall evidence assessment.
+  - Predict clinically meaningful human drug-induced liver injury under the query's reported exposure
+    and population when these are supplied.
+  - When the query has no reported external condition, assess the molecule-level DILI endpoint without
+    inventing a dose, route, population or duration. Missing conditions do not imply a universal claim
+    across all exposure settings.
+  - Separate observed human DILI from animal liver injury, hepatocyte toxicity, generic cytotoxicity,
+    mechanistic liabilities and model predictions. Those endpoints are not interchangeable measurements.
+  - Evidence from hepatic cell function, bile-acid transport, bioactivation, mitochondria, immune interactions
+    and cellular stress may change the prediction when the mechanistic link and structural transferability
+    are strong. Explain their limitations; new direct outcome evidence is not required for a justified
+    prediction.
+  - Preserve the tested molecule's role and co-exposure context. A protectant, modifier, metabolite or
+    probe is not automatically the substance causing the reported injury.
+  - A negative clinical observation applies to its reported population and exposure; absence of published
+    reports or an isolated negative mechanism assay does not establish absence of DILI risk.
+  - Keep mixed outcomes, predictions, missing context and uncertainty explicit. Family placement does
+    not establish a new experiment or independent evidence support.
+default: dili_conditioned_or_source_molecule_outcome.v1
+historical: dili_conditioned_or_source_molecule_outcome.v1
+profiles:
+  dili_conditioned_or_source_molecule_outcome.v1:
+    name: dili_conditioned_or_source_molecule_outcome.v1
+    prompt_profile: dili_conditioned_or_source_molecule_outcome.v1
+    system_role: Assess human drug-induced liver injury using molecular evidence.
+    endpoint_name: clinically meaningful human drug-induced liver injury
+    label_scope: dili_conditioned_or_source_molecule_outcome.v1
+    task_instructions: *id001
+    prediction_field: final_prediction
+    positive_prediction: dili_risk
+    negative_prediction: no_dili_risk
+    required_fields: *id002
+    required_json_schema: *id003
+    tdc_task_instructions: *id004

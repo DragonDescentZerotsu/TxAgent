@@ -29,7 +29,7 @@ from typing import Any
 import pandas as pd
 
 from data.processing.paths import assert_canonical_library_output
-from tools.chembl_tool.common.export import ensure_dir
+from predict.utils.files import ensure_dir
 from data.processing.evidence_library.compact_artifacts import (
     assert_compact_schema,
     build_relational_evidence_catalog,
@@ -90,12 +90,8 @@ from data.processing.evidence_library.shared.v1.normalization.task_policy import
     StarlingTaskPolicy,
 )
 from data.processing.evidence_library.versions.v8.task_registry import import_task_module
-from tools.chembl_tool.common.task_workflows.evidence_library import fingerprint_metadata
-from tools.chembl_tool.common.units import (
-    UNIT_NORMALIZER_VERSION,
-    contextual_unit_policy_manifest,
-    qualifier_vocabulary_manifest,
-)
+from data.processing.evidence_library.index_builder import fingerprint_metadata
+from data.processing.evidence_library.units import UNIT_NORMALIZER_VERSION, contextual_unit_policy_manifest, qualifier_vocabulary_manifest
 
 
 SOURCE_INVENTORY_FILENAME = "00_source/source_inventory.json"

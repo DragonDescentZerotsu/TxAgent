@@ -19,7 +19,7 @@ from data.processing.evidence_library.shared.v2.clustered_auxiliary_mapping impo
     reconciliation_plan,
 )
 from data.processing.evidence_library.shared.v2.normalization.cleaning import file_sha256
-from data.processing.llm_api import DEFAULT_ENV_FILE, openai_compatible_client
+from predict.api_client.transport import DEFAULT_ENV_FILE, openai_compatible_client
 
 
 TASK_CONTRACTS = {

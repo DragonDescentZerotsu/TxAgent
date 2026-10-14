@@ -29,7 +29,7 @@ from data.processing.evidence_library.versions.v10.tasks.ames.starling_exact_uni
     compile_exact_unit_mapping,
     load_reviewed_unit_decisions,
 )
-from tools.chembl_tool.common.units import canonicalize_unit
+from data.processing.evidence_library.units import canonicalize_unit
 
 INVENTORY_VERSION = "ames_exact_unit_inventory.v1"
 PACKET_VERSION = "ames_exact_unit_review_packet.v1"

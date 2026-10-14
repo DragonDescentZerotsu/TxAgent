@@ -1,0 +1,81 @@
+{
+  "assay_transfer_status": "query_pure_partial",
+  "base_release_index_sha256": "cd7dcb0a2ecaa8237a010a171412aa17c55223685065bf506039ffec28fd2185",
+  "evidence": {
+    "content_id": "1a3a0d8ce8aa96a8cac8163bd4673f24680020a42df580b1477c716d9ef55b11",
+    "manifest": "evidence/VERSION.json",
+    "manifest_sha256": "e368181e8eb8f704bd9b5e9461990c0563c8b6595ee52b1042c53ee76b3490b6",
+    "record_count": 332
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v2"
+  },
+  "levels_independent": true,
+  "model": {
+    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-pinned-dili-xnkoqrux",
+    "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
+    "revision": "bb5248609a729ac7dc6d6c9a3cccba1566a3d19e"
+  },
+  "morgan_fingerprint": {
+    "bits": 2048,
+    "radius": 2,
+    "similarity": "Tanimoto"
+  },
+  "neighbor_identity_policy_by_level": {
+    "L1": "scaffold_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "flat_v5/tdc_v2/dili/l1/query_pure/reused_task_best_v1/original",
+  "query_pure_policy": {
+    "complete_order": "assay_transfer",
+    "completeness": "all_100_parents_and_all_train_contexts",
+    "incomplete_order": "morgan",
+    "schema_version": "tdc_v2_l1_query_pure.v1"
+  },
+  "query_pure_summary": {
+    "test": {
+      "assay_pure_queries": 0,
+      "morgan_pure_queries": 96,
+      "queries": 96,
+      "scores_reused": 0
+    },
+    "valid": {
+      "assay_pure_queries": 0,
+      "morgan_pure_queries": 47,
+      "queries": 47,
+      "scores_reused": 0
+    }
+  },
+  "ranking_modes": [
+    "morgan",
+    "query-pure"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "score_source_release_index_sha256": "bb0f45beeed7e2edc3b300a968408cb160e1eb270a1de1a2bd10af8c9feb884b",
+  "scoring_contract_version": "assay_transfer_chat_first_divergent_token_bf16_backbone_fp32_head.v2",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L1": {
+          "content_id": "acd0ab57d37be66f063cec675248361ec8651bad02fff4f89976ef9ecb5aeb48",
+          "manifest": "scaffold/test/L1/VERSION.json",
+          "manifest_sha256": "d9d91111f7ab7fdcf132c21eeefe5fc1c4e7f61d00481dccb11d552a13f75599"
+        }
+      }
+    },
+    "valid": {
+      "levels": {
+        "L1": {
+          "content_id": "354be30e976d534dfb3743724c677f03a12fcf5ce5e70338f6cfa581fd647bf3",
+          "manifest": "scaffold/valid/L1/VERSION.json",
+          "manifest_sha256": "394b86eae44e5ca6d93d32e33f7d39eb57bfd7b599feaa4eef1d15b2a4775b79"
+        }
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "dili"
+}

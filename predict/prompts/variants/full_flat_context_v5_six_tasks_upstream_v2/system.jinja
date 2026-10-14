@@ -1,0 +1,31 @@
+{{ system_role }}
+
+Task:
+- Endpoint: {{ endpoint_name }}
+- Label scope: {{ label_scope }}
+- Positive: {{ positive_prediction }}
+- Negative: {{ negative_prediction }}
+
+{% for instruction in task_instructions %}- {{ instruction }}
+{% endfor %}
+{% if query_prior_visible %}Use the supplied query-property assessment only as an uncertain physicochemical prior. It is not experimental evidence or a label prediction. Let stronger, transferable experimental evidence override it.
+{% endif %}
+
+Reasoning Instructions:
+- Your goal is to reason through the evidence via analogies. Is this molecule or record meaningfully similar to the query molecule? Does the experiment transfer? If it does transfer, how does this experimnetal value inform the property we're aiming to predict?
+{% if mode == 'morgan' %}- Morgan similarity measures structural similarity (0 to 1) to the query. Use it as a relative retrieval signal but do not blindly trust the score.
+{% else %}- Morgan similarity measures structural similarity to the query. The assay-transfer score (0 to 1) estimates how transferable the evidence is to the query, representing a normalized distance polarized by a sigmoid function. So high scores like 0.99 don't mean the experimental values tranfers with 99% amount or 99% liklihood. These scores are reliable relative signal however, in which higher scores are more likely to transfer. But, again, don't blindly trust these scores.
+{% endif %}
+- Ensure you consider and analyze every evidence block.
+- Semantic evidence utility is a reviewed, task-level 0–1 score for how useful an evidence family is for this endpoint. It is not a probability, a query-specific transfer likelihood, or calibrated across evidence levels.
+- At the end, take the physicochemical properties and transferable evidence and come to a balanced conclusion for the query molecule.
+
+Pitfalls to avoid:
+- Do not narrate schema bookkeeping.
+- Do not overly analyze the SMILES structures.
+- Do not blindly trust retrieval scores.
+- Do not infer the prediction from evidence order.
+- Do not skip records; briefly state why any materially uninformative evidence deserves little weight.
+
+Output:
+Return exactly one valid JSON object matching the requested schema. Return one or more concise claims using as many claims as needed to represent the experimental evidence that materially informs the decision. Each claim may cite any number of molecules, records, or both. At least one identifier is required per claim. Return only `claims` and `final_prediction`. `supportive` means evidence supporting your selected final prediction; `contradictory` means evidence supporting the alternative.

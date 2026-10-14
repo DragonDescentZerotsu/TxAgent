@@ -1,0 +1,81 @@
+{
+  "assay_transfer_status": "query_pure_partial",
+  "base_release_index_sha256": "aab501af7820edca8fdfba4edbac3b56827278231d2966a64db96b4862603fee",
+  "evidence": {
+    "content_id": "0ab65711540f870be10c9878993698d8957f62f2967e1988d1ea14002ef8619d",
+    "manifest": "evidence/VERSION.json",
+    "manifest_sha256": "d4f7b5873097d6c1c82339a9af45f36a32cb840c4f8c3b82c14e9daf35af91ee",
+    "record_count": 196
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v2"
+  },
+  "levels_independent": true,
+  "model": {
+    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-pinned-carcinogens-2xcwcpul",
+    "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
+    "revision": "8be3376cd1d84e46c18b61617f63ad597aeaff52"
+  },
+  "morgan_fingerprint": {
+    "bits": 2048,
+    "radius": 2,
+    "similarity": "Tanimoto"
+  },
+  "neighbor_identity_policy_by_level": {
+    "L1": "scaffold_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "flat_v5/tdc_v2/carcinogens/l1/query_pure/reused_task_best_v1/original",
+  "query_pure_policy": {
+    "complete_order": "assay_transfer",
+    "completeness": "all_100_parents_and_all_train_contexts",
+    "incomplete_order": "morgan",
+    "schema_version": "tdc_v2_l1_query_pure.v1"
+  },
+  "query_pure_summary": {
+    "test": {
+      "assay_pure_queries": 0,
+      "morgan_pure_queries": 56,
+      "queries": 56,
+      "scores_reused": 0
+    },
+    "valid": {
+      "assay_pure_queries": 0,
+      "morgan_pure_queries": 28,
+      "queries": 28,
+      "scores_reused": 0
+    }
+  },
+  "ranking_modes": [
+    "morgan",
+    "query-pure"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "score_source_release_index_sha256": "0641b131f2a64b77a7a4c9220faf8ce244d726d69a5a7aa084ab5f20d18e8517",
+  "scoring_contract_version": "assay_transfer_chat_first_divergent_token_bf16_backbone_fp32_head.v2",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L1": {
+          "content_id": "f305b1f98a82400ed00e08d2bb5653fe70a7bdbffec67b5e2a198ead501ed1b9",
+          "manifest": "scaffold/test/L1/VERSION.json",
+          "manifest_sha256": "7ae375b5727fc0107b41866eaa09e16dc91070629723dcfc43c0468130a637aa"
+        }
+      }
+    },
+    "valid": {
+      "levels": {
+        "L1": {
+          "content_id": "02f169432121c3bb00b132a338c5c7eed403154a888fd4af0e9564b2f9a1668f",
+          "manifest": "scaffold/valid/L1/VERSION.json",
+          "manifest_sha256": "38a68f5ec8e5e4353bd929e8a159e649da4b7bbec5b8f169844556bfb98852ff"
+        }
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "carcinogens"
+}

@@ -84,7 +84,11 @@ def patched_plotter(repo: Path) -> str:
     )
     if sha256(source.encode()) != PATCHED_SHA256:
         raise RuntimeError("Patched renderer hash mismatch")
-    return source
+    return replace_once(
+        source,
+        "from tools.chembl_tool.common.json_utils import canonical_json_bytes, sha256_file",
+        "from predict.utils.json import canonical_json_bytes, sha256_file",
+    )
 
 
 def rows(path: Path) -> list[dict[str, str]]:

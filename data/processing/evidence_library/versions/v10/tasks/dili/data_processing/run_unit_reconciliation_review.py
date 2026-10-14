@@ -31,8 +31,8 @@ from data.processing.evidence_library.versions.v10.tasks.dili.starling_measureme
     DEEPSEEK_PROVIDER,
     ENDPOINT_CONCURRENCY_BUDGET,
 )
-from data.processing.llm_api import openai_compatible_client
-from tools.chembl_tool.common.units import canonicalize_unit
+from predict.api_client.transport import openai_compatible_client
+from data.processing.evidence_library.units import canonicalize_unit
 
 CACHE_VERSION = "dili_unit_review_cache.v2"
 RUN_RECEIPT_VERSION = "dili_unit_review_run.v1"

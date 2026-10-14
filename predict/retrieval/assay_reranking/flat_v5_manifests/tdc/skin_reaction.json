@@ -1,0 +1,146 @@
+{
+  "schema_version": "flat_v5_artifact_bundle.v1",
+  "status": "complete",
+  "bundle_id": "flat_v5/tdc/skin_reaction",
+  "task": "skin_reaction",
+  "benchmark": "tdc",
+  "harness_version": "full-flat-context-v5",
+  "max_level": null,
+  "cache_config": {
+    "path": "data/gold_labels/TDC/manifest.json",
+    "sha256": "6374b29701d0cf5faa591b8f9f8b873be8c7ba098c08e9e5f418a87122cff9ea"
+  },
+  "artifacts": [
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l1/RELEASE_INDEX.json",
+      "size": 1978,
+      "sha256": "7972bb54b037e13d0cf6aaeeab8e0dabf8255015fbb03994bc67e1a1923f3632"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l1/evidence/VERSION.json",
+      "size": 617,
+      "sha256": "1d9f64c14ba2460c3466084ab2e25568f7f1a7a38a2b70883063c1fd5b660b65"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l1/evidence/records.parquet",
+      "size": 20993,
+      "sha256": "43ad22d20944fbc25f7054947cf4617337a25ecd1d97c55b7ba36873ae2cd156"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l1/scaffold/test/L1/VERSION.json",
+      "size": 16101,
+      "sha256": "1d0010f62fec5b1c640f0daf46f7f854b0261b0192ba677cfe57ec513b3e0575"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l1/scaffold/test/L1/rankings.sqlite3",
+      "size": 4411392,
+      "sha256": "902b2692d0d96ac4ff57b5c8fa965cc9ec3370ceaea6b386a15a29a9ff87383e"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l1/scaffold/valid/L1/VERSION.json",
+      "size": 9256,
+      "sha256": "a6c7aaf090d5778ab2fbfeef673e749ee5024e444d057d45471d182c89ba028a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l1/scaffold/valid/L1/rankings.sqlite3",
+      "size": 2203648,
+      "sha256": "a9b11f65c56f926298e6b960cba0e990b56c77e0ff2b5877be15b23d155b9a62"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l1_cards/RELEASE_INDEX.json",
+      "size": 1592,
+      "sha256": "672143437967d4d7c06f1bcb2c285a5938be3462c1b8cbe4f0631c9144f20ba3"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l1_cards/evidence/VERSION.json",
+      "size": 1021,
+      "sha256": "4759615f9d4b7c4c9fc260060903a41646d9d48c1f7404727a8c64edaabf3558"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l1_cards/evidence/records.parquet",
+      "size": 42550,
+      "sha256": "5a06d67659242ca5c45189e6ae1cf2815fae22c46736b9505c4882d2c553df5b"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l1_cards/scaffold/test/L1/VERSION.json",
+      "size": 17085,
+      "sha256": "c62ba60c1ba0b93259a4dcc1cfb9825f1cf769ebeaee74984c47468786d1584e"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l1_cards/scaffold/test/L1/rankings.sqlite3",
+      "size": 4136960,
+      "sha256": "bc408a500676116db3ee72c4c827fda17df9a3a317c57ee33101b3e6de27df8a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l1_cards/scaffold/valid/L1/VERSION.json",
+      "size": 9064,
+      "sha256": "921069d5ddc12e532d2f47e440e46b4db73b7ac406b75f7308693d47243f4bbd"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l1_cards/scaffold/valid/L1/rankings.sqlite3",
+      "size": 2093056,
+      "sha256": "1b9ada62235d02c28fff8bc906e5f6c077e12a2e0a948823122977e6a32f4ee5"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l2plus/RELEASE_INDEX.json",
+      "size": 2140,
+      "sha256": "05e0b960fb103cc674812a96c8256005d93842da74301a8a747b7cb7389c3e1d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l2plus/scaffold/test/L2/VERSION.json",
+      "size": 11716,
+      "sha256": "cd82946fe6e8ae48584625582eb432cf57d5a4edbcf0cc66b482888d8f237ad6"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l2plus/scaffold/test/L2/rankings.sqlite3",
+      "size": 21602304,
+      "sha256": "e64d2a87418c7c4fed4e65fef58a06ed816f1cd44cca97f3d8ae7f9a293bfbe8"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l2plus/scaffold/test/L3/VERSION.json",
+      "size": 11736,
+      "sha256": "2cce62c4ea4f7f496793d5b0129ea2563dd3663a3b819e04068c0eb6ddeade32"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l2plus/scaffold/test/L3/rankings.sqlite3",
+      "size": 32415744,
+      "sha256": "fc8f36d7a126590388cb94dbd6cf164d7a83257d4d7f21ca0e5a3044b80b60ba"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l2plus/scaffold/valid/L2/VERSION.json",
+      "size": 6760,
+      "sha256": "b491fadb0a9062d92cc616cc39c800efb1fa50e0e5b0608018675dcb988da51b"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l2plus/scaffold/valid/L2/rankings.sqlite3",
+      "size": 9998336,
+      "sha256": "10daf75873e35f72da02c06c6d04171dc81b8a479effc722665c1cb85c1af59c"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l2plus/scaffold/valid/L3/VERSION.json",
+      "size": 6770,
+      "sha256": "17e554e0d24cc28453cdc3e702c5d16764258657aa90a732b14f16e42db283bd"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l2plus/scaffold/valid/L3/rankings.sqlite3",
+      "size": 17436672,
+      "sha256": "2f94d56bd464e503845df3887f2a0fd9ad60819fb2d2814d1dd41d8edf2b8f0e"
+    },
+    {
+      "path": "data/evidence_libraries/skin_reaction/v10_main_universe_v5/retrieval_projection/ranked_evidence_v1/VERSION.json",
+      "size": 1732,
+      "sha256": "c4391ed6d429c59d870e6061ac9b84d6325d897f2685d6c49c9aada5438f739a"
+    },
+    {
+      "path": "data/evidence_libraries/skin_reaction/v10_main_universe_v5/retrieval_projection/ranked_evidence_v1/records.parquet",
+      "size": 10550387,
+      "sha256": "065c50c531979a5b230f8927c2ce81a8753f95505fbd993d9f268d976089e8b9"
+    },
+    {
+      "path": "data/gold_labels/TDC/manifest.json",
+      "size": 11417,
+      "sha256": "6374b29701d0cf5faa591b8f9f8b873be8c7ba098c08e9e5f418a87122cff9ea"
+    }
+  ],
+  "missing": []
+}

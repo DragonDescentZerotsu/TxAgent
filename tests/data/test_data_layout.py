@@ -39,6 +39,7 @@ def test_data_root_contains_only_canonical_categories() -> None:
         if not path.name.startswith(".") and path.name != "__pycache__"
     }
     assert names == {
+        "AGENTS.md",
         "__init__.py",
         "README.md",
         "artifacts",
@@ -61,11 +62,9 @@ def test_evidence_library_has_no_compatibility_links_or_imports() -> None:
     assert not (construction_root / "prompts").exists()
     assert not (construction_root / "tasks").exists()
 
-    for task in ("bbb_martins", "bioavailability_ma", "skin_reaction"):
-        task_root = Path("tools/chembl_tool/tasks") / task
-        assert not any(path.is_symlink() for path in task_root.iterdir())
-    assert not Path("tools/chembl_tool/common/starling").exists()
-    assert not Path("tools/chembl_tool/tasks/ames").exists()
+    assert not Path("tools/chembl_tool").exists()
+    assert not Path("tools/chembl_tool").is_symlink()
+    assert not Path("archive/chembl_tool").exists()
 
     forbidden = (
         "tools.chembl_tool.common." + "starling",

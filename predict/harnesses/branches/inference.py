@@ -8,9 +8,6 @@ import os
 from pathlib import Path
 from typing import Any, Callable, Mapping
 
-from predict.harnesses.branches.reasoning.coverage import (
-    augment_group_messages_with_neighbor_context,
-)
 from predict.llm_io.evidence import ASSAY_RAW_CARD_PROMPT_PROFILE
 from predict.api_client.client import OpenAICompatibleClient
 from predict.llm_io.response import (
@@ -231,7 +228,6 @@ def call_group_branch(
     content_validator: Callable[[Mapping[str, Any]], list[str]] | None = None,
 ) -> dict[str, Any]:
     """Use live comparison tools, or harness-prefetched blind comparisons."""
-    messages = augment_group_messages_with_neighbor_context(messages, group)
     if (
         group.get("tools_prefetched")
         or group.get("identity_blind")

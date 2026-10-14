@@ -74,7 +74,7 @@ DEFAULT_BASE_MAPPING_PATH = None
 DEFAULT_PROFILE_PATH = DEFAULT_CLEANED_RECORDS.parent / "endpoint_unit_profile.json"
 DEFAULT_GOLD_FIXTURE = (
     REPO_ROOT
-    / "tests/chembl_tool/common/measurement_resolution_quality/gold/skin_reaction.v10.jsonl"
+    / "tests/data/evidence_library/measurement_resolution_quality/gold/skin_reaction.v10.jsonl"
 )
 ROUTING_EXACT_UNIT_MAPPING_PATH = (
     TASK_ROOT / "data_processing/canonicalization_v7/exact_measurement_unit_map.v3.json"

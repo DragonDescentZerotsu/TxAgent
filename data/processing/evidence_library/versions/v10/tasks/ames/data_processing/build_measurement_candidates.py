@@ -49,7 +49,7 @@ DEFAULT_OUTPUT = (
 )
 DEFAULT_GOLD = (
     REPO_ROOT
-    / "tests/chembl_tool/common/measurement_resolution_quality/gold/ames.v10.jsonl"
+    / "tests/data/evidence_library/measurement_resolution_quality/gold/ames.v10.jsonl"
 )
 GOLD_SHA256 = "14ced688f4e4bfb31df915eff79543acfc78c047df552efe280d9f7541d6be1d"
 GOLD_CASES = 500

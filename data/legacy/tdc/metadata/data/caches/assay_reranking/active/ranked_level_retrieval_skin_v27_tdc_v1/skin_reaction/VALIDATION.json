@@ -1,0 +1,34 @@
+{
+  "content_id": "3a6f967704aea8d2a5b1a98ce6ba56dc7b572126bc35cfb5cc02937038e6d695",
+  "evidence_content_id": "3e0358ab8304ffa64383afef4fd5c0d3c46487b3d04e1debcfc25e58fa234885",
+  "evidence_records_sha256": "065c50c531979a5b230f8927c2ce81a8753f95505fbd993d9f268d976089e8b9",
+  "schema_version": "ranked_uid_release_validation.v1",
+  "splits": {
+    "test": {
+      "L2": {
+        "content_id": "b37af85b2e62473b4433b47214b13ccf0a148fc59aeba120d8ccce1b67734cb9",
+        "database_sha256": "e64d2a87418c7c4fed4e65fef58a06ed816f1cd44cca97f3d8ae7f9a293bfbe8",
+        "stored_rows": 46237
+      },
+      "L3": {
+        "content_id": "47802686ef1101d474e2c0b2b9d04a426a4c1c1395e794f04b717838cbecb07f",
+        "database_sha256": "fc8f36d7a126590388cb94dbd6cf164d7a83257d4d7f21ca0e5a3044b80b60ba",
+        "stored_rows": 69756
+      }
+    },
+    "valid": {
+      "L2": {
+        "content_id": "38d3782e7a381db768c8da032e3116535dcdfdb3b33142a7f24c589619803dda",
+        "database_sha256": "10daf75873e35f72da02c06c6d04171dc81b8a479effc722665c1cb85c1af59c",
+        "stored_rows": 21434
+      },
+      "L3": {
+        "content_id": "0e3d20989fa816662a6c33a69dca980001868b87c29d5c211a7201de5bb39430",
+        "database_sha256": "2f94d56bd464e503845df3887f2a0fd9ad60819fb2d2814d1dd41d8edf2b8f0e",
+        "stored_rows": 37300
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "skin_reaction"
+}

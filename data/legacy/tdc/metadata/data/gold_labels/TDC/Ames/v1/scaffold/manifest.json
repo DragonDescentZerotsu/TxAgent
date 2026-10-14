@@ -1,0 +1,48 @@
+{
+  "task": "ames",
+  "task_directory": "Ames",
+  "benchmark": "tdc",
+  "version": "v1",
+  "release_id": "tdc_v1",
+  "contract": "tdc_conditioned_benchmark.v1",
+  "status": "complete",
+  "target_definition": "TDC Ames mutagenicity label; 1 is mutagenic and 0 is non-mutagenic.",
+  "source_rows": 7278,
+  "normalized_rows": 7278,
+  "accepted_source_rows": 7274,
+  "accepted_parents": 7246,
+  "rejected_source_rows": 0,
+  "conflicting_source_rows": 4,
+  "conflicting_parents": 2,
+  "split_repairs": 0,
+  "splits": {
+    "train": {
+      "n": 5077,
+      "positive": 2677
+    },
+    "valid": {
+      "n": 720,
+      "positive": 404
+    },
+    "test": {
+      "n": 1449,
+      "positive": 864
+    }
+  },
+  "source_manifest": "data/raw/tdc/Ames/v1/source_manifest.json",
+  "source_manifest_sha256": "184e950a23bd286c12d727359c4684efb7de45202c3225ad2919d6514eb51e47",
+  "outputs": {
+    "conflicting_parent_labels.jsonl": "6b20e8c8ed8d4519e446716ea638aa1ca37bd95509c0c3cf5e3407d6c202deed",
+    "heldout_molecule_condition_labels.jsonl": "fa1e1008d5758886ebd107acd9905ab1c5e424d9b86b0642ad344874e76dbb1a",
+    "rejected_source_rows.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "split_repairs.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "test.jsonl": "f9f266cc3927da97b443d0f6eb08e4a50270ba5f31e85019f6ec80609c054de6",
+    "test_molecule_condition_labels.jsonl": "e48a1df88b7480462bc56b9579fbc8f7663f0748c77ad0fed78e2a26da5cf0ef",
+    "train.jsonl": "b54b6f549105dbf1dca8a3a96d89c2542c1b040a0141cc61f5213eb7638ff153",
+    "train_molecule_condition_labels.jsonl": "930fd3305f48b567a41b3f00cb3a2af4fb575e4381e171aca0107bcc4bc63b07",
+    "valid.jsonl": "c75d8d8d5d664f563065d4990ccb82147587b66b5b26b50eb3ed68b62538e72e",
+    "valid_molecule_condition_labels.jsonl": "75d8f7fdd57a56349cc072ac8da7ad98f2c31bf24e7fec10c0fbb51d8dbe6578"
+  },
+  "current_pointer_changed": false,
+  "summary_sha256": "af3c15f68a311cb5a0cbc0edfb49c4036bd15bb2078b5754d3fdc3b0af86e91e"
+}

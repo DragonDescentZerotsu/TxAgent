@@ -45,3 +45,25 @@ def test_consolidates_complete_prior_and_contrast_runs(tmp_path, monkeypatch):
         (str(minimum), prior) for minimum in (0, 1, 2) for prior in ("cached", "none")
     }
     assert json.loads((output / "manifest.json").read_text())["status"] == "complete"
+
+
+def test_pair_bucket_analysis_forwards_study_settings_and_preserves_counts(tmp_path, monkeypatch):
+    from analysis.prediction import progressive_pair_buckets as analysis
+    source = tmp_path / "source.json"
+    source.write_text("{}")
+    bucket = json.dumps(["assay", "endpoint", "unit"])
+    lookup = {(f"u{i}", f"r{i}"): bucket for i in range(1, 4)}
+    monkeypatch.setattr(analysis, "_pair_bucket_lookup", lambda task: (lookup, source, source))
+    seen = {}
+    def selected(**kwargs):
+        seen.update(kwargs)
+        return {"q": {"L1": [dict(record_id="r1", payload=dict(source_row_uid="u1"))],
+                      "L2": [dict(record_id=f"r{i}", payload=dict(source_row_uid=f"u{i}")) for i in (2, 3)]}}, {}
+    monkeypatch.setattr(analysis, "_selected_records", selected)
+    summary, per_query, frequencies, provenance = analysis.analyze(
+        source, task_levels={"bbb_martins": 2}, modes=("morgan",), pools=("all",),
+        subset="test", molecule_limit=3, l1_limit=4, later_limit=5)
+    assert (seen["last_level"], seen["subset"], seen["molecule_limit"], seen["l1_limit"], seen["later_limit"]) == (2, "test", 3, 4, 5)
+    assert {row["level"]: row["selected_records_total"] for row in summary} == {"L1": 1, "L2": 2}
+    assert sum(row["selected_records"] for row in frequencies) == 3
+    assert len(per_query) == 2 and set(provenance) == {"bbb_martins"}

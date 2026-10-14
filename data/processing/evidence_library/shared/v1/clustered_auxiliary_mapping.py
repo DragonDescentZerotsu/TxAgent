@@ -306,7 +306,7 @@ def build_clustered_auxiliary_mapping(
     reconcile_cleaned_key_conflicts: bool = True,
 ) -> dict[str, Any]:
     """Build and atomically publish a complete reconciled mapping."""
-    from openai import OpenAI
+    from predict.api_client.transport import openai_compatible_client
 
     destination = Path(output_path)
     if destination.exists() and not overwrite:
@@ -375,7 +375,7 @@ def build_clustered_auxiliary_mapping(
     client_kwargs: dict[str, Any] = {"api_key": api_key_loader()}
     if base_url:
         client_kwargs["base_url"] = base_url
-    client = OpenAI(**client_kwargs)
+    client = openai_compatible_client(base_url=client_kwargs.get("base_url") or "https://api.openai.com/v1", api_key=client_kwargs["api_key"])[0]
     output_sources: dict[str, dict[str, Any]] = defaultdict(dict)
     generation_sections: dict[str, Any] = {}
     for spec in specs:

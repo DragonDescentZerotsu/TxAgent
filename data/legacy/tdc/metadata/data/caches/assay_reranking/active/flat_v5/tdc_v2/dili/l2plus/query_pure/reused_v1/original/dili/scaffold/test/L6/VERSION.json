@@ -1,0 +1,645 @@
+{
+  "capacity": 100,
+  "content_id": "894e03b4012b152bf61f7acd26d3152aeb60eec6f3c3ead3fb89ce5e6132da1a",
+  "database": "rankings.sqlite3",
+  "database_sha256": "977598c9ea89484965152b63ce0b2c6c7b38b500cbaf31e566cc93dbf96efb44",
+  "inputs": {
+    "evidence_manifest_sha256": "1876c9e92ae695174e69f153e0c2bfaaf67d84ded9d36a1fc57d144e5ba4d4b1",
+    "query_sha256": "2bfb45d3672256351e076f5cb27997b5571c047541c2928c2cf20dfe39090353",
+    "shared_parent_universe_sha256": "881e9a4652c80f83718bbd36ee332acd93d0d63bdb290d1408c47239c0e910cd"
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v2"
+  },
+  "level": "L6",
+  "model": {
+    "dataset": "jiosephlee/assay-transfer-record-level-v27-dili-general-intern",
+    "dataset_manifest_sha256": "8bd8cba9c059a441138a093d02d9d94d5298b77203c70fce0cfd204a35e01e1f",
+    "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v27-dili-general-best",
+    "revision": "e34d922504cc67290ce5289607f54e5d74f6868e"
+  },
+  "neighbor_identity_policy": "parent_disjoint",
+  "parent_capacity": 100,
+  "parent_universe_source": "shared_l2plus_morgan_100",
+  "pool": "all",
+  "query_count": 96,
+  "query_counts": {
+    "TDC_DILI_01D490B9061139615013": {
+      "candidate_parents": 39,
+      "candidate_records": 662,
+      "missing_scores": 0,
+      "scored_records": 662
+    },
+    "TDC_DILI_07645BD4981D5B82D3D6": {
+      "candidate_parents": 39,
+      "candidate_records": 971,
+      "missing_scores": 0,
+      "scored_records": 971
+    },
+    "TDC_DILI_087FDF92A675E83CFE2A": {
+      "candidate_parents": 20,
+      "candidate_records": 312,
+      "missing_scores": 0,
+      "scored_records": 312
+    },
+    "TDC_DILI_08BA029DC199216AB597": {
+      "candidate_parents": 30,
+      "candidate_records": 623,
+      "missing_scores": 0,
+      "scored_records": 623
+    },
+    "TDC_DILI_12A0B81778EE0115E2FE": {
+      "candidate_parents": 36,
+      "candidate_records": 418,
+      "missing_scores": 0,
+      "scored_records": 418
+    },
+    "TDC_DILI_12D3D34A621B0F761798": {
+      "candidate_parents": 28,
+      "candidate_records": 720,
+      "missing_scores": 0,
+      "scored_records": 720
+    },
+    "TDC_DILI_13DF578D4E6E02BCD634": {
+      "candidate_parents": 19,
+      "candidate_records": 171,
+      "missing_scores": 0,
+      "scored_records": 171
+    },
+    "TDC_DILI_17246B30B0A7E5200142": {
+      "candidate_parents": 28,
+      "candidate_records": 486,
+      "missing_scores": 0,
+      "scored_records": 486
+    },
+    "TDC_DILI_1DB00BDDF464F4DA4D4B": {
+      "candidate_parents": 27,
+      "candidate_records": 509,
+      "missing_scores": 0,
+      "scored_records": 509
+    },
+    "TDC_DILI_1F5871DD64170E88637A": {
+      "candidate_parents": 25,
+      "candidate_records": 284,
+      "missing_scores": 0,
+      "scored_records": 284
+    },
+    "TDC_DILI_2383D708A6529B7F1752": {
+      "candidate_parents": 32,
+      "candidate_records": 797,
+      "missing_scores": 0,
+      "scored_records": 797
+    },
+    "TDC_DILI_23A74304D9B1262EA2E7": {
+      "candidate_parents": 34,
+      "candidate_records": 929,
+      "missing_scores": 0,
+      "scored_records": 929
+    },
+    "TDC_DILI_2521798D045E45389232": {
+      "candidate_parents": 24,
+      "candidate_records": 331,
+      "missing_scores": 331,
+      "scored_records": 0
+    },
+    "TDC_DILI_2E19B5172E9E04ED7582": {
+      "candidate_parents": 21,
+      "candidate_records": 572,
+      "missing_scores": 0,
+      "scored_records": 572
+    },
+    "TDC_DILI_3032359AB896EB9B8FEB": {
+      "candidate_parents": 33,
+      "candidate_records": 865,
+      "missing_scores": 0,
+      "scored_records": 865
+    },
+    "TDC_DILI_327B4FC4C490DCAE7856": {
+      "candidate_parents": 26,
+      "candidate_records": 379,
+      "missing_scores": 0,
+      "scored_records": 379
+    },
+    "TDC_DILI_32D20C87745AD555075A": {
+      "candidate_parents": 28,
+      "candidate_records": 343,
+      "missing_scores": 343,
+      "scored_records": 0
+    },
+    "TDC_DILI_38CF56129EFAD069DBCE": {
+      "candidate_parents": 31,
+      "candidate_records": 428,
+      "missing_scores": 0,
+      "scored_records": 428
+    },
+    "TDC_DILI_3B9F4BBEF705866D0C15": {
+      "candidate_parents": 25,
+      "candidate_records": 630,
+      "missing_scores": 0,
+      "scored_records": 630
+    },
+    "TDC_DILI_3CEA16C62CBD7F0581FF": {
+      "candidate_parents": 29,
+      "candidate_records": 716,
+      "missing_scores": 0,
+      "scored_records": 716
+    },
+    "TDC_DILI_3D71A3B18E95A95306C7": {
+      "candidate_parents": 27,
+      "candidate_records": 804,
+      "missing_scores": 0,
+      "scored_records": 804
+    },
+    "TDC_DILI_3E23862C0AC897C95777": {
+      "candidate_parents": 14,
+      "candidate_records": 589,
+      "missing_scores": 0,
+      "scored_records": 589
+    },
+    "TDC_DILI_42AE03946F63BA5AC0EE": {
+      "candidate_parents": 23,
+      "candidate_records": 756,
+      "missing_scores": 0,
+      "scored_records": 756
+    },
+    "TDC_DILI_44022DD92F22F58A8134": {
+      "candidate_parents": 29,
+      "candidate_records": 502,
+      "missing_scores": 0,
+      "scored_records": 502
+    },
+    "TDC_DILI_4808DD3B726CA527B442": {
+      "candidate_parents": 21,
+      "candidate_records": 470,
+      "missing_scores": 470,
+      "scored_records": 0
+    },
+    "TDC_DILI_4ED286BA4B8FD2CBCEBC": {
+      "candidate_parents": 26,
+      "candidate_records": 556,
+      "missing_scores": 0,
+      "scored_records": 556
+    },
+    "TDC_DILI_527D756B04C3407AFF8A": {
+      "candidate_parents": 27,
+      "candidate_records": 260,
+      "missing_scores": 0,
+      "scored_records": 260
+    },
+    "TDC_DILI_5455313CEB53A10886A3": {
+      "candidate_parents": 39,
+      "candidate_records": 3968,
+      "missing_scores": 0,
+      "scored_records": 3968
+    },
+    "TDC_DILI_56BFF3156DB95242B4D7": {
+      "candidate_parents": 21,
+      "candidate_records": 477,
+      "missing_scores": 0,
+      "scored_records": 477
+    },
+    "TDC_DILI_576270B05E60CFD96576": {
+      "candidate_parents": 30,
+      "candidate_records": 340,
+      "missing_scores": 0,
+      "scored_records": 340
+    },
+    "TDC_DILI_5CA00B6AB1C51F2D5179": {
+      "candidate_parents": 21,
+      "candidate_records": 700,
+      "missing_scores": 0,
+      "scored_records": 700
+    },
+    "TDC_DILI_5EF960F5EC2701E03EE4": {
+      "candidate_parents": 38,
+      "candidate_records": 4064,
+      "missing_scores": 0,
+      "scored_records": 4064
+    },
+    "TDC_DILI_6154EED84AF38F5BAE15": {
+      "candidate_parents": 21,
+      "candidate_records": 450,
+      "missing_scores": 0,
+      "scored_records": 450
+    },
+    "TDC_DILI_61A9C00E06D9B0D6D254": {
+      "candidate_parents": 37,
+      "candidate_records": 1171,
+      "missing_scores": 0,
+      "scored_records": 1171
+    },
+    "TDC_DILI_641A4DB9B174D288140E": {
+      "candidate_parents": 40,
+      "candidate_records": 975,
+      "missing_scores": 0,
+      "scored_records": 975
+    },
+    "TDC_DILI_649848C82A1A3C5937FA": {
+      "candidate_parents": 21,
+      "candidate_records": 551,
+      "missing_scores": 0,
+      "scored_records": 551
+    },
+    "TDC_DILI_64C5558ED35CD23BA280": {
+      "candidate_parents": 25,
+      "candidate_records": 1137,
+      "missing_scores": 0,
+      "scored_records": 1137
+    },
+    "TDC_DILI_6695FAA142F6A4DD2DB0": {
+      "candidate_parents": 18,
+      "candidate_records": 186,
+      "missing_scores": 0,
+      "scored_records": 186
+    },
+    "TDC_DILI_671408BE57ADD2BC3590": {
+      "candidate_parents": 12,
+      "candidate_records": 42,
+      "missing_scores": 0,
+      "scored_records": 42
+    },
+    "TDC_DILI_673E56AD06784032F561": {
+      "candidate_parents": 24,
+      "candidate_records": 939,
+      "missing_scores": 0,
+      "scored_records": 939
+    },
+    "TDC_DILI_6D4D83991A8EDB8CAA66": {
+      "candidate_parents": 38,
+      "candidate_records": 512,
+      "missing_scores": 0,
+      "scored_records": 512
+    },
+    "TDC_DILI_700DD72748951855B7DA": {
+      "candidate_parents": 23,
+      "candidate_records": 297,
+      "missing_scores": 0,
+      "scored_records": 297
+    },
+    "TDC_DILI_785D350E62207F0D6ACC": {
+      "candidate_parents": 29,
+      "candidate_records": 431,
+      "missing_scores": 0,
+      "scored_records": 431
+    },
+    "TDC_DILI_79F772D803A9B7B1C53F": {
+      "candidate_parents": 31,
+      "candidate_records": 1847,
+      "missing_scores": 0,
+      "scored_records": 1847
+    },
+    "TDC_DILI_7E480D3F94D1BDABE796": {
+      "candidate_parents": 28,
+      "candidate_records": 250,
+      "missing_scores": 0,
+      "scored_records": 250
+    },
+    "TDC_DILI_7E6135CFF4346EAD088E": {
+      "candidate_parents": 23,
+      "candidate_records": 317,
+      "missing_scores": 0,
+      "scored_records": 317
+    },
+    "TDC_DILI_80521BA35481B5E26B9F": {
+      "candidate_parents": 25,
+      "candidate_records": 265,
+      "missing_scores": 0,
+      "scored_records": 265
+    },
+    "TDC_DILI_80D3EDDEBEDAAC69B9F7": {
+      "candidate_parents": 31,
+      "candidate_records": 537,
+      "missing_scores": 0,
+      "scored_records": 537
+    },
+    "TDC_DILI_80DD7931AB7289553A90": {
+      "candidate_parents": 29,
+      "candidate_records": 211,
+      "missing_scores": 0,
+      "scored_records": 211
+    },
+    "TDC_DILI_85B1BFB7AE25945BB488": {
+      "candidate_parents": 26,
+      "candidate_records": 777,
+      "missing_scores": 0,
+      "scored_records": 777
+    },
+    "TDC_DILI_86DDB03A60A259C6561F": {
+      "candidate_parents": 28,
+      "candidate_records": 360,
+      "missing_scores": 0,
+      "scored_records": 360
+    },
+    "TDC_DILI_86FAD3EBB072CCC5A227": {
+      "candidate_parents": 35,
+      "candidate_records": 424,
+      "missing_scores": 0,
+      "scored_records": 424
+    },
+    "TDC_DILI_87F0D308D2A82E2F8064": {
+      "candidate_parents": 33,
+      "candidate_records": 483,
+      "missing_scores": 0,
+      "scored_records": 483
+    },
+    "TDC_DILI_886BD455F7F49C1428F5": {
+      "candidate_parents": 29,
+      "candidate_records": 834,
+      "missing_scores": 0,
+      "scored_records": 834
+    },
+    "TDC_DILI_8A6DBC612A2247CCBD17": {
+      "candidate_parents": 22,
+      "candidate_records": 152,
+      "missing_scores": 0,
+      "scored_records": 152
+    },
+    "TDC_DILI_8AF339F423CD85522828": {
+      "candidate_parents": 43,
+      "candidate_records": 3981,
+      "missing_scores": 0,
+      "scored_records": 3981
+    },
+    "TDC_DILI_8BC14F4C1F5CC6FB8826": {
+      "candidate_parents": 22,
+      "candidate_records": 224,
+      "missing_scores": 224,
+      "scored_records": 0
+    },
+    "TDC_DILI_8E322437EC5E19B2170E": {
+      "candidate_parents": 43,
+      "candidate_records": 3981,
+      "missing_scores": 0,
+      "scored_records": 3981
+    },
+    "TDC_DILI_9B26C0B973451E00E872": {
+      "candidate_parents": 43,
+      "candidate_records": 653,
+      "missing_scores": 0,
+      "scored_records": 653
+    },
+    "TDC_DILI_9C5451ADFF1822BE28FA": {
+      "candidate_parents": 24,
+      "candidate_records": 689,
+      "missing_scores": 0,
+      "scored_records": 689
+    },
+    "TDC_DILI_9DAD38C9FE0008EE13A4": {
+      "candidate_parents": 19,
+      "candidate_records": 630,
+      "missing_scores": 0,
+      "scored_records": 630
+    },
+    "TDC_DILI_9E00C784D34038766DB2": {
+      "candidate_parents": 31,
+      "candidate_records": 1079,
+      "missing_scores": 0,
+      "scored_records": 1079
+    },
+    "TDC_DILI_A2274E26C81BC1229986": {
+      "candidate_parents": 20,
+      "candidate_records": 118,
+      "missing_scores": 0,
+      "scored_records": 118
+    },
+    "TDC_DILI_A63FE7EAF9E3AA45ACBA": {
+      "candidate_parents": 19,
+      "candidate_records": 253,
+      "missing_scores": 0,
+      "scored_records": 253
+    },
+    "TDC_DILI_AD4B381CB2867007AF6D": {
+      "candidate_parents": 29,
+      "candidate_records": 486,
+      "missing_scores": 0,
+      "scored_records": 486
+    },
+    "TDC_DILI_B98FAF1F0CD3FC8D9910": {
+      "candidate_parents": 23,
+      "candidate_records": 242,
+      "missing_scores": 0,
+      "scored_records": 242
+    },
+    "TDC_DILI_BC3BA4A5C8881272DFE4": {
+      "candidate_parents": 31,
+      "candidate_records": 253,
+      "missing_scores": 0,
+      "scored_records": 253
+    },
+    "TDC_DILI_BDC30190C72AA31219BB": {
+      "candidate_parents": 22,
+      "candidate_records": 580,
+      "missing_scores": 0,
+      "scored_records": 580
+    },
+    "TDC_DILI_C21EA938A2049B93A8F4": {
+      "candidate_parents": 26,
+      "candidate_records": 414,
+      "missing_scores": 0,
+      "scored_records": 414
+    },
+    "TDC_DILI_C8408522BA7166B99EB4": {
+      "candidate_parents": 23,
+      "candidate_records": 426,
+      "missing_scores": 0,
+      "scored_records": 426
+    },
+    "TDC_DILI_C9F2D2BA0A75491763EE": {
+      "candidate_parents": 27,
+      "candidate_records": 254,
+      "missing_scores": 0,
+      "scored_records": 254
+    },
+    "TDC_DILI_CEB728DDA1686EF11B76": {
+      "candidate_parents": 20,
+      "candidate_records": 388,
+      "missing_scores": 0,
+      "scored_records": 388
+    },
+    "TDC_DILI_D10EE142C15159663BF1": {
+      "candidate_parents": 23,
+      "candidate_records": 242,
+      "missing_scores": 242,
+      "scored_records": 0
+    },
+    "TDC_DILI_D3DAA6337742D14F2B59": {
+      "candidate_parents": 41,
+      "candidate_records": 1772,
+      "missing_scores": 0,
+      "scored_records": 1772
+    },
+    "TDC_DILI_D4B8724DE5CCE95766D9": {
+      "candidate_parents": 22,
+      "candidate_records": 341,
+      "missing_scores": 0,
+      "scored_records": 341
+    },
+    "TDC_DILI_D56BC6AE1309FBA21D56": {
+      "candidate_parents": 33,
+      "candidate_records": 671,
+      "missing_scores": 0,
+      "scored_records": 671
+    },
+    "TDC_DILI_D5B916F7390E11FA42B1": {
+      "candidate_parents": 34,
+      "candidate_records": 298,
+      "missing_scores": 298,
+      "scored_records": 0
+    },
+    "TDC_DILI_D5BE23BF7B9D8058B631": {
+      "candidate_parents": 31,
+      "candidate_records": 377,
+      "missing_scores": 0,
+      "scored_records": 377
+    },
+    "TDC_DILI_D64A2CF76A2B787C8412": {
+      "candidate_parents": 25,
+      "candidate_records": 216,
+      "missing_scores": 0,
+      "scored_records": 216
+    },
+    "TDC_DILI_D7487320D69B25BCF833": {
+      "candidate_parents": 30,
+      "candidate_records": 1385,
+      "missing_scores": 0,
+      "scored_records": 1385
+    },
+    "TDC_DILI_DA37A4EB40F03ED4B377": {
+      "candidate_parents": 28,
+      "candidate_records": 422,
+      "missing_scores": 0,
+      "scored_records": 422
+    },
+    "TDC_DILI_E236027ABB5A74B098A8": {
+      "candidate_parents": 30,
+      "candidate_records": 694,
+      "missing_scores": 0,
+      "scored_records": 694
+    },
+    "TDC_DILI_E2D806F66E561B2CFE34": {
+      "candidate_parents": 25,
+      "candidate_records": 311,
+      "missing_scores": 0,
+      "scored_records": 311
+    },
+    "TDC_DILI_E2FC4C9FA826ECB25C27": {
+      "candidate_parents": 29,
+      "candidate_records": 1328,
+      "missing_scores": 0,
+      "scored_records": 1328
+    },
+    "TDC_DILI_EABE9FB495B7784C01BF": {
+      "candidate_parents": 17,
+      "candidate_records": 118,
+      "missing_scores": 0,
+      "scored_records": 118
+    },
+    "TDC_DILI_EC575819B94FF9B5DB6A": {
+      "candidate_parents": 23,
+      "candidate_records": 968,
+      "missing_scores": 0,
+      "scored_records": 968
+    },
+    "TDC_DILI_EE09BF997E0CB721B35E": {
+      "candidate_parents": 27,
+      "candidate_records": 506,
+      "missing_scores": 0,
+      "scored_records": 506
+    },
+    "TDC_DILI_EF0EC41A7DD8056C8A4F": {
+      "candidate_parents": 28,
+      "candidate_records": 498,
+      "missing_scores": 0,
+      "scored_records": 498
+    },
+    "TDC_DILI_F00499C7E977150D8BB3": {
+      "candidate_parents": 28,
+      "candidate_records": 401,
+      "missing_scores": 0,
+      "scored_records": 401
+    },
+    "TDC_DILI_F2C2CD580D0805F07E1E": {
+      "candidate_parents": 25,
+      "candidate_records": 271,
+      "missing_scores": 0,
+      "scored_records": 271
+    },
+    "TDC_DILI_F313F95D1581A46D1D8B": {
+      "candidate_parents": 21,
+      "candidate_records": 343,
+      "missing_scores": 0,
+      "scored_records": 343
+    },
+    "TDC_DILI_F4942292880AF323ED8F": {
+      "candidate_parents": 24,
+      "candidate_records": 390,
+      "missing_scores": 0,
+      "scored_records": 390
+    },
+    "TDC_DILI_F4F7438CF59C5BE0CA91": {
+      "candidate_parents": 18,
+      "candidate_records": 165,
+      "missing_scores": 0,
+      "scored_records": 165
+    },
+    "TDC_DILI_FA19A93CF33C6E3D97AC": {
+      "candidate_parents": 21,
+      "candidate_records": 388,
+      "missing_scores": 0,
+      "scored_records": 388
+    },
+    "TDC_DILI_FC81B75EC23DA233158D": {
+      "candidate_parents": 23,
+      "candidate_records": 235,
+      "missing_scores": 0,
+      "scored_records": 235
+    },
+    "TDC_DILI_FEAECE5C3C9DC0545D1D": {
+      "candidate_parents": 21,
+      "candidate_records": 454,
+      "missing_scores": 0,
+      "scored_records": 454
+    }
+  },
+  "query_pure_policy": {
+    "complete_order": "assay_transfer",
+    "incomplete_order": "morgan",
+    "incomplete_prompt_scores": "hidden",
+    "schema_version": "tdc_v2_query_pure.v1",
+    "scope": "query_level"
+  },
+  "query_pure_summary": {
+    "assay_pure_queries": 90,
+    "assay_pure_records": 63317,
+    "morgan_pure_queries": 6,
+    "morgan_pure_records": 1908,
+    "queries": 96
+  },
+  "query_smiles_policy": "frozen_parent_else_source_smiles",
+  "ranking_rows_sha256": "419a0a46d16f2993c35e36063f1d6e3b56f067029ccc65e89a098ed894d80b2f",
+  "schema_version": "ranked_uid_retrieval.v1",
+  "score_counts": {
+    "exact_reuse": 63317
+  },
+  "score_coverage": "query_pure",
+  "score_reuse_sources": [
+    {
+      "database_sha256": "705d26cebd14726b04a372ecb6d3a91692d03df919942cd8f77153b45e49c79c",
+      "manifest_sha256": "42bab8cf6c16a0a937c787d374a84c79a88b14085f617bd0ad3788db2a1a1d50",
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v1/dili/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2/dili/scaffold/valid/L6/VERSION.json"
+    },
+    {
+      "database_sha256": "88027f68e6d6855b1f731c443c02ad3a4e97ee2cbe5e93f5077d8d749b458196",
+      "manifest_sha256": "3ef4899485fb9812ae39cad67d0547717e94e0159f4a24ae0d19e95c33eab22a",
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v1/dili/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2/dili/scaffold/test/L6/VERSION.json"
+    }
+  ],
+  "shared_candidate_universe": true,
+  "source_smiles_fallback_queries": 0,
+  "status": "complete",
+  "stored_rows": 65225,
+  "subset": "test",
+  "task_id": "dili",
+  "trusted_predecessor_row_reuse": false
+}

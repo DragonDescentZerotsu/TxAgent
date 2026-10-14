@@ -17,7 +17,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Mapping
 
-from tools.chembl_tool.common.units import canonicalize_unit, units_compatible
+from data.processing.evidence_library.units import canonicalize_unit, units_compatible
 
 
 SEMANTICS_SCHEMA_VERSION = "bbb_martins_measurement_semantics.schema.v1"

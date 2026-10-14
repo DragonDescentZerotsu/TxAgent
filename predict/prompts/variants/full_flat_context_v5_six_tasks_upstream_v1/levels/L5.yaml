@@ -1,0 +1,5 @@
+bbb_martins: {description: Influx or uptake-transporter evidence.}
+bioavailability_ma: {description: Gut-wall efflux and intestinal metabolism evidence.}
+ames: {description: Genotoxicity mechanisms and qualified mechanistic evidence.}
+dili: {description: Additional indirect liver-related evidence at this reviewed level.}
+carcinogens: {description: Additional indirect carcinogenicity-related evidence at this reviewed level.}

@@ -6,12 +6,9 @@ import json
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
-from tools.chembl_tool.common.json_utils import write_json_atomic, write_jsonl_atomic
+from predict.utils.json import write_json_atomic, write_jsonl_atomic
 from data.processing.gold_labels.benchmark_dataset import sha256_file
-from tools.chembl_tool.common.molecule_identity import (
-    bemis_murcko_scaffold,
-    normalize_molecule_identity,
-)
+from predict.retrieval.policies import bemis_murcko_scaffold, normalize_molecule_identity
 
 
 REVIEW_CONTRACT = "conditioned_gold_record_review.v1"

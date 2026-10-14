@@ -33,7 +33,7 @@ PROFILE = "l1_context_semantic_weighted_l2_v1"
 OUTPUT_ROOT = cache_profile_root(PROFILE)
 BASE_ROOT = cache_profile_root("l1_context_semantic_l2_v1")
 REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
-POLICY_PATH = REPOSITORY_ROOT / "semantic_buckets/policies/semantic_weighted_top10_v2.json"
+POLICY_PATH = REPOSITORY_ROOT / "optimization/semantic_buckets/policies/semantic_weighted_top10_v2.json"
 
 
 def _digest(value: object) -> str:

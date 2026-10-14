@@ -16,12 +16,7 @@ import shutil
 from typing import Any, Iterable
 
 from data.processing.paths import ARTIFACTS_ROOT
-from tools.chembl_tool.common.json_utils import (
-    read_jsonl,
-    sha256_file,
-    write_json_atomic,
-    write_jsonl_atomic,
-)
+from predict.utils.json import read_jsonl, sha256_file, write_json_atomic, write_jsonl_atomic
 from data.processing.gold_labels.conditioned_benchmark import (
     BENCHMARK_ROOT,
     BUILD_ROOT,

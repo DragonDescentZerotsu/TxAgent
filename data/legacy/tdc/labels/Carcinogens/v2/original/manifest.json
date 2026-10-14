@@ -1,0 +1,60 @@
+{
+  "task": "carcinogens",
+  "task_directory": "Carcinogens",
+  "benchmark": "tdc",
+  "version": "v2",
+  "release_id": "tdc_v2_original",
+  "contract": "tdc_original_source_splits.v2",
+  "layout": "original",
+  "status": "complete",
+  "source_repository_commit": "f409ff3673498f0b16efc4c05d8a027815c08f0e",
+  "source_files": [
+    {
+      "split": "train",
+      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/Carcinogens_Lagunin/train.csv",
+      "path": "data/raw/tdc/Carcinogens/v2/train.csv",
+      "sha256": "d6a328e6d6bc476bc26900413027e905b4643dd5894ed3061cf176e8df9f8b58",
+      "rows": 196
+    },
+    {
+      "split": "valid",
+      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/Carcinogens_Lagunin/val.csv",
+      "path": "data/raw/tdc/Carcinogens/v2/valid.csv",
+      "sha256": "43aa01238a8321d56f5a927958210dba3f390abd425f2c315c862c5fe391cb35",
+      "rows": 28
+    },
+    {
+      "split": "test",
+      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/Carcinogens_Lagunin/test.csv",
+      "path": "data/raw/tdc/Carcinogens/v2/test.csv",
+      "sha256": "b5b180aafe7a3bdf4af7e772e0dd4366a1d718eed8c2104e2ab426ea8101f539",
+      "rows": 56
+    }
+  ],
+  "source_rows": 280,
+  "preserved_rows": 280,
+  "splits": {
+    "train": {
+      "n": 196,
+      "positive": 44
+    },
+    "valid": {
+      "n": 28,
+      "positive": 5
+    },
+    "test": {
+      "n": 56,
+      "positive": 11
+    }
+  },
+  "outputs": {
+    "train_molecule_condition_labels.jsonl": "017b7fba6308edeeb637155aef57921e0588982ec32ec7a7f6935405e5a5c636",
+    "train.jsonl": "588b589a15b43334c4cff2e8778ae0afe32255b57fe3d6d25f54bb023307383f",
+    "valid_molecule_condition_labels.jsonl": "b07bb865a5b259de4d219a83f3d42684ab2f45a181d1143cc685775ec157415f",
+    "valid.jsonl": "ead2cda7ce75cab82f1110cf84bb317d622cd041b3f124a3fe56715a20791a8b",
+    "test_molecule_condition_labels.jsonl": "19d5bb3c4df60ebf968afe46fb341925a618a6c780e708bb35429152ead46b7f",
+    "test.jsonl": "0f01d109c977e9b5b5b0f29015a1196e9fb88c7521e4111dafa326cec51a66a5",
+    "heldout_molecule_condition_labels.jsonl": "ba13b9cb3e2cae283af164037222a03dfb15441d7727501b07b217fab033ee4c"
+  },
+  "summary_sha256": "7a83aad1e42a82d9808827f20378a7688a4fc800a2352d368217c4c8774fd4ac"
+}

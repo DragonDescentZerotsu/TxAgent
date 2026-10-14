@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from data.processing.evidence_library.evidence_library import starling_molecule_id
-from tools.chembl_tool.common.task_workflows.evidence_library import standardize_smiles
+from data.processing.evidence_library.index_builder import standardize_smiles
 from .contracts import CLEANING_STAGE_VERSION, NormalizedSourceProfile
 
 

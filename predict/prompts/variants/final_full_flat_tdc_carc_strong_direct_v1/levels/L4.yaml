@@ -1,0 +1,15 @@
+bbb_martins:
+  description: Efflux-transporter evidence.
+bioavailability_ma:
+  description: Absorption
+  solubility: null
+  dissolution: null
+  or permeability evidence.: null
+ames:
+  description: DNA damage
+  repair: null
+  and damage-response evidence.: null
+dili:
+  description: Additional indirect liver-related evidence at this reviewed level.
+carcinogens:
+  description: Additional indirect carcinogenicity-related evidence at this reviewed level.

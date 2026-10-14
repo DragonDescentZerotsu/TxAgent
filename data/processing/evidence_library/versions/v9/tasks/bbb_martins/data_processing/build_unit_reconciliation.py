@@ -18,7 +18,7 @@ from data.processing.evidence_library.versions.v9.tasks.bbb_martins.starling_mea
 from data.processing.evidence_library.versions.v9.unit_vocabulary import (
     DEFAULT_VOCABULARY_PATH,
 )
-from tools.chembl_tool.common.units import canonicalize_unit, clean_unit
+from data.processing.evidence_library.units import canonicalize_unit, clean_unit
 
 
 OUTPUT = Path(__file__).parent / "canonicalization_v8/bbb_unit_reconciliation.v1.json"

@@ -87,7 +87,8 @@ def _make_matrix(tmp_path: Path) -> tuple[Path, Path, Path]:
                     ),
                     "usage": {"reasoning_tokens": 17},
                     "content": {"claims": [
-                        {"evidence_role": "supportive"},
+                        {"evidence_role": "supportive", "molecule_ids": ["Molecule 1"],
+                         "record_ids": ["Record 1-1", "Record 1-1"]},
                         {"evidence_role": "contradictory"},
                         {"evidence_role": "contextual"},
                     ]},
@@ -137,6 +138,9 @@ def test_flat_trace_diagnostics_measure_usage_and_publish_partial_then_complete(
     assert json.loads(measured["unknown_reference_ids"]) == ["Evidence group 9"]
     assert measured["reasoning_word_count"] == "12"
     assert measured["reasoning_tokens"] == "17"
+    assert measured["reasoning_token_source"] == "provider"
+    assert measured["final_mentioned_molecule_count"] == "1"
+    assert measured["final_mentioned_record_count"] == "1"
     assert measured["claim_count"] == "3"
     assert measured["supportive_claim_count"] == "1"
     assert measured["contradictory_claim_count"] == "1"
@@ -172,12 +176,66 @@ def test_flat_trace_diagnostics_measure_usage_and_publish_partial_then_complete(
     with (complete / "reasoning_usage.per_query.tsv").open(newline="") as handle:
         rows = list(csv.DictReader(handle, delimiter="\t"))
     assert len(rows) == 2
-    assert rows[1]["reasoning_char_count"] == "0"
-    assert rows[1]["matched_reference_occurrences"] == "0"
-    assert rows[1]["molecule_coverage"] == "0.000000"
-    assert rows[1]["record_coverage"] == "0.000000"
-    assert rows[1]["mentioned_molecule_count"] == "0"
-    assert rows[1]["mentioned_record_count"] == "0"
+    assert rows[1]["reasoning_char_count"] == ""
+    assert rows[1]["matched_reference_occurrences"] == ""
+    assert rows[1]["molecule_coverage"] == ""
+    assert rows[1]["record_coverage"] == ""
+    assert rows[1]["mentioned_molecule_count"] == ""
+    assert rows[1]["mentioned_record_count"] == ""
+    assert rows[1]["reasoning_text_available"] == "0"
     assert rows[1]["claim_count"] == "0"
     with pytest.raises(FileExistsError, match="completed analysis"):
         build([matrix_path], output_root)
+
+
+def test_hidden_reasoning_keeps_provider_tokens_and_final_citations(tmp_path):
+    from analysis.prediction.flat_reasoning_diagnostics import _measure_run
+
+    run = tmp_path / "run"
+    _write(run / "request.json", _trace_request())
+    _write(run / "final_reasoning_output.json", {
+        "status": "ok", "llm": {
+            "reasoning_content": "",
+            "usage": {"completion_tokens_details": {"reasoning_tokens": 42}},
+            "content": {"claims": [{"molecule_ids": ["Molecule 2", "Molecule 2"],
+                                   "record_ids": ["C01"]}]},
+        },
+    })
+    gaps = []
+    row = _measure_run(matrix_path=tmp_path / "matrix.json", task="bbb_martins",
+                       subset="test", metadata={}, run_dir=run, expected_index=0,
+                       inputs={}, gaps=gaps)
+    assert not gaps
+    assert row["reasoning_tokens"] == 42
+    assert row["reasoning_text_available"] == 0
+    assert row["mentioned_molecule_count"] == ""
+    assert row["final_mentioned_molecule_count"] == 1
+    assert row["final_mentioned_record_count"] == 1
+
+
+def test_visible_reasoning_uses_tokenizer_when_provider_usage_is_missing(tmp_path, monkeypatch):
+    from analysis.prediction.flat_reasoning_diagnostics import _measure_run
+    from predict.harnesses.branches import inference
+
+    class Tokenizer:
+        def encode(self, text):
+            return type("Encoding", (), {"ids": [1, 2, 3]})()
+
+    monkeypatch.setattr(inference, "_deepseek_tokenizer", lambda: Tokenizer())
+    run = tmp_path / "run"
+    _write(run / "request.json", _trace_request())
+    _write(run / "final_reasoning_output.json", {
+        "status": "ok", "llm": {
+            "reasoning_content": "Molecule 1 cites Record 1-1",
+            "usage": {}, "content": {"claims": []},
+        },
+    })
+    gaps = []
+    row = _measure_run(matrix_path=tmp_path / "matrix.json", task="bbb_martins",
+                       subset="test", metadata={}, run_dir=run, expected_index=0,
+                       inputs={}, gaps=gaps)
+    assert not gaps
+    assert row["reasoning_tokens"] == 3
+    assert row["reasoning_token_source"] == "deepseek_tokenizer_estimate"
+    assert row["mentioned_molecule_count"] == 1
+    assert row["mentioned_record_count"] == 1

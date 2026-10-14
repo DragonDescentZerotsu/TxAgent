@@ -1,0 +1,12 @@
+{
+  "content_id": "1a3a0d8ce8aa96a8cac8163bd4673f24680020a42df580b1477c716d9ef55b11",
+  "input_sha256": "c7f12cbbd0b4c7cbef3ede0bb65a45ff431a329de5251c81133fde1f4b592af7",
+  "record_count": 332,
+  "records": "records.parquet",
+  "records_sha256": "36dadf36a9003878f5abdbb1de34ff731a490ee84ae9191c6aba35e6df77e299",
+  "schema_version": "ranked_evidence_projection.v1",
+  "source_identity": "tdc_v2_source_row_uid",
+  "source_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/TDC/DILI/v2/original/train_molecule_condition_labels.jsonl",
+  "status": "complete",
+  "task_id": "dili"
+}

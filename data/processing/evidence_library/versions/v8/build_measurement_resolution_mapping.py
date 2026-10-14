@@ -24,7 +24,7 @@ from typing import Any
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from data.processing.llm_api import DEFAULT_ENV_FILE, openai_compatible_client
+from predict.api_client.transport import DEFAULT_ENV_FILE, openai_compatible_client
 from data.processing.evidence_library.versions.v8.build_reference_semantics_mapping import (
     BUDGET_EXHAUSTED_EXIT_CODE,
     DISTILLATION_ROOT,
@@ -100,7 +100,7 @@ class TaskConfig:
 
 
 GOLD_FIXTURE = Path(
-    "tests/chembl_tool/common/measurement_resolution_quality/gold/"
+    "tests/data/evidence_library/measurement_resolution_quality/gold/"
     "bbb_martins.v8.jsonl"
 )
 

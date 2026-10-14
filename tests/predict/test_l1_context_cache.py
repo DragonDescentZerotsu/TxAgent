@@ -7,12 +7,6 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import pytest
 
-from predict.harnesses.progressive import _records
-from predict.harnesses.progressive import runner
-from predict.harnesses.progressive.prompt import (
-    prompt_asset_manifest,
-    render_progressive_messages,
-)
 from predict.retrieval.assay_reranking.cache_matched import (
     load_candidates as load_dispatched_candidates,
 )
@@ -176,7 +170,6 @@ def test_active_context_v2_m0_stays_inside_compacted_top10(tmp_path):
     assert not selected["fallback_beyond_primary"]
     assert selected["selected_unique_parents"] == 9
     assert selected["selected_repeated_parent_cards"] == 1
-    assert audit["selection_policy"] in runner.SQLITE_SELECTION_CONTRACTS
 
 
 def test_l1_only_accepts_per_level_limit_mapping(tmp_path):
@@ -233,185 +226,14 @@ def test_active_context_v2_supports_wider_primary_pools(
     assert selected["selected_label_counts"] == {"0": 1, "1": 5}
 
 
-def test_context_v3_renders_both_scores_and_reference_index(tmp_path):
-    policy = _fixture(
-        tmp_path,
-        primary_width=10,
-        candidate_widths=[10, 15, 25, 100],
-        labels=[1] * 10,
-        schema_version=ACTIVE_CONTEXT_SCHEMA_VERSION,
-    )
-    molecules, _, _ = load_candidates(
-        {"q": "CCO"}, task="bbb_martins", subset="valid", policy=policy,
-        molecule_limit=10, l1_limit=1, min_contrast=0,
-    )
-    snapshots = _records.stage_ranked_snapshots(
-        molecules["q"], task="bbb_martins", records_by_level={},
-        prompt_version="reranked_progressive_l1_context_v3",
-        molecule_descriptions={"CCN": "L1 DESCRIPTION SENTINEL"},
-    )
-    messages, reference_index = _records.build_tianang_aligned_messages(
-        contract=runner._task_contract(
-            "bbb_martins", "reranked_progressive_l1_context_v3"
-        ),
-        levels=_records.tianang_aligned_levels(
-            "bbb_martins", 1,
-            prompt_version="reranked_progressive_l1_context_v3",
-        ),
-        current_level=1, query_smiles="CCO",
-        query_molecule_description="QUERY DESCRIPTION SENTINEL",
-        condition_sentence="",
-        query_prior=None, query_tool_summary=None, active=snapshots[1],
-        prior_state=None, prompt_version="reranked_progressive_l1_context_v3",
-        record_limit=1, l2_record_limit=1, indirect_record_limit=50,
-        retrieval_policy=policy["stages"], molecule_limit=10,
-        return_reference_index=True,
-    )
-    rendered = messages[1]["content"]
-    assert rendered.count("Morgan similarity:") == 10
-    assert rendered.count("Transfer liklihood:") == 10
-    assert rendered.count("L1 DESCRIPTION SENTINEL") == 10
-    assert rendered.count("QUERY DESCRIPTION SENTINEL") == 1
-    assert [row["visible_id"] for row in reference_index
-            if row["unit_kind"] != "record"] == [
-        f"Molecule {number}" for number in range(1, 11)
-    ]
-    omitted = _records.stage_ranked_snapshots(
-        molecules["q"], task="bbb_martins", records_by_level={},
-        prompt_version="reranked_progressive_l1_context_v3",
-        molecule_descriptions={},
-    )
-    assert all("molecule_description" not in row for row in omitted[1].values())
 
 
-def test_context_v3_prompt_bundle_is_self_contained():
-    manifest = prompt_asset_manifest("reranked_progressive_l1_context_v3")
-    assert not any(name.startswith("@") for name in manifest["files_sha256"])
-    assert {"system.jinja", "user.jinja", "card.yaml", "tasks.yaml"} <= set(
-        manifest["files_sha256"]
-    )
 
 
-def test_context_v4_uses_mode_specific_scores(tmp_path):
-    base_policy = _fixture(
-        tmp_path,
-        primary_width=10,
-        candidate_widths=[10, 15, 25, 100],
-        labels=[1] * 10,
-        schema_version=ACTIVE_CONTEXT_SCHEMA_VERSION,
-    )
-
-    def render(reranking, l1_method):
-        policy = copy.deepcopy(base_policy)
-        policy['reranking'] = reranking
-        policy['stages']['L1'] = l1_method
-        molecules, _, _ = load_candidates(
-            {'q': 'CCO'}, task='bbb_martins', subset='valid', policy=policy,
-            molecule_limit=10, l1_limit=1, min_contrast=0,
-        )
-        snapshots = _records.stage_ranked_snapshots(
-            molecules['q'], task='bbb_martins', records_by_level={},
-            prompt_version='reranked_progressive_l1_context_v4',
-        )
-        messages, _ = _records.build_tianang_aligned_messages(
-            contract=runner._task_contract(
-                'bbb_martins', 'reranked_progressive_l1_context_v4'
-            ),
-            levels=_records.tianang_aligned_levels(
-                'bbb_martins', 1,
-                prompt_version='reranked_progressive_l1_context_v4',
-            ),
-            current_level=1, query_smiles='CCO', condition_sentence='',
-            query_prior=None, query_tool_summary=None, active=snapshots[1],
-            prior_state=None, prompt_version='reranked_progressive_l1_context_v4',
-            record_limit=1, l2_record_limit=1, indirect_record_limit=50,
-            retrieval_policy=policy['stages'], molecule_limit=10,
-            return_reference_index=True,
-        )
-        return messages[1]['content']
-
-    morgan = render('morgan', 'morgan')
-    assert morgan.count('Morgan similarity:') == 10
-    assert 'Transfer liklihood:' not in morgan
-    assay_transfer = render(
-        'assay-transfer-contrastive', 'assay_transfer_contrastive'
-    )
-    assert assay_transfer.count('Morgan similarity:') == 10
-    assert assay_transfer.count('Transfer liklihood:') == 10
 
 
-def test_context_v4_prompt_bundle_is_self_contained():
-    manifest = prompt_asset_manifest('reranked_progressive_l1_context_v4')
-    assert not any(name.startswith('@') for name in manifest['files_sha256'])
-    assert {'system.jinja', 'user.jinja', 'card.yaml', 'tasks.yaml'} <= set(
-        manifest['files_sha256']
-    )
 
 
-def test_context_v4_skin_successor_renders_skin_contract_and_prior():
-    version = 'reranked_progressive_l1_context_v4_skin_v1'
-    contract = runner._task_contract('skin_reaction', version)
-    payload = {
-        'protocol': {'prompt_mode': 'morgan', 'version': 'test'},
-        'task_definition': {
-            'task': contract.task,
-            'endpoint': contract.endpoint_name,
-            'label_scope': contract.label_scope,
-            'prediction_values': {
-                contract.positive_prediction: 'positive class (label 1)',
-                contract.negative_prediction: 'negative class (label 0)',
-            },
-            'instructions': list(contract.task_instructions),
-        },
-        'level_context': {'current_level': 1},
-        'query': {'canonical_smiles': 'CCO'},
-        'query_prior': {
-            'skin_sensitization_prior': 'risk',
-            'reactive_or_haptenation_prior': 'concerning',
-            'activation_prior': 'pro_hapten',
-            'skin_exposure_context': 'mixed_or_unclear',
-            'confidence': 'moderate',
-            'reasoning_summary': 'fixture assessment',
-            'property_drivers': [],
-            'caveats': [],
-        },
-        'active_evidence': [{
-            'canonical_smiles': 'CCN',
-            'morgan_similarity': 0.75,
-            'evidence_cards': [{
-                'card_id': 'C01',
-                'endpoint': 'human patch test',
-                'reported_value': 'positive',
-                'reported_unit': 'source-unit',
-            }],
-        }],
-        'required_json_schema': {
-            contract.prediction_field: (
-                f'{contract.positive_prediction} | {contract.negative_prediction}'
-            ),
-        },
-    }
-
-    messages = render_progressive_messages(
-        system_role=contract.system_role,
-        payload=payload,
-        prompt_version=version,
-    )
-    system, user = (message['content'] for message in messages)
-    assert contract.label_scope in system
-    assert 'generic local injury' in system
-    assert 'Skin sensitization prior: risk' in user
-    assert 'Reactive or haptenation prior: concerning' in user
-    assert 'Activation prior: pro_hapten' in user
-    assert 'Skin exposure context: mixed_or_unclear' in user
-    assert 'Result: positive source-unit' in user
-    assert '"skin_reaction_prediction": "risk | no_risk"' in user
-    assert _records.tianang_aligned_levels(
-        'skin_reaction', 1, prompt_version=version
-    )[0]['endpoint_group'] == 'direct_skin_sensitization'
-
-    manifest = prompt_asset_manifest(version)
-    assert not any(name.startswith('@') for name in manifest['files_sha256'])
 
 
 def test_contrastive_selection_prefers_top25_and_keeps_context_cards_separate(tmp_path):
@@ -430,104 +252,104 @@ def test_contrastive_selection_prefers_top25_and_keeps_context_cards_separate(tm
     }
     assert not audit["query_audits"]["q"]["L1"]["fallback_beyond_primary"]
 
-    snapshots = _records.stage_ranked_snapshots(
-        selected, task="bbb_martins", records_by_level={},
-        prompt_version="reranked_progressive_l1_context_v2",
-    )
-    assert len(snapshots[1]) == 6
-    repeated = [row for row in snapshots[1].values() if row["canonical_smiles"] == "CCN"]
-    assert len(repeated) == 6
-    assert {row.get("selected_condition") for row in repeated} >= {
-        "condition-1", "condition-2"
-    }
-    assert all(len(row["cards"]) == 1 for row in repeated)
-    assert "gold_label" not in json.dumps(snapshots)
 
-    messages = _records.build_tianang_aligned_messages(
-        contract=runner._task_contract(
-            "bbb_martins", "reranked_progressive_l1_context_v2"
-        ),
-        levels=_records.tianang_aligned_levels(
-            "bbb_martins", 1,
-            prompt_version="reranked_progressive_l1_context_v2",
-        ),
-        current_level=1,
-        query_smiles="CCO",
-        condition_sentence="",
-        query_prior=None,
-        query_tool_summary=None,
-        active=snapshots[1],
-        prior_state=None,
-        prompt_version="reranked_progressive_l1_context_v2",
-        record_limit=1,
-        l2_record_limit=1,
-        indirect_record_limit=50,
-        retrieval_policy={"L1": "assay_transfer_contrastive"},
-        molecule_limit=6,
-    )
-    rendered = "\n".join(message["content"] for message in messages)
-    assert "condition-1" in rendered and "condition-2" in rendered
-    assert "gold_label" not in rendered
 
-    prompt_only = copy.deepcopy(snapshots[1])
-    for analog in prompt_only.values():
-        for key in list(analog):
-            if key.startswith("_diagnostic_"):
-                del analog[key]
-    messages_without_diagnostics = _records.build_tianang_aligned_messages(
-        contract=runner._task_contract(
-            "bbb_martins", "reranked_progressive_l1_context_v2"
-        ),
-        levels=_records.tianang_aligned_levels(
-            "bbb_martins", 1,
-            prompt_version="reranked_progressive_l1_context_v2",
-        ),
-        current_level=1,
-        query_smiles="CCO",
-        condition_sentence="",
-        query_prior=None,
-        query_tool_summary=None,
-        active=prompt_only,
-        prior_state=None,
-        prompt_version="reranked_progressive_l1_context_v2",
-        record_limit=1,
-        l2_record_limit=1,
-        indirect_record_limit=50,
-        retrieval_policy={"L1": "assay_transfer_contrastive"},
-        molecule_limit=6,
-    )
-    assert messages_without_diagnostics == messages
 
-    successor_messages, reference_index = _records.build_tianang_aligned_messages(
-        contract=runner._task_contract(
-            "bbb_martins", "reranked_progressive_l1_context_v2_references_v1"
-        ),
-        levels=_records.tianang_aligned_levels(
-            "bbb_martins", 1,
-            prompt_version="reranked_progressive_l1_context_v2_references_v1",
-        ),
-        current_level=1,
-        query_smiles="CCO",
-        condition_sentence="",
-        query_prior=None,
-        query_tool_summary=None,
-        active=snapshots[1],
-        prior_state=None,
-        prompt_version="reranked_progressive_l1_context_v2_references_v1",
-        record_limit=1,
-        l2_record_limit=1,
-        indirect_record_limit=50,
-        retrieval_policy={"L1": "assay_transfer_contrastive"},
-        molecule_limit=6,
-        return_reference_index=True,
-    )
-    assert successor_messages == messages
-    assert [
-        row["visible_id"] for row in reference_index if row["unit_kind"] != "record"
-    ] == [f"Molecule {number}" for number in range(1, 7)]
-    assert {row["visible_id"] for row in reference_index if row["unit_kind"] == "record"} == {
-        f"C{number:02d}" for number in range(1, 7)
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def test_contrastive_selection_uses_top100_only_after_top25_is_exhausted(tmp_path):
@@ -601,31 +423,31 @@ def test_assay_transfer_reorders_only_the_frozen_morgan_top_k(tmp_path):
     assert "ctx-7" not in assay_ids
 
     rendered = []
-    for policy, rows in ((morgan_policy, morgan["q"]), (assay_policy, assay["q"])):
-        snapshots = _records.stage_ranked_snapshots(
-            rows, task="bbb_martins", records_by_level={},
-            prompt_version="reranked_progressive_l1_context_order_only_v1",
-        )
-        rendered.append(_records.build_tianang_aligned_messages(
-            contract=runner._task_contract(
-                "bbb_martins", "reranked_progressive_l1_context_order_only_v1"
-            ),
-            levels=_records.tianang_aligned_levels(
-                "bbb_martins", 1,
-                prompt_version="reranked_progressive_l1_context_order_only_v1",
-            ),
-            current_level=1, query_smiles="CCO", condition_sentence="",
-            query_prior=None, query_tool_summary=None, active=snapshots[1],
-            prior_state=None,
-            prompt_version="reranked_progressive_l1_context_order_only_v1",
-            record_limit=1, l2_record_limit=1, indirect_record_limit=50,
-            retrieval_policy=policy["stages"], molecule_limit=6,
-        ))
-    assert rendered[0][0] == rendered[1][0]
-    for messages in rendered:
-        assert messages[1]["content"].count("Morgan similarity:") == 6
-        assert messages[1]["content"].count("Transfer liklihood:") == 6
-        assert "gold_label" not in messages[1]["content"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def test_morgan_contrastive_rebalances_by_morgan_rank_and_hides_transfer(tmp_path):
@@ -647,27 +469,27 @@ def test_morgan_contrastive_rebalances_by_morgan_rank_and_hides_transfer(tmp_pat
     assert audit["query_audits"]["q"]["L1"]["selected_label_counts"] == {
         "0": 2, "1": 4
     }
-    snapshots = _records.stage_ranked_snapshots(
-        selected, task="bbb_martins", records_by_level={},
-        prompt_version="reranked_progressive_l1_context_v2",
-    )
-    messages = _records.build_tianang_aligned_messages(
-        contract=runner._task_contract(
-            "bbb_martins", "reranked_progressive_l1_context_v2"
-        ),
-        levels=_records.tianang_aligned_levels(
-            "bbb_martins", 1,
-            prompt_version="reranked_progressive_l1_context_v2",
-        ),
-        current_level=1, query_smiles="CCO", condition_sentence="",
-        query_prior=None, query_tool_summary=None, active=snapshots[1],
-        prior_state=None, prompt_version="reranked_progressive_l1_context_v2",
-        record_limit=1, l2_record_limit=1, indirect_record_limit=50,
-        retrieval_policy={"L1": "morgan_contrastive"}, molecule_limit=6,
-    )
-    rendered = "\n".join(message["content"] for message in messages)
-    assert "Morgan similarity:" in rendered
-    assert "Assay transfer score:" not in rendered
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def test_contrastive_shape_fails_closed(tmp_path):
@@ -738,87 +560,3 @@ def test_negative_contrast_fails_closed(tmp_path):
             policy=_fixture(tmp_path), molecule_limit=6, l1_limit=1,
             min_contrast=-1,
         )
-
-
-def test_l1_context_harness_pins_validation_only_assets():
-    args = runner.parse_args([
-        "--harness-version", "reranked-progressive-l1-context-v1",
-        "--tasks", "bbb_martins",
-        "--reranking", "assay-transfer-contrastive",
-        "--prepare-only", "--skip-tool-prefetch",
-    ])
-    assert args.max_level == 1
-    assert args.context_limit == 10
-    assert args.l1_min_contrast == 3
-    assert args.prompt_version == "reranked_progressive_l1_context_v2"
-    assert args.retrieval_policies["bbb_martins"]["selection_contract"] == SCHEMA_VERSION
-    zero = runner.parse_args([
-        "--harness-version", "reranked-progressive-l1-context-v1",
-        "--tasks", "bbb_martins",
-        "--reranking", "assay-transfer-contrastive",
-        "--l1-min-contrast", "0",
-        "--prepare-only", "--skip-tool-prefetch",
-    ])
-    assert zero.l1_min_contrast == 0
-    previous = runner.parse_args([
-        "--harness-version", "reranked-progressive-l1-context-v1",
-        "--tasks", "bbb_martins",
-        "--reranking", "assay-transfer",
-        "--prompt-version", "reranked_progressive_l1_context_v1",
-        "--prepare-only", "--skip-tool-prefetch",
-    ])
-    assert previous.prompt_version == "reranked_progressive_l1_context_v1"
-    morgan = runner.parse_args([
-        "--harness-version", "reranked-progressive-l1-context-v1",
-        "--tasks", "bioavailability_ma", "--reranking", "morgan",
-        "--assay-transfer-cache",
-        "predict/retrieval/assay_reranking/l1_context_morgan100_v1.yaml",
-        "--l1-contexts", "10", "--prompt-version",
-        "reranked_progressive_l1_context_v2", "--prepare-only",
-        "--skip-tool-prefetch",
-    ])
-    assert morgan.retrieval_policies["bioavailability_ma"]["stages"] == {
-        "L1": "morgan"
-    }
-    assert morgan.context_limit == 10
-    morgan_contrastive = runner.parse_args([
-        "--harness-version", "reranked-progressive-l1-context-v1",
-        "--tasks", "bioavailability_ma", "--reranking", "morgan-contrastive",
-        "--assay-transfer-cache",
-        "predict/retrieval/assay_reranking/l1_context_morgan100_k15_v1.yaml",
-        "--l1-contexts", "15", "--l1-min-contrast", "3",
-        "--prompt-version", "reranked_progressive_l1_context_v2",
-        "--prepare-only", "--skip-tool-prefetch",
-    ])
-    assert morgan_contrastive.context_limit == 15
-    assert morgan_contrastive.retrieval_policies["bioavailability_ma"]["stages"] == {
-        "L1": "morgan_contrastive"
-    }
-    paired = runner.parse_args([
-        "--harness-version", "reranked-progressive-l1-context-v1",
-        "--tasks", "bioavailability_ma",
-        "--reranking", "assay-transfer-within-morgan",
-        "--assay-transfer-cache",
-        "predict/retrieval/assay_reranking/l1_context_morgan100_v1.yaml",
-        "--l1-contexts", "10", "--prompt-version",
-        "reranked_progressive_l1_context_order_only_v1",
-        "--prepare-only", "--skip-tool-prefetch",
-    ])
-    assert paired.retrieval_policies["bioavailability_ma"]["stages"] == {
-        "L1": "assay_transfer_within_morgan"
-    }
-    without_prior = runner.parse_args([
-        "--harness-version", "reranked-progressive-l1-context-v1",
-        "--tasks", "bbb_martins",
-        "--reranking", "assay-transfer-contrastive",
-        "--prompt-version", "reranked_progressive_l1_context_v2_no_query_prior",
-        "--query-prior", "none",
-        "--prepare-only", "--skip-tool-prefetch",
-    ])
-    assert without_prior.prompt_version.endswith("_no_query_prior")
-    with pytest.raises(SystemExit):
-        runner.parse_args([
-            "--harness-version", "reranked-progressive-l1-context-v1",
-            "--reranking", "assay-transfer-contrastive",
-            "--l1-contexts", "5",
-        ])

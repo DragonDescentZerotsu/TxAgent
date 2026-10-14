@@ -44,11 +44,7 @@ from data.processing.evidence_library.shared.v1.normalization.organization impor
 from data.processing.evidence_library.shared.v1.normalization.task_policy import (
     StarlingTaskPolicy,
 )
-from tools.chembl_tool.common.molecule_identity import (
-    IDENTITY_NORMALIZER_VERSION,
-    bemis_murcko_scaffold,
-    normalize_molecule_identity,
-)
+from predict.retrieval.policies import IDENTITY_NORMALIZER_VERSION, bemis_murcko_scaffold, normalize_molecule_identity
 
 CORE_PAIR_BUCKET_STAGE = "03_pair_buckets"
 VIEW_VERSION = "starling_v7_benchmark_view.v4"

@@ -1,0 +1,252 @@
+{
+  "benchmark": "tdc",
+  "status": "complete",
+  "tasks": {
+    "bbb_martins": {
+      "directory": "BBB_Martins",
+      "split_policy": "original_source",
+      "splits": {
+        "train": {
+          "n": 1421,
+          "positive": 1056
+        },
+        "valid": {
+          "n": 203,
+          "positive": 167
+        },
+        "test": {
+          "n": 406,
+          "positive": 328
+        }
+      },
+      "outputs": {
+        "train_molecule_condition_labels.jsonl": "38358d35479029a6aa03d8d71eeacee12215e03ff0bb23b3a0bf52fa53933b5f",
+        "train.jsonl": "e30c41550e138c6d013088dc4416acf5e60999d08625f75497d903ff8ee808cb",
+        "valid_molecule_condition_labels.jsonl": "9abf8a8472b9245ae94ccf014f091af4eaadf6e2cf07189207d2e2c0135e8e13",
+        "valid.jsonl": "18154f56abefe2f3672bf65d490210ce8e03353025a1de4f49cdc3fdab58eda4",
+        "test_molecule_condition_labels.jsonl": "f1f8560a0aefb332f770966b5581f9796ef7107f03167fbb935d69dd79bca948",
+        "test.jsonl": "4112683c5127ed7ad97a0f053a7dc57eaa0b5d118cdb9f13136196e32cfe2619",
+        "heldout_molecule_condition_labels.jsonl": "46653601c596aa0c1b3807161e0dad537e5cb28878d06b860eea33d96e62ecdf"
+      },
+      "target_definition": "Frozen original TDC binary outcome.",
+      "ranking_policy": "query_pure",
+      "max_level": 5,
+      "allow_ambiguous_context_labels": true,
+      "retrieval": {
+        "L1": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1/RELEASE_INDEX.json",
+        "later": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/RELEASE_INDEX.json"
+      },
+      "selection": {
+        "direct_cache": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1_cards/RELEASE_INDEX.json",
+        "context_identity": "canonical_context_molecule.v1",
+        "direct_assay_scores": "not_computed"
+      }
+    },
+    "bioavailability_ma": {
+      "directory": "Bioavailability_Ma",
+      "split_policy": "scaffold_conditioned",
+      "splits": {
+        "train": {
+          "n": 448,
+          "positive": 344
+        },
+        "valid": {
+          "n": 64,
+          "positive": 51
+        },
+        "test": {
+          "n": 128,
+          "positive": 97
+        }
+      },
+      "outputs": {
+        "conflicting_parent_labels.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "heldout_molecule_condition_labels.jsonl": "027580da4f7159c4de39b9d20e364c993a1d0e9b8bc5f0f77ed43b0649c2ffd4",
+        "rejected_source_rows.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "split_repairs.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test.jsonl": "3d2b19f663309e757b2995ee5cd91c2def2b1458f91033dc892cd0744ad1da3d",
+        "test_molecule_condition_labels.jsonl": "a66c10e01809c624bf215f9f0683147f0b9ee3bb2a42f53b5a8119b46268b4c2",
+        "train.jsonl": "3ad5ea9b94dea2f8ac71e20f689cfd0ec78f04d135aae3d299445e678f0b26b9",
+        "train_molecule_condition_labels.jsonl": "7997d9a19a3060a84f084e4ae0ec5f2cc8cb2b7578d0ed2d3f38cabec5753571",
+        "valid.jsonl": "7ceaf7d97584e68021c277e4730e817459de2e74d7760a65eb2c46fc416d771d",
+        "valid_molecule_condition_labels.jsonl": "13471f87625d0e15c8acae9055810f87df9f066185d9f57bb0b6bf0e2bf99467"
+      },
+      "target_definition": "TDC oral bioavailability label; 1 is F >= 20% and 0 is F < 20%.",
+      "ranking_policy": "assay_transfer",
+      "max_level": 6,
+      "allow_ambiguous_context_labels": false,
+      "retrieval": {
+        "L1": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l1/RELEASE_INDEX.json",
+        "later": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/RELEASE_INDEX.json"
+      },
+      "selection": {
+        "direct_cache": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l1_cards/RELEASE_INDEX.json",
+        "context_identity": "canonical_context_molecule.v1",
+        "direct_assay_scores": "not_computed"
+      }
+    },
+    "skin_reaction": {
+      "directory": "Skin_Reaction",
+      "split_policy": "scaffold_conditioned",
+      "splits": {
+        "train": {
+          "n": 282,
+          "positive": 205
+        },
+        "valid": {
+          "n": 40,
+          "positive": 22
+        },
+        "test": {
+          "n": 82,
+          "positive": 47
+        }
+      },
+      "outputs": {
+        "conflicting_parent_labels.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "heldout_molecule_condition_labels.jsonl": "b618aa5b7ff180ce5bc27917ed74bc2ba5472bb06c8893e6f68d1ffdb62729d1",
+        "rejected_source_rows.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "split_repairs.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test.jsonl": "6b5354f18ee6ab4721ada0cd69af7c9a75f5262982c335fb5d507ec6fe122f6f",
+        "test_molecule_condition_labels.jsonl": "cb1edfb3118bbe56828a3492fe19142c623bcd3f83640a737baab528b836b719",
+        "train.jsonl": "b7330ade0f3b3c4a2b73e61fe96d030ee2084500d1da58bf5ea7a22672dfb87c",
+        "train_molecule_condition_labels.jsonl": "2102f6288d63ede7e23fa6f5f294ab6f912c6a3b25bba781eee9b6e72965c823",
+        "valid.jsonl": "4c319667c95bb56d0b68d7b9bc5019c2ad52d1001e91978d0aa6e957fe53e796",
+        "valid_molecule_condition_labels.jsonl": "96a23fd1b662f035e8f16b2e4168e9ee10338f5b1fbf8cde5a7023d3ab7a8060"
+      },
+      "target_definition": "TDC skin-reaction label; 1 is reaction-positive and 0 is reaction-negative.",
+      "ranking_policy": "assay_transfer",
+      "max_level": 3,
+      "allow_ambiguous_context_labels": false,
+      "retrieval": {
+        "L1": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l1/RELEASE_INDEX.json",
+        "later": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l2plus/RELEASE_INDEX.json"
+      },
+      "selection": {
+        "direct_cache": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l1_cards/RELEASE_INDEX.json",
+        "context_identity": "canonical_context_molecule.v1",
+        "direct_assay_scores": "not_computed"
+      }
+    },
+    "ames": {
+      "directory": "Ames",
+      "split_policy": "original_source",
+      "splits": {
+        "train": {
+          "n": 5094,
+          "positive": 2693
+        },
+        "valid": {
+          "n": 727,
+          "positive": 411
+        },
+        "test": {
+          "n": 1457,
+          "positive": 870
+        }
+      },
+      "outputs": {
+        "train_molecule_condition_labels.jsonl": "629f909d39eff7ad46d7f61da741cf1cf873848428bda13d660c3fbf294a4b6f",
+        "train.jsonl": "e9bec4c383bd0dcfa8b3df9012e911ee78a74941708c957fc61ce7a653f7b924",
+        "valid_molecule_condition_labels.jsonl": "b10dd08a69f09dec8e7f99b786dd534ec84faf9c91dac653b74d32192e7a5f52",
+        "valid.jsonl": "0e21a143913ebf2830024a1ce235bea616cdc8a99ae47f3cdac98effd1809d85",
+        "test_molecule_condition_labels.jsonl": "868b6a6be84579d0e202e7907df09066f147b05d7ba1701812d4615d3d31c07d",
+        "test.jsonl": "14b028d7c7d09bcd3ada92d9877de989a93722df6a2d5340c360aa489fa69033",
+        "heldout_molecule_condition_labels.jsonl": "0cfc12efd270fc5aa74135632847f37cce4c13bd20636e991b01b851e4a7fad9"
+      },
+      "target_definition": "Frozen original TDC binary outcome.",
+      "ranking_policy": "query_pure",
+      "max_level": 5,
+      "allow_ambiguous_context_labels": true,
+      "retrieval": {
+        "L1": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l1/RELEASE_INDEX.json",
+        "later": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/RELEASE_INDEX.json"
+      },
+      "selection": {
+        "direct_cache": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l1_cards/RELEASE_INDEX.json",
+        "context_identity": "canonical_context_molecule.v1",
+        "direct_assay_scores": "not_computed"
+      }
+    },
+    "dili": {
+      "directory": "DILI",
+      "split_policy": "original_source",
+      "splits": {
+        "train": {
+          "n": 332,
+          "positive": 156
+        },
+        "valid": {
+          "n": 47,
+          "positive": 30
+        },
+        "test": {
+          "n": 96,
+          "positive": 50
+        }
+      },
+      "outputs": {
+        "train_molecule_condition_labels.jsonl": "c7f12cbbd0b4c7cbef3ede0bb65a45ff431a329de5251c81133fde1f4b592af7",
+        "train.jsonl": "9db572688a00dfed205c49f7539607463927ae7c1f7d0baf1249e56925020ce3",
+        "valid_molecule_condition_labels.jsonl": "62b9f857889717dc95e8087cf5688fe29c6277371bb83f7dcbc1e1738cfda674",
+        "valid.jsonl": "3a12a2f920b17d77ae7099fe3962781d328fc9b6b6db58a265b4461cec1b7efc",
+        "test_molecule_condition_labels.jsonl": "2bfb45d3672256351e076f5cb27997b5571c047541c2928c2cf20dfe39090353",
+        "test.jsonl": "1d2d86fdf91b8e97667fc1159c05ee876c1ddc3ea5e86fe3930d753ca5996a73",
+        "heldout_molecule_condition_labels.jsonl": "c142d91043c627842c991f2dfeab830d7c9176425e1340b5fbf4e616fa504a6f"
+      },
+      "target_definition": "Frozen original TDC binary outcome.",
+      "ranking_policy": "query_pure",
+      "max_level": 7,
+      "allow_ambiguous_context_labels": true,
+      "retrieval": {
+        "L1": "data/caches/assay_reranking/active/flat_v5/tdc/dili/l1/RELEASE_INDEX.json",
+        "later": "data/caches/assay_reranking/active/flat_v5/tdc/dili/l2plus/RELEASE_INDEX.json"
+      },
+      "selection": {
+        "direct_cache": "data/caches/assay_reranking/active/flat_v5/tdc/dili/l1_cards/RELEASE_INDEX.json",
+        "context_identity": "canonical_context_molecule.v1",
+        "direct_assay_scores": "not_computed"
+      }
+    },
+    "carcinogens": {
+      "directory": "Carcinogens",
+      "split_policy": "original_source",
+      "splits": {
+        "train": {
+          "n": 196,
+          "positive": 44
+        },
+        "valid": {
+          "n": 28,
+          "positive": 5
+        },
+        "test": {
+          "n": 56,
+          "positive": 11
+        }
+      },
+      "outputs": {
+        "train_molecule_condition_labels.jsonl": "017b7fba6308edeeb637155aef57921e0588982ec32ec7a7f6935405e5a5c636",
+        "train.jsonl": "588b589a15b43334c4cff2e8778ae0afe32255b57fe3d6d25f54bb023307383f",
+        "valid_molecule_condition_labels.jsonl": "b07bb865a5b259de4d219a83f3d42684ab2f45a181d1143cc685775ec157415f",
+        "valid.jsonl": "ead2cda7ce75cab82f1110cf84bb317d622cd041b3f124a3fe56715a20791a8b",
+        "test_molecule_condition_labels.jsonl": "19d5bb3c4df60ebf968afe46fb341925a618a6c780e708bb35429152ead46b7f",
+        "test.jsonl": "0f01d109c977e9b5b5b0f29015a1196e9fb88c7521e4111dafa326cec51a66a5",
+        "heldout_molecule_condition_labels.jsonl": "ba13b9cb3e2cae283af164037222a03dfb15441d7727501b07b217fab033ee4c"
+      },
+      "target_definition": "Frozen original TDC binary outcome.",
+      "ranking_policy": "query_pure",
+      "max_level": 7,
+      "allow_ambiguous_context_labels": true,
+      "retrieval": {
+        "L1": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l1/RELEASE_INDEX.json",
+        "later": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/RELEASE_INDEX.json"
+      },
+      "selection": {
+        "direct_cache": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l1_cards/RELEASE_INDEX.json",
+        "context_identity": "canonical_context_molecule.v1",
+        "direct_assay_scores": "not_computed"
+      }
+    }
+  }
+}

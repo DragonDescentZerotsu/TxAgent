@@ -7,7 +7,7 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
-from tools.chembl_tool.common.units import canonicalize_unit
+from data.processing.evidence_library.units import canonicalize_unit
 from data.processing.evidence_library.shared.v1.reference_semantics import (
     REFERENCE_BASIS_NONE,
     REFERENCE_BASIS_UNKNOWN,

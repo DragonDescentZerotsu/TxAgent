@@ -1,0 +1,59 @@
+{
+  "task": "skin_reaction",
+  "task_directory": "Skin_Reaction",
+  "benchmark": "tdc",
+  "version": "v2",
+  "release_id": "tdc_v2_original",
+  "contract": "tdc_original_source_splits.v2",
+  "layout": "original",
+  "status": "complete",
+  "source_repository_commit": "f409ff3673498f0b16efc4c05d8a027815c08f0e",
+  "source_files": [
+    {
+      "split": "train",
+      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/Skin_Reaction/train.csv",
+      "path": "data/raw/tdc/Skin_Reaction/v2/train.csv",
+      "sha256": "0d81868c2ae3a208ab707949aad7c917c129b6a0eefd1917b4b759d0ffd28711",
+      "rows": 282
+    },
+    {
+      "split": "valid",
+      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/Skin_Reaction/val.csv",
+      "path": "data/raw/tdc/Skin_Reaction/v2/valid.csv",
+      "sha256": "399adf6bc4a32d81601270e7f96bdf9e4f325c98da98b322b82720c3d283edf0",
+      "rows": 40
+    },
+    {
+      "split": "test",
+      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/Skin_Reaction/test.csv",
+      "path": "data/raw/tdc/Skin_Reaction/v2/test.csv",
+      "sha256": "4ffe2b22a696989fc8d77d9a65ae0a44b4da616827f2b30c82458e9cf87054e1",
+      "rows": 82
+    }
+  ],
+  "source_rows": 404,
+  "preserved_rows": 404,
+  "splits": {
+    "train": {
+      "n": 282,
+      "positive": 205
+    },
+    "valid": {
+      "n": 40,
+      "positive": 22
+    },
+    "test": {
+      "n": 82,
+      "positive": 47
+    }
+  },
+  "outputs": {
+    "train_molecule_condition_labels.jsonl": "58770cf0bdd2f4d92f362cc143da72685702b0949e390612789daf2e902cdc84",
+    "train.jsonl": "623cc4d4f91672b9520f5e29fe8c0c17b2d2561465c6fde329e95db75f68128a",
+    "valid_molecule_condition_labels.jsonl": "e71049f25ecb0cd73949c596f09c01a0cd5f406ee9b4a4d89b117cee7166dc79",
+    "valid.jsonl": "58a47a6c55b0ae850655fd86953cb2c192b4b104d766c0ee70397c55a6673524",
+    "test_molecule_condition_labels.jsonl": "ba8afc6b67dd984933f532ce3c60229cd5448aecb6092ce32d4a73924a3062ed",
+    "test.jsonl": "5d6fb3b209125b3cc03c63e465e4682ee4917ff16891f2f2fdfec39e257fbf2e",
+    "heldout_molecule_condition_labels.jsonl": "42ad6564ed5c4a975101dc0a60a9de295d3591a16eea225d702d988f9988722d"
+  }
+}

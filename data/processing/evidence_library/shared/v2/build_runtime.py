@@ -213,20 +213,19 @@ def implementation_fingerprint(
     repo_root = Path(__file__).resolve().parents[5]
     common_root = Path(__file__).resolve().parent
     evidence_root = common_root.parents[1]
-    tool_common_root = repo_root / "tools/chembl_tool/common"
-    task_root = repo_root / "tools/chembl_tool/tasks" / task_id
+    task_root = evidence_root / "versions" / 'v10' / "tasks" / task_id
     paths = sorted(common_root.rglob("*.py"))
     paths.extend(
         path
         for path in (
             evidence_root / "compact_artifacts.py",
             evidence_root / "evidence_library.py",
-            tool_common_root / "evidence_contract.py",
-            tool_common_root / "molecule_identity.py",
-            tool_common_root / "units.py",
-            tool_common_root / "task_workflows/evidence_library.py",
-            tool_common_root / "contextual_unit_policy.json",
-            tool_common_root / "qualifier_vocabulary_policy.json",
+            repo_root / "predict/llm_io/evidence.py",
+            repo_root / "predict/retrieval/policies.py",
+            evidence_root / "units.py",
+            evidence_root / "index_builder.py",
+            evidence_root / "contextual_unit_policy.json",
+            evidence_root / "qualifier_vocabulary_policy.json",
         )
         if path.is_file()
     )
@@ -604,7 +603,7 @@ def clean_sources_ordered(
 
 
 def _parent_identity_item(smiles: str) -> tuple[str, str]:
-    from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
+    from predict.retrieval.policies import normalize_molecule_identity
 
     identity = normalize_molecule_identity(smiles)
     return smiles, identity.parent_inchi_key or identity.parent_smiles

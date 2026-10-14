@@ -9,25 +9,21 @@ import os
 from pathlib import Path
 import tempfile
 from typing import Any
-
-
-def canonical_json_bytes(value: Any) -> bytes:
-    """Serialize JSON deterministically for hashes and byte-size audits."""
-    return json.dumps(
-        value,
-        ensure_ascii=False,
-        sort_keys=True,
-        separators=(",", ":"),
-    ).encode("utf-8")
+from data.processing.paths import resolve_legacy_path
 
 
 def sha256_file(path: Path) -> str:
     """Return a streaming SHA-256 digest without loading the file at once."""
     digest = hashlib.sha256()
-    with path.open("rb") as handle:
+    with resolve_legacy_path(path).open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def read_json(path: Path) -> Any:
+    """Read current metadata or an explicitly preserved historical header."""
+    return json.loads(resolve_legacy_path(path).read_text(encoding="utf-8"))
 
 
 def parse_json_content(content: str) -> Any:
@@ -92,5 +88,5 @@ def write_jsonl_atomic(path: Path, rows: list[dict[str, Any]]) -> None:
 
 def read_jsonl(path: Path) -> list[dict[str, Any]]:
     """Read non-empty JSONL records from ``path``."""
-    with path.open(encoding="utf-8") as handle:
+    with resolve_legacy_path(path).open(encoding="utf-8") as handle:
         return [json.loads(line) for line in handle if line.strip()]

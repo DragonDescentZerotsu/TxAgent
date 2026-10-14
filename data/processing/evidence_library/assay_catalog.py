@@ -13,11 +13,7 @@ import hashlib
 from pathlib import Path
 from typing import Any, Iterable
 
-from tools.chembl_tool.common.json_utils import (
-    sha256_file,
-    write_json_atomic,
-    write_jsonl_atomic,
-)
+from predict.utils.json import sha256_file, write_json_atomic, write_jsonl_atomic
 
 
 CATALOG_VERSION = "starling_assay_context_catalog.v1"

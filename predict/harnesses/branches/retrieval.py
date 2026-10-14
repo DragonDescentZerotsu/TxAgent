@@ -56,7 +56,7 @@ from predict.retrieval.retrieve import (
 )
 
 
-EXPERIMENT_MODES = {"none", "direct", "full_flat", "full_mechanism", "native"}
+EXPERIMENT_MODES = {"none", "full_flat"}
 
 # Retrieval strategy is the CLI-level source of truth. Internally the strategy is
 # implied by whether a reranker is supplied: morgan_fingerprint -> no reranker
@@ -259,38 +259,11 @@ def retrieve_experiment_view(
         return _query_only_retrieval(query_smiles, mode=mode)
     if index is None:
         raise ValueError(f"Experiment mode `{mode}` requires a neighbor index")
-    if mode == "native":
-        result = retrieve_neighbors(
-            query_smiles,
-            dict(index),
-            top_k_per_group=top_k_per_group,
-            min_similarity=min_similarity,
-            groups=native_groups,
-            neighbor_identity_policy=neighbor_identity_policy,
-            neighbor_selector=neighbor_selector,
-        )
-        result["experiment"] = {
-            "mode": mode,
-            "source": _source_name(config, index),
-            **policy_metadata(neighbor_identity_policy),
-            "neighbor_selector": selector_metadata(neighbor_selector),
-        }
-        return result
     if config is None:
-        raise ValueError(f"Experiment mode `{mode}` requires a source experiment config")
+        raise ValueError("Flat retrieval requires a source configuration")
+    from predict.harnesses.branches.flat import retrieve_flat_evidence
 
-    if mode == "direct":
-        from predict.harnesses.branches.direct import retrieve_direct_evidence
-
-        retriever = retrieve_direct_evidence
-    elif mode == "full_flat":
-        from predict.harnesses.branches.flat import retrieve_flat_evidence
-
-        retriever = retrieve_flat_evidence
-    else:
-        from predict.harnesses.branches.full import retrieve_full_evidence
-
-        retriever = retrieve_full_evidence
+    retriever = retrieve_flat_evidence
     return retriever(
         query_smiles,
         index,
@@ -1016,11 +989,3 @@ def retrieval_coverage(
             for selection in selections
         )
     return coverage
-
-
-def _source_name(config: BranchRetrievalConfig | None, index: Mapping[str, Any]) -> str:
-    """Prefer the task source name and otherwise read it from index metadata."""
-    if config is not None:
-        return config.source_name
-    source = index.get("source") or {}
-    return str(source.get("dataset") or source.get("type") or "native")

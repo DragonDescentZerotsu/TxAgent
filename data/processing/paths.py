@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from pathlib import Path
+from functools import lru_cache
+import json
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DATA_ROOT = REPO_ROOT / "data"
@@ -12,6 +14,33 @@ LEGACY_GOLD_LABELS_ROOT = GOLD_LABELS_ROOT / "legacy"
 EVIDENCE_LIBRARIES_ROOT = DATA_ROOT / "evidence_libraries"
 ARTIFACTS_ROOT = DATA_ROOT / "artifacts"
 LEGACY_ROOT = DATA_ROOT / "legacy"
+
+
+@lru_cache(maxsize=1)
+def _tdc_relocations():
+    path = LEGACY_ROOT / "tdc/relocations.json"
+    return json.loads(path.read_text()) if path.is_file() else {}
+
+
+def resolve_legacy_path(value: str | Path) -> Path:
+    """Locate explicitly relocated historical inputs without filesystem aliases."""
+    path = Path(value)
+    if path.exists():
+        return path
+    absolute = (path if path.is_absolute() else REPO_ROOT / path).resolve()
+    mirror = LEGACY_ROOT / "tdc/metadata"
+    if absolute.is_relative_to(mirror):
+        absolute = REPO_ROOT / absolute.relative_to(mirror)
+    if not absolute.is_relative_to(REPO_ROOT):
+        return path
+    relative = str(absolute.relative_to(REPO_ROOT))
+    mapping = _tdc_relocations()
+    if relative in mapping:
+        return REPO_ROOT / mapping[relative]
+    for source in sorted(mapping, key=len, reverse=True):
+        if relative.startswith(source + "/"):
+            return REPO_ROOT / mapping[source] / relative[len(source) + 1:]
+    return absolute
 
 _TASK_NAMES = {
     "BBB_Martins": "bbb_martins",

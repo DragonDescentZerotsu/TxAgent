@@ -20,11 +20,13 @@ FIXTURE = Path(__file__).with_name("fixtures") / "direct_l1_task_best_prompts.v1
 
 def test_released_direct_l1_prompts_render_exactly() -> None:
     for case in json.loads(FIXTURE.read_text()):
+        # Frozen prompt fixtures explicitly retain their original TDC cohort.
+        release = "legacy" if case["release"] == "tdc-v1" else case["release"]
         train = {row["benchmark_row_id"]: row for row in _rows(
-            case["task"], case["release"], "train"
+            case["task"], release, "train"
         )[1]}
         valid = {row["benchmark_row_id"]: row for row in _rows(
-            case["task"], case["release"], "valid"
+            case["task"], release, "valid"
         )[1]}
         prompt = DirectL1PromptRenderer(case["task"], case["release"]).render(
             train[case["known_id"]], valid[case["query_id"]]
@@ -53,8 +55,8 @@ def test_tdc_safety_direct_models_reuse_frozen_l1_universe() -> None:
         model = model_profile(task, "direct_tdc_best")
         assert model["revision"] and len(model["revision"]) == 40
         assert model["prompt_profile"] == "tdc_binary_same_different_parent_smiles.v1"
-        assert _profile(task, "tdc-v1").startswith(f"flat_v5/tdc_v1/{task}/l1/")
-        assert DirectL1PromptRenderer(task, "tdc-v1").render(
+        assert _profile(task, "tdc") == "flat_v5/tdc_direct_scored"
+        assert DirectL1PromptRenderer(task, "tdc").render(
             {"drug": "CCO", "Y": 1}, {"drug": "CCN"}
         )
 

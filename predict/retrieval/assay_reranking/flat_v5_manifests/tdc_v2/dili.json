@@ -1,0 +1,201 @@
+{
+  "schema_version": "flat_v5_artifact_bundle.v1",
+  "status": "complete",
+  "bundle_id": "flat_v5/tdc_v2/dili",
+  "task": "dili",
+  "benchmark": "tdc_v2",
+  "harness_version": "full-flat-context-v5",
+  "max_level": null,
+  "cache_config": {
+    "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v2_query_pure_v1.yaml",
+    "sha256": "be1d72217588ac0c706ee0adbc7e7e56927aa52b7924265c902f56c2deaa95d3"
+  },
+  "artifacts": [
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l1/query_pure/reused_task_best_v1/original/RELEASE_INDEX.json",
+      "size": 2640,
+      "sha256": "d0dc190b46f15cb6bfe958de861afe156de734daf2a7414847105913c2f255e6"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l1/query_pure/reused_task_best_v1/original/evidence/VERSION.json",
+      "size": 612,
+      "sha256": "e368181e8eb8f704bd9b5e9461990c0563c8b6595ee52b1042c53ee76b3490b6"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l1/query_pure/reused_task_best_v1/original/evidence/records.parquet",
+      "size": 69194,
+      "sha256": "36dadf36a9003878f5abdbb1de34ff731a490ee84ae9191c6aba35e6df77e299"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l1/query_pure/reused_task_best_v1/original/scaffold/test/L1/VERSION.json",
+      "size": 16530,
+      "sha256": "d9d91111f7ab7fdcf132c21eeefe5fc1c4e7f61d00481dccb11d552a13f75599"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l1/query_pure/reused_task_best_v1/original/scaffold/test/L1/rankings.sqlite3",
+      "size": 3960832,
+      "sha256": "a7a74f1f387e11730ac74adff326dfcfb0c1db99f2c940272a87386644d1eab5"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l1/query_pure/reused_task_best_v1/original/scaffold/valid/L1/VERSION.json",
+      "size": 9083,
+      "sha256": "394b86eae44e5ca6d93d32e33f7d39eb57bfd7b599feaa4eef1d15b2a4775b79"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l1/query_pure/reused_task_best_v1/original/scaffold/valid/L1/rankings.sqlite3",
+      "size": 2056192,
+      "sha256": "753a4ee3d9d1ae35c415e6814916398e4d44e6c2bb5f2ca03595b56fe7bfc618"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/RELEASE_INDEX.json",
+      "size": 5463,
+      "sha256": "e8f7c0d008ebd772e2ea66046ad7a8f90b7b7fdb0f4246314b0dfe5674bc1cb4"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/test/L2/VERSION.json",
+      "size": 18742,
+      "sha256": "3ed3bdf1b965c37df3c48a795b463c908f8b238b0b131c3de778313a3174fb6c"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/test/L2/rankings.sqlite3",
+      "size": 31928320,
+      "sha256": "779850a99fd50fb41d5150a36b896c3b0ddcbf51294b72a7bca01a25f0a9ffbe"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/test/L3/VERSION.json",
+      "size": 18703,
+      "sha256": "ec2378f02fec0c09c0f1817c9dca73987a2369f913720829ecf474c185d154fe"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/test/L3/rankings.sqlite3",
+      "size": 20860928,
+      "sha256": "b83c9688c5b5d5e7f231da60c7dd31140b4799ced77def22a42171d4cbcb36bb"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/test/L4/VERSION.json",
+      "size": 18605,
+      "sha256": "fed493618eb27ee089b2ef37b76aa0d00bbc6fd49219783663f70a577f15483a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/test/L4/rankings.sqlite3",
+      "size": 11186176,
+      "sha256": "f44d3c83ee782a1061f8601881ec3f30ab469c37a5dbd6e4faabc71f62d9e211"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/test/L5/VERSION.json",
+      "size": 18757,
+      "sha256": "c3b552e6539474efe28bcdffa3ac2b53c446d170e2d66648c2a1b89a006a01e0"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/test/L5/rankings.sqlite3",
+      "size": 42876928,
+      "sha256": "4415181484de40787bebf81f4f503e6fbc2db912d2e1adfae0fb9800e866c8e8"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/test/L6/VERSION.json",
+      "size": 18711,
+      "sha256": "b64a82dc16554fe0c4e740328544a25952381887c930d8a21c7d2244c43a67a8"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/test/L6/rankings.sqlite3",
+      "size": 29720576,
+      "sha256": "977598c9ea89484965152b63ce0b2c6c7b38b500cbaf31e566cc93dbf96efb44"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/test/L7/VERSION.json",
+      "size": 18769,
+      "sha256": "7495f339b0cb02043077d0fd1cfb9bfb81491b138857bb489f84caf0b7d28d05"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/test/L7/rankings.sqlite3",
+      "size": 43913216,
+      "sha256": "6d41ae8dac0de1fa2fe9f502e16f8a3ee343d531f38b693ad388542c223e567f"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/test/PARENT_UNIVERSE.json",
+      "size": 944093,
+      "sha256": "881e9a4652c80f83718bbd36ee332acd93d0d63bdb290d1408c47239c0e910cd"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/valid/L2/VERSION.json",
+      "size": 10682,
+      "sha256": "5ccb5ea2a8631728804c99b1abfb01f802845f74d0c81e2a2cff3e682edd7a8e"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/valid/L2/rankings.sqlite3",
+      "size": 23797760,
+      "sha256": "730d4a8c236709e236372c46b93eabb9127fbdad173b9437aeeac21b957cee8a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/valid/L3/VERSION.json",
+      "size": 10668,
+      "sha256": "e523308d9007ce73dc55c2d9c5d3869b8e4d950246239e794613a2e02bf236c6"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/valid/L3/rankings.sqlite3",
+      "size": 13037568,
+      "sha256": "2f77172c554b2d2002f4282af89f9ce099480bcf1b8f2d75581dc0a64017b1c3"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/valid/L4/VERSION.json",
+      "size": 10637,
+      "sha256": "a383a721415a7b19a2e78c5c0c7b16ef2b76cfb0f381c920d4234f6753c4041a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/valid/L4/rankings.sqlite3",
+      "size": 15159296,
+      "sha256": "731f08ab8537815c1283d8ad92f716f07cd9bde8ecbbef09dc9bc57ed11f4942"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/valid/L5/VERSION.json",
+      "size": 10699,
+      "sha256": "06127cbf5de8c8ba2b0657506a3e4b930c869008edd4b842e7ab222d4679ebeb"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/valid/L5/rankings.sqlite3",
+      "size": 26746880,
+      "sha256": "54ed4ff9558b2bb908a9d58879ded6223a849d61900b05f6c70b1a52516a0e5a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/valid/L6/VERSION.json",
+      "size": 10680,
+      "sha256": "d37ae5db81feb12fce7cbf8008c12ad970a6e4d70ff681f2c4d5d3c861ffbe10"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/valid/L6/rankings.sqlite3",
+      "size": 17326080,
+      "sha256": "d486d7c620a7f828ce903a4233c250940fc23e23e8940617bc95d70163779937"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/valid/L7/VERSION.json",
+      "size": 10704,
+      "sha256": "9cce2726a9d959a870cd13eea10fe516c4f17764a7879f80a9dc85b047b9d3d2"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/valid/L7/rankings.sqlite3",
+      "size": 26595328,
+      "sha256": "a349ed782ee9b9b7e87da25ec4e7268a4bc2169633baf3b2c42afcd90016abe5"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/scaffold/valid/PARENT_UNIVERSE.json",
+      "size": 489773,
+      "sha256": "4d8f2229010edff8a172ed129030ef1691534f977d591b6650b562907df71026"
+    },
+    {
+      "path": "data/evidence_libraries/dili/v10_main_universe_v3/retrieval_projection/ranked_evidence_safety_v27_v1/VERSION.json",
+      "size": 1963,
+      "sha256": "1876c9e92ae695174e69f153e0c2bfaaf67d84ded9d36a1fc57d144e5ba4d4b1"
+    },
+    {
+      "path": "data/evidence_libraries/dili/v10_main_universe_v3/retrieval_projection/ranked_evidence_safety_v27_v1/records.parquet",
+      "size": 939579289,
+      "sha256": "52abd57bcfcf32b6666abb21501b4a5eac042b54dbec64dea92c08a6ab1e74b7"
+    },
+    {
+      "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v2_query_pure_v1.yaml",
+      "size": 1844,
+      "sha256": "be1d72217588ac0c706ee0adbc7e7e56927aa52b7924265c902f56c2deaa95d3"
+    }
+  ],
+  "missing": []
+}

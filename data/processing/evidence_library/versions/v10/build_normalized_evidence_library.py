@@ -101,15 +101,9 @@ from data.processing.starling_source_row_identity import (
     UID_FIELD,
     validate_task_sources,
 )
-from tools.chembl_tool.common.export import ensure_dir
-from tools.chembl_tool.common.task_workflows.evidence_library import (
-    fingerprint_metadata,
-)
-from tools.chembl_tool.common.units import (
-    UNIT_NORMALIZER_VERSION,
-    contextual_unit_policy_manifest,
-    qualifier_vocabulary_manifest,
-)
+from predict.utils.files import ensure_dir
+from data.processing.evidence_library.index_builder import fingerprint_metadata
+from data.processing.evidence_library.units import UNIT_NORMALIZER_VERSION, contextual_unit_policy_manifest, qualifier_vocabulary_manifest
 
 SOURCE_INVENTORY_FILENAME = "00_source/source_inventory.json"
 ENDPOINT_INVENTORY_FILENAME = "00_source/endpoint_inventory.json"

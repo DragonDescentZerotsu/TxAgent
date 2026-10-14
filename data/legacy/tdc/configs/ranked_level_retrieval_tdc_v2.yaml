@@ -1,0 +1,14 @@
+version: 1
+caches:
+  bbb_martins:
+    L1: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l1/morgan/tdc_v2/original/RELEASE_INDEX.json
+  bioavailability_ma:
+    L1: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/bioavailability_ma/l1/morgan/tdc_v2/original/RELEASE_INDEX.json
+  skin_reaction:
+    L1: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l1/morgan/tdc_v2/original/RELEASE_INDEX.json
+  ames:
+    L1: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l1/morgan/tdc_v2/original/RELEASE_INDEX.json
+  dili:
+    L1: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l1/morgan/tdc_v2/original/RELEASE_INDEX.json
+  carcinogens:
+    L1: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/carcinogens/l1/morgan/tdc_v2/original/RELEASE_INDEX.json

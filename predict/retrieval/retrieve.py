@@ -163,11 +163,6 @@ def retrieve_neighbors(
     }
 
 
-def similarity_bucket(similarity: float) -> str:
-    """Backward-compatible Morgan/Tanimoto bucket helper."""
-    return similarity_bucket_for_index(similarity, {})
-
-
 def _top_neighbors_for_group(
     group_id: str,
     molecule_indices: list[int],

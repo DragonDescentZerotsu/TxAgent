@@ -6,7 +6,7 @@ import json
 import re
 from typing import Any, Mapping
 
-from openai import OpenAI
+from predict.api_client.transport import openai_compatible_client
 
 from predict.tools.client import ToolServiceClient
 from predict.utils.json import parse_json_content
@@ -39,12 +39,12 @@ class OpenAICompatibleClient:
     ):
         if transport_max_retries < 0:
             raise ValueError("transport_max_retries must be non-negative")
-        self.client = openai_client or OpenAI(
+        self.client = openai_client or openai_compatible_client(
             api_key=api_key,
             base_url=base_url.rstrip("/"),
-            timeout=timeout_s,
+            timeout_s=timeout_s,
             max_retries=transport_max_retries,
-        )
+        )[0]
         self.model = model
         self.max_tokens = max_tokens
         self.temperature = temperature
@@ -93,6 +93,7 @@ class OpenAICompatibleClient:
             "model": response.model or self.model,
             "id": response.id or "",
             "provider": selected[0].get("provider") if len(selected) == 1 else getattr(response, "provider", None),
+            "service_tier": getattr(response, "service_tier", None),
         }
 
     def _tokenized_completion_json(
@@ -302,6 +303,8 @@ class OpenAICompatibleClient:
         omit_response_format = bool(extra_body.pop("omit_response_format", False))
         extra_body.pop("allowed_served_models", None)
         extra_body.pop("expected_upstream_provider", None)
+        extra_body.pop("expected_service_tier", None)
+        extra_body.pop("min_request_interval_ms", None)
         extra_body.pop("provider_pool_snapshot_sha256", None)
         extra_body.pop("max_request_cost_usd", None)
         kwargs: dict[str, Any] = {"model": self.model, "messages": messages}

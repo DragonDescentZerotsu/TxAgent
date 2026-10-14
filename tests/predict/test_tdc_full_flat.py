@@ -1,17 +1,101 @@
 from __future__ import annotations
 
 import json
+from copy import deepcopy
 from pathlib import Path
 from types import SimpleNamespace
 
-from predict.harnesses.branches import flat, matrix, runtime
-from predict.harnesses.branches.tdc_query_priors import _matching_source
+import pytest
+
+from predict.harnesses.branches import flat, matrix, runtime, tdc_query_priors
+from predict.harnesses.branches.tdc_query_priors import (
+    _matching_source,
+    load_prepared_inputs,
+)
 from predict.harnesses.branches.six_task_query_priors import _inputs as query_prior_inputs
 from predict.retrieval.assay_reranking import build_tdc_indirect_ranked_retrieval
 from predict.retrieval.assay_reranking.ranked_uid_retrieval import _payload
 from predict.retrieval.assay_reranking.runtime import cache_profile_root
 from predict.tasks.prompt_profiles import require_matching_prompt_profiles
 from predict.utils.json import sha256_file
+
+
+def test_tdc_v2_mixed_prompt_hides_scores_below_high_band_and_shows_l5() -> None:
+    def evidence(level: str, uid: str) -> dict:
+        return {
+            "evidence_id": uid,
+            "selection_provenance": {"level": level, "evidence_family": "family",
+                                     "assay_transfer_score": 0.99, "assay_rank": 1},
+            "source_provenance": {"source_row_uid": uid},
+            "prompt_evidence": {"card_id": uid, "endpoint": "observed endpoint",
+                                "transfer_likelihood": 0.99},
+        }
+
+    base = {"query": {"canonical_smiles": "CC"}, "groups": [{
+        "group_id": "Flat.all_evidence", "neighbors": [
+            {"standard_inchi_key": "P1", "canonical_smiles": "CCO",
+             "evidence_rows": [evidence("L1", "train:1")]},
+            {"standard_inchi_key": "P5", "canonical_smiles": "CCN",
+             "evidence_rows": [evidence("L5", "uid:5")]},
+        ],
+    }]}
+    selected = {("L1", "P1"): 0.8, ("L5", "uid:5"): 0.7}
+    for band in ("high", "middle", "low"):
+        retrieval = deepcopy(base)
+        flat._apply_tdc_v2_scores(retrieval, selected, band)
+        messages, _ = flat.build_flat_context_request(
+            retrieval, task_id="ames", task_prompt_profile="ames_bacterial_reverse_mutation.v1",
+            layout="level-grouped", reranking="assay-transfer", query_prior=None,
+            prompt_version=flat.TDC_V2_MIXED_PROMPT_VERSION,
+        )
+        text = "\n".join(message["content"] for message in messages)
+        assert ("Transfer likelihood: 0.7" in text) == (band == "high")
+        assert ("Transfer likelihood: 0.8" in text) == (band == "high")
+        assert "0.99" not in text
+        assert ("assay-transfer score" in text) == (band == "high")
+
+
+def test_final_full_flat_shows_exact_l1_and_l5_scores_without_a_band() -> None:
+    def evidence(level: str, uid: str) -> dict:
+        return {
+            "evidence_id": uid,
+            "selection_provenance": {"level": level, "evidence_family": "family"},
+            "source_provenance": {"source_row_uid": uid},
+            "prompt_evidence": {"card_id": uid, "endpoint": "observed endpoint"},
+        }
+
+    retrieval = {"benchmark": "tdc", "query": {"canonical_smiles": "CC"}, "groups": [{
+        "group_id": "Flat.all_evidence", "neighbors": [
+            {"standard_inchi_key": "P1", "canonical_smiles": "CCO", "similarity": .72,
+             "similarity_metric": "Morgan radius=2 bits=2048 Tanimoto",
+             "evidence_rows": [evidence("L1", "train:1")]},
+            {"standard_inchi_key": "P5", "canonical_smiles": "CCN", "similarity": .41,
+             "similarity_metric": "Morgan radius=2 bits=2048 Tanimoto",
+             "evidence_rows": [evidence("L5", "uid:5")]},
+        ],
+    }]}
+    flat._apply_tdc_v2_scores(retrieval, {("L1", "P1"): .8, ("L5", "uid:5"): .7}, "available")
+    messages, metadata = flat.build_flat_context_request(
+        retrieval, task_id="ames", task_prompt_profile="ames_bacterial_reverse_mutation.v1",
+        layout="level-grouped", reranking="assay-transfer", query_prior=None,
+        prompt_version=flat.FINAL_FULL_FLAT_PROMPT_VERSION,
+    )
+    visible = messages[1]["content"]
+    assert "Morgan similarity: 0.72" in visible and "Morgan similarity: 0.41" in visible
+    assert "Transfer likelihood: 0.8" in visible and "Transfer likelihood: 0.7" in visible
+    assert len(metadata["reasoning_reference_index"]) == 4
+
+
+def test_canonical_tdc_cache_and_retired_version_switch() -> None:
+    from data.processing.gold_labels.conditioned_benchmark import TDC_MANIFEST
+    from predict.retrieval.assay_reranking.cache_matched import load_cache_policy
+    flat.require_current_cache_bundle(TDC_MANIFEST)
+    for task in ('bioavailability_ma', 'skin_reaction'):
+        policy = load_cache_policy(TDC_MANIFEST, task, 'valid', 'assay-transfer-contrastive', 1)
+        assert policy['stages']['L1'] == 'assay_transfer_contrastive'
+    with pytest.raises(SystemExit):
+        flat.run(["--harness-version", "final-full-flat", "--task", "skin_reaction",
+                  "--benchmark", "tdc", "--tdc-label-version", "v1"])
 
 
 def test_upstream_v2_safety_final_writes_shared_trace(tmp_path: Path, monkeypatch) -> None:
@@ -77,6 +161,33 @@ def test_tdc_prior_reuse_requires_exact_query_smiles(tmp_path: Path) -> None:
     assert _matching_source(row, {}, {("K", ""): old}) == ("tdc_existing", old)
 
 
+def test_tdc_prepared_priors_reject_changed_benchmark_or_request_inputs(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    source = tmp_path / "valid.jsonl"
+    source.write_text("source\n")
+    label_source = tmp_path / "valid_molecule_condition_labels.jsonl"
+    label_source.write_text("labels\n")
+    monkeypatch.setattr(tdc_query_priors, "tdc_split_path", lambda *args: source)
+    fresh = tmp_path / "fresh_inputs" / "ames.jsonl"
+    fresh.parent.mkdir()
+    fresh.write_text("request\n")
+    task = {"fresh": 1, "input_jsonl": str(fresh), "input_sha256": sha256_file(fresh)}
+    (tmp_path / "prepared.json").write_text(json.dumps({
+        "schema_version": "tdc_query_prior_build.v1", "status": "prepared",
+        "task_ids": ["ames"], "subsets": ["valid"],
+        "source_inputs": [
+            {"path": str(source), "sha256": sha256_file(source)},
+            {"path": str(label_source), "sha256": sha256_file(label_source)},
+        ],
+        "tasks": {"ames": task},
+    }))
+    assert load_prepared_inputs(tmp_path, ("ames",), ("valid",)) == {"ames": task}
+    source.write_text("changed\n")
+    with pytest.raises(ValueError, match="source set or hashes changed"):
+        load_prepared_inputs(tmp_path, ("ames",), ("valid",))
+
+
 def test_tdc_matrix_uses_tdc_split() -> None:
     args = matrix._selection_args(
         "bbb_martins", Path("/tmp/tdc-full-flat"), limit=0,
@@ -84,16 +195,35 @@ def test_tdc_matrix_uses_tdc_split() -> None:
     )
     assert args.benchmark == "tdc"
     assert args.input_jsonl == Path(
-        "data/gold_labels/TDC/BBB_Martins/v1/scaffold/valid_molecule_condition_labels.jsonl"
+        "data/gold_labels/TDC/BBB_Martins/valid_molecule_condition_labels.jsonl"
     ).resolve()
     assert args.prompt_version == flat.CONTEXT_V5_PROMPT_VERSION
 
 
+def test_tdc_v2_matrix_uses_original_split_and_query_pure_bundle() -> None:
+    args = matrix._selection_args(
+        "bbb_martins", Path("/tmp/tdc-v2-full-flat"), limit=0,
+        context_v5=True, all_levels=True, benchmark="tdc",
+    )
+    assert args.input_jsonl == Path(
+        "data/gold_labels/TDC/BBB_Martins/valid_molecule_condition_labels.jsonl"
+    ).resolve()
+    assert args.assay_transfer_cache == flat.TDC_MANIFEST
+
+
 def test_six_task_query_priors_accept_tdc_valid_splits() -> None:
-    for task, size in (("ames", 720), ("dili", 47), ("carcinogens", 27)):
+    for task, size in (("ames", 727), ("dili", 47), ("carcinogens", 28)):
         path, rows = query_prior_inputs(task, "valid", "tdc")
         assert "/gold_labels/TDC/" in str(path)
         assert len(rows) == size
+
+
+def test_six_task_query_priors_accept_explicit_fresh_inputs(tmp_path: Path) -> None:
+    source = tmp_path / "ames.jsonl"
+    source.write_text(json.dumps({"benchmark_row_id": "q1", "drug": "CCO"}) + "\n")
+    path, rows = query_prior_inputs("ames", "fresh", "tdc", tmp_path)
+    assert path == source.resolve()
+    assert rows == [(0, {"benchmark_row_id": "q1", "drug": "CCO"})]
 
 
 def test_mixed_context_score_cache_is_active() -> None:
@@ -109,7 +239,7 @@ def test_tdc_indirect_wrapper_selects_tdc_queries(monkeypatch) -> None:
     monkeypatch.setattr(builder, "LABEL_RELEASE", {"benchmark": "tdc", "version": "v1"})
     monkeypatch.setattr(builder, "TASK_LEVELS", build_tdc_indirect_ranked_retrieval.LEVELS)
     path, rows, queries = builder._queries("bioavailability_ma", "test")
-    assert "/gold_labels/TDC/Bioavailability_Ma/v1/scaffold/" in str(path)
+    assert "/gold_labels/TDC/Bioavailability_Ma/" in str(path)
     assert len(rows) == len(queries) == 128
     assert "L1" not in builder.TASK_LEVELS["bioavailability_ma"]
 

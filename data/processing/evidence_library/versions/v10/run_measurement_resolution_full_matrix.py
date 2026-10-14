@@ -26,7 +26,7 @@ import pyarrow.parquet as pq
 from data.processing.evidence_library.versions.v10 import (
     build_measurement_resolution_mapping as runner,
 )
-from data.processing.llm_api import DEFAULT_ENV_FILE, resolve_api_key
+from predict.api_client.transport import DEFAULT_ENV_FILE, resolve_api_key
 from data.processing.paths import REPO_ROOT
 
 

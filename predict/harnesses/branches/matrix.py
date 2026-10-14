@@ -11,6 +11,8 @@ the outputs; this module owns only matrix coordination and its root receipts.
 
 from __future__ import annotations
 
+from predict.harnesses.branches.manifests import run_directory, read_record, require_query_ids, require_artifact_versions
+
 import argparse
 import csv
 from dataclasses import replace
@@ -26,7 +28,7 @@ from typing import Any, Mapping
 from urllib.request import urlopen
 
 from data.processing.gold_labels.conditioned_benchmark import split_path, tdc_split_path
-from data.processing.llm_api import (
+from predict.api_client.transport import (
     DEFAULT_ENV_FILE,
     provider_from_base_url,
 )
@@ -50,9 +52,11 @@ from predict.harnesses.branches.prompt import attach_external_condition
 from predict.llm_io.response import validated_branch_content
 from predict.api_client.pool import (
     DEFAULT_PROVIDER_POOL_CONFIG,
+    DEEPSEEK_V4_ALIASES,
     OpenAIProviderPool,
     ProviderPoolConfig,
     build_provider_pool,
+    canonical_provider_model,
     load_provider_pool_config,
     preflight_provider_models,
     primary_capacity,
@@ -66,12 +70,8 @@ from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
 
 
 MATRIX_VERSION = "joseph_flat_matrix.v4"
-MODEL = "deepseek-ai/DeepSeek-V4-Flash-0731"
-DEEPSEEK_V4_ALIASES = {
-    "deepseek-ai/DeepSeek-V4-Flash-0731",
-    "deepseek/deepseek-v4-flash-0731",
-}
-DEFAULT_PROVIDER_CONFIG = DEFAULT_PROVIDER_POOL_CONFIG
+MODEL = "deepseek/deepseek-v4-flash-0731"
+DEFAULT_PROVIDER_CONFIG = flat.DEFAULT_PROVIDER_CONFIG
 TASKS = (
     "bbb_martins", "bioavailability_ma", "skin_reaction",
     "ames", "dili", "carcinogens",
@@ -103,7 +103,7 @@ SINGLE_ROOT = Path(
 )
 DEFAULT_OUTPUT_ROOT = Path(
     "outputs/paper/assay_transfer_harness/joseph/"
-    "joseph_flat_v2_morgan_valid_records10_cache_v3_deepseek_v4_flash"
+    "final_full_flat_morgan_valid_records10"
 )
 
 
@@ -224,12 +224,18 @@ def load_preselected_grid(path: Path) -> list[dict[str, Any]]:
     return profiles
 
 
-def load_preselected_direct_grid(path: Path) -> list[dict[str, Any]]:
+def load_preselected_direct_grid(
+    path: Path, *, benchmark: str, subset: str,
+) -> list[dict[str, Any]]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if (
         payload.get("schema_version") not in DIRECT_GRID_SCHEMAS
         or payload.get("status") != "complete"
         or payload.get("kind") != "direct"
+        or payload.get("benchmark") != benchmark
+        or (payload.get("subset") != subset and not (
+            benchmark == "gold_v1" and subset == "valid"
+            and payload.get("subset") == "valid_small"))
     ):
         raise ValueError(f"Invalid completed direct selection grid: {path}")
     profiles = payload.get("profiles") or []
@@ -252,7 +258,14 @@ def load_preselected_direct_grid(path: Path) -> list[dict[str, Any]]:
                 manifest = path.parent / manifest
             if not manifest.is_file() or sha256_file(manifest) != entry.get("sha256"):
                 raise ValueError(f"Direct manifest mismatch for {profile.get('name')} {task}")
-            subsets.add(json.loads(manifest.read_text(encoding="utf-8")).get("subset"))
+            leaf = json.loads(manifest.read_text(encoding="utf-8"))
+            if (leaf.get("benchmark") != benchmark or
+                    (leaf.get("subset") != subset and not (
+                        benchmark == "gold_v1" and subset == "valid"
+                        and leaf.get("subset") == "valid_small"))
+                    or leaf.get("task_id") != task or leaf.get("profile") != profile.get("name")):
+                raise ValueError(f"Direct selection identity differs: {profile.get('name')} {task}")
+            subsets.add(leaf["subset"])
             entry["path"] = str(manifest.resolve())
         if len(subsets) != 1 or None in subsets:
             raise ValueError(f"Direct profile mixes evaluation subsets: {profile.get('name')}")
@@ -271,15 +284,22 @@ def load_mixed_selection_grids(
     task_names: set[str] = set()
     for path in paths:
         payload = json.loads(path.read_text(encoding="utf-8"))
+        tdc_v2 = payload.get("schema_version") in {
+            "tdc_mixed_grid", "tdc_bbb_filtered_grid",
+            "tdc_dili_geomean_mixed_grid"}
         tasks = payload.get("tasks") or []
         profiles = payload.get("profiles") or []
         if (
-            payload.get("schema_version") != "gold_submodular_selection_grid.v1"
+            payload.get("schema_version") not in {
+                "gold_submodular_selection_grid.v1", "tdc_mixed_grid",
+                "tdc_bbb_filtered_grid", "tdc_dili_geomean_mixed_grid"}
             or payload.get("status") != "complete"
-            or payload.get("kind") != "indirect"
-            or payload.get("benchmark") != f"{benchmark}_v1"
-            or payload.get("subset") != (
-                "valid_small" if benchmark == "gold" and subset == "valid" else subset
+            or payload.get("kind") != ("mixed" if tdc_v2 else "indirect")
+            or payload.get("benchmark") != (
+                "tdc" if tdc_v2 and benchmark == "tdc" else f"{benchmark}_v1")
+            or payload.get("subset") not in (
+                ("valid", "valid_small") if benchmark == "gold" and subset == "valid"
+                else (subset,)
             )
             or len(tasks) != 1 or tasks[0] not in TASKS or tasks[0] in task_names
             or len(profiles) != payload.get("profile_count")
@@ -290,23 +310,39 @@ def load_mixed_selection_grids(
         names = {profile.get("name") for profile in profiles}
         if len(names) != len(profiles):
             raise ValueError("Mixed selection grid repeats a profile name")
+        fixed_direct = None
         for profile in profiles:
             name = profile["name"]
             source = (profile.get("task_manifests") or {}).get(task) or {}
             indirect_path = (path.parent / str(source.get("path") or "")).resolve()
-            mixed_path = (path.parent / "mixed" / name / task / "manifest.json").resolve()
+            mixed_path = (indirect_path if tdc_v2 else
+                          (path.parent / "mixed" / name / task / "manifest.json").resolve())
             if (not indirect_path.is_file()
                     or sha256_file(indirect_path) != source.get("sha256")
                     or not mixed_path.is_file()):
                 raise ValueError(f"Mixed selection leaf is missing or changed: {name}/{task}")
             mixed = json.loads(mixed_path.read_text(encoding="utf-8"))
-            if (mixed.get("schema_version") != "gold_mixed_selection.v1"
+            expected_schema = (
+                "tdc_bbb_filtered_selection"
+                if payload["schema_version"] == "tdc_bbb_filtered_grid"
+                else "tdc_dili_geomean_mixed_selection"
+                if payload["schema_version"] == "tdc_dili_geomean_mixed_grid"
+                else "tdc_mixed_selection" if tdc_v2 else "gold_mixed_selection.v1"
+            )
+            if (mixed.get("schema_version") != expected_schema
                     or mixed.get("status") != "complete"
                     or mixed.get("task_id") != task
                     or mixed.get("benchmark") != payload["benchmark"]
                     or mixed.get("subset") != payload["subset"]
-                    or (mixed.get("indirect") or {}).get("sha256") != source["sha256"]):
+                    or (not tdc_v2 and (mixed.get("indirect") or {}).get("sha256")
+                        != source["sha256"])):
                 raise ValueError(f"Mixed selection leaf disagrees with grid: {name}/{task}")
+            if tdc_v2:
+                direct = (mixed["direct_profile"], mixed["files"]["selected_contexts.tsv"]["sha256"])
+                if mixed["indirect_profile"]["name"] != name or (
+                        fixed_direct is not None and direct != fixed_direct):
+                    raise ValueError("TDC grid changes the frozen direct panel")
+                fixed_direct = direct
             combined.setdefault(name, {"name": name, "task_manifests": {}})[
                 "task_manifests"
             ][task] = {"path": str(mixed_path), "sha256": sha256_file(mixed_path)}
@@ -327,29 +363,20 @@ def assign_provider_routes(prepared: Mapping[str, Any]) -> dict[tuple[str, int],
 def _missing_from_previous_batch(
     previous: Mapping[str, Any], selection_args: argparse.Namespace,
     candidate_indices: list[int] | None = None,
+    *, matrix_path: Path | None = None,
 ) -> tuple[list[int], int]:
     """Reuse complete results when the frozen selection and prompt bundle match."""
     path = Path(str(previous["path"])).resolve()
-    if sha256_file(path) != previous["sha256"]:
-        raise ValueError(f"Previous retrieval manifest changed: {path}")
-    source = json.loads(path.read_text(encoding="utf-8"))
-    prompt_assets_changed = (source.get("prompt_assets") or {}).get("sha256") != (
-        flat.prompt_asset_manifest(selection_args.prompt_version)["sha256"]
-    )
-    if (
-        source.get("task") != selection_args.task
-        or source.get("evaluation_subset") != selection_args.evaluation_subset
-        or source.get("input_jsonl") != str(selection_args.input_jsonl)
-        or source.get("input_sha256") != sha256_file(selection_args.input_jsonl)
-        or source.get("prompt_version") != selection_args.prompt_version
-        or source.get("flat_mixed_selection") != str(selection_args.flat_mixed_selection)
-        or source.get("flat_mixed_selection_sha256") != sha256_file(selection_args.flat_mixed_selection)
-        or source.get("assay_transfer_cache") != str(selection_args.assay_transfer_cache)
-        or previous.get("assay_transfer_cache_sha256") != sha256_file(selection_args.assay_transfer_cache)
-    ):
+    source = read_record(path)
+    prompt_assets_changed = source.get("prompt_version") != selection_args.prompt_version
+    selected_manifest = selection_args.flat_mixed_selection or selection_args.flat_preselected_contexts
+    if any(source.get(key) != getattr(selection_args, key) for key in
+           ("task", "evaluation_subset", "prompt_version")):
         raise ValueError(f"Previous batch is incompatible with this selection: {path}")
+    require_artifact_versions(source, {key: getattr(selection_args, key, None) for key in
+        ("input_jsonl", "assay_transfer_cache", "flat_mixed_selection", "flat_preselected_contexts")})
     full_indices = flat._preselected_query_indices(
-        selection_args.flat_mixed_selection,
+        selected_manifest,
         read_jsonl(selection_args.input_jsonl),
         task=selection_args.task,
         subset=selection_args.evaluation_subset,
@@ -368,10 +395,18 @@ def _missing_from_previous_batch(
         )
     ):
         raise ValueError(f"Previous batch has a different query cohort: {path}")
+    require_query_ids(source, read_jsonl(selection_args.input_jsonl), cohort_indices)
     config = importlib.import_module(
         f"predict.harnesses.branches.tasks.{selection_args.task}.contract"
     ).CONFIG
     batch_dir = path.parent.parent
+    if matrix_path is not None and not batch_dir.is_relative_to(matrix_path.parent):
+        candidates = list(matrix_path.parent.glob(
+            f"*/**/{selection_args.task}/{selection_args.batch_id}/manifest.json"
+        ))
+        if len(candidates) != 1:
+            raise ValueError(f"Cannot locate unique previous batch for {matrix_path}: {candidates}")
+        batch_dir = candidates[0].parent
     prepared = PreparedBatch(
         config=config,
         args=argparse.Namespace(skip_existing=True, label_field="Y", smiles_field="drug"),
@@ -389,11 +424,11 @@ def _missing_from_previous_batch(
             complete = collect_completed_item(prepared, BatchItem(index, records[index]))
         except (OSError, ValueError, TypeError, KeyError):
             complete = None
-        if complete is not None and prompt_assets_changed:
-            run_dir = batch_dir / "runs" / f"{batch_dir.name}_idx{index:05d}"
+        run_dir = run_directory(batch_dir, index)
+        if complete is not None and (prompt_assets_changed or (run_dir / "request.json").exists()):
             retrieval_path = path.parent / "runs" / f"{path.parent.name}_idx{index:05d}" / "retrieval.json"
             try:
-                batch_manifest = json.loads((batch_dir / "manifest.json").read_text(encoding="utf-8"))
+                batch_manifest = read_record(batch_dir / "manifest.json")
                 retrieval = attach_external_condition(
                     json.loads(retrieval_path.read_text(encoding="utf-8")), records[index]
                 )
@@ -453,9 +488,7 @@ def provider_client(
             ),
         )
     provider_kinds = {provider_from_base_url(spec.base_url) for spec in config.providers}
-    if len(provider_kinds) != 1:
-        raise ValueError("Flat matrix providers must share one reasoning transport mode")
-    local = provider_kinds == {"local"}
+    local = "local" in provider_kinds
 
     return build_provider_pool(
         config,
@@ -501,7 +534,7 @@ def verify_single_reuse(task: str, detailed_input: Path) -> dict[str, Any]:
         raise ValueError(f"Detailed validation split disagrees with compact rows: {task}")
 
     source = _single_batch(task)
-    manifest = json.loads((source / "manifest.json").read_text(encoding="utf-8"))
+    manifest = read_record(source / "manifest.json")
     expected_profile = flat.prompt_assets(flat.JOSEPH_PROMPT_VERSION)["tasks"][task][
         "prompt_profile"
     ]
@@ -573,13 +606,14 @@ def _selection_args(
     prior_root: Path = flat.DEFAULT_QUERY_PRIOR_ROOT,
     assay_transfer_cache: Path = DEFAULT_CACHE_BUNDLE,
     benchmark: str = "gold",
+    input_jsonl: Path | None = None,
 ) -> argparse.Namespace:
     input_jsonl = (
-        tdc_split_path(task, evaluation_subset)
-        if benchmark == "tdc" else split_path(task, evaluation_subset)
-    ).with_name(
-        f"{evaluation_subset}_molecule_condition_labels.jsonl"
-    ).resolve()
+        input_jsonl.resolve() if input_jsonl is not None else (
+            tdc_split_path(task, evaluation_subset)
+            if benchmark == "tdc" else split_path(task, evaluation_subset)
+        ).with_name(f"{evaluation_subset}_molecule_condition_labels.jsonl").resolve()
+    )
     context_v4 = (
         context_width is not None and not context_v5 and not context_v6
         and not context_v5_six_tasks
@@ -590,9 +624,11 @@ def _selection_args(
         else flat.CONTEXT_V6_PROMPT_VERSION if context_v6
         else flat.CONTEXT_V5_PROMPT_VERSION if context_v5
         else flat.CONTEXT_V4_PROMPT_VERSION if context_v4
-        else flat.JOSEPH_PROMPT_VERSION
+        else flat.FINAL_FULL_FLAT_PROMPT_VERSION
     )
-    cache_bundle = flat.resolve_default_cache_bundle(task, benchmark, assay_transfer_cache)
+    cache_bundle = flat.resolve_default_cache_bundle(
+        task, benchmark, assay_transfer_cache,
+    )
     task_max_level = flat.prompt_task_max_level(task, prompt_version, cache_bundle)
     return argparse.Namespace(
         harness_version=(
@@ -606,6 +642,7 @@ def _selection_args(
         prompt_version=prompt_version,
         task=task,
         benchmark=benchmark,
+
         reranking=reranking,
         assay_transfer_cache=cache_bundle.resolve(),
         record_pool=record_pool,
@@ -620,7 +657,7 @@ def _selection_args(
         records_per_level=records_per_level,
         ranking_tie_seed=0,
         max_level=task_max_level if all_levels else 1 if context_prompt else 0,
-        layout="level-grouped" if context_v5 or context_v5_six_tasks else "global",
+        layout="global" if context_v4 or context_v6 else "level-grouped",
         query_prior="cached",
         prior_root=prior_root.resolve(),
         l1_min_contrast=min_contrast,
@@ -729,6 +766,8 @@ def _batch_command(
         command.extend(["--start", "0", "--limit", str(args.limit)])
     if getattr(args, "flat_replay_subset", False):
         command.append("--flat-replay-subset")
+    if getattr(args, "flat_prompt_successor_replay", False):
+        command.append("--flat-prompt-successor-replay")
     if context_v4:
         command.extend([
             TASK_PROMPT_PROFILE_OPTIONS[task],
@@ -749,13 +788,9 @@ def _provider_execution(
     config: ProviderPoolConfig,
     timeout_s: int,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    models = {spec.model for spec in config.providers}
-    if len(models) != 1:
-        raise ValueError("Flat matrix providers must request one exact model alias")
+    model = canonical_provider_model(config)
     provider_kinds = {provider_from_base_url(spec.base_url) for spec in config.providers}
-    if len(provider_kinds) != 1:
-        raise ValueError("Flat matrix providers must share one reasoning transport mode")
-    local = provider_kinds == {"local"}
+    local = "local" in provider_kinds
 
     receipts = []
     for spec in config.providers:
@@ -771,7 +806,7 @@ def _provider_execution(
     first = config.providers[0]
     return (
         {
-            "model": first.model,
+            "model": model,
             "base_url": first.base_url,
             "api_key_env": first.api_key_env,
             "timeout_s": first.timeout_s or timeout_s,
@@ -820,7 +855,12 @@ def _materialize_direct_request_review(
             flat.CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
             flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
             flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+            flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
+            flat.DILI_TDC_V2_POLARIZED_PROMPT_VERSION,
+            flat.TDC_SKIN_LLNA_PROMPT_VERSION,
+            flat.TDC_SKIN_LLNA_SCORES_PROMPT_VERSION,
             flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
+            flat.FINAL_FULL_FLAT_PROMPT_VERSION,
         }:
             raise ValueError(f"Unexpected direct-grid prompt version for {batch_id}")
         retrieval_batch = Path(prepared.args.retrieval_replay_source_batch)
@@ -916,21 +956,31 @@ def main(argv: list[str] | None = None) -> int:
         choices=CONDITION_CHOICES,
         default=DEFAULT_CONDITIONS,
     )
+    manual = parser.add_mutually_exclusive_group()
+    manual.add_argument("--uids", nargs="+")
+    manual.add_argument("--uids-file", type=Path)
+    parser.add_argument("--uid-level")
+    parser.add_argument("--indices", nargs="*")
     parser.add_argument("--records-per-level", type=int, default=RECORDS_PER_LEVEL)
-    parser.add_argument("--context-v4-grid", action="store_true")
-    parser.add_argument("--context-v5-grid", action="store_true")
-    parser.add_argument("--context-v5-l1", action="store_true")
-    parser.add_argument("--context-v5-all-level", action="store_true")
+    parser.set_defaults(context_v4_grid=False, context_v5_grid=False,
+                        context_v5_l1=False, context_v5_all_level=False)
     parser.add_argument("--preselected-grid-manifest", type=Path)
     parser.add_argument("--preselected-direct-grid-manifest", type=Path)
+    parser.add_argument("--prompt-only-retrieval-source-matrix", type=Path)
     parser.add_argument("--mixed-selection-grid-manifest", action="append", type=Path, default=[])
     parser.add_argument(
         "--mixed-harness-version",
         choices=(
             flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_HARNESS_VERSION,
             flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_HARNESS_VERSION,
+            flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_HARNESS_VERSION,
+            flat.TDC_V2_MIXED_HARNESS_VERSION,
+            flat.DILI_TDC_V2_MIXED_V3_HARNESS_VERSION,
+            flat.DILI_TDC_V2_POLARIZED_HARNESS_VERSION,
+            flat.FINAL_FULL_FLAT_HARNESS_VERSION,
+            flat.FINAL_FULL_FLAT_TDC_CARC_STRONG_HARNESS_VERSION, flat.FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_HARNESS_VERSION,
         ),
-        default=flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_HARNESS_VERSION,
+        default=flat.FINAL_FULL_FLAT_HARNESS_VERSION,
     )
     parser.add_argument(
         "--resume-missing-from", action="append", type=Path, default=[],
@@ -942,9 +992,16 @@ def main(argv: list[str] | None = None) -> int:
             flat.CONTEXT_V5_SIX_TASKS_HARNESS_VERSION,
             flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_HARNESS_VERSION,
             flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_HARNESS_VERSION,
+            flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_HARNESS_VERSION,
+            flat.TDC_SKIN_LLNA_HARNESS_VERSION,
+            flat.TDC_SKIN_LLNA_SCORES_HARNESS_VERSION,
             flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_HARNESS_VERSION,
+            flat.TDC_V2_MIXED_HARNESS_VERSION,
+            flat.DILI_TDC_V2_MIXED_V3_HARNESS_VERSION,
+            flat.DILI_TDC_V2_POLARIZED_HARNESS_VERSION,
+            flat.FINAL_FULL_FLAT_HARNESS_VERSION,
         ),
-        default=flat.CONTEXT_V5_SIX_TASKS_HARNESS_VERSION,
+        default=flat.FINAL_FULL_FLAT_HARNESS_VERSION,
     )
     parser.add_argument("--tasks", nargs="+", choices=TASKS)
     parser.add_argument(
@@ -954,7 +1011,10 @@ def main(argv: list[str] | None = None) -> int:
         "--evaluation-subsets", nargs="+", choices=("valid", "test")
     )
     parser.add_argument("--benchmark", choices=("gold", "tdc"), default="gold")
+
     parser.add_argument("--prior-root", type=Path)
+    parser.add_argument("--input-jsonl", type=Path,
+                        help="Explicit Gold direct or mixed cohort, such as valid_small.")
     parser.add_argument(
         "--prior-root-by-subset", action="append", default=[], metavar="SUBSET=PATH"
     )
@@ -962,10 +1022,12 @@ def main(argv: list[str] | None = None) -> int:
         "--assay-transfer-cache", type=Path, default=DEFAULT_CACHE_BUNDLE
     )
     parser.add_argument("--flat-artifact-bundle-root", type=Path)
+    parser.add_argument("--flat-artifact-manifest", type=Path)
+    parser.add_argument("--flat-artifact-receipt", type=Path)
     parser.add_argument(
         "--preselected-harness-version",
-        choices=(flat.CONTEXT_V5_HARNESS_VERSION, flat.CONTEXT_V6_HARNESS_VERSION),
-        default=flat.CONTEXT_V6_HARNESS_VERSION,
+        choices=(flat.FINAL_FULL_FLAT_HARNESS_VERSION,),
+        default=flat.FINAL_FULL_FLAT_HARNESS_VERSION,
     )
     parser.add_argument("--grid-run-id", default="")
     parser.add_argument(
@@ -993,6 +1055,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--skip-pilots", action="store_true")
     args = parser.parse_args(raw_argv)
+    if args.preselected_direct_harness_version not in flat.ACTIVE_HARNESS_PROMPTS and not args.prompt_only_retrieval_source_matrix:
+        parser.error("Retired direct prompt requires pinned prompt-only retrieval replay")
+    legacy_skin_replay = (
+        args.benchmark == 'tdc' and bool(args.prompt_only_retrieval_source_matrix)
+    )
+    legacy_direct_replay = (
+        args.benchmark == 'tdc' and bool(args.preselected_direct_grid_manifest) and (args.preselected_direct_harness_version == flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_HARNESS_VERSION) and (set(args.tasks or ()) in ({'bioavailability_ma'}, {'skin_reaction'}))
+    )
     if sum((
         args.context_v4_grid, args.context_v5_grid, args.context_v5_l1,
         args.context_v5_all_level,
@@ -1004,6 +1074,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.evaluation_subset and args.evaluation_subsets:
         parser.error("use either --evaluation-subset or --evaluation-subsets")
     evaluation_subsets = tuple(args.evaluation_subsets or (args.evaluation_subset or "valid",))
+    if (args.benchmark == 'tdc' and args.prior_root is None and (not args.prior_root_by_subset)):
+        parser.error("TDC cached priors require an explicit reviewed prior overlay")
     if args.preselected_grid_manifest and (
         args.records_per_level != 10
         or args.morgan_primary_parent_widths != (15, 25, 50)
@@ -1012,6 +1084,18 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("the preselected grid has fixed K10/W25/M0 settings")
     if args.preselected_direct_grid_manifest and len(evaluation_subsets) != 1:
         parser.error("a direct selection grid must target exactly one evaluation subset")
+    if args.prompt_only_retrieval_source_matrix and not args.preselected_direct_grid_manifest:
+        parser.error("prompt-only retrieval replay requires a direct selection grid")
+    if legacy_skin_replay and json.loads(
+        args.preselected_direct_grid_manifest.read_text(encoding="utf-8")
+    ).get("tasks") != ["skin_reaction"]:
+        parser.error("TDC-v1 prompt-only replay requires a Skin-only direct grid")
+    if args.input_jsonl and not (args.uids or args.uids_file) and not (
+        (args.preselected_direct_grid_manifest or args.mixed_selection_grid_manifest)
+        and args.benchmark == "gold"
+        and evaluation_subsets == ("valid",)
+    ):
+        parser.error("--input-jsonl requires a Gold direct or mixed grid on valid")
     if args.mixed_selection_grid_manifest and len(evaluation_subsets) != 1:
         parser.error("mixed selection grids must target exactly one evaluation subset")
     if "--preselected-harness-version" in raw_argv and not args.preselected_grid_manifest:
@@ -1023,8 +1107,19 @@ def main(argv: list[str] | None = None) -> int:
         parser.error(
             "--preselected-direct-harness-version requires --preselected-direct-grid-manifest"
         )
+    if args.uid_level and not args.uids:
+        parser.error("--uid-level applies only to --uids")
+    if args.uids or args.uids_file:
+        if not args.tasks or len(args.tasks) != 1:
+            parser.error("manual UIDs require exactly one --tasks entry")
+        if args.preselected_grid_manifest or args.preselected_direct_grid_manifest or args.mixed_selection_grid_manifest:
+            parser.error("manual UIDs replace preselected grids; do not combine them")
+        if args.uids and (not args.uid_level or not args.indices or len(args.indices) != 1):
+            parser.error("inline UIDs require --uid-level and exactly one --indices entry")
     if args.parallelism is not None and args.parallelism < 1:
         parser.error("--parallelism must be positive")
+    if bool(args.flat_artifact_manifest) != bool(args.flat_artifact_receipt):
+        parser.error("pass both --flat-artifact-manifest and --flat-artifact-receipt")
     if args.max_stage_requeues is not None and args.max_stage_requeues < 0:
         parser.error("--max-stage-requeues must be non-negative")
     if args.max_stage_requeues is None:
@@ -1057,6 +1152,15 @@ def main(argv: list[str] | None = None) -> int:
     args.provider_pool_config = args.provider_pool_config.resolve()
     args.trace_root = args.trace_root.resolve()
     args.assay_transfer_cache = args.assay_transfer_cache.resolve()
+    if not (legacy_skin_replay or legacy_direct_replay):
+        try:
+            flat.require_current_cache_bundle(args.assay_transfer_cache)
+        except (OSError, ValueError) as exc:
+            parser.error(str(exc))
+    if (
+        args.benchmark == 'tdc' and args.preselected_direct_grid_manifest and ('--preselected-direct-harness-version' not in raw_argv) and (json.loads(args.preselected_direct_grid_manifest.read_text()).get('tasks') == ['skin_reaction'])
+    ):
+        args.preselected_direct_harness_version = flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_HARNESS_VERSION
     if args.mixed_selection_grid_manifest:
         direct_prompt_version = flat.JOSEPH_HARNESS_PROMPTS[args.mixed_harness_version]
     elif args.preselected_direct_grid_manifest:
@@ -1082,9 +1186,25 @@ def main(argv: list[str] | None = None) -> int:
         args.preselected_grid_manifest = args.preselected_grid_manifest.resolve()
     if args.preselected_direct_grid_manifest:
         args.preselected_direct_grid_manifest = args.preselected_direct_grid_manifest.resolve()
+    prompt_only_sources = {}
+    if args.prompt_only_retrieval_source_matrix:
+        path = args.prompt_only_retrieval_source_matrix.resolve()
+        source_matrix = json.loads(path.read_text(encoding="utf-8"))
+        if (
+            direct_prompt_version not in {flat.TDC_SKIN_LLNA_PROMPT_VERSION, flat.TDC_SKIN_LLNA_SCORES_PROMPT_VERSION} or args.benchmark != 'tdc' or evaluation_subsets[0] not in {'valid', 'test'} or (source_matrix.get('prompt_version') != flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION) or (source_matrix.get('benchmark') != 'tdc') or (source_matrix.get('evaluation_subsets') != list(evaluation_subsets)) or (source_matrix.get('prior_roots', {}).get(evaluation_subsets[0]) != str(prior_roots[evaluation_subsets[0]]))
+        ):
+            parser.error("TDC Skin prompt-only replay requires matching V3 inputs")
+        prompt_only_sources = {
+            (row["task"], row["evaluation_subset"], row["profile"]): row
+            for row in source_matrix.get("selections", [])
+        }
+        if len(prompt_only_sources) != len(source_matrix.get("selections", [])):
+            parser.error("prompt-only source matrix repeats a selection")
     args.mixed_selection_grid_manifest = [path.resolve() for path in args.mixed_selection_grid_manifest]
-    if args.resume_missing_from and not args.mixed_selection_grid_manifest:
-        parser.error("--resume-missing-from requires a mixed-selection grid")
+    if args.resume_missing_from and not (
+        args.mixed_selection_grid_manifest or args.preselected_direct_grid_manifest
+    ):
+        parser.error("--resume-missing-from requires a mixed or direct selection grid")
     previous_matrices = []
     for previous_path in args.resume_missing_from:
         path = previous_path.resolve()
@@ -1210,7 +1330,12 @@ def main(argv: list[str] | None = None) -> int:
             if args.preselected_grid_manifest else []
         )
         direct_grid_profiles = (
-            load_preselected_direct_grid(args.preselected_direct_grid_manifest)
+            load_preselected_direct_grid(
+                args.preselected_direct_grid_manifest,
+                benchmark=("gold_v1" if args.benchmark == "gold" else
+                           "tdc"),
+                subset=evaluation_subsets[0],
+            )
             if args.preselected_direct_grid_manifest else []
         )
         mixed_grid_profiles = (
@@ -1306,7 +1431,8 @@ def main(argv: list[str] | None = None) -> int:
             subset = item["subset"]
             if item["profile"]:
                 reranking, record_pool, width, contrast, all_levels = (
-                    "assay-transfer-contrastive", "all", 25, 0, True
+                    "assay-transfer" if args.benchmark == 'tdc' else "assay-transfer-contrastive",
+                    "all", 25, 0, True
                 )
             else:
                 reranking, record_pool, width, contrast, all_levels = item["variant"]
@@ -1341,10 +1467,17 @@ def main(argv: list[str] | None = None) -> int:
                 prior_root=prior_roots[subset],
                 assay_transfer_cache=args.assay_transfer_cache,
                 benchmark=args.benchmark,
+
+                input_jsonl=args.input_jsonl,
                 batch_id=(
                     f"{task}__{item['profile']}" if item["profile"] else None
                 ),
             )
+            selection_args.uids = args.uids
+            selection_args.uids_file = args.uids_file
+            selection_args.uid_level = args.uid_level
+            if args.indices:
+                selection_args.indices = list(args.indices)
             if args.assay_transfer_cache.name in {
                 "ranked_level_retrieval_gold_v1_v27_carcinogens_hybrid_v1.yaml",
                 "ranked_level_retrieval_tdc_v1_v27_ames_hybrid_v1.yaml",
@@ -1356,6 +1489,13 @@ def main(argv: list[str] | None = None) -> int:
                 selection_args.flat_artifact_receipt = (
                     Path("data/caches/assay_reranking/active/flat_v5/receipts/v27_hybrid_successors")
                     / f"{args.benchmark}_v1" / f"{task}.json"
+                ).resolve()
+            elif args.assay_transfer_cache.name == "ranked_level_retrieval_tdc_v2_dili_parent_disjoint_v2.yaml":
+                selection_args.flat_artifact_manifest = Path(
+                    "predict/retrieval/assay_reranking/flat_v5_manifests/tdc_v2_dili_parent_disjoint_v2/dili.json"
+                ).resolve()
+                selection_args.flat_artifact_receipt = Path(
+                    "data/caches/assay_reranking/active/flat_v5/receipts/tdc_v2_dili_parent_disjoint_v2/dili.json"
                 ).resolve()
             elif (args.assay_transfer_cache.name.endswith("_v27_successors_v1.yaml")
                     and task in {"ames", "dili", "carcinogens"}):
@@ -1387,6 +1527,9 @@ def main(argv: list[str] | None = None) -> int:
                 bundle_root = args.flat_artifact_bundle_root.resolve()
                 selection_args.flat_artifact_manifest = bundle_root / "manifests" / f"{task}.json"
                 selection_args.flat_artifact_receipt = bundle_root / "receipts" / f"{task}.json"
+            if args.flat_artifact_manifest is not None:
+                selection_args.flat_artifact_manifest = args.flat_artifact_manifest.resolve()
+                selection_args.flat_artifact_receipt = args.flat_artifact_receipt.resolve()
             if len(evaluation_subsets) > 1:
                 prefix = f"{task}__"
                 selection_args.batch_id = (
@@ -1406,9 +1549,9 @@ def main(argv: list[str] | None = None) -> int:
                         != sha256_file(selection_args.assay_transfer_cache)
                         or (
                             previous_matrix.get("model") != execution["model"]
-                            and {
+                            and not {
                                 previous_matrix.get("model"), execution["model"]
-                            } != DEEPSEEK_V4_ALIASES
+                            } <= DEEPSEEK_V4_ALIASES
                         )
                         or previous_matrix.get("reasoning_effort") != execution["reasoning_effort"]
                         or previous_matrix.get("max_tokens") != args.max_tokens
@@ -1416,6 +1559,7 @@ def main(argv: list[str] | None = None) -> int:
                         raise ValueError(f"Previous matrix request configuration differs: {key}")
                     missing, reused = _missing_from_previous_batch(
                         previous_selections[key], selection_args, missing,
+                        matrix_path=previous_path,
                     )
                     resume_receipts.append({
                         "source": str(previous_path),
@@ -1429,18 +1573,48 @@ def main(argv: list[str] | None = None) -> int:
                 if not missing:
                     continue
                 selection_args.indices = [str(index) for index in missing]
-                selection_args.flat_mixed_selection_subset = True
+                selection_args.flat_mixed_selection_subset = bool(selection_args.flat_mixed_selection)
             current_source = (
                 selection_args.batch_root / selection_args.batch_id
                 / "cache_matched_retrieval"
             )
-            if (previous_source is not None
-                    and (json.loads((previous_source / "manifest.json").read_text(encoding="utf-8"))
-                         .get("prompt_assets") or {}).get("sha256")
-                    == flat.prompt_asset_manifest(selection_args.prompt_version)["sha256"]
+            replay_entry = prompt_only_sources.get((task, subset, item["profile"]))
+            if prompt_only_sources and replay_entry is None:
+                raise ValueError(f"Prompt-only source lacks {task}/{subset}/{item['profile']}")
+            if replay_entry is not None:
+                manifest_path = Path(replay_entry["path"]).resolve()
+                if sha256_file(manifest_path) != replay_entry["sha256"]:
+                    raise ValueError(f"Prompt-only source manifest changed: {manifest_path}")
+                selection = json.loads(manifest_path.read_text(encoding="utf-8"))
+                expected_replay = {
+                    "prompt_version": flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
+                    "task": task, "evaluation_subset": subset,
+                    "input_jsonl": str(selection_args.input_jsonl),
+                    "input_sha256": sha256_file(selection_args.input_jsonl),
+                    "flat_preselected_contexts": str(item["manifest"]),
+                    "flat_preselected_contexts_sha256": sha256_file(item["manifest"]),
+                    "assay_transfer_cache": str(selection_args.assay_transfer_cache),
+                    "layout": selection_args.layout, "query_prior": selection_args.query_prior,
+                    "max_level": 1, "indices": list(range(sum(
+                        1 for line in selection_args.input_jsonl.open(encoding="utf-8")
+                        if line.strip()
+                    ))),
+                    "selection_contract_sha256": replay_entry["selection_contract_sha256"],
+                }
+                mismatches = {key: (selection.get(key), value)
+                              for key, value in expected_replay.items()
+                              if selection.get(key) != value}
+                if mismatches:
+                    raise ValueError(f"Prompt-only retrieval contract mismatch: {mismatches}")
+                source = manifest_path.parent
+                selection_args.flat_replay_subset = True
+                selection_args.flat_prompt_successor_replay = True
+            elif (previous_source is not None
+                    and read_record(previous_source / "manifest.json").get("prompt_version")
+                    == selection_args.prompt_version
                     and not (current_source / "manifest.json").exists()):
                 source = previous_source
-                selection = json.loads((source / "manifest.json").read_text(encoding="utf-8"))
+                selection = read_record(source / "manifest.json")
                 selection_args.flat_replay_subset = True
             else:
                 source, selection = flat._materialize_cache_matched_retrievals(
@@ -1463,10 +1637,7 @@ def main(argv: list[str] | None = None) -> int:
                     ),
                     "mixed_selection": str(item["manifest"]) if item.get("mixed") else "",
                     "path": str(source / "manifest.json"),
-                    "sha256": sha256_file(source / "manifest.json"),
-                    "selection_contract_sha256": selection[
-                        "selection_contract_sha256"
-                    ],
+                    "run_uid": read_record(source / "manifest.json")["run_uid"],
                     "artifact_manifest": selection.get("artifact_manifest", ""),
                     "artifact_manifest_sha256": selection.get(
                         "artifact_manifest_sha256", ""
@@ -1748,8 +1919,10 @@ def main(argv: list[str] | None = None) -> int:
         write_json_atomic(root / "matrix.json", manifest)
         organized_runs = {}
         if args.study and (direct_grid_profiles or mixed_grid_profiles):
+            executed_profiles = {row["profile"] for row in selection_receipts}
             for item in work:
-                organized_runs[item["profile"]] = item["root"]
+                if item["profile"] in executed_profiles:
+                    organized_runs[item["profile"]] = item["root"]
             for profile, run_root in organized_runs.items():
                 write_json_atomic(run_root / "run.json", {
                     "schema_version": "organized_study_run.v1",
@@ -1758,7 +1931,8 @@ def main(argv: list[str] | None = None) -> int:
                     "status": manifest["status"], "metric_status": "pending",
                     "prompt_version": manifest["prompt_version"],
                     "harness_version": manifest["harness_version"],
-                    "reranking": "assay-transfer-contrastive",
+                    "reranking": ("assay-transfer" if args.benchmark == 'tdc' else
+                                  "assay-transfer-contrastive"),
                     "query_prior": "with_query_prior", "l1_molecules": 10,
                     "l1_min_contrast": 0, "morgan_primary_parent_width": 25,
                     "tasks": [item["task"] for item in work if item["profile"] == profile],
@@ -1774,7 +1948,8 @@ def main(argv: list[str] | None = None) -> int:
                 "status": manifest["status"], "metric_status": "pending",
                 "prompt_version": manifest["prompt_version"],
                 "harness_version": manifest["harness_version"],
-                "reranking": "assay-transfer-contrastive",
+                "reranking": ("assay-transfer" if args.benchmark == 'tdc' else
+                              "assay-transfer-contrastive"),
                 "query_prior": "with_query_prior", "l1_molecules": 10,
                 "l1_min_contrast": args.l1_min_contrasts[0],
                 "morgan_primary_parent_width": 25,
@@ -1782,7 +1957,7 @@ def main(argv: list[str] | None = None) -> int:
                 "matrix_json": str(root / "matrix.json"),
                 "matrix_json_sha256": sha256_file(root / "matrix.json"),
             })
-            from predict.harnesses.progressive.matrix import _refresh_results_catalog
+            from predict.traces.catalog import _refresh_results_catalog
             _refresh_results_catalog(args.results_root)
         if args.prepare_only:
             return 0
@@ -1864,7 +2039,7 @@ def main(argv: list[str] | None = None) -> int:
                 run["metric_status"] = completion["status"]
                 run["matrix_json_sha256"] = sha256_file(root / "matrix.json")
                 write_json_atomic(run_path, run)
-            from predict.harnesses.progressive.matrix import _refresh_results_catalog
+            from predict.traces.catalog import _refresh_results_catalog
             _refresh_results_catalog(args.results_root)
         from predict.live import update_run
 

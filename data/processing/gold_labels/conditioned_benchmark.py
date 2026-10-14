@@ -52,23 +52,45 @@ def split_path(task: str, split: str, version: str = "current") -> Path:
     return task_root(task, version) / f"{split}.jsonl"
 
 
-def tdc_task_root(task: str, version: str = "v1") -> Path:
-    """Return an explicitly versioned TDC scaffold-split root."""
+TDC_MANIFEST = TDC_ROOT / "manifest.json"
 
-    try:
-        directory = TASK_DIRECTORIES[task]
-    except KeyError as exc:
-        choices = ", ".join(sorted(TASK_DIRECTORIES))
-        raise ValueError(f"Unknown TDC benchmark task {task!r}; choose {choices}") from exc
-    if not version or "/" in version or "\\" in version:
-        raise ValueError(f"invalid TDC release version: {version!r}")
-    root = TDC_ROOT / directory / version / "scaffold"
+
+def tdc_config(task: str | None = None) -> dict:
+    """Read the single canonical TDC configuration, without version selection."""
+    import json
+    document = json.loads(TDC_MANIFEST.read_text(encoding="utf-8"))
+    if document.get("benchmark") != "tdc" or document.get("status") != "complete":
+        raise ValueError(f"Invalid canonical TDC configuration: {TDC_MANIFEST}")
+    if set(document.get("tasks", {})) != set(TASK_DIRECTORIES):
+        raise ValueError("Canonical TDC must configure all six tasks")
+    if task is None:
+        return document
+    if task not in TASK_DIRECTORIES:
+        raise ValueError(f"Unknown TDC benchmark task: {task!r}")
+    return document["tasks"][task]
+
+
+def tdc_task_root(task: str) -> Path:
+    root = TDC_ROOT / tdc_config(task)["directory"]
     if not root.is_dir():
-        raise FileNotFoundError(f"TDC release is absent: {root}")
+        raise FileNotFoundError(f"Canonical TDC task is absent: {root}")
     return root
 
 
-def tdc_split_path(task: str, split: str, version: str = "v1") -> Path:
-    if split not in SPLITS:
-        raise ValueError(f"Unknown split {split!r}")
-    return tdc_task_root(task, version) / f"{split}.jsonl"
+def tdc_split_path(task: str, split: str) -> Path:
+    if split not in {"train", "valid", "test"}:
+        raise ValueError(f"Unsupported TDC split: {split}")
+    return tdc_task_root(task) / f"{split}.jsonl"
+
+
+def tdc_manifest(task: str, split: str) -> Path:
+    """Validate the selected frozen query files against the canonical config."""
+    from predict.utils.json import sha256_file
+    spec = tdc_config(task)
+    root = tdc_task_root(task)
+    if split not in {"valid", "test"}:
+        raise ValueError(f"Unsupported TDC evaluation split: {split}")
+    for name in (f"{split}.jsonl", f"{split}_molecule_condition_labels.jsonl"):
+        if sha256_file(root / name) != spec["outputs"].get(name):
+            raise ValueError(f"Canonical TDC split changed: {root / name}")
+    return TDC_MANIFEST

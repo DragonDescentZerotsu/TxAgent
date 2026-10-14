@@ -5,9 +5,7 @@ library rather than construct a particular release. `bucket_informativeness_v1.j
 is used by `analysis.evidence_library.bucket_informativeness`.
 `record_informativeness_v1.jinja` is the reviewed row-level scoring prompt used
 by `analysis.evidence_library.record_informativeness`.
-`relevance_bucket_tournament_v1.jinja` compares V9 BBB relevance buckets for
-relative downstream usefulness without exposing reference semantics or molecule
-identity.
-`relevance_bucket_diagnostic_v2.jinja` uses inline, outcome-blind candidates and
-exact bucket-ID winners to isolate repeatability, order, batch-context, and batch-
-size effects after the V1 calibration gate failed.
+The relevance tournament and diagnostic templates are retained for frozen
+Bradley–Terry experiment provenance; their fitting/ranking executables are retired.
+New semantic utility scoring uses the canonical two-pass scorer under
+`optimization/semantic_buckets/`.

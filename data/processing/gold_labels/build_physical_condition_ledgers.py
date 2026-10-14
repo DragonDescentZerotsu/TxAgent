@@ -21,7 +21,7 @@ from data.processing.gold_labels.stage1_repaired_sources import (
     label_bbb_stage1_row,
     scientific_payload_sha256,
 )
-from tools.chembl_tool.common.json_utils import write_json_atomic, write_jsonl_atomic
+from predict.utils.json import write_json_atomic, write_jsonl_atomic
 
 
 BBB_REVIEW_ROOT = Path(

@@ -12,7 +12,7 @@ from data.processing.evidence_library.shared.v2.categorical_response import (
 from data.processing.evidence_library.shared.v2.normalization.measurements import (
     parse_point_measurement,
 )
-from tools.chembl_tool.common.units import canonicalize_unit
+from data.processing.evidence_library.units import canonicalize_unit
 from data.processing.evidence_library.versions.v10.tasks.bbb_martins.starling_measurement_semantics import (
     load_measurement_semantics_policy,
     numeric_domain_status,

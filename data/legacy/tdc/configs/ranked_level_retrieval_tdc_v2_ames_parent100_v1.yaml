@@ -1,0 +1,5 @@
+version: 22
+caches:
+  ames:
+    L1: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l1/query_pure/reused_task_best_v1/original/RELEASE_INDEX.json
+    later: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/parent100_v2/original/ames/RELEASE_INDEX.json

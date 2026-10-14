@@ -1,6 +1,0 @@
-{
-  "command": "/tmp/ames_v10_stage1_stage2_20260908/pytest-env312/bin/pytest",
-  "hostname": "epyc-4-10",
-  "pid": 323689,
-  "started_at": "2026-09-08T14:00:05.315161+00:00"
-}

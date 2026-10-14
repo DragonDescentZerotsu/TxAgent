@@ -1,0 +1,82 @@
+{
+  "assay_transfer_status": "query_pure_partial",
+  "base_release_index_sha256": "66bfe0e90a561549e175d4dbc8e5c549fc2e50c1bedc01373395af7829823899",
+  "evidence": {
+    "content_id": "a6e5880be371d9c4fd1758475fbfca33ef57d112b88b349a0d120140c5968787",
+    "manifest": "evidence/VERSION.json",
+    "manifest_sha256": "d329d0b579fd08312133ad1bd15bce21f99b6e92815f3d4848d96fd7640b3f79",
+    "record_count": 1421
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v2"
+  },
+  "levels_independent": true,
+  "model": {
+    "checkpoint_step": 130,
+    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-bbb-martins-best",
+    "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
+    "revision": "42cb4afa224c102898d75fe4ad48e166254952b5"
+  },
+  "morgan_fingerprint": {
+    "bits": 2048,
+    "radius": 2,
+    "similarity": "Tanimoto"
+  },
+  "neighbor_identity_policy_by_level": {
+    "L1": "scaffold_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "flat_v5/tdc_v2/bbb_martins/l1/query_pure/reused_task_best_v1/original",
+  "query_pure_policy": {
+    "complete_order": "assay_transfer",
+    "completeness": "all_100_parents_and_all_train_contexts",
+    "incomplete_order": "morgan",
+    "schema_version": "tdc_v2_l1_query_pure.v1"
+  },
+  "query_pure_summary": {
+    "test": {
+      "assay_pure_queries": 28,
+      "morgan_pure_queries": 378,
+      "queries": 406,
+      "scores_reused": 2800
+    },
+    "valid": {
+      "assay_pure_queries": 28,
+      "morgan_pure_queries": 175,
+      "queries": 203,
+      "scores_reused": 2800
+    }
+  },
+  "ranking_modes": [
+    "morgan",
+    "query-pure"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "score_source_release_index_sha256": "86662e2e4bdbfa5bfa6dc7ba1c09574fab1367f502cb9c362fdabdfbdb0d1345",
+  "scoring_contract_version": "assay_transfer_chat_first_divergent_token_bf16_backbone_fp32_head.v2",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L1": {
+          "content_id": "2c2c57883463e0aefa835efa4f6a048085e9cc1293e7a2dec7618786ec669292",
+          "manifest": "scaffold/test/L1/VERSION.json",
+          "manifest_sha256": "fdf37b5202ee420d50ada10e929f830df876198a7ad6f780a021c11da4d0695b"
+        }
+      }
+    },
+    "valid": {
+      "levels": {
+        "L1": {
+          "content_id": "28b87f66f2de3737a04c693893bca012bfba54186832a48ba8794274ded8469a",
+          "manifest": "scaffold/valid/L1/VERSION.json",
+          "manifest_sha256": "1aca470b24a20620838faca04ba96c8b623c95142d10578c2f6067ca08a87a04"
+        }
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "bbb_martins"
+}

@@ -41,12 +41,8 @@ from data.processing.gold_labels.voter_membership import (
     write_gold_label_record_index,
     write_voter_membership,
 )
-from tools.chembl_tool.common.json_utils import write_json_atomic, write_jsonl_atomic
-from tools.chembl_tool.common.molecule_identity import (
-    IDENTITY_NORMALIZER_VERSION,
-    bemis_murcko_scaffold,
-    normalize_molecule_identity,
-)
+from predict.utils.json import write_json_atomic, write_jsonl_atomic
+from predict.retrieval.policies import IDENTITY_NORMALIZER_VERSION, bemis_murcko_scaffold, normalize_molecule_identity
 
 
 VERSION = "conditioned_benchmark_physical_voters.v2"

@@ -1,0 +1,1934 @@
+{
+  "previous_gold_sha256": "3bf18175111fead0f1be7a4860c35449dd00e1ea3d833aee6c647d68b1b9946c",
+  "revised_gold_sha256": "034eb2feca84e377104342fa22b06170d5a8f5d7347a3a4aac32ba1a4048386a",
+  "reviewed_cases": 500,
+  "unchanged_answer_cases": 450,
+  "changed_answer_cases": 50,
+  "review_scope": "complete original input fields for every case; same sample and identities",
+  "changes": [
+    {
+      "audit_case_id": "bioavailability_ma:03b6612f5003034e6b728a0b8ca7cd5d9fde919ed2070d72254b2bac68c61c05",
+      "source_row_uid": "sr_a047960d08ed4fe4bc2b8192e02f1232",
+      "source_gold_ordinal": 12,
+      "input_sha256": "9e78c46f670142474f1165d8746269fd084a9c047694d2ed210ca8120b54ce79",
+      "previous_answer": {
+        "status": "unsure",
+        "measurements": []
+      },
+      "revised_answer": {
+        "status": "relative",
+        "measurements": []
+      },
+      "rationale": "The source reports a bounded change against an external control or comparator; relative takes precedence over bound/range uncertainty.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:044d501c3ff79070fb9b6cbd1c1364cba264d4f98522daa60c1543c58984659b",
+      "source_row_uid": "sr_3087e6a232ef4fecb1be1193d8b922a0",
+      "source_gold_ordinal": 14,
+      "input_sha256": "9fd243ad0ebec55dcd30198dfbef60c0713d85b51380f9c87aa2d49cc4951cc8",
+      "previous_answer": {
+        "status": "unsure",
+        "measurements": []
+      },
+      "revised_answer": {
+        "status": "relative",
+        "measurements": []
+      },
+      "rationale": "The source reports a bounded change against an external control or comparator; relative takes precedence over bound/range uncertainty.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:0a641f0a7a694d61fa07b73574f983b7645549efe5cd0f66df301713664d1618",
+      "source_row_uid": "sr_c8a2afe2b633450ab8c9510822eead92",
+      "source_gold_ordinal": 26,
+      "input_sha256": "ccb4a0b5e3d17b6df81aa01b224085e3f9525a935dfa0762c032d0ebd4c764b3",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.00000118",
+            "unit": "cm/s",
+            "expected_scalar": 1.18e-06,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "1.18",
+            "unit": "10^-6 cm/s",
+            "expected_scalar": 1.18e-06,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.00000118",
+                "unit": "cm/s",
+                "expected_scalar": 1.18e-06,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:1a4fb1d5d23ce1920f72823ba5845798330056a89755f43579e3cb4452d21684",
+      "source_row_uid": "sr_1450ba3753334e038ccf0b013641fbad",
+      "source_gold_ordinal": 57,
+      "input_sha256": "4863526c7c52920e83517d66831a0d5e9120d152f49a742557ceac8a4c0a2ba6",
+      "previous_answer": {
+        "status": "relative",
+        "measurements": []
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.025",
+            "unit": "fraction",
+            "expected_scalar": 0.025,
+            "expected_canonical_unit": "fraction"
+          }
+        ]
+      },
+      "rationale": "The source explicitly defines f using oral and IV dose-normalized exposure. This is a fixed oral/IV fraction, not an arbitrary regimen comparison.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:1bdbdbfc87c303954a8a9a56995a30d7b9cd6b9334d1170da2f1a9c82862319b",
+      "source_row_uid": "sr_7de45907d4024a9d9b9b624f90d0353a",
+      "source_gold_ordinal": 61,
+      "input_sha256": "d3dfb14af662fe4f5f60302603267ca25d7aca16e3a1ccec7c0d0270ddbf9bc7",
+      "previous_answer": {
+        "status": "unsure",
+        "measurements": []
+      },
+      "revised_answer": {
+        "status": "relative",
+        "measurements": []
+      },
+      "rationale": "The source reports a bounded change against an external control or comparator; relative takes precedence over bound/range uncertainty.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:25b24c1810a20b80837ad93b3cac47a69c0f7f33529d7e2f82c5c1751200b525",
+      "source_row_uid": "sr_c31cb0eaee434dd0acdaec4fa5c5ff3e",
+      "source_gold_ordinal": 88,
+      "input_sha256": "ead22b6382a30202605933d55d76a195fce345a4365f423724d1aa61a5af3f67",
+      "previous_answer": {
+        "status": "relative",
+        "measurements": []
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "3.38",
+            "unit": "ratio",
+            "expected_scalar": 3.38,
+            "expected_canonical_unit": "ratio"
+          }
+        ]
+      },
+      "rationale": "The named accumulation/linearity readout or explicit repeated-dose/single-dose formula defines a consistent within-compound exposure denominator, not an arbitrary external comparator.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:35765e918bb2a0fdeeda2ecdb1a39996c72cb4834648513721d14525d89c15f7",
+      "source_row_uid": "sr_a8f8dfe97f9646fa8ea583f595efad2c",
+      "source_gold_ordinal": 113,
+      "input_sha256": "b917e0f03720d561bc31ffe91196b931c78f4c293abb9aa57fed27d4670bcb59",
+      "previous_answer": {
+        "status": "relative",
+        "measurements": []
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "5.65",
+            "unit": "ratio",
+            "expected_scalar": 5.65,
+            "expected_canonical_unit": "ratio"
+          }
+        ]
+      },
+      "rationale": "The named accumulation/linearity readout or explicit repeated-dose/single-dose formula defines a consistent within-compound exposure denominator, not an arbitrary external comparator.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:37cf8ea8d42ee194a3c6869be2accaa11195f6c34f6604e2080a17caffea946c",
+      "source_row_uid": "sr_1adf673b23124760b5716b7f0f83b5ac",
+      "source_gold_ordinal": 115,
+      "input_sha256": "170548a7dced405c064bcff0ec004fe1dd5e1ae5667dcb6b9b45e174552fc799",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.0000141",
+            "unit": "cm/s",
+            "expected_scalar": 1.41e-05,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "14.1",
+            "unit": "10^-6 cm/s",
+            "expected_scalar": 1.41e-05,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.0000141",
+                "unit": "cm/s",
+                "expected_scalar": 1.41e-05,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:3f009bed15a8fdac2a8835c047ea7657a09c41209a87c638ce5e6da48d475c2c",
+      "source_row_uid": "sr_256ec658e5754692a2045e8f1ac8eb7d",
+      "source_gold_ordinal": 125,
+      "input_sha256": "8d38da3b8876fd053680cc05887fcd39023e96af72529af750ee7c03b9b7ef0a",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.0000181",
+            "unit": "cm/s",
+            "expected_scalar": 1.81e-05,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "1.81",
+            "unit": "10^-5 cm/s",
+            "expected_scalar": 1.81e-05,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.0000181",
+                "unit": "cm/s",
+                "expected_scalar": 1.81e-05,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:4492c8275f0000f66870f97e6d831ea510e05b1bfddc836de31424e1ac9cfd4b",
+      "source_row_uid": "sr_dac364f1123d4c8680a15591f9da7e68",
+      "source_gold_ordinal": 133,
+      "input_sha256": "e74a882f05b46f2964db3f3500064e69a8579799d868e62e6ce3673281e14168",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "77.63",
+            "unit": "µM",
+            "expected_scalar": 77.63,
+            "expected_canonical_unit": "µM"
+          },
+          {
+            "measurement": "1.47",
+            "unit": "nM/cm^2/sec",
+            "expected_scalar": 1.47,
+            "expected_canonical_unit": "nM/cm^2·s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "unsure",
+        "measurements": []
+      },
+      "rationale": "The primary field selects several native outcomes without identifying one main outcome; differing units do not authorize multiple outputs.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:44f7e417f71b9d49b2206ed5df9e9fe2dc501b2dd13055df4d8fdd57cd11c9a5",
+      "source_row_uid": "sr_6938594d0a544acc9ffe5a02f14db7b3",
+      "source_gold_ordinal": 134,
+      "input_sha256": "a0ad9f3e6896569aacf29bef8193ef4ead21e3c07454e6219329cf3509f31e6d",
+      "previous_answer": {
+        "status": "relative",
+        "measurements": []
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "3.2",
+            "unit": "ratio",
+            "expected_scalar": 3.2,
+            "expected_canonical_unit": "ratio"
+          }
+        ]
+      },
+      "rationale": "The named accumulation/linearity readout or explicit repeated-dose/single-dose formula defines a consistent within-compound exposure denominator, not an arbitrary external comparator.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:466bf647ee22cb6bc1ece89eb0f1ae9a38550aa2612e054d1f68d0966d9914c7",
+      "source_row_uid": "sr_52f1fd89dd7e44bf8681359c4fb5ead2",
+      "source_gold_ordinal": 136,
+      "input_sha256": "9e8c3ae9475da562d4c0f5e0f1f628689626ad45bf162ef07ac71c52860e83b1",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "1720",
+            "unit": "pmol/mg protein per 45 min",
+            "expected_scalar": 38.2222222222222,
+            "expected_canonical_unit": "pmol/mg·min·protein"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "relative",
+        "measurements": []
+      },
+      "rationale": "The primary measurement selects a 70 percent reduction against control. Absolute formation amounts in support cannot replace that selected comparison.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:469bc72545b0ec8e644db23530ffea59e868a2c7bb53d473c1928ea57dbb0c1c",
+      "source_row_uid": "sr_f37834cb30f6402fa3f547212fa8e925",
+      "source_gold_ordinal": 137,
+      "input_sha256": "984e7d2431c314958d1638f2f885b3bf4c3c2de369b3285ff5378d2053a42152",
+      "previous_answer": {
+        "status": "unavailable",
+        "measurements": []
+      },
+      "revised_answer": {
+        "status": "unsure",
+        "measurements": []
+      },
+      "rationale": "The source-selected native readout is a fraction transferred/absorbed, but only a range is reported. The broad oral-bioavailability category is not a reason to declare that native outcome absent.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:48a15b12a5cdedc42af95bdf7263425696383556f1e4f9789ecc772fee9ac604",
+      "source_row_uid": "sr_1d96fd4623bf4afe91004eb080d59cf1",
+      "source_gold_ordinal": 141,
+      "input_sha256": "2302dc025407784ab8e7787b9a93395f005a60c60a03edc0d8980168fb3b55b7",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "9.58",
+            "unit": "µM",
+            "expected_scalar": 9.58,
+            "expected_canonical_unit": "µM"
+          },
+          {
+            "measurement": "0.24",
+            "unit": "nmol/min/mg",
+            "expected_scalar": 0.24,
+            "expected_canonical_unit": "nmol/mg·min"
+          },
+          {
+            "measurement": "0.030",
+            "unit": "ratio",
+            "expected_scalar": 0.03,
+            "expected_canonical_unit": "ratio"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "9.58",
+                "unit": "µM",
+                "expected_scalar": 9.58,
+                "expected_canonical_unit": "µM"
+              },
+              {
+                "measurement": "0.24",
+                "unit": "nmol/min/mg",
+                "expected_scalar": 0.24,
+                "expected_canonical_unit": "nmol/mg·min"
+              },
+              {
+                "measurement": "0.030",
+                "unit": "fraction",
+                "expected_scalar": 0.03,
+                "expected_canonical_unit": "fraction"
+              }
+            ]
+          },
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "9.58",
+                "unit": "µM",
+                "expected_scalar": 9.58,
+                "expected_canonical_unit": "µM"
+              },
+              {
+                "measurement": "0.24",
+                "unit": "nmol/min/mg",
+                "expected_scalar": 0.24,
+                "expected_canonical_unit": "nmol/mg·min"
+              },
+              {
+                "measurement": "0.030",
+                "unit": "unitless",
+                "expected_scalar": 0.03,
+                "expected_canonical_unit": "dimensionless"
+              }
+            ]
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "unsure",
+        "measurements": []
+      },
+      "rationale": "The primary field selects several native outcomes without identifying one main outcome; differing units do not authorize multiple outputs.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:4b9f8e1be251070f86960050e291fba382916f5da6b7cdd14daa292185841012",
+      "source_row_uid": "sr_1055797d9bf748fbbea21a0111c3f177",
+      "source_gold_ordinal": 148,
+      "input_sha256": "f247b3a90847d08206d2baa927481e12c192ccb9e446fd8fd5d40495855ecfdc",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "9.2",
+            "unit": "mM",
+            "expected_scalar": 9.2,
+            "expected_canonical_unit": "mM"
+          },
+          {
+            "measurement": "2070",
+            "unit": "pmol/min/mg",
+            "expected_scalar": 2070.0,
+            "expected_canonical_unit": "pmol/mg·min"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "unsure",
+        "measurements": []
+      },
+      "rationale": "The primary field selects several native outcomes without identifying one main outcome; differing units do not authorize multiple outputs.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:4c45795f91aa2070a1b8373290124c2640019344e25ece480137ef203e07e439",
+      "source_row_uid": "sr_68df0f0546c144efad6053c4d25cc645",
+      "source_gold_ordinal": 149,
+      "input_sha256": "438738a4d57ef08adeb7279fab43f90ed15b9a3f47aa9641a211ff0d3bb8b461",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "1.69",
+            "unit": "10^-6 cm/s",
+            "expected_scalar": 1.69e-06,
+            "expected_canonical_unit": "cm/s"
+          },
+          {
+            "measurement": "13.54",
+            "unit": "ratio",
+            "expected_scalar": 13.54,
+            "expected_canonical_unit": "ratio"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "1.69",
+                "unit": "10^-6 cm/s",
+                "expected_scalar": 1.69e-06,
+                "expected_canonical_unit": "cm/s"
+              },
+              {
+                "measurement": "13.54",
+                "unit": "fraction",
+                "expected_scalar": 13.54,
+                "expected_canonical_unit": "fraction"
+              }
+            ]
+          },
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "1.69",
+                "unit": "10^-6 cm/s",
+                "expected_scalar": 1.69e-06,
+                "expected_canonical_unit": "cm/s"
+              },
+              {
+                "measurement": "13.54",
+                "unit": "unitless",
+                "expected_scalar": 13.54,
+                "expected_canonical_unit": "dimensionless"
+              }
+            ]
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "unsure",
+        "measurements": []
+      },
+      "rationale": "The primary field selects several native outcomes without identifying one main outcome; differing units do not authorize multiple outputs.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:4d82ee37347b1005e3c386c05896ba1f9182466229b79de0c2424ccaeb9f3456",
+      "source_row_uid": "sr_aee24ba1f84b45df95e47b196d4eb3c5",
+      "source_gold_ordinal": 150,
+      "input_sha256": "ef0c7f5fa1151aa3774165e5755e2f3d4a6ee5acba8e3732c033b187a504bb64",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.00000201",
+            "unit": "cm/s",
+            "expected_scalar": 2.01e-06,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "2.01",
+            "unit": "10^-6 cm/s",
+            "expected_scalar": 2.01e-06,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.00000201",
+                "unit": "cm/s",
+                "expected_scalar": 2.01e-06,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:5102d93ad4e7cd30c69c9700ebb9ec234c173747de383c2f12f3f37ae3841300",
+      "source_row_uid": "sr_c75edd333c2f478a8e33c1072fc89bb9",
+      "source_gold_ordinal": 158,
+      "input_sha256": "637c4a57b957e765dec1ef221928150c3c1847eb4b44df50da0e7d46053ef64d",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.00001793",
+            "unit": "cm/s",
+            "expected_scalar": 1.793e-05,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "17.93",
+            "unit": "10^-6 cm/s",
+            "expected_scalar": 1.793e-05,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.00001793",
+                "unit": "cm/s",
+                "expected_scalar": 1.793e-05,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:5389ed0027ef3c682d1d24e0f4909a03c1640720319327afd1e757d52ce4fb23",
+      "source_row_uid": "sr_711a96b2164d4100804cc57e222ffc92",
+      "source_gold_ordinal": 165,
+      "input_sha256": "5c0bd6580454a1647669c7bd265e1c7c9729ec9d0c778b1baeacac446d8ae975",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.00000618",
+            "unit": "cm/s",
+            "expected_scalar": 6.18e-06,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "6.18",
+            "unit": "10^-6 cm/s",
+            "expected_scalar": 6.18e-06,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.00000618",
+                "unit": "cm/s",
+                "expected_scalar": 6.18e-06,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:56daf102f46414baf8ce2ff7f3123bfbfb0513ac172782479c149d32a2a5d677",
+      "source_row_uid": "sr_e478642f33004864940b356e8681246c",
+      "source_gold_ordinal": 171,
+      "input_sha256": "2089aee2b46661d1ae19fbab8e643e3f366bab5252000a540b012e6a5ac9316e",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.000000479",
+            "unit": "cm/s",
+            "expected_scalar": 4.79e-07,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.479",
+            "unit": "10^-6 cm s^-1",
+            "expected_scalar": 4.79e-07,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.000000479",
+                "unit": "cm/s",
+                "expected_scalar": 4.79e-07,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:6876655b3e2c00ba26317a1515317275944b4ae19c308676e84fd553340985e0",
+      "source_row_uid": "sr_a50b21cc7c4e4678b3a8093d377a1b30",
+      "source_gold_ordinal": 191,
+      "input_sha256": "3c22b08e72e4bb4a3c6cae4d0503a76bafb5df1a82fcb35b7713e0a43381acf0",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "2.20",
+            "unit": "nmol/min/mg protein",
+            "expected_scalar": 2.2,
+            "expected_canonical_unit": "nmol/mg·min·protein"
+          },
+          {
+            "measurement": "228.9",
+            "unit": "µM",
+            "expected_scalar": 228.9,
+            "expected_canonical_unit": "µM"
+          },
+          {
+            "measurement": "0.78",
+            "unit": "unitless",
+            "expected_scalar": 0.78,
+            "expected_canonical_unit": "dimensionless"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "2.20",
+                "unit": "nmol/min/mg protein",
+                "expected_scalar": 2.2,
+                "expected_canonical_unit": "nmol/mg·min·protein"
+              },
+              {
+                "measurement": "228.9",
+                "unit": "µM",
+                "expected_scalar": 228.9,
+                "expected_canonical_unit": "µM"
+              },
+              {
+                "measurement": "0.78",
+                "unit": "ratio",
+                "expected_scalar": 0.78,
+                "expected_canonical_unit": "ratio"
+              }
+            ]
+          },
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "2.20",
+                "unit": "nmol/min/mg protein",
+                "expected_scalar": 2.2,
+                "expected_canonical_unit": "nmol/mg·min·protein"
+              },
+              {
+                "measurement": "228.9",
+                "unit": "µM",
+                "expected_scalar": 228.9,
+                "expected_canonical_unit": "µM"
+              },
+              {
+                "measurement": "0.78",
+                "unit": "fraction",
+                "expected_scalar": 0.78,
+                "expected_canonical_unit": "fraction"
+              }
+            ]
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "unsure",
+        "measurements": []
+      },
+      "rationale": "The primary field selects several native outcomes without identifying one main outcome; differing units do not authorize multiple outputs.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:6ae988849ef95b51ed0bdd4b8bd778288322e894a64304d372090f68dc4cd733",
+      "source_row_uid": "sr_74c78af2af084015a6b10a9b3ec838c3",
+      "source_gold_ordinal": 196,
+      "input_sha256": "009a66c401466a831a0c3f8f00e69b96d3f2ab1f27d6fcaa85d748f0b12e2849",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.00000021",
+            "unit": "cm/s",
+            "expected_scalar": 2.1e-07,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.21",
+            "unit": "10^-6 cm/s",
+            "expected_scalar": 2.1e-07,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.00000021",
+                "unit": "cm/s",
+                "expected_scalar": 2.1e-07,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:73a98990b79b5f0a63a5670050db0d5214400261da8e8d736a5453d4ce7fc890",
+      "source_row_uid": "sr_eadd26501c2b420b9750939e345ff171",
+      "source_gold_ordinal": 208,
+      "input_sha256": "04b5bb5bd850f0d53d99e7a7e78f5f68a1f1204649077f1ae01963b680e378ce",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "12.8",
+            "unit": "h",
+            "expected_scalar": 12.8,
+            "expected_canonical_unit": "h"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "12.8",
+            "unit": "hr",
+            "expected_scalar": 12.8,
+            "expected_canonical_unit": "h"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "12.8",
+                "unit": "h",
+                "expected_scalar": 12.8,
+                "expected_canonical_unit": "h"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:73b9389b334b4c1b08039af63e1b1ded23698a4719e9b1c56658ae4a58d9dd59",
+      "source_row_uid": "sr_5038ee8b659d4357a4691825189e1b60",
+      "source_gold_ordinal": 209,
+      "input_sha256": "7d38be726efcc5926a4f29f3b28d204bfe1fbab000da8509ca184086847157d0",
+      "previous_answer": {
+        "status": "relative",
+        "measurements": []
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "1.2",
+            "unit": "ratio",
+            "expected_scalar": 1.2,
+            "expected_canonical_unit": "ratio"
+          }
+        ]
+      },
+      "rationale": "The named accumulation/linearity readout or explicit repeated-dose/single-dose formula defines a consistent within-compound exposure denominator, not an arbitrary external comparator.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:817352a1a7102575b3ae49583a0b511c7a75a1d6e0699102e173a6d3e14911fb",
+      "source_row_uid": "sr_691c989fecc844c9b76baa48805e7ebc",
+      "source_gold_ordinal": 237,
+      "input_sha256": "457fea0513ec294f625ffe1e7eb7668fee3bced8405985d30f938b51ec5932e8",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.000165",
+            "unit": "cm/s",
+            "expected_scalar": 0.000165,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "1.65",
+            "unit": "10^-4 cm/s",
+            "expected_scalar": 0.000165,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.000165",
+                "unit": "cm/s",
+                "expected_scalar": 0.000165,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:81dbdc5ecd102eb651ead1adacd601519f32849a8e9793c646c374dce9442a52",
+      "source_row_uid": "sr_129ab7024b484892b8ed708043ce7814",
+      "source_gold_ordinal": 238,
+      "input_sha256": "7c4c6b3e73927a52f7f7a373f3c98da551df75cbfcef114f2dc669f0fb3c32f5",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "94",
+            "unit": "µM",
+            "expected_scalar": 94.0,
+            "expected_canonical_unit": "µM"
+          },
+          {
+            "measurement": "2.7",
+            "unit": "nmol/min/nmol",
+            "expected_scalar": 2.7,
+            "expected_canonical_unit": "/min"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "unsure",
+        "measurements": []
+      },
+      "rationale": "The primary field selects several native outcomes without identifying one main outcome; differing units do not authorize multiple outputs.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:83cff898bb78ab0f80f6423d46da86c0dfb72e196b6e975d37f93f0c921f02d4",
+      "source_row_uid": "sr_4909a678bde84ffebd4ca71a28821713",
+      "source_gold_ordinal": 241,
+      "input_sha256": "3a7e4824dbc7c7c16a2490a7280deee423b4d6e59bb31426355e748598128092",
+      "previous_answer": {
+        "status": "unsure",
+        "measurements": []
+      },
+      "revised_answer": {
+        "status": "relative",
+        "measurements": []
+      },
+      "rationale": "The source reports a bounded change against an external control or comparator; relative takes precedence over bound/range uncertainty.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:8f240bd9d6c73723a5a714909884e9a021afd4c1c1f1f5efd207552bb952853c",
+      "source_row_uid": "sr_c72472a0169743cbaa0996d95442dfcf",
+      "source_gold_ordinal": 264,
+      "input_sha256": "2587ecacc13c3dcc4b4f31867017a1e7f6b2bebb940e2024e0720d9b65e4f198",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.00575",
+            "unit": "mL/cm·min",
+            "expected_scalar": 0.00575,
+            "expected_canonical_unit": "mL/cm·min"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "5.75",
+            "unit": "10^-3 mL/min/cm",
+            "expected_scalar": 0.00575,
+            "expected_canonical_unit": "mL/cm·min"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.00575",
+                "unit": "mL/cm·min",
+                "expected_scalar": 0.00575,
+                "expected_canonical_unit": "mL/cm·min"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:8fa987b1e0b1ebc4775fe4a60a1821aab5773bd1a62310a6cbbe98706f891a5a",
+      "source_row_uid": "sr_02e12cdf22a042f6876726da26c915b3",
+      "source_gold_ordinal": 265,
+      "input_sha256": "e2423007a5f9ca0dbbcaf6693ea0143802c9b322cb7ad6064ab35695bafb39c3",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.00006051",
+            "unit": "cm/s",
+            "expected_scalar": 6.051e-05,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "6.051",
+            "unit": "10^-5 cm/s",
+            "expected_scalar": 6.051e-05,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.00006051",
+                "unit": "cm/s",
+                "expected_scalar": 6.051e-05,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:90dba9772b0dc88d2ec588409a103e1d8818d888c8481e509bcde342913a7472",
+      "source_row_uid": "sr_cb4c5f2691ef4ec8accb6cdcfc567976",
+      "source_gold_ordinal": 268,
+      "input_sha256": "bfd4f601d3b4a223a9853547288fa9ec34d47298571aa981140b142487a4f3c1",
+      "previous_answer": {
+        "status": "unsure",
+        "measurements": []
+      },
+      "revised_answer": {
+        "status": "relative",
+        "measurements": []
+      },
+      "rationale": "The source reports a bounded change against an external control or comparator; relative takes precedence over bound/range uncertainty.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:92e97a91530e5e5e6e7a2ea0a543842429541484fcb03afe1f02427e01899c47",
+      "source_row_uid": "sr_71ddc3f120ab4493a094e1a19905f1bf",
+      "source_gold_ordinal": 270,
+      "input_sha256": "2394a43c7d9d15bf5b2eed9f044693cc90fe04bb8e60c78332c313fa151ca215",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.00004123",
+            "unit": "cm/s",
+            "expected_scalar": 4.123e-05,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "41.23",
+            "unit": "10^-6 cm/s",
+            "expected_scalar": 4.123e-05,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.00004123",
+                "unit": "cm/s",
+                "expected_scalar": 4.123e-05,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:96b2f59c71a950cdebfe7438af9704ef7c9849432acf288254b7abe12505afe8",
+      "source_row_uid": "sr_baeea48ae7db4a54b7c43dc7061fcf02",
+      "source_gold_ordinal": 276,
+      "input_sha256": "d317d3a8debdc189f87a33b0a0bf8a201d50563baa4c201e84176712bac33afe",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.000004",
+            "unit": "cm/s",
+            "expected_scalar": 4e-06,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "4.0",
+            "unit": "10^-6 cm/s",
+            "expected_scalar": 4e-06,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.000004",
+                "unit": "cm/s",
+                "expected_scalar": 4e-06,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:99cbcb9a4b8feefbc8e9db90b53a6c59e68f6872f525facbd324fa5cb865a522",
+      "source_row_uid": "sr_34c47f7d4b064aaaa222e83e43335a25",
+      "source_gold_ordinal": 288,
+      "input_sha256": "d44de98e6e2cd605683a0d540b2286859449c02bc4fa0856ce00625ffb7ffa46",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.00000112",
+            "unit": "cm/s",
+            "expected_scalar": 1.12e-06,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "1.12",
+            "unit": "10^-6 cm/s",
+            "expected_scalar": 1.12e-06,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.00000112",
+                "unit": "cm/s",
+                "expected_scalar": 1.12e-06,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:9a63b994cc1c4ef7c4b1ed735c1e1e9f3da73f8ae15abab92c71586215f10799",
+      "source_row_uid": "sr_51c47fd91bc04709838d0e6a4b7f943f",
+      "source_gold_ordinal": 291,
+      "input_sha256": "3800602736ab58fe9ba2e9eb5d84fc2bc02023f1233ec8ad9442144443184928",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.9",
+            "unit": "ratio",
+            "expected_scalar": 0.9,
+            "expected_canonical_unit": "ratio"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.9",
+                "unit": "fraction",
+                "expected_scalar": 0.9,
+                "expected_canonical_unit": "fraction"
+              }
+            ]
+          },
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.9",
+                "unit": "unitless",
+                "expected_scalar": 0.9,
+                "expected_canonical_unit": "dimensionless"
+              }
+            ]
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "unsure",
+        "measurements": []
+      },
+      "rationale": "The primary field selects several native outcomes without identifying one main outcome; differing units do not authorize multiple outputs.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:9ec6dcb98c2d0794e897080791bda14c6bee098e80fca73e0ed7a02173e1b07b",
+      "source_row_uid": "sr_0b6cf2e7886e4de68a037253bc1335c8",
+      "source_gold_ordinal": 300,
+      "input_sha256": "771d97fc60617cc4ba34d35b698ded61fff5a025fc6f381970acc1b12bd95018",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.00000052",
+            "unit": "cm/s",
+            "expected_scalar": 5.2e-07,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "5.2",
+            "unit": "10^-7 cm/s",
+            "expected_scalar": 5.2e-07,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.00000052",
+                "unit": "cm/s",
+                "expected_scalar": 5.2e-07,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:a2d86dab022b34c60b4b312fbc74cb7f84324c3871ba5bf40c21e63ae45f15fc",
+      "source_row_uid": "sr_ae4277e475ea4773b166e54828242c71",
+      "source_gold_ordinal": 312,
+      "input_sha256": "81335500e614aba6f1017f85ec3bea8896b433b5262631de85a352f865ab4f81",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.0000022",
+            "unit": "cm/s",
+            "expected_scalar": 2.2e-06,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "2.2",
+            "unit": "10^-6 cm s^-1",
+            "expected_scalar": 2.2e-06,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.0000022",
+                "unit": "cm/s",
+                "expected_scalar": 2.2e-06,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:b2c0b8d453e109f79da2e10c56c5edec8d8ecb82ed6cd01a667b4b89d0cb666f",
+      "source_row_uid": "sr_8a6f65e831f94ddf9e628859459e40ae",
+      "source_gold_ordinal": 342,
+      "input_sha256": "eff109854ff7f35d2db3f2c4638d375d4ec6cdb5549319662147d134c66b8c84",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "1",
+            "unit": "ratio",
+            "expected_scalar": 1.0,
+            "expected_canonical_unit": "ratio"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "1",
+                "unit": "fraction",
+                "expected_scalar": 1.0,
+                "expected_canonical_unit": "fraction"
+              }
+            ]
+          },
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "1",
+                "unit": "unitless",
+                "expected_scalar": 1.0,
+                "expected_canonical_unit": "dimensionless"
+              }
+            ]
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "unsure",
+        "measurements": []
+      },
+      "rationale": "The primary permeability is only a bound. A secondary parenthetical efflux ratio must not replace the unresolved primary permeability outcome.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:ba1491283ff9eb1e110f0446edfb351c6b5e0a3115ecc1a22fbe2d117c42e698",
+      "source_row_uid": "sr_403f46a603c84372ace96c17b03acbe0",
+      "source_gold_ordinal": 353,
+      "input_sha256": "90888dafa24381206e77e6cd67cc0933599f97ed510ff7b7b6834ff676dc3c6f",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.000001",
+            "unit": "cm/s",
+            "expected_scalar": 1e-06,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "1",
+            "unit": "10^-6 cm/s",
+            "expected_scalar": 1e-06,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.000001",
+                "unit": "cm/s",
+                "expected_scalar": 1e-06,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:c22a6aa45df42bdd12b79f9538da2303696529c225f0a80f20989ece5318d2a5",
+      "source_row_uid": "sr_77a6fa9724d24896828c4140f1cbbdbb",
+      "source_gold_ordinal": 363,
+      "input_sha256": "bbd7440cb93c827d7346770a01e0261571d8788d0def3b1f0a36cf6b84f5b7de",
+      "previous_answer": {
+        "status": "relative",
+        "measurements": []
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "1.15",
+            "unit": "ratio",
+            "expected_scalar": 1.15,
+            "expected_canonical_unit": "ratio"
+          }
+        ]
+      },
+      "rationale": "The named accumulation/linearity readout or explicit repeated-dose/single-dose formula defines a consistent within-compound exposure denominator, not an arbitrary external comparator.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:ce17c25dbba77e54461bb32e61f505f7f750e9757308bd2ae4065cb1e0c8424d",
+      "source_row_uid": "sr_1f7ab9e35bc84ed0aa5b362eebe47c3f",
+      "source_gold_ordinal": 393,
+      "input_sha256": "e63af418debb5e872e42c97ccd1f628094910d8ac1874526b5a72fd1ac736790",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.00132",
+            "unit": "mg/cm^2·s",
+            "expected_scalar": 0.00132,
+            "expected_canonical_unit": "mg/cm^2·s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "13.20",
+            "unit": "10^-4 mg/(cm^2·sec)",
+            "expected_scalar": 0.00132,
+            "expected_canonical_unit": "mg/cm^2·s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.00132",
+                "unit": "mg/cm^2·s",
+                "expected_scalar": 0.00132,
+                "expected_canonical_unit": "mg/cm^2·s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:ce862bb959cf353500e10b94e8e422d32dc4697e0cb973c489bbcb39d7b65614",
+      "source_row_uid": "sr_0d38bd387cf649e3b3a1847f78d7858d",
+      "source_gold_ordinal": 394,
+      "input_sha256": "7051d1025b4f123dab73df3312ed0828cec2e1650fea0dae5c840402a49d377a",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.00028",
+            "unit": "cm/s",
+            "expected_scalar": 0.00028,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "2.8",
+            "unit": "10^-4 cm/s",
+            "expected_scalar": 0.00028,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.00028",
+                "unit": "cm/s",
+                "expected_scalar": 0.00028,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:cf02dfee07d0356b82d20934dcde581f937422c1faae647dcc4a27fe8e52f50f",
+      "source_row_uid": "sr_7fe08556798442e09634c40dda057900",
+      "source_gold_ordinal": 397,
+      "input_sha256": "d9ef5b7ce876e9d50cb80788d0ca65668b466a96cfe4499d537244569e7a53bc",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.00000039",
+            "unit": "cm/s",
+            "expected_scalar": 3.9e-07,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.39",
+            "unit": "10^-6 cm/s",
+            "expected_scalar": 3.9e-07,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.00000039",
+                "unit": "cm/s",
+                "expected_scalar": 3.9e-07,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:cf82b91c47c0026e40e7a40db41974782b9682595023f9daf8701c129bf0b322",
+      "source_row_uid": "sr_a6a29c40dc4a42c18d08af3c772754af",
+      "source_gold_ordinal": 398,
+      "input_sha256": "a178a46d95dc73b0772b484dc1f2476f7ef58344056741a7d8d4c532784debed",
+      "previous_answer": {
+        "status": "unsure",
+        "measurements": []
+      },
+      "revised_answer": {
+        "status": "relative",
+        "measurements": []
+      },
+      "rationale": "The source reports a bounded change against an external control or comparator; relative takes precedence over bound/range uncertainty.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:d0920cef564a89c4be4062f4b47a977855789b7fc012a2e376dc215ff1e2b416",
+      "source_row_uid": "sr_19b9e46f8732454aa558dd95d9a4250f",
+      "source_gold_ordinal": 402,
+      "input_sha256": "49c9b6cca0db95b6b90ca692737c02668d4e78c068a070c75f4a1235d0006b0e",
+      "previous_answer": {
+        "status": "relative",
+        "measurements": []
+      },
+      "revised_answer": {
+        "status": "unsure",
+        "measurements": []
+      },
+      "rationale": "Source wording mixes an AUC comparison between doses with a fraction absorbed; it does not unambiguously establish whether 30 percent is of dose or of the comparator outcome.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:d39ac53b9c13555c803fee9311eb1e5f0ba16905c21029842d923809379f60d1",
+      "source_row_uid": "sr_db16f020b7cb4d97a01bb358f494627a",
+      "source_gold_ordinal": 412,
+      "input_sha256": "6a72c7c0018be8120ec66a4fa12e1dfa52e213f7ea646fa815fc7d267764d20c",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "2.00",
+            "unit": "10^-2 (pmol/min/pmol P450)/µM",
+            "expected_scalar": 0.02,
+            "expected_canonical_unit": "/P450·min·µM"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "2.00",
+            "unit": "10^-2 (pmol·min−1·pmol−1 P450) per µM",
+            "expected_scalar": 0.02,
+            "expected_canonical_unit": "P450/min·µM"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "2.00",
+                "unit": "10^-2 (pmol/min/pmol P450)/µM",
+                "expected_scalar": 0.02,
+                "expected_canonical_unit": "/P450·min·µM"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:dceb64f8e32837b54f682fe05b5323d4a7988f206611ae39e2e09a109cb58996",
+      "source_row_uid": "sr_f3dfce25fd6b42dea2bdf3507faca928",
+      "source_gold_ordinal": 437,
+      "input_sha256": "473c98a816ab03be5eb2f21bfad21267a8e45a0248d6124db14f76f725ac1d8f",
+      "previous_answer": {
+        "status": "unavailable",
+        "measurements": []
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "608.3",
+            "unit": "µM",
+            "expected_scalar": 608.3,
+            "expected_canonical_unit": "µM"
+          }
+        ]
+      },
+      "rationale": "The primary field explicitly selects fitted Ki and its complete unit under a broad UGT-metabolism category. Ki is the reported inhibitory outcome, not the administered assay concentration.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:e4b8b40858f035b76b35a05f2e969fc53985ee5b2d309c9c1ed743e9ea127977",
+      "source_row_uid": "sr_12a1b5f3f4de49eeb2987d0e24c4e9dc",
+      "source_gold_ordinal": 451,
+      "input_sha256": "c377ffda5efe6c07bf9988ae764c5a356296df3bbe25092fa671320fe4c837aa",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.000013",
+            "unit": "cm/s",
+            "expected_scalar": 1.3e-05,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "1.3",
+            "unit": "10^-5 cm/s",
+            "expected_scalar": 1.3e-05,
+            "expected_canonical_unit": "cm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.000013",
+                "unit": "cm/s",
+                "expected_scalar": 1.3e-05,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:eb522af5c4a5aa684f1816a159883849f544e7d7c9363555631712bfc7e79367",
+      "source_row_uid": "sr_ccdc778caa724d9b97d7201b03c57475",
+      "source_gold_ordinal": 469,
+      "input_sha256": "95f03338d1f0dfc55f0a8d43cbd5e9b96910c0307be260eaa953663ff3f9606d",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "0.0000151",
+            "unit": "cm/s",
+            "expected_scalar": 1.51e-05,
+            "expected_canonical_unit": "cm/s"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "151",
+            "unit": "nm/s",
+            "expected_scalar": 151.0,
+            "expected_canonical_unit": "nm/s"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "0.0000151",
+                "unit": "cm/s",
+                "expected_scalar": 1.51e-05,
+                "expected_canonical_unit": "cm/s"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "Use the coefficient and complete unit/printed scale explicitly present in the source; retain the reviewed equivalent old spelling or conversion only as a scoring alternative.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:eeb7c23d0d2a2faf4fa6cb9328ed6bf1da7731c68fef571dc45db106d493d8b9",
+      "source_row_uid": "sr_565f1f4905f5456a90153a48c61fe92b",
+      "source_gold_ordinal": 479,
+      "input_sha256": "1573d7e4867639c822d880e2626966a5a12cefd130a8228ee2c2d6936735546e",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "2.88",
+            "unit": "ratio",
+            "expected_scalar": 2.88,
+            "expected_canonical_unit": "ratio"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "2.88",
+                "unit": "fraction",
+                "expected_scalar": 2.88,
+                "expected_canonical_unit": "fraction"
+              }
+            ]
+          },
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "2.88",
+                "unit": "unitless",
+                "expected_scalar": 2.88,
+                "expected_canonical_unit": "dimensionless"
+              }
+            ]
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "2.88",
+            "unit": "ratio",
+            "expected_scalar": 2.88,
+            "expected_canonical_unit": "ratio"
+          }
+        ],
+        "alternatives": [
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "2.88",
+                "unit": "fraction",
+                "expected_scalar": 2.88,
+                "expected_canonical_unit": "fraction"
+              }
+            ]
+          },
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "2.88",
+                "unit": "unitless",
+                "expected_scalar": 2.88,
+                "expected_canonical_unit": "dimensionless"
+              }
+            ]
+          },
+          {
+            "status": "ok",
+            "measurements": [
+              {
+                "measurement": "2.88",
+                "unit": "fold",
+                "expected_scalar": 2.88,
+                "expected_canonical_unit": "fold"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "The source explicitly equates 2.88-fold directional permeation with efflux ratio 2.88. Accept fold only for this reviewed equivalence, not for arbitrary comparisons.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    },
+    {
+      "audit_case_id": "bioavailability_ma:f5d1a894ff7b6a4b9ea4642cebccdefd9b1043c9a3a0dd4e60b37870980a3328",
+      "source_row_uid": "sr_1984abb1d06d47458d916059d31124c1",
+      "source_gold_ordinal": 486,
+      "input_sha256": "7e3728ef8ac6bb09294ed21485ac917aa718ceefd58b1c5874f1c966fa639c55",
+      "previous_answer": {
+        "status": "ok",
+        "measurements": [
+          {
+            "measurement": "48",
+            "unit": "pmol/min/mg protein",
+            "expected_scalar": 48.0,
+            "expected_canonical_unit": "pmol/mg·min·protein"
+          },
+          {
+            "measurement": "16",
+            "unit": "µM",
+            "expected_scalar": 16.0,
+            "expected_canonical_unit": "µM"
+          }
+        ]
+      },
+      "revised_answer": {
+        "status": "unsure",
+        "measurements": []
+      },
+      "rationale": "The primary field selects several native outcomes without identifying one main outcome; differing units do not authorize multiple outputs.",
+      "reviewer": "Codex source-only re-review",
+      "review_date": "2026-09-05"
+    }
+  ]
+}

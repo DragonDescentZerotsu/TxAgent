@@ -17,7 +17,7 @@ from data.processing.evidence_library.shared.v2.normalization.cleaning import (
 from data.processing.evidence_library.versions.v7.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark_v4 import (
     label_record as label_bbb_record,
 )
-from tools.chembl_tool.common.json_utils import write_json_atomic
+from predict.utils.json import write_json_atomic
 
 
 VERSION = "gold_v1_voter_contract.v1"

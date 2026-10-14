@@ -1,0 +1,17 @@
+{
+  "profile": "ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1",
+  "splits": {
+    "test": {
+      "database_sha256": "902b2692d0d96ac4ff57b5c8fa965cc9ec3370ceaea6b386a15a29a9ff87383e",
+      "query_count": 82,
+      "ranking_rows": 8200
+    },
+    "valid": {
+      "database_sha256": "a9b11f65c56f926298e6b960cba0e990b56c77e0ff2b5877be15b23d155b9a62",
+      "query_count": 40,
+      "ranking_rows": 4000
+    }
+  },
+  "status": "complete",
+  "task_id": "skin_reaction"
+}

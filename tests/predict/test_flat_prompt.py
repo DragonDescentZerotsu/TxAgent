@@ -9,13 +9,16 @@ from types import SimpleNamespace
 
 import pytest
 
+from predict.llm_io.response import response_validation_errors
 from predict.harnesses.branches.runner import (
     _parse_args,
     _validate_assay_transfer_scores,
     _validate_flat_prompt,
     _validated_flat_selection_manifest,
     _validate_group_prompt_contract,
+    prediction_to_label,
 )
+from predict.harnesses.branches.tasks.dili.contract import CONFIG as DILI_CONFIG
 from predict.harnesses.branches.flat import (
     ASSAY_TRANSFER_VARIANT,
     CONTEXT_V4_HARNESS_VERSION,
@@ -25,6 +28,7 @@ from predict.harnesses.branches.flat import (
     CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
     CONTEXT_V6_PROMPT_VERSION,
     CONTEXT_V7_HARNESS_VERSION,
     CONTEXT_V7_PROMPT_VERSION,
@@ -66,82 +70,16 @@ FIXTURE_PATH = Path("tests/predict/fixtures/tianang_flat_v1_rendered.json")
 JOSEPH_FIXTURE_PATH = Path("tests/predict/fixtures/joseph_flat_v2_rendered.json")
 
 
-def _fixture() -> dict:
-    return json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
 
 
-def _payload() -> dict:
-    return deepcopy(_fixture()["input_payload"])
 
 
-def _render(case: dict) -> list[dict[str, str]]:
-    fixture = _fixture()
-    return render_flat_group_messages(
-        deepcopy(fixture["input_payload"]),
-        group=deepcopy(fixture["group_context"]),
-        task_id=case["task_id"],
-        task_prompt_profile=case["task_prompt_profile"],
-        group_tools_enabled=False,
-        retrieval_strategy=case["retrieval_strategy"],
-    )
 
 
-def test_reviewed_flat_prompt_messages() -> None:
-    fixture = _fixture()
-    assert fixture["prompt_version"] == PROMPT_VERSION
-    for case in fixture["cases"]:
-        messages = _render(case)
-        rendered = [
-            messages[0],
-            {"role": "user", "content": json.loads(messages[1]["content"])},
-        ]
-        assert rendered == case["expected_messages"]
 
 
-def test_reviewed_joseph_flat_prompt_messages() -> None:
-    fixture = json.loads(JOSEPH_FIXTURE_PATH.read_text(encoding="utf-8"))
-    for case in fixture["cases"]:
-        messages = render_flat_group_messages(
-            deepcopy(fixture["input_payload"]),
-            group=deepcopy(fixture["group_context"]),
-            task_id=case["task_id"],
-            task_prompt_profile=case["task_prompt_profile"],
-            group_tools_enabled=False,
-            prompt_version=fixture["prompt_version"],
-            retrieval_strategy="morgan_fingerprint",
-            flat_reranking=case["reranking"],
-        )
-        observed = hashlib.sha256(
-            json.dumps(
-                messages, ensure_ascii=False, sort_keys=True, separators=(",", ":")
-            ).encode("utf-8")
-        ).hexdigest()
-        assert observed == case["messages_sha256"]
 
 
-def test_flat_variants_project_only_their_ranking_surface() -> None:
-    source = _payload()
-    common = {
-        "task_id": "bbb_martins",
-        "task_prompt_profile": "meaningful_cns_access_v1",
-        "include_query_tool_guidance": True,
-    }
-    morgan = apply_flat_group_prompt(
-        source,
-        retrieval_strategy="morgan_fingerprint",
-        **common,
-    )
-    assay = apply_flat_group_prompt(
-        source,
-        retrieval_strategy="assay_transfer_tool",
-        **common,
-    )
-
-    assert source == _payload()
-    assert morgan["neighbors"][0]["similarity"] == 0.72
-    assert "assay_transfer_score" not in str(morgan)
-    assert "similarity" not in assay["neighbors"][0]
-    assert assay["neighbors"][0]["assay_transfer_score"] == 0.91
 
 
 def test_flat_prompt_variant_is_selected_by_existing_retrieval_strategy() -> None:
@@ -156,17 +94,6 @@ def test_flat_prompt_variant_is_selected_by_existing_retrieval_strategy() -> Non
     ) == JOINT_VARIANT
 
 
-def test_flat_prompt_rejects_a_nonflat_group() -> None:
-    payload = _payload()
-    payload["group"]["group_id"] = "Tier 1.direct"
-    with pytest.raises(ValueError, match="Flat.all_evidence"):
-        apply_flat_group_prompt(
-            payload,
-            task_id="bbb_martins",
-            task_prompt_profile="meaningful_cns_access_v1",
-            include_query_tool_guidance=True,
-            retrieval_strategy="morgan_fingerprint",
-        )
 
 
 def test_flat_prompt_bundle_is_complete_and_version_owned() -> None:
@@ -178,7 +105,7 @@ def test_flat_prompt_bundle_is_complete_and_version_owned() -> None:
         "system.jinja",
         "tasks.yaml",
     }
-    assert manifest["assembly_files_sha256"].keys() == {"flat.py"}
+    assert manifest["assembly_files_sha256"].keys() == {"flat.py", "prompts/__init__.py"}
     assert len(manifest["sha256"]) == 64
     with pytest.raises(ValueError, match="Unknown flat prompt version"):
         prompt_directory("../tianang_flat_v1")
@@ -255,6 +182,89 @@ def _flat_context_retrieval() -> dict:
     }
 
 
+@pytest.mark.parametrize("prompt_version", [
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
+])
+def test_upstream_prompt_shows_neighbor_morgan_with_transfer_likelihood(
+    prompt_version: str,
+) -> None:
+    retrieval = _flat_context_retrieval()
+    neighbor = retrieval["groups"][0]["neighbors"][0]
+    neighbor.update(similarity=0.73, similarity_metric="Morgan radius=2 bits=2048 Tanimoto")
+    for row in neighbor["evidence_rows"]:
+        row["selection_provenance"].pop("morgan_similarity")
+        row["selection_provenance"]["assay_transfer_score"] = 0.88
+    messages, _ = build_flat_context_request(
+        retrieval, task_id="bioavailability_ma",
+        task_prompt_profile="f20_evidence_calibrated_v2",
+        layout="global", reranking="assay-transfer-contrastive",
+        query_prior=None, prompt_version=prompt_version,
+    )
+    assert "Morgan similarity: 0.73" in messages[1]["content"]
+    assert "Transfer likelihood: 0.88" in messages[1]["content"]
+
+
+@pytest.mark.parametrize("benchmark", ["gold_v1", "tdc"])
+def test_final_full_flat_renders_available_scores_and_valid_references(benchmark: str) -> None:
+    retrieval = _flat_context_retrieval()
+    retrieval["benchmark"] = benchmark
+    neighbor = retrieval["groups"][0]["neighbors"][0]
+    neighbor.update(similarity=0.73, similarity_metric="Morgan radius=2 bits=2048 Tanimoto")
+    for row in neighbor["evidence_rows"]:
+        row["selection_provenance"].pop("morgan_similarity", None)
+        row["selection_provenance"]["assay_transfer_score"] = 0.88
+    messages, metadata = build_flat_context_request(
+        retrieval, task_id="bioavailability_ma",
+        task_prompt_profile="f20_evidence_calibrated_v2",
+        layout="global", reranking="assay-transfer-contrastive",
+        query_prior=None, prompt_version=flat.FINAL_FULL_FLAT_PROMPT_VERSION,
+    )
+    assert "Morgan similarity: 0.73" in messages[1]["content"]
+    assert "Transfer likelihood: 0.88" in messages[1]["content"]
+    assert metadata["reasoning_reference_contract"]["schema_version"] == "progressive_reasoning_references.v1"
+    assert flat_context_validation(
+        "bioavailability_ma", task_prompt_profile="f20_evidence_calibrated_v2",
+        prompt_version=flat.FINAL_FULL_FLAT_PROMPT_VERSION,
+        reference_index=metadata["reasoning_reference_index"],
+    )["allowed_values"]["final_prediction"] == {"pass", "fail"}
+    retrieval["groups"][0]["neighbors"][0]["evidence_rows"][0]["selection_provenance"].pop(
+        "assay_transfer_score"
+    )
+    messages, _ = build_flat_context_request(
+        retrieval, task_id="bioavailability_ma",
+        task_prompt_profile="f20_evidence_calibrated_v2",
+        layout="global", reranking="assay-transfer-contrastive",
+        query_prior=None, prompt_version=flat.FINAL_FULL_FLAT_PROMPT_VERSION,
+    )
+    assert "Morgan similarity: 0.73" in messages[1]["content"]
+    assert messages[1]["content"].count("Transfer likelihood: 0.88") == 1
+
+
+@pytest.mark.parametrize("band,visible", [
+    ("high", True), ("middle", False), ("low", False),
+])
+def test_gold_score_band_hides_likelihood_below_seventy_percent(
+    band: str, visible: bool,
+) -> None:
+    retrieval = _flat_context_retrieval()
+    neighbor = retrieval["groups"][0]["neighbors"][0]
+    neighbor.update(similarity=0.73, similarity_metric="Morgan radius=2 bits=2048 Tanimoto")
+    for row in neighbor["evidence_rows"]:
+        row["selection_provenance"]["assay_transfer_score"] = 0.88
+    flat._apply_gold_score_visibility(retrieval, band)
+    messages, _ = build_flat_context_request(
+        retrieval, task_id="bioavailability_ma",
+        task_prompt_profile="f20_evidence_calibrated_v2",
+        layout="global", reranking="assay-transfer-contrastive",
+        query_prior=None,
+        prompt_version=CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+    )
+    assert "Morgan similarity: 0.8" in messages[1]["content"]
+    assert ("Transfer likelihood: 0.88" in messages[1]["content"]) is visible
+    assert ("The assay-transfer score" in messages[0]["content"]) is visible
+
+
 def test_flat_context_layouts_keep_global_ids_and_change_only_grouping() -> None:
     common = {
         "task_id": "bbb_martins",
@@ -316,14 +326,6 @@ def test_flat_context_schema_has_only_summary_and_final_prediction() -> None:
     }) == ["invalid_output_fields"]
 
 
-def test_flat_context_harness_is_publicly_selectable(monkeypatch) -> None:
-    calls = []
-    monkeypatch.setattr(flat, "_joseph_main", lambda argv: calls.append(argv) or 0)
-    assert flat.run([
-        "--harness-version", CONTEXT_V4_HARNESS_VERSION,
-        "--task", "bbb_martins", "--query-prior", "none", "--prepare-only",
-    ]) == 0
-    assert CONTEXT_V4_HARNESS_VERSION in calls[0]
 
 
 def test_v5_uses_molecule_scoped_record_ids_and_claim_schema() -> None:
@@ -444,6 +446,54 @@ def test_upstream_components_render_portable_schema_and_map_native_label(
     assert "exact chembl evidence assessment" not in messages[1]["content"]
     assert all("\n\n\n" not in message["content"] for message in messages)
     assert "\n\n- " not in messages[0]["content"]
+
+
+@pytest.mark.parametrize("task,profile,positive,negative,native_positive,native_negative", [
+    ("dili", "dili_conditioned_or_source_molecule_outcome.v1", "dili_risk", "no_dili_risk", "dili_risk", "no_dili_risk"),
+    ("ames", "ames_bacterial_reverse_mutation.v1", "positive", "negative", "positive", "negative"),
+    ("skin_reaction", "skin_sensitization_contact_allergy.v2", "risk", "no_risk", "risk", "no_risk"),
+    ("carcinogens", "carcinogens_starling_only_five_organism_groups.v1", "positive", "negative", "positive", "negative"),
+])
+def test_safety_v3_uses_endpoint_prediction_labels(
+    task: str, profile: str, positive: str, negative: str,
+    native_positive: str, native_negative: str,
+) -> None:
+    version = CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION
+    messages, metadata = build_flat_context_request(
+        _flat_context_retrieval(), task_id=task, task_prompt_profile=profile,
+        layout="level-grouped", reranking="assay-transfer-contrastive",
+        query_prior=None, prompt_version=version,
+    )
+    validation = flat_context_validation(
+        task, task_prompt_profile=profile, prompt_version=version,
+        reference_index=metadata["reasoning_reference_index"],
+    )
+
+    assert validation["allowed_values"]["final_prediction"] == {positive, negative}
+    assert f'"final_prediction": "{positive} | {negative}"' in messages[1]["content"]
+    assert native_flat_prediction(task, positive, prompt_version=version)[0] == native_positive
+    assert native_flat_prediction(task, negative, prompt_version=version)[0] == native_negative
+    assert flat_context_validation(
+        task, task_prompt_profile=profile,
+        prompt_version=CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+    )["allowed_values"]["final_prediction"] == {"pass", "fail"}
+
+
+def test_dili_v3_labels_reach_binary_scorer() -> None:
+    version = CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION
+    allowed = flat_context_validation(
+        "dili", task_prompt_profile="dili_conditioned_or_source_molecule_outcome.v1",
+        prompt_version=version,
+    )["allowed_values"]
+    assert response_validation_errors(
+        {"content": {"final_prediction": "pass"}}, allowed_values=allowed,
+    ) == ["invalid_value:final_prediction"]
+    for prediction, expected in (("dili_risk", 1), ("no_dili_risk", 0)):
+        assert response_validation_errors(
+            {"content": {"final_prediction": prediction}}, allowed_values=allowed,
+        ) == []
+        native, _ = native_flat_prediction("dili", prediction, prompt_version=version)
+        assert prediction_to_label(DILI_CONFIG, native) == expected
 
 
 def test_v5_claims_allow_unbounded_molecule_or_record_citations() -> None:
@@ -575,79 +625,12 @@ def test_v7_oral_requires_only_high_low_final_prediction() -> None:
     assert bbb["allowed_values"]["final_prediction"] == {"pass", "fail"}
 
 
-def test_v7_harness_is_publicly_selectable(monkeypatch) -> None:
-    calls = []
-    monkeypatch.setattr(flat, "_joseph_main", lambda argv: calls.append(argv) or 0)
-    assert flat.run([
-        "--harness-version", CONTEXT_V7_HARNESS_VERSION,
-        "--task", "bioavailability_ma", "--query-prior", "none", "--prepare-only",
-    ]) == 0
-    assert CONTEXT_V7_HARNESS_VERSION in calls[0]
 
 
-def test_v8_harness_is_publicly_selectable(monkeypatch) -> None:
-    calls = []
-    monkeypatch.setattr(flat, "_joseph_main", lambda argv: calls.append(argv) or 0)
-    assert flat.run([
-        "--harness-version", CONTEXT_V8_HARNESS_VERSION,
-        "--task", "bbb_martins", "--query-prior", "none", "--prepare-only",
-    ]) == 0
-    assert CONTEXT_V8_HARNESS_VERSION in calls[0]
 
 
-def test_v5_harness_is_publicly_selectable(monkeypatch) -> None:
-    calls = []
-    monkeypatch.setattr(flat, "_joseph_main", lambda argv: calls.append(argv) or 0)
-    assert flat.run([
-        "--harness-version", CONTEXT_V5_HARNESS_VERSION,
-        "--task", "bbb_martins", "--query-prior", "none", "--prepare-only",
-    ]) == 0
-    assert CONTEXT_V5_HARNESS_VERSION in calls[0]
 
 
-@pytest.mark.parametrize(
-    ("config", "strategy", "extra"),
-    [
-        (BBB_CONFIG, "morgan_fingerprint", []),
-        (BIOAVAILABILITY_CONFIG, "morgan_fingerprint", []),
-        (SKIN_CONFIG, "morgan_fingerprint", []),
-        (
-            BBB_CONFIG,
-            "assay_transfer_tool",
-            ["--retrieval-source", "starling", "--enable-assay-transfer-scores", "--legacy"],
-        ),
-        (
-            BIOAVAILABILITY_CONFIG,
-            "assay_transfer_tool",
-            ["--retrieval-source", "starling", "--enable-assay-transfer-scores", "--legacy"],
-        ),
-        (
-            SKIN_CONFIG,
-            "assay_transfer_tool",
-            ["--retrieval-source", "starling", "--enable-assay-transfer-scores", "--legacy"],
-        ),
-    ],
-)
-def test_flat_prompt_cli_uses_frozen_task_contract(
-    config, strategy: str, extra: list[str]
-) -> None:
-    args = _parse_args(
-        config,
-        [
-            "--experiment-mode",
-            "full_flat",
-            "--flat-prompt-version",
-            PROMPT_VERSION,
-            "--retrieval-strategy",
-            strategy,
-            *extra,
-        ],
-    )
-
-    _validate_flat_prompt(config, args)
-    _validate_assay_transfer_scores(config, args)
-    assert args.group_prompt_format == "legacy"
-    assert args.group_output_schema in {"", "legacy"}
 
 
 def test_archived_assay_reranker_requires_legacy_opt_in() -> None:
@@ -675,7 +658,7 @@ def test_flat_prompt_rejects_a_different_task_profile() -> None:
             "meaningful_cns_adjudication_v2",
         ],
     )
-    with pytest.raises(SystemExit, match="requires task prompt profile"):
+    with pytest.raises(SystemExit, match="Retired prompt requires frozen request replay"):
         _validate_flat_prompt(BBB_CONFIG, args)
 
 
@@ -734,64 +717,6 @@ def test_flat_group_reuse_requires_the_same_prompt_contract(tmp_path: Path) -> N
     )
 
 
-@pytest.mark.parametrize(
-    ("task_id", "task_prompt_profile"),
-    [
-        ("bbb_martins", "meaningful_cns_access_v1"),
-        ("bioavailability_ma", "f20_evidence_calibrated_v2"),
-        ("skin_reaction", "sensitization_aligned_v2"),
-    ],
-)
-def test_task_pipelines_delegate_flat_rendering(
-    monkeypatch, task_id: str, task_prompt_profile: str
-) -> None:
-    module = importlib.import_module(
-        f"predict.harnesses.branches.tasks.{task_id}.pipeline"
-    )
-    group = {
-        "group_id": "Flat.all_evidence",
-        "tier": "Flat",
-        "endpoint_group": "all_evidence",
-        "neighbors": [],
-        "identity_blind": True,
-        "tools_prefetched": [],
-    }
-    payload = module.build_group_prompt_payload(
-        {},
-        group,
-        prompt_profile=task_prompt_profile,
-        include_query_tool_guidance=False,
-    )
-    expected = render_flat_group_messages(
-        payload,
-        group=group,
-        task_id=task_id,
-        task_prompt_profile=task_prompt_profile,
-        group_tools_enabled=False,
-        retrieval_strategy="morgan_fingerprint",
-    )
-    captured = {}
-
-    def fake_call(_client, messages, **kwargs):
-        captured.update(messages=messages, kwargs=kwargs)
-        return {"structured_output_validation": {"valid": True}}
-
-    monkeypatch.setattr(module, "call_group_branch", fake_call)
-    module._reason_one_group(
-        SimpleNamespace(enable_group_tools=False),
-        {},
-        group,
-        prompt_profile=task_prompt_profile,
-        flat_prompt_version=PROMPT_VERSION,
-        retrieval_strategy="morgan_fingerprint",
-    )
-
-    assert captured["messages"] == expected
-    assert captured["kwargs"]["required_fields"] == (
-        "transferability",
-        "confidence",
-        "reasoning_summary",
-    )
 
 
 def _selected_payload(record_id: str, level: str, family: str) -> dict:
@@ -989,114 +914,6 @@ def test_partial_snapshot_bundle_keeps_safety_l7_visible(prompt_version: str) ->
     ) == 7
 
 
-def test_flat_v2_renders_complete_source_semantics_without_molecule_name() -> None:
-    source = _selected_payload("r1", "L1", "direct_oral")
-    source["task_id"] = "bioavailability_ma"
-    source["source_fields"] = {
-        "assay_system": "Caco-2 monolayer",
-        "endpoint_name": "intestinal permeability",
-        "measurement_text": "12.3",
-        "unit_text": "cm/s",
-        "species": "human",
-        "qualifying_conditions": "60 minutes",
-        "dose": 0,
-        "substrate_status": False,
-        "biological_context": ["intestinal", {"region": "jejunum"}],
-        "extra_details": {"fed": False, "temperature_c": 37},
-        "support_text": "Measured permeability was 12.3 cm/s.",
-        "molecule_name": "IDENTITY_SENTINEL",
-        "pmid": "12345678",
-        "confidence": 0.99,
-        "smiles": "CCN",
-    }
-    source["source_contract"]["source_or_simply_cleaned"] = {
-        name: True for name in source["source_fields"]
-    }
-    molecule = {
-        "reference_molecule_id": "REF",
-        "canonical_smiles": "CCN",
-        "ranking_method": "joint",
-        "morgan_similarity": 0.712345,
-        "transfer_likelihood": 0.823456,
-        "morgan_top5_rank": 1,
-        "assay_transfer_top5_rank": "not_selected_in_top5",
-        "l1_records": [{
-            "record_id": "r1",
-            "reference_molecule_id": "REF",
-            "morgan_similarity": 0.712345,
-            "ranking_method": "joint",
-            "payload": source,
-        }],
-    }
-    retrieval = cache_matched_flat_retrieval(
-        "q",
-        "CCO",
-        [molecule],
-        {},
-        task="bioavailability_ma",
-        reranking="joint",
-        query_audit={"L1": {"selected_records": 1}},
-        prompt_version=JOSEPH_PROMPT_VERSION,
-    )
-    group = retrieval["groups"][0]
-    row = group["neighbors"][0]["evidence_rows"][0]
-    accounting = row["field_accounting"]
-    assert set(accounting["approved_nonempty_fields"]) == set(source["source_fields"])
-    assert accounting["excluded_fields"] == {
-        "molecule_name": "evidence_molecule_name",
-        "pmid": "nonsemantic_metadata_or_duplicate_structure",
-        "confidence": "nonsemantic_metadata_or_duplicate_structure",
-        "smiles": "nonsemantic_metadata_or_duplicate_structure",
-    }
-
-    module = importlib.import_module(
-        "predict.harnesses.branches.tasks.bioavailability_ma.pipeline"
-    )
-    payload = module.build_group_prompt_payload(
-        {"canonical_smiles": "CCO"},
-        group,
-        prompt_profile="f20_evidence_calibrated_v2",
-        include_query_tool_guidance=False,
-    )
-    messages = render_flat_group_messages(
-        payload,
-        group=group,
-        task_id="bioavailability_ma",
-        task_prompt_profile="f20_evidence_calibrated_v2",
-        group_tools_enabled=False,
-        prompt_version=JOSEPH_PROMPT_VERSION,
-        retrieval_strategy="morgan_fingerprint",
-        flat_reranking="joint",
-    )
-    visible = json.loads(messages[1]["content"])
-    assert set(visible) == {
-        "task", "query", "molecules", "instructions", "required_json_schema"
-    }
-    assert len(visible["molecules"]) == 1
-    rendered_molecule = visible["molecules"][0]
-    assert rendered_molecule["canonical_smiles"] == "CCN"
-    assert rendered_molecule["morgan_similarity"] == 0.7123
-    assert rendered_molecule["transfer_likelihood"] == 0.8235
-    assert rendered_molecule["morgan_top5_rank"] == 1
-    assert rendered_molecule["assay_transfer_top5_rank"] == "not_selected_in_top5"
-    card = rendered_molecule["evidence_cards"][0]
-    assert card == {
-        "card_id": "C01",
-        "assay_context": "Caco-2 monolayer",
-        "endpoint": "intestinal permeability",
-        "reported_value": "12.3",
-        "reported_unit": "cm/s",
-        "species": "human",
-        "qualifying_conditions": "60 minutes",
-        "experimental_details": {
-            "dose": 0,
-            "substrate_status": False,
-            "biological_context": ["intestinal", {"region": "jejunum"}],
-        },
-        "extra_details": {"fed": False, "temperature_c": 37},
-        "support_text": "Measured permeability was 12.3 cm/s.",
-    }
-    assert "IDENTITY_SENTINEL" not in messages[1]["content"]
 
 
 def test_l1_context_cards_with_one_parent_remain_separate() -> None:
@@ -1149,55 +966,6 @@ def test_flat_hybrid_partial_level_hides_assay_score() -> None:
     assert "transfer_likelihood" not in row["prompt_evidence"]
 
 
-def test_flat_v2_places_later_assay_score_on_its_card() -> None:
-    l1_payload = _selected_payload("r1", "L1", "direct")
-    later_payload = _selected_payload("r2", "L2", "passive")
-    molecule = {
-        "reference_molecule_id": "REF",
-        "canonical_smiles": "CCN",
-        "ranking_method": "assay_transfer",
-        "morgan_similarity": 0.712345,
-        "transfer_likelihood": 0.823456,
-        "l1_records": [{
-            "record_id": "r1", "reference_molecule_id": "REF",
-            "morgan_similarity": 0.712345, "ranking_method": "assay_transfer",
-            "payload": l1_payload,
-        }],
-    }
-    later = {"L2": {"records": [{
-        "record_id": "r2", "reference_molecule_id": "REF",
-        "morgan_similarity": 0.712345, "ranking_method": "assay_transfer",
-        "transfer_likelihood": 0.934567, "payload": later_payload,
-    }]}}
-    retrieval = cache_matched_flat_retrieval(
-        "q", "CCO", [molecule], later, task="bbb_martins",
-        reranking="assay-transfer", query_audit={},
-        prompt_version=JOSEPH_PROMPT_VERSION,
-    )
-    group = retrieval["groups"][0]
-    module = importlib.import_module(
-        "predict.harnesses.branches.tasks.bbb_martins.pipeline"
-    )
-    payload = module.build_group_prompt_payload(
-        {"canonical_smiles": "CCO"}, group,
-        prompt_profile="meaningful_cns_access_v1",
-        include_query_tool_guidance=False,
-    )
-    visible = apply_flat_group_prompt(
-        payload,
-        task_id="bbb_martins",
-        task_prompt_profile="meaningful_cns_access_v1",
-        include_query_tool_guidance=False,
-        prompt_version=JOSEPH_PROMPT_VERSION,
-        retrieval_strategy="morgan_fingerprint",
-        flat_reranking="assay-transfer",
-    )
-    rendered = visible["molecules"][0]
-    assert rendered["transfer_likelihood"] == 0.8235
-    assert "morgan_similarity" not in rendered
-    assert "transfer_likelihood" not in rendered["evidence_cards"][0]
-    assert rendered["evidence_cards"][1]["transfer_likelihood"] == 0.9346
-    assert [card["card_id"] for card in rendered["evidence_cards"]] == ["C01", "C02"]
 
 
 def test_flat_v2_rounds_similarity_after_assigning_its_bucket() -> None:
@@ -1284,67 +1052,20 @@ def test_flat_v2_claims_allow_empty_and_reject_unknown_cards() -> None:
     assert validation["forbidden_field_names"] == ("key_evidence", "tool_summary")
 
 
-def test_public_flat_defaults_to_joseph_and_legacy_is_explicit(monkeypatch) -> None:
+def test_public_flat_defaults_to_final_and_rejects_retired_harnesses(monkeypatch) -> None:
     calls = []
-    monkeypatch.setattr(flat, "_joseph_main", lambda argv: calls.append((PUBLIC_HARNESS_VERSION, argv)) or 0)
+    monkeypatch.setattr(flat, "_joseph_main", lambda argv: calls.append(argv) or 0)
     monkeypatch.setattr(flat, "mode_main", lambda mode, argv: calls.append((mode, argv)) or 0)
     assert flat.run(["--task", "bbb_martins", "--prepare-only"]) == 0
-    assert calls[0][0] == PUBLIC_HARNESS_VERSION
-    assert flat.run([
-        "--harness-version", "tianang-flat-v1", "--task", "bbb_martins"
-    ]) == 0
-    assert "--flat-prompt-version" in calls[1][1]
+    assert calls[0][:2] == ["--harness-version", PUBLIC_HARNESS_VERSION]
+    assert PUBLIC_HARNESS_VERSION == "final-full-flat"
+    with pytest.raises(SystemExit):
+        flat.run(["--harness-version", "tianang-flat-v1", "--task", "bbb_martins"])
 
 
-def test_flat_v2_disables_only_group_comparison_tools(
-    monkeypatch, tmp_path: Path
-) -> None:
-    calls = []
-    monkeypatch.setattr(
-        flat,
-        "_materialize_cache_matched_retrievals",
-        lambda _args: (tmp_path, {"status": "prepared"}),
-    )
-    monkeypatch.setattr(
-        flat, "mode_main", lambda mode, argv: calls.append((mode, argv)) or 0
-    )
-    assert flat._joseph_main([
-        "--harness-version", PUBLIC_HARNESS_VERSION,
-        "--task", "bbb_martins",
-        "--limit", "1",
-    ]) == 0
-    forwarded = calls[-1][1]
-    assert JOSEPH_PROMPT_VERSION in forwarded
-    assert "--disable-flat-tools" in forwarded
-
-    assert flat._joseph_main([
-        "--harness-version", JOSEPH_V1_HARNESS_VERSION,
-        "--task", "bbb_martins",
-        "--limit", "1",
-    ]) == 0
-    forwarded = calls[-1][1]
-    assert JOSEPH_V1_PROMPT_VERSION in forwarded
-    assert "--disable-flat-tools" not in forwarded
 
 
-def test_full_flat_context_v5_accepts_the_published_test_cache(
-    monkeypatch, tmp_path: Path
-) -> None:
-    observed = {}
 
-    def materialize(args):
-        observed["subset"] = args.evaluation_subset
-        return tmp_path, {"status": "prepared"}
-
-    monkeypatch.setattr(flat, "_materialize_cache_matched_retrievals", materialize)
-    assert flat._joseph_main([
-        "--harness-version", CONTEXT_V5_HARNESS_VERSION,
-        "--task", "bbb_martins",
-        "--evaluation-subset", "test",
-        "--query-prior", "none",
-        "--prepare-only",
-    ]) == 0
-    assert observed == {"subset": "test"}
 
 
 def test_joseph_flat_prompt_rejects_skin() -> None:
@@ -1357,7 +1078,7 @@ def test_joseph_flat_prompt_rejects_skin() -> None:
             "--retrieval-replay-source-batch", "/tmp/frozen",
         ],
     )
-    with pytest.raises(SystemExit, match="BBB and oral"):
+    with pytest.raises(SystemExit, match="Retired prompt requires frozen request replay"):
         _validate_flat_prompt(SKIN_CONFIG, args)
 
 
@@ -1373,6 +1094,7 @@ def test_score_only_upstream_flat_prompt_accepts_skin() -> None:
             "--disable-flat-tools",
             "--reasoning-effort", "high",
             "--flat-query-prior", "none",
+            "--flat-request-replay-root", "/tmp/frozen/requests",
             SKIN_CONFIG.prompt_profile_option, "skin_sensitization_contact_allergy.v2",
         ],
     )
@@ -1396,9 +1118,24 @@ def test_joseph_cli_maps_public_pool_names_only(
 
     monkeypatch.setattr(flat, "_materialize_cache_matched_retrievals", materialize)
     assert flat._joseph_main([
-        "--task", "bioavailability_ma", flag, public, "--prepare-only"
+            "--harness-version", flat.PUBLIC_HARNESS_VERSION,
+            "--task", "bioavailability_ma", flag, public, "--query-prior", "none", "--prepare-only"
     ]) == 0
     assert observed == {"public": public, "stored": stored}
+
+
+@pytest.mark.parametrize("explicit", [False, True])
+def test_flat_launcher_forwards_the_selected_provider_config(monkeypatch, tmp_path, explicit):
+    selected = flat.DEFAULT_PROVIDER_CONFIG.with_name("current_endpoints.json") if explicit else flat.DEFAULT_PROVIDER_CONFIG
+    observed = {}
+    monkeypatch.setattr(flat, "_materialize_cache_matched_retrievals", lambda args: (tmp_path, {}))
+    monkeypatch.setattr(flat, "mode_main", lambda mode, argv: observed.update(argv=argv) or 0)
+    argv = ["--task", "bbb_martins", "--query-prior", "none", "--max-tokens", "262144"]
+    if explicit:
+        argv.extend(["--provider-pool-config", str(selected)])
+    assert flat._joseph_main(argv) == 0
+    forwarded = observed["argv"]
+    assert forwarded[forwarded.index("--provider-pool-config") + 1] == str(selected)
 
 
 @pytest.mark.parametrize("pool", ["assay-transfer-trained", "all_transfer_eligible"])
@@ -1424,7 +1161,7 @@ def test_joseph_batch_binds_selection_manifest(tmp_path: Path) -> None:
     source = tmp_path / "cache_matched_retrieval"
     source.mkdir()
     selection = {
-        "harness_version": PUBLIC_HARNESS_VERSION,
+        "harness_version": "joseph-flat-v2",
         "prompt_version": JOSEPH_PROMPT_VERSION,
         "task": "bbb_martins",
         "evaluation_subset": "valid",
@@ -1440,6 +1177,9 @@ def test_joseph_batch_binds_selection_manifest(tmp_path: Path) -> None:
         "molecule_name_visible": False,
         "group_tools_enabled": False,
     }
+    from predict.harnesses.branches.manifests import artifact_name
+    selection["artifacts"] = {"input_jsonl": artifact_name(input_path)}
+    selection["queries"] = {"0": json.loads(input_path.read_text().splitlines()[0])["benchmark_row_id"]}
     manifest_path = source / "manifest.json"
     manifest_path.write_text(json.dumps(selection), encoding="utf-8")
     args = _parse_args(
@@ -1481,7 +1221,11 @@ def test_no_tool_provider_pool_uses_plain_group_call(monkeypatch) -> None:
     assert result["messages"] == messages
 
 
-def test_score_only_successor_exposes_cached_morgan_similarity() -> None:
+@pytest.mark.parametrize("prompt_version", [
+    flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
+    flat.TDC_SKIN_LLNA_SCORES_PROMPT_VERSION,
+])
+def test_score_only_successor_exposes_cached_morgan_similarity(prompt_version: str) -> None:
     group = {"neighbors": [{
         "canonical_smiles": "CCN", "standard_inchi_key": "parent",
         "similarity": 0.712345,
@@ -1500,14 +1244,20 @@ def test_score_only_successor_exposes_cached_morgan_similarity() -> None:
     )
     new, _, _ = flat._flat_context_sections(
         group, layout="level-grouped",
-        prompt_version=flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
+        prompt_version=prompt_version,
     )
     assert "morgan_similarity" not in old[0]["molecules"][0]
     assert new[0]["molecules"][0]["morgan_similarity"] == 0.7123
     assert new[0]["molecules"][0]["transfer_likelihood"] == 0.8235
+    del group["neighbors"][0]["evidence_rows"][0]["selection_provenance"]["assay_transfer_score"]
+    morgan_only, _, _ = flat._flat_context_sections(
+        group, layout="level-grouped", prompt_version=prompt_version,
+    )
+    assert morgan_only[0]["molecules"][0]["morgan_similarity"] == 0.7123
+    assert "transfer_likelihood" not in morgan_only[0]["molecules"][0]
     group["neighbors"][0]["similarity_metric"] = "unknown"
     with pytest.raises(ValueError, match="requires Morgan"):
         flat._flat_context_sections(
             group, layout="level-grouped",
-            prompt_version=flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
+            prompt_version=prompt_version,
         )

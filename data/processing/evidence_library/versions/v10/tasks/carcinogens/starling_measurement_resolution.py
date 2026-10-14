@@ -51,7 +51,7 @@ EXACT_UNIT_MAPPING_PATH = mapping_path("exact_measurement_units")
 ENFORCE_EXACT_UNITS_DURING_EXTRACTION = False
 DEFAULT_GOLD_FIXTURE = (
     REPO_ROOT
-    / "tests/chembl_tool/common/measurement_resolution_quality/gold/carcinogens.v10.jsonl"
+    / "tests/data/evidence_library/measurement_resolution_quality/gold/carcinogens.v10.jsonl"
 )
 
 SOURCE_IDS = (

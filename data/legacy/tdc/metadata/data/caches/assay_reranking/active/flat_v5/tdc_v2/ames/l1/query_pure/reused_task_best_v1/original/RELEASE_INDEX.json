@@ -1,0 +1,81 @@
+{
+  "assay_transfer_status": "query_pure_partial",
+  "base_release_index_sha256": "f28455ede14866ed1a857735de1852a952e01b38db1816e56b47297410d8d492",
+  "evidence": {
+    "content_id": "521a350508f8fbd46d3ee2b5a525e8a9356564f8b44ae667568599be6b542d73",
+    "manifest": "evidence/VERSION.json",
+    "manifest_sha256": "31d01a7866e5f2741270be4080de1404ee8a087067a961965b1eea6f87c03443",
+    "record_count": 5094
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v2"
+  },
+  "levels_independent": true,
+  "model": {
+    "model": "jiosephlee/intern-s1-mini-ames-v10-3-tdc-mixed-canonical-best",
+    "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
+    "revision": "392dd01912090040cfc0427f9f680d16d47eb27b"
+  },
+  "morgan_fingerprint": {
+    "bits": 2048,
+    "radius": 2,
+    "similarity": "Tanimoto"
+  },
+  "neighbor_identity_policy_by_level": {
+    "L1": "scaffold_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "flat_v5/tdc_v2/ames/l1/query_pure/reused_task_best_v1/original",
+  "query_pure_policy": {
+    "complete_order": "assay_transfer",
+    "completeness": "all_100_parents_and_all_train_contexts",
+    "incomplete_order": "morgan",
+    "schema_version": "tdc_v2_l1_query_pure.v1"
+  },
+  "query_pure_summary": {
+    "test": {
+      "assay_pure_queries": 1364,
+      "morgan_pure_queries": 93,
+      "queries": 1457,
+      "scores_reused": 136400
+    },
+    "valid": {
+      "assay_pure_queries": 682,
+      "morgan_pure_queries": 45,
+      "queries": 727,
+      "scores_reused": 68200
+    }
+  },
+  "ranking_modes": [
+    "morgan",
+    "query-pure"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "score_source_release_index_sha256": "6eeec3fae6b38103a66ea9f17f2cde62a4e3264205ad333f42220a8ded10c7b5",
+  "scoring_contract_version": "assay_transfer_chat_first_divergent_token_bf16_backbone_fp32_head.v2",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L1": {
+          "content_id": "8968b12cc2ca3fc5305cd151ec4ba1149a63329e467cf70082599f96c37ff766",
+          "manifest": "scaffold/test/L1/VERSION.json",
+          "manifest_sha256": "34d1590e9278654aead0ca63aa4e25ab87d98f7c7bbff3fbfc92d93c2af51e04"
+        }
+      }
+    },
+    "valid": {
+      "levels": {
+        "L1": {
+          "content_id": "bf4278f3e96739fc10cace94e19186d16450708ea82a9d9b572d1a6492dca4e2",
+          "manifest": "scaffold/valid/L1/VERSION.json",
+          "manifest_sha256": "3e2464dd75c16bc053b04ab71492f6115f6833fde4fc22781208668d4f26dae1"
+        }
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "ames"
+}

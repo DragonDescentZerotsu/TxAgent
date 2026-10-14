@@ -32,8 +32,8 @@ from data.processing.evidence_library.versions.v10.tasks.skin_reaction.data_proc
 from data.processing.evidence_library.versions.v10.tasks.skin_reaction.data_processing.build_unit_reconciliation import (
     _required_units,
 )
-from data.processing.llm_api import openai_compatible_client
-from tools.chembl_tool.common.units import canonicalize_unit
+from predict.api_client.transport import openai_compatible_client
+from data.processing.evidence_library.units import canonicalize_unit
 
 TASK = "skin_reaction"
 INVENTORY_VERSION = "skin_reaction_unit_inventory.v4"

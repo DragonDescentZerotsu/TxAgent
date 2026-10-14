@@ -15,7 +15,7 @@ from data.processing.evidence_library.shared.v2.normalization.measurements impor
     SOURCE_SPECIFIC_ATOMIC_SCALAR_STATUS,
     parse_point_measurement,
 )
-from tools.chembl_tool.common.units import canonicalize_unit
+from data.processing.evidence_library.units import canonicalize_unit
 from data.processing.evidence_library.versions.v9.tasks.bioavailability_ma.canonical_source import (
     DIRECT_REPORT_TYPES,
 )

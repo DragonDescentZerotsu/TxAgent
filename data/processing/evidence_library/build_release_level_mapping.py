@@ -10,7 +10,7 @@ from pathlib import Path
 import pandas as pd
 
 from data.processing.evidence_library.shared.v2.normalization.cleaning import file_sha256
-from tools.chembl_tool.common.json_utils import write_json_atomic
+from predict.utils.json import write_json_atomic
 
 
 LEVELS = {
@@ -189,9 +189,7 @@ def _route_unmapped(
 ) -> pd.DataFrame:
     """Apply the existing reviewed purity classifier only to new physical UIDs."""
     if task == "bbb_martins":
-        from tools.chembl_tool.tasks.bbb_martins.source_family_purity import (
-            BBBSourceFamilyClassifier, load_near_direct_reviews,
-        )
+        from data.processing.evidence_library.bbb_source_family_purity import BBBSourceFamilyClassifier, load_near_direct_reviews
         voter_indices = {
             int(value) for value in all_records.loc[
                 all_records.source_row_uid.astype(str).isin(voters), "source_index"
@@ -203,9 +201,7 @@ def _route_unmapped(
             for row in rows.to_dict("records")
         ]
     elif task == "bioavailability_ma":
-        from tools.chembl_tool.tasks.bioavailability_ma.source_family_purity import (
-            upstream_record_key, vote_pure_family_move,
-        )
+        from data.processing.evidence_library.oral_source_family_purity import upstream_record_key, vote_pure_family_move
         voter_rows = all_records.loc[all_records.source_row_uid.astype(str).isin(voters)]
         voter_keys = {upstream_record_key(row) for row in voter_rows.to_dict("records")}
         groups = []

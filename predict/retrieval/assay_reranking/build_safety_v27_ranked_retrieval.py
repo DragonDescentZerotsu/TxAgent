@@ -14,6 +14,7 @@ import pyarrow.parquet as pq
 from predict.utils.json import sha256_file
 
 from . import build_ranked_uid_retrieval as builder
+from . import runtime
 from .runtime import cache_profile_root
 from .v27_safety import TASKS
 
@@ -41,7 +42,7 @@ def profile(
             "assay_complete_or_hidden_morgan_tail_shared_parent40_v1"
         )
     elif snapshot:
-        variant = "shared_parent40_partial_snapshot_v1"
+        variant = f"shared_parent{parent_capacity}_partial_snapshot_v1"
     else:
         variant = f"shared_parent{parent_capacity}_v1" if parent_capacity < 100 else "shared_parent100_v2"
     return f"flat_v5/{benchmark}_v1/{task}/l2plus/assay_transfer/v27/general_candidate_copy_{variant}"
@@ -54,8 +55,10 @@ def _configure(
     if hybrid and (supplement or snapshot or parent_capacity != 40
                    or (benchmark, task) not in NARROW_PARENT_TASKS):
         raise ValueError("Hybrid releases require Gold Carcinogens or TDC AMES parent-40 inputs")
-    if snapshot and (supplement or parent_capacity != 40 or (benchmark, task) not in NARROW_PARENT_TASKS):
-        raise ValueError("Partial snapshots require Gold Carcinogens or TDC AMES parent-40 inputs")
+    if snapshot and (supplement or (benchmark, task, parent_capacity) not in {
+        ("gold", "carcinogens", 40), ("gold", "carcinogens", 100), ("tdc", "ames", 40),
+    }):
+        raise ValueError("Unsupported partial snapshot task or parent capacity")
     if supplement and (parent_capacity != 100 or (benchmark, task) not in NARROW_PARENT_TASKS):
         raise ValueError("Ranks 41-50 supplement requires a narrow-parent task and default capacity")
     if not supplement and (
@@ -289,14 +292,17 @@ def main() -> None:
     parser.add_argument("--tokenize-workers", type=int, default=1)
     parser.add_argument("--score-reuse-root", action="append", type=Path, default=[])
     parser.add_argument("--source-parent-universe", type=Path)
+    parser.add_argument("--fa3-score-generation", action="store_true")
     parser.add_argument("--source-root", type=Path)
     parser.add_argument("--parent-capacity", type=int, choices=(40, 50, 100), default=100)
     parser.add_argument("--supplement-41-50", action="store_true")
     args = parser.parse_args()
+    if args.fa3_score_generation:
+        runtime.SCORING_CONTRACT_VERSION = runtime.FA3_SCORING_CONTRACT_VERSION
     if args.command == "snapshot-partial" and (args.source_root is None or args.parent_capacity != 40):
         parser.error("snapshot-partial requires --source-root and --parent-capacity 40")
-    if args.command == "validate-partial" and args.parent_capacity != 40:
-        parser.error("validate-partial requires --parent-capacity 40")
+    if args.command == "validate-partial" and args.parent_capacity not in (40, 100):
+        parser.error("validate-partial requires --parent-capacity 40 or 100")
     if args.command == "snapshot-hybrid" and (args.source_root is None or args.parent_capacity != 40):
         parser.error("snapshot-hybrid requires --source-root and --parent-capacity 40")
     if args.command == "validate-hybrid" and args.parent_capacity != 40:

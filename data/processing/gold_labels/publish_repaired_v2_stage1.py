@@ -10,7 +10,7 @@ from typing import Any
 
 from data.processing.gold_labels.benchmark_dataset import sha256_file
 from data.processing.gold_labels.build_repaired_v2 import validate_stage1_authority
-from tools.chembl_tool.common.json_utils import write_json_atomic
+from predict.utils.json import write_json_atomic
 
 
 VERSION = "conditioned_gold_v2_stage1_publication.v1"

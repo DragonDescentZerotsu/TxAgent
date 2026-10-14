@@ -1,0 +1,201 @@
+{
+  "schema_version": "flat_v5_artifact_bundle.v1",
+  "status": "complete",
+  "bundle_id": "flat_v5/tdc_v2/dili",
+  "task": "dili",
+  "benchmark": "tdc_v2",
+  "harness_version": "full-flat-context-v5",
+  "max_level": null,
+  "cache_config": {
+    "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v2_dili_parent_disjoint_v2.yaml",
+    "sha256": "8ed9d20348812f4c359baa64307e79a4aa9d837d58301b1ebb4b21d0ba458260"
+  },
+  "artifacts": [
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l1/query_pure/reused_task_best_v1/original/RELEASE_INDEX.json",
+      "size": 2640,
+      "sha256": "d0dc190b46f15cb6bfe958de861afe156de734daf2a7414847105913c2f255e6"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l1/query_pure/reused_task_best_v1/original/evidence/VERSION.json",
+      "size": 612,
+      "sha256": "e368181e8eb8f704bd9b5e9461990c0563c8b6595ee52b1042c53ee76b3490b6"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l1/query_pure/reused_task_best_v1/original/evidence/records.parquet",
+      "size": 69194,
+      "sha256": "36dadf36a9003878f5abdbb1de34ff731a490ee84ae9191c6aba35e6df77e299"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l1/query_pure/reused_task_best_v1/original/scaffold/test/L1/VERSION.json",
+      "size": 16530,
+      "sha256": "d9d91111f7ab7fdcf132c21eeefe5fc1c4e7f61d00481dccb11d552a13f75599"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l1/query_pure/reused_task_best_v1/original/scaffold/test/L1/rankings.sqlite3",
+      "size": 3960832,
+      "sha256": "a7a74f1f387e11730ac74adff326dfcfb0c1db99f2c940272a87386644d1eab5"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l1/query_pure/reused_task_best_v1/original/scaffold/valid/L1/VERSION.json",
+      "size": 9083,
+      "sha256": "394b86eae44e5ca6d93d32e33f7d39eb57bfd7b599feaa4eef1d15b2a4775b79"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l1/query_pure/reused_task_best_v1/original/scaffold/valid/L1/rankings.sqlite3",
+      "size": 2056192,
+      "sha256": "753a4ee3d9d1ae35c415e6814916398e4d44e6c2bb5f2ca03595b56fe7bfc618"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/RELEASE_INDEX.json",
+      "size": 5580,
+      "sha256": "b027b14ef99a2c2b30204caa5b0ba92de0f07a30d42a6ea6d571a62c643ce70e"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/test/L2/VERSION.json",
+      "size": 18742,
+      "sha256": "ec58bf57171025832f7190ec8925007b90480b79b8d924bab268f25618e07605"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/test/L2/rankings.sqlite3",
+      "size": 29077504,
+      "sha256": "02c5c532caf469d232991b58cd48a2db237fbc80ede47cf09faca7b1524f8ac0"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/test/L3/VERSION.json",
+      "size": 18701,
+      "sha256": "b0700ee07d61617090eb7503d9b1ec1e9c135d6d8895d876b9a983069deacbb2"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/test/L3/rankings.sqlite3",
+      "size": 18952192,
+      "sha256": "e0564d434884f1cb55dd6695988cf42aac9c952f6a1efc8f964961dcf83ce9ed"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/test/L4/VERSION.json",
+      "size": 18603,
+      "sha256": "cf4db6624c9e4b0c85bec6bedf56f5c9a1c585c4a25cd2fed9e43fbbc4c3f76a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/test/L4/rankings.sqlite3",
+      "size": 10158080,
+      "sha256": "f3ef715ee46a919c70c4144d16355e2eb4ea090d411fdd19192e294274bce5d3"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/test/L5/VERSION.json",
+      "size": 18759,
+      "sha256": "a7f36b13454b615860b628ad13ce0483f7096a290cf7016c57576a5f86c403e3"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/test/L5/rankings.sqlite3",
+      "size": 39653376,
+      "sha256": "4dccdd8dba66e043bdd5c335ca6fad9c0b54f3894235d5d2ae814e92a2240664"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/test/L6/VERSION.json",
+      "size": 18711,
+      "sha256": "e6b0198b85b7c59d1ae8f8806a8e42e725a99d74648e12b3eef379cfe0527176"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/test/L6/rankings.sqlite3",
+      "size": 26656768,
+      "sha256": "0b1ae5b9c3280082c41242787d8b97b42942e2617bdafd2e4906a4f58b6e35fd"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/test/L7/VERSION.json",
+      "size": 18769,
+      "sha256": "8290ddbe0811a27c9e76821f5b0e36665758fd5bdfb409035a8abfe82dabd30a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/test/L7/rankings.sqlite3",
+      "size": 39870464,
+      "sha256": "844e3d71a237e51cb340ba5ea9c4547dd4bb4cd8df349d5f74a9c8aa98a183f9"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/test/PARENT_UNIVERSE.json",
+      "size": 943983,
+      "sha256": "7edb94e222913f13763b5d7c5da80dbc708a59ba5870a2cf9cafb4e8c76591cc"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/valid/L2/VERSION.json",
+      "size": 10684,
+      "sha256": "070d7cbd1b2ea7a9077ce5f457bb31d55cbd7034aefab10f4644c71806255bc8"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/valid/L2/rankings.sqlite3",
+      "size": 21364736,
+      "sha256": "ffad8d03d99ed74cff2548f46237b9d54a65832dc345c712f3bc1dcecca5dfd3"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/valid/L3/VERSION.json",
+      "size": 10666,
+      "sha256": "96daf9b3824b177066ca121e9992ded39b6534a7fd376e8cf07d87d19a16af25"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/valid/L3/rankings.sqlite3",
+      "size": 11153408,
+      "sha256": "e2aedb07c33089ec65db16b0027c54180a6fe02b17dc6f380e8843efc80f2dc8"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/valid/L4/VERSION.json",
+      "size": 10629,
+      "sha256": "a97583b496eac49191f7826fda1e08aa16e4aab97ad59cab3b40dbd8ad9f855a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/valid/L4/rankings.sqlite3",
+      "size": 10018816,
+      "sha256": "8c9179f63bf30178ac427334197b8cc7e86b6ca2fe655f381ae64ea8194d1b6e"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/valid/L5/VERSION.json",
+      "size": 10698,
+      "sha256": "847365386bbdba99c8b519cbaebf6faa6659283f866a03de67256b00484974dd"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/valid/L5/rankings.sqlite3",
+      "size": 23109632,
+      "sha256": "2026ce3ec5608cdfa6a96422990bdc4713607bb84918a36c33981a919c3a9a52"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/valid/L6/VERSION.json",
+      "size": 10674,
+      "sha256": "344230864642f427924b9e67162345e7a2bd21a731c5b8d6c426566b2f42e8c3"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/valid/L6/rankings.sqlite3",
+      "size": 14495744,
+      "sha256": "1c537b50a914684a80bbca5cd05a18721cba33a75997f641c60a16867663a586"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/valid/L7/VERSION.json",
+      "size": 10704,
+      "sha256": "f41f23ea4cd7845934ad2543a0735da9d97c073cad682efb74579d450e27aebc"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/valid/L7/rankings.sqlite3",
+      "size": 23662592,
+      "sha256": "3b1dec57d7dec9b1277696bf3f0f7b76e1b3a78bed62f6ee5ed995d37623ac2a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/scaffold/valid/PARENT_UNIVERSE.json",
+      "size": 490314,
+      "sha256": "00691b346c4829cbe1792aecfb91f37b307edf781c4f90624c819f0047cbec6b"
+    },
+    {
+      "path": "data/evidence_libraries/dili/v10_main_universe_v3/retrieval_projection/ranked_evidence_safety_v27_v1/VERSION.json",
+      "size": 1963,
+      "sha256": "1876c9e92ae695174e69f153e0c2bfaaf67d84ded9d36a1fc57d144e5ba4d4b1"
+    },
+    {
+      "path": "data/evidence_libraries/dili/v10_main_universe_v3/retrieval_projection/ranked_evidence_safety_v27_v1/records.parquet",
+      "size": 939579289,
+      "sha256": "52abd57bcfcf32b6666abb21501b4a5eac042b54dbec64dea92c08a6ab1e74b7"
+    },
+    {
+      "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v2_dili_parent_disjoint_v2.yaml",
+      "size": 307,
+      "sha256": "8ed9d20348812f4c359baa64307e79a4aa9d837d58301b1ebb4b21d0ba458260"
+    }
+  ],
+  "missing": []
+}

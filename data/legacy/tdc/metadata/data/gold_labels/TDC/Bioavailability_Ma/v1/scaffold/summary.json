@@ -1,0 +1,47 @@
+{
+  "task": "bioavailability_ma",
+  "task_directory": "Bioavailability_Ma",
+  "benchmark": "tdc",
+  "version": "v1",
+  "release_id": "tdc_v1",
+  "contract": "tdc_conditioned_benchmark.v1",
+  "status": "complete",
+  "target_definition": "TDC oral bioavailability label; 1 is F >= 20% and 0 is F < 20%.",
+  "source_rows": 640,
+  "normalized_rows": 640,
+  "accepted_source_rows": 640,
+  "accepted_parents": 640,
+  "rejected_source_rows": 0,
+  "conflicting_source_rows": 0,
+  "conflicting_parents": 0,
+  "split_repairs": 0,
+  "splits": {
+    "train": {
+      "n": 448,
+      "positive": 344
+    },
+    "valid": {
+      "n": 64,
+      "positive": 51
+    },
+    "test": {
+      "n": 128,
+      "positive": 97
+    }
+  },
+  "source_manifest": "data/raw/tdc/Bioavailability_Ma/v1/source_manifest.json",
+  "source_manifest_sha256": "6401ed6fa5613c1b4173de0843b1fadb4c5f0b2b703ca79548bf3793d7a223b3",
+  "outputs": {
+    "conflicting_parent_labels.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "heldout_molecule_condition_labels.jsonl": "027580da4f7159c4de39b9d20e364c993a1d0e9b8bc5f0f77ed43b0649c2ffd4",
+    "rejected_source_rows.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "split_repairs.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "test.jsonl": "3d2b19f663309e757b2995ee5cd91c2def2b1458f91033dc892cd0744ad1da3d",
+    "test_molecule_condition_labels.jsonl": "a66c10e01809c624bf215f9f0683147f0b9ee3bb2a42f53b5a8119b46268b4c2",
+    "train.jsonl": "3ad5ea9b94dea2f8ac71e20f689cfd0ec78f04d135aae3d299445e678f0b26b9",
+    "train_molecule_condition_labels.jsonl": "7997d9a19a3060a84f084e4ae0ec5f2cc8cb2b7578d0ed2d3f38cabec5753571",
+    "valid.jsonl": "7ceaf7d97584e68021c277e4730e817459de2e74d7760a65eb2c46fc416d771d",
+    "valid_molecule_condition_labels.jsonl": "13471f87625d0e15c8acae9055810f87df9f066185d9f57bb0b6bf0e2bf99467"
+  },
+  "current_pointer_changed": false
+}

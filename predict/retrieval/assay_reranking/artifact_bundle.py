@@ -8,6 +8,9 @@ Inference checks that receipt instead of rescanning the payloads.
 
 from __future__ import annotations
 
+from data.processing.paths import resolve_legacy_path
+from predict.utils.json import read_json
+
 import argparse
 from datetime import datetime, timezone
 import json
@@ -43,8 +46,8 @@ def _component(value: str) -> str:
 
 def benchmark_id(value: str) -> str:
     """Normalize CLI benchmark names to manifest identities."""
-    value = {"gold": "gold_v1", "tdc": "tdc_v1"}.get(str(value), str(value))
-    if value not in {"gold_v1", "tdc_v1"}:
+    value = {"gold": "gold_v1"}.get(str(value), str(value))
+    if value not in {"gold_v1", "tdc", "tdc_v1", "tdc_v2"}:
         raise ValueError(f"unsupported artifact benchmark: {value!r}")
     return value
 
@@ -165,7 +168,7 @@ def _repo_artifact_path(relative: str, repo_root: Path) -> Path:
     root = repo_root.resolve()
     if candidate.is_absolute() or not candidate.parts or ".." in candidate.parts:
         raise ArtifactBundleError(f"artifact path must be repository-relative: {relative!r}")
-    resolved = (root / candidate).resolve()
+    resolved = resolve_legacy_path((root / candidate).resolve())
     if not resolved.is_relative_to(root):
         raise ArtifactBundleError(f"artifact path escapes repository root: {relative!r}")
     return resolved
@@ -206,6 +209,8 @@ def _collect_known_files(
         "file", "path", "parquet", "sqlite", "assignments", "prompts",
     }
     for key, value in document.items():
+        if key in {"source_paths", "score_reuse_sources"}:
+            continue  # Audit provenance is hash-pinned, not a runtime payload.
         if isinstance(value, str) and key in path_keys:
             candidate = _resolve_reference(value, parent, repo_root)
             if candidate.is_file() or candidate.suffix in {".parquet", ".sqlite3", ".json"}:
@@ -224,7 +229,7 @@ def _collect_release_index(
     if not index_path.is_file():
         return
     try:
-        document = json.loads(index_path.read_text(encoding="utf-8"))
+        document = read_json(index_path)
     except (OSError, json.JSONDecodeError) as error:
         raise ArtifactBundleError(f"invalid release index: {index_path}") from error
     manifests: list[Path] = []
@@ -249,7 +254,7 @@ def _collect_release_index(
         if not manifest_path.is_file():
             continue
         try:
-            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest = read_json(manifest_path)
         except (OSError, json.JSONDecodeError) as error:
             raise ArtifactBundleError(f"invalid artifact manifest: {manifest_path}") from error
         _collect_known_files(
@@ -291,7 +296,11 @@ def build_bundle_manifest(
     """Inventory one task/benchmark without requiring payloads to be tracked."""
     benchmark = benchmark_id(benchmark)
     cache_config = cache_config.resolve()
-    config = yaml.safe_load(cache_config.read_text(encoding="utf-8"))
+    config = yaml.safe_load(resolve_legacy_path(cache_config).read_text(encoding="utf-8"))
+    if config.get("benchmark") == "tdc" and "tasks" in config:
+        config = {"caches": {key: {**{role: str(repo_root / value) for role, value in spec["retrieval"].items()},
+                                    "optimizer_L1": str(repo_root / spec["selection"]["direct_cache"])}
+                             for key, spec in config["tasks"].items()}}
     if not isinstance(config, dict) or not isinstance(config.get("caches"), dict):
         raise ArtifactBundleError(f"invalid cache configuration: {cache_config}")
     paths: dict[str, Path] = {}
@@ -341,7 +350,7 @@ def build_bundle_manifest(
 
 def _load_manifest(path: Path) -> dict[str, Any]:
     try:
-        document = json.loads(path.read_text(encoding="utf-8"))
+        document = read_json(path)
     except (OSError, json.JSONDecodeError) as error:
         raise ArtifactBundleError(f"cannot read artifact bundle manifest: {path}") from error
     if not isinstance(document, dict) or document.get("schema_version") != BUNDLE_SCHEMA:
@@ -465,7 +474,7 @@ def require_receipt(
         str(manifest.get("task") or ""), str(manifest.get("benchmark") or ""), repo_root=repo_root
     )
     try:
-        receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+        receipt = read_json(receipt_path)
     except (OSError, json.JSONDecodeError) as error:
         raise ArtifactBundleError(
             "artifact verification receipt is absent: "
@@ -596,9 +605,7 @@ def restore_archive(
 ) -> dict[str, Any]:
     """Verify and restore a compressed bundle into canonical repository paths."""
     try:
-        metadata = json.loads(
-            (archive_root / "archive.json").read_text(encoding="utf-8")
-        )
+        metadata = read_json(archive_root / "archive.json")
     except (OSError, json.JSONDecodeError) as error:
         raise ArtifactBundleError(f"cannot read artifact archive: {archive_root}") from error
     if not isinstance(metadata, dict) or metadata.get("schema_version") != ARCHIVE_SCHEMA:
@@ -669,7 +676,7 @@ def _main(argv: list[str] | None = None) -> int:
     subparsers = parser.add_subparsers(dest="action", required=True)
     inventory = subparsers.add_parser("inventory")
     inventory.add_argument("--task", required=True)
-    inventory.add_argument("--benchmark", choices=("gold_v1", "tdc_v1"), required=True)
+    inventory.add_argument("--benchmark", choices=("gold_v1", "tdc"), required=True)
     inventory.add_argument("--cache-config", type=Path, required=True)
     inventory.add_argument("--max-level", type=int)
     inventory.add_argument("--output", type=Path)

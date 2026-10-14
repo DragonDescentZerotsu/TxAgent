@@ -297,10 +297,7 @@ def write_compact_neighbor_index(
     standardized_by_molecule: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Write a portable index without embedding any evidence records."""
-    from tools.chembl_tool.common.task_workflows.evidence_library import (
-        build_neighbor_index,
-        fingerprint_metadata,
-    )
+    from data.processing.evidence_library.index_builder import build_neighbor_index, fingerprint_metadata
 
     from data.processing.evidence_library.shared.v1.normalization.audit import (
         write_parquet,

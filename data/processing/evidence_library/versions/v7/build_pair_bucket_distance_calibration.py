@@ -23,7 +23,7 @@ import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
 
-from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
+from predict.retrieval.policies import normalize_molecule_identity
 from data.processing.evidence_library.shared.v1.build_pair_bucket_transfer_policy import (
     TransferPolicyBuildSpec,
     _validate_global_context_contract,

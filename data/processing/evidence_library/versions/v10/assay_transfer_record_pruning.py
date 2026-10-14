@@ -25,8 +25,8 @@ import pyarrow.parquet as pq
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 from scipy.stats import normaltest
 
-from tools.chembl_tool.common.openai_reasoning_client import OpenAICompatibleClient
-from data.processing.llm_api import openai_compatible_client
+from predict.api_client.client import OpenAICompatibleClient
+from predict.api_client.transport import openai_compatible_client
 from data.processing.evidence_library.shared.v2.normalization.audit import write_parquet
 from data.processing.evidence_library.shared.v2.normalization.cleaning import file_sha256
 from data.processing.evidence_library.versions.v10.build_reference_semantics_mapping import (

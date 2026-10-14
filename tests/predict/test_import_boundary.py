@@ -38,16 +38,9 @@ def test_predict_does_not_import_legacy_chembl_tool_modules() -> None:
     assert not violations, f"legacy inference imports: {sorted(set(violations))}"
 
 
-def test_harness_universes_do_not_import_each_other() -> None:
-    branch_imports = _imported_modules(PREDICT_ROOT / "harnesses" / "branches")
-    progressive_imports = _imported_modules(PREDICT_ROOT / "harnesses" / "progressive")
+def test_predict_does_not_import_retired_workflows() -> None:
     assert not [
         path
-        for path, module in branch_imports
-        if module.startswith("predict.harnesses.progressive")
-    ]
-    assert not [
-        path
-        for path, module in progressive_imports
-        if module.startswith("predict.harnesses.branches")
+        for path, module in _imported_modules(PREDICT_ROOT)
+        if module.startswith(("predict.harnesses.progressive", "baselines."))
     ]

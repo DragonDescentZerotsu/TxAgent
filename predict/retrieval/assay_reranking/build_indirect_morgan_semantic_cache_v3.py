@@ -42,7 +42,7 @@ CONTROL_LIMIT = 25
 SEMANTIC_LIMIT = 25
 LLM_SEMANTIC_LIMIT = 100
 PER_PARENT_LIMIT = 10
-WEIGHTS = Path(__file__).resolve().parents[3] / "semantic_buckets/policies/semantic_weighted_top10_v2.json"
+WEIGHTS = Path(__file__).resolve().parents[3] / "optimization/semantic_buckets/policies/semantic_weighted_top10_v2.json"
 GOLD = {
     "bbb_martins": Path("data/gold_labels/BBB_Martins/v2/scaffold"),
     "bioavailability_ma": Path("data/gold_labels/Bioavailability_Ma/v2/scaffold"),

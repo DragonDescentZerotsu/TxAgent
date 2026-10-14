@@ -1,0 +1,30 @@
+{
+  "contract": "tdc_raw_source.v2",
+  "task": "skin_reaction",
+  "dataset": "Skin_Reaction",
+  "source_repository_commit": "f409ff3673498f0b16efc4c05d8a027815c08f0e",
+  "source_location": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/Skin_Reaction",
+  "files": [
+    {
+      "split": "train",
+      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/Skin_Reaction/train.csv",
+      "path": "data/raw/tdc/Skin_Reaction/v2/train.csv",
+      "sha256": "0d81868c2ae3a208ab707949aad7c917c129b6a0eefd1917b4b759d0ffd28711",
+      "rows": 282
+    },
+    {
+      "split": "valid",
+      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/Skin_Reaction/val.csv",
+      "path": "data/raw/tdc/Skin_Reaction/v2/valid.csv",
+      "sha256": "399adf6bc4a32d81601270e7f96bdf9e4f325c98da98b322b82720c3d283edf0",
+      "rows": 40
+    },
+    {
+      "split": "test",
+      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/Skin_Reaction/test.csv",
+      "path": "data/raw/tdc/Skin_Reaction/v2/test.csv",
+      "sha256": "4ffe2b22a696989fc8d77d9a65ae0a44b4da616827f2b30c82458e9cf87054e1",
+      "rows": 82
+    }
+  ]
+}

@@ -55,7 +55,7 @@ from data.processing.evidence_library.versions.v10.measurement_routing import (
 from data.processing.evidence_library.versions.v10.task_registry import (
     import_task_module,
 )
-from data.processing.llm_api import (
+from predict.api_client.transport import (
     DEFAULT_ENV_FILE,
     openai_compatible_client,
     provider_from_base_url,
@@ -122,7 +122,7 @@ class TaskConfig:
 
 
 GOLD_FIXTURE = Path(
-    "tests/chembl_tool/common/measurement_resolution_quality/gold/"
+    "tests/data/evidence_library/measurement_resolution_quality/gold/"
     "bbb_martins.v8.jsonl"
 )
 

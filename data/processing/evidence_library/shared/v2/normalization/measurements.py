@@ -9,11 +9,7 @@ from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict, dataclass
 from typing import Any
 
-from tools.chembl_tool.common.units import (
-    canonicalize_measurement,
-    canonicalize_unit,
-    clean_unit,
-)
+from data.processing.evidence_library.units import canonicalize_measurement, canonicalize_unit, clean_unit
 
 from .cleaning import clean_measurement_text, clean_text, finite_float, stable_id
 from .contracts import (

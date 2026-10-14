@@ -1,0 +1,47 @@
+{
+  "task": "carcinogens",
+  "task_directory": "Carcinogens",
+  "benchmark": "tdc",
+  "version": "v1",
+  "release_id": "tdc_v1",
+  "contract": "tdc_conditioned_benchmark.v1",
+  "status": "complete",
+  "target_definition": "TDC carcinogenicity label; 1 is carcinogenic and 0 is non-carcinogenic.",
+  "source_rows": 280,
+  "normalized_rows": 280,
+  "accepted_source_rows": 276,
+  "accepted_parents": 276,
+  "rejected_source_rows": 0,
+  "conflicting_source_rows": 4,
+  "conflicting_parents": 2,
+  "split_repairs": 0,
+  "splits": {
+    "train": {
+      "n": 193,
+      "positive": 39
+    },
+    "valid": {
+      "n": 27,
+      "positive": 7
+    },
+    "test": {
+      "n": 56,
+      "positive": 12
+    }
+  },
+  "source_manifest": "data/raw/tdc/Carcinogens/v1/source_manifest.json",
+  "source_manifest_sha256": "e71a0c226ed14ab632ff9cb22ed8abced9d9f12aa44f211cad1c4903c5049b54",
+  "outputs": {
+    "conflicting_parent_labels.jsonl": "7235e02bb49498ee5b8bc766f224d9370585985895744da4e6528a7644b76750",
+    "heldout_molecule_condition_labels.jsonl": "9a0f4c8f46e4a3230b25feb625a27b45967f5c6b722fc0deeec82fe4b4494470",
+    "rejected_source_rows.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "split_repairs.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "test.jsonl": "210f1c647ed451b79308ab6403f51d0ac5c65e192d66c6f384e729f497125197",
+    "test_molecule_condition_labels.jsonl": "93594aa28bce125bac9199c2b93739b37baac046ae87fa155deaf98a2a06c444",
+    "train.jsonl": "1aaaeab4cbe8af6d7bee1a768a2b0e8de6011dcef5de513d77eb4e7d79caf104",
+    "train_molecule_condition_labels.jsonl": "2b7bfb7388c17d26af45386cf9c751bd65cfe3b409aff3707a95359f4c7402a3",
+    "valid.jsonl": "441ea2ca786d2db33f9fb34ffb0546c79eb50f967ad1188ac11cb626ab234722",
+    "valid_molecule_condition_labels.jsonl": "35e95256a5d18f47e3855466873c69dde756888a3120e419d05d8dffc736a209"
+  },
+  "current_pointer_changed": false
+}

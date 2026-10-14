@@ -1,6 +1,9 @@
 """Read independent top-100 level rankings and join selected evidence by UID."""
 from __future__ import annotations
 
+from data.processing.paths import resolve_legacy_path
+from predict.utils.json import read_json
+
 from collections import defaultdict
 import json
 import math
@@ -14,7 +17,7 @@ CAPACITY = 100
 
 
 def _open(path: Path) -> sqlite3.Connection:
-    connection = sqlite3.connect(f"file:{path.resolve()}?mode=ro&immutable=1", uri=True)
+    connection = sqlite3.connect(f"file:{resolve_legacy_path(path).resolve()}?mode=ro&immutable=1", uri=True)
     connection.row_factory = sqlite3.Row
     return connection
 
@@ -58,7 +61,7 @@ def _limits(
 
 
 def _manifest(path: Path, *, task: str, subset: str, level: str, method: str) -> dict[str, Any]:
-    document = json.loads(path.read_text(encoding="utf-8"))
+    document = read_json(path)
     required = {
         "schema_version": SCHEMA_VERSION,
         "status": "complete",
@@ -193,9 +196,9 @@ def load_candidates(
         manifest_documents[level] = manifest
 
     index_path = Path(policy["cache_index"]).resolve()
-    index = json.loads(index_path.read_text(encoding="utf-8"))
+    index = read_json(index_path)
     evidence_manifest_path = (index_path.parent / index["evidence"]["manifest"]).resolve()
-    evidence_manifest = json.loads(evidence_manifest_path.read_text(encoding="utf-8"))
+    evidence_manifest = read_json(evidence_manifest_path)
     if (
         evidence_manifest.get("status") != "complete"
         or evidence_manifest.get("content_id") != index["evidence"]["content_id"]

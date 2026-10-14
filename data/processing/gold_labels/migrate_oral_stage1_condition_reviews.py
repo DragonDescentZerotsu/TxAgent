@@ -18,15 +18,9 @@ from data.processing.evidence_library.versions.v10.tasks.bioavailability_ma.cano
     RAW_LOCAL_SOURCE_PATH,
     REVIEWED_SOURCE_REPAIRS_PATH,
 )
-from tools.chembl_tool.common.json_utils import write_json_atomic, write_jsonl_atomic
-from tools.chembl_tool.tasks.bioavailability_ma.reviewed_context_conditioned_benchmark import (
-    CORE_EXTERNAL_CONDITION_GROUPS,
-    REVIEW_ROOT,
-    propose_source_row,
-)
-from tools.chembl_tool.tasks.bioavailability_ma import (
-    build_canonical_starling_source as canonical_builder,
-)
+from predict.utils.json import write_json_atomic, write_jsonl_atomic
+from data.processing.gold_labels.reviewed_oral_benchmark import CORE_EXTERNAL_CONDITION_GROUPS, REVIEW_ROOT, propose_source_row
+from data.processing.gold_labels import oral_canonical_source as canonical_builder
 
 
 VERSION = "oral_stage1_condition_review_migration.v1"

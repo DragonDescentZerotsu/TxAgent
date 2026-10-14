@@ -1,0 +1,61 @@
+{
+  "assay_transfer_status": "complete",
+  "base_profile": "ranked_level_retrieval_tdc_v1",
+  "evidence": {
+    "content_id": "cd5e3e8a3010adf0fefa25e3a0b374dd7e41a913e116812c3177ae3d9fc1b249",
+    "manifest": "evidence/VERSION.json",
+    "manifest_sha256": "cb757afa1215c9fd28a8e21c1569e8cc78f77520482f9983a5b0fc981e2ae0f9",
+    "record_count": 448
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v1"
+  },
+  "levels_independent": true,
+  "model": {
+    "checkpoint_step": 80,
+    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-v2-hp-bioavailability-ma-best",
+    "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
+    "revision": "a1cb6960e9ea4b18c69a87cf10bb7ef695192208"
+  },
+  "morgan_fingerprint": {
+    "bits": 2048,
+    "radius": 2,
+    "similarity": "Tanimoto"
+  },
+  "neighbor_identity_policy_by_level": {
+    "L1": "scaffold_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1",
+  "ranking_modes": [
+    "morgan",
+    "assay-transfer"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "scoring_contract_version": "assay_transfer_chat_first_divergent_token_bf16_backbone_fp32_head.v2",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L1": {
+          "content_id": "2cc3dcc5d2ca4973e8cfc9d1a2859712093aff6a6b1d527e1681781097cb4428",
+          "manifest": "scaffold/test/L1/VERSION.json",
+          "manifest_sha256": "f200e01005feb148e3c4576562dc174cd0f1322d1c97c5ba6e4c0c81441ea0d4"
+        }
+      }
+    },
+    "valid": {
+      "levels": {
+        "L1": {
+          "content_id": "d6cf914732a31373e09eda37349a2c75f4d0eb481ba1dba587ffaa028b7352b7",
+          "manifest": "scaffold/valid/L1/VERSION.json",
+          "manifest_sha256": "be63a37d86e525073449e286f2648357337eccfef6844098515746c1ee88e479"
+        }
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "bioavailability_ma"
+}

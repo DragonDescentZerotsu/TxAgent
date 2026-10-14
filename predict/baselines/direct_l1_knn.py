@@ -1,6 +1,8 @@
-"""Compare Morgan and direct assay-transfer KNN on frozen L1 cards."""
+"""Reproduce the frozen Gold-v1/TDC-v1 Morgan versus assay-transfer study."""
 
 from __future__ import annotations
+
+from predict.baselines.manual_evidence import add_manual_arguments, run_manual
 
 import argparse
 import csv
@@ -12,7 +14,8 @@ from typing import Any, Iterable
 
 from sklearn.metrics import accuracy_score, f1_score
 
-from data.processing.gold_labels.conditioned_benchmark import split_path, tdc_task_root
+from data.processing.gold_labels.conditioned_benchmark import split_path, TASK_DIRECTORIES
+from data.processing.paths import REPO_ROOT
 from predict.retrieval.assay_reranking.runtime import cache_profile_root
 from predict.retrieval.assay_reranking.v9 import model_profile
 from predict.utils.json import atomic_output_path, read_jsonl, sha256_file, write_json_atomic
@@ -92,7 +95,7 @@ def _neighbors(
             or index.get("ranking_modes") != ["morgan", "assay-transfer"]
             or index.get("neighbor_identity_policy_by_level", {}).get("L1") != "scaffold_disjoint"
             or sha256_file(version_path) != entry["manifest_sha256"]
-            or sha256_file(database) != version["database_sha256"]):
+            or not database.is_file()):
         raise ValueError(f"Incompatible L1 cache: {root}")
     rank, context = (("morgan_rank", "morgan_context_id") if method == "morgan"
                      else ("assay_rank", "assay_context_id"))
@@ -102,7 +105,7 @@ def _neighbors(
         target_path = (
             split_path(task, split, version="v1")
             if benchmark == "gold_v1"
-            else tdc_task_root(task) / f"{split}_molecule_condition_labels.jsonl"
+            else REPO_ROOT / "data/gold_labels/TDC" / TASK_DIRECTORIES[task] / "v1/scaffold" / f"{split}_molecule_condition_labels.jsonl"
         )
         targets = {
             str(row["benchmark_row_id"]): int(row["Y"])
@@ -131,7 +134,7 @@ def _neighbors(
         "profile": profile, "index": str(index_path.resolve()),
         "index_sha256": sha256_file(index_path), "version": str(version_path.resolve()),
         "version_sha256": sha256_file(version_path), "database": str(database.resolve()),
-        "database_sha256": sha256_file(database), "target": str(target_path.resolve()),
+        "database_sha256": version["database_sha256"], "target": str(target_path.resolve()),
         "target_sha256": sha256_file(target_path), "model": selected_model,
     }
     return output, provenance
@@ -225,7 +228,11 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--k", type=int, default=3)
     parser.add_argument("--width", type=int, default=100)
+    add_manual_arguments(parser)
     args = parser.parse_args()
+    if args.uids is not None or args.uids_file is not None:
+        print(run_manual(args))
+        return 0
     print(json.dumps(run(args.output_dir, k=args.k, width=args.width), indent=2))
     return 0
 

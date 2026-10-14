@@ -1,1 +1,1 @@
-"""Direct, flat, and full branch-based inference."""
+"""FINAL flat inference and native query priors."""

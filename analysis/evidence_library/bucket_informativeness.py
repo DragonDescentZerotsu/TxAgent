@@ -29,9 +29,9 @@ from data.processing.evidence_library.versions.v8.build_reference_semantics_mapp
     BUDGET_EXHAUSTED_EXIT_CODE,
     TokenLedger,
 )
-from data.processing.llm_api import DEFAULT_ENV_FILE, resolve_api_key
-from tools.chembl_tool.common.json_utils import atomic_output_path, write_json_atomic
-from tools.chembl_tool.common.openai_reasoning_client import OpenAICompatibleClient
+from predict.api_client.transport import DEFAULT_ENV_FILE, resolve_api_key
+from predict.utils.json import atomic_output_path, write_json_atomic
+from predict.api_client.client import OpenAICompatibleClient
 
 VERSION = "bucket_informativeness.v1"
 CACHE_VERSION = "bucket_informativeness_requests.v1"

@@ -62,7 +62,7 @@ from data.processing.evidence_library.versions.v7.measurement_routing import (
 )
 from data.processing.evidence_library.shared.v1.normalization.cleaning import file_sha256
 from data.processing.evidence_library.shared.v1.normalization.measurements import parse_point_measurement
-from tools.chembl_tool.common.units import canonicalize_unit
+from data.processing.evidence_library.units import canonicalize_unit
 from data.processing.evidence_library.versions.v7.task_registry import import_task_module
 
 

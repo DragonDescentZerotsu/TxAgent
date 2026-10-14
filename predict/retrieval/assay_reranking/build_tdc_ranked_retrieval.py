@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from data.processing.gold_labels.conditioned_benchmark import tdc_config
+
 import argparse
 import json
 import os
@@ -24,7 +26,7 @@ from .ranked_uid_retrieval import CAPACITY, SCHEMA_VERSION
 from .runtime import cache_profile_root
 
 
-PROFILE = "ranked_level_retrieval_tdc_v1"
+PROFILE = "canonical_tdc_parent_grouped_l1"
 TASKS = (
     "bbb_martins",
     "bioavailability_ma",
@@ -34,7 +36,7 @@ TASKS = (
     "carcinogens",
 )
 SUBSETS = ("valid", "test")
-DEFAULT_OUTPUT = cache_profile_root(PROFILE)
+DEFAULT_OUTPUT = Path("data/caches/assay_reranking/active/flat_v5/tdc")
 
 
 def _parent(row: dict[str, Any]) -> tuple[str, str]:
@@ -42,7 +44,10 @@ def _parent(row: dict[str, Any]) -> tuple[str, str]:
     return str(row["molecule_identity_key"]), str(identity["parent_smiles"])
 
 
-def _write_projection(task: str, train_path: Path, train: list[dict[str, Any]], root: Path) -> Path:
+def _write_projection(
+    task: str, train_path: Path, train: list[dict[str, Any]], root: Path,
+    split_policy: str,
+) -> Path:
     projection = root / "evidence"
     projection.mkdir(parents=True)
     records = []
@@ -57,7 +62,7 @@ def _write_projection(task: str, train_path: Path, train: list[dict[str, Any]], 
             payload = {
                 "task_id": task,
                 "progressive_level": "L1",
-                "label_source": "tdc_v1",
+                "label_source": "tdc",
                 "benchmark_row_id": str(row["benchmark_row_id"]),
                 "canonical_smiles": parent_smiles,
                 "source_canonical_smiles": str(row["drug"]),
@@ -68,6 +73,7 @@ def _write_projection(task: str, train_path: Path, train: list[dict[str, Any]], 
                 "source_fields": {
                     "source_record_id": uid,
                     "label": int(row["Y"]),
+                    **dict(row.get("source_fields") or {}),
                 },
                 "display_measurement_text": f"Frozen TDC label={int(row['Y'])}",
                 "display_unit_text": "",
@@ -88,7 +94,7 @@ def _write_projection(task: str, train_path: Path, train: list[dict[str, Any]], 
         "status": "complete",
         "task_id": task,
         "record_count": len(records),
-        "source_identity": "tdc_source_record_id",
+        "source_identity": "tdc_source_row_uid",
         "input_sha256": sha256_file(train_path),
     }
     identity["content_id"] = _digest(identity)
@@ -112,15 +118,21 @@ def _build_split(
     train: list[dict[str, Any]],
     evidence_manifest: Path,
     root: Path,
+    split_policy: str,
 ) -> dict[str, Any]:
     query_path = tdc_task_root(task) / f"{subset}_molecule_condition_labels.jsonl"
     query_rows = read_jsonl(query_path)
-    parents: dict[str, dict[str, Any]] = {}
+    parent_rows: dict[str, list[dict[str, Any]]] = {}
     fingerprints = []
     for row in train:
         parent_id, parent_smiles = _parent(row)
-        if parent_id in parents:
+        if split_policy == "scaffold_conditioned" and parent_id in parent_rows:
             raise ValueError(f"TDC train contains duplicate parent: {task}/{parent_id}")
+        parent_rows.setdefault(parent_id, []).append(row)
+    parents: dict[str, dict[str, Any]] = {}
+    for parent_id, rows in parent_rows.items():
+        row = rows[0]
+        parent_smiles = _parent(row)[1]
         fingerprint = standardize_smiles_and_fp(parent_smiles)[2]
         if fingerprint is None:
             raise ValueError(f"TDC train parent is invalid: {task}/{parent_id}")
@@ -137,6 +149,17 @@ def _build_split(
     rankings = []
     selected_contexts: set[str] = set()
     query_counts = {}
+    train_scaffolds = {
+        parent_id: str(rows[0].get("bemis_murcko_scaffold") or "")
+        for parent_id, rows in parent_rows.items()
+    }
+    parent_context_ids = {
+        parent_id: (
+            parent_id if split_policy == "scaffold_conditioned"
+            else f"TDC_V2_PARENT_{_digest({'task': task, 'parent': parent_id})[:20]}"
+        )
+        for parent_id in parent_ids
+    }
     for query in query_rows:
         query_id = str(query["benchmark_row_id"])
         query_parent, query_smiles = _parent(query)
@@ -152,7 +175,7 @@ def _build_split(
                 if parent_id != query_parent
                 and (
                     not query.get("bemis_murcko_scaffold")
-                    or str(parents[parent_id].get("bemis_murcko_scaffold") or "")
+                    or train_scaffolds[parent_id]
                     != str(query["bemis_murcko_scaffold"])
                 )
             ),
@@ -162,8 +185,12 @@ def _build_split(
             raise ValueError(f"TDC query lacks {CAPACITY} disjoint parents: {task}/{query_id}")
         member_count = 0
         for rank, (similarity, parent_id, row) in enumerate(candidates, 1):
-            context_id = str(row["benchmark_row_id"])
-            members = [str(value) for value in row["source_record_ids"]]
+            context_id = parent_context_ids[parent_id]
+            members = [
+                str(value)
+                for member in parent_rows[parent_id]
+                for value in member["source_record_ids"]
+            ]
             selected_contexts.add(context_id)
             member_count += len(members)
             rankings.append((
@@ -180,15 +207,22 @@ def _build_split(
     connection.executemany(
         "INSERT INTO rankings VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", rankings
     )
-    by_context = {str(row["benchmark_row_id"]): row for row in train}
+    by_context = {
+        parent_context_ids[parent_id]: rows
+        for parent_id, rows in parent_rows.items()
+    }
     connection.executemany(
         "INSERT INTO contexts VALUES (?,?,?,?)",
         [
             (
                 context_id,
-                str(by_context[context_id]["molecule_identity_key"]),
-                str(by_context[context_id].get("condition_group") or ""),
-                int(by_context[context_id]["Y"]),
+                str(by_context[context_id][0]["molecule_identity_key"]),
+                str(by_context[context_id][0].get("condition_group") or ""),
+                (
+                    int(by_context[context_id][0]["Y"])
+                    if len({int(row["Y"]) for row in by_context[context_id]}) == 1
+                    else -1
+                ),
             )
             for context_id in sorted(selected_contexts)
         ],
@@ -199,7 +233,11 @@ def _build_split(
             (context_id, uid, rank)
             for context_id in sorted(selected_contexts)
             for rank, uid in enumerate(
-                map(str, by_context[context_id]["source_record_ids"]), 1
+                (
+                    str(uid)
+                    for member in by_context[context_id]
+                    for uid in member["source_record_ids"]
+                ), 1
             )
         ],
     )
@@ -210,7 +248,7 @@ def _build_split(
         "pool": "fixed",
         "capacity": CAPACITY,
         "parent_capacity": CAPACITY,
-        "label_release": {"benchmark": "tdc", "version": "v1"},
+        "label_release": {"benchmark": "tdc"},
         "neighbor_identity_policy": "scaffold_disjoint",
         "shared_candidate_universe": True,
         "morgan_fingerprint": {"radius": 2, "bits": 2048, "similarity": "Tanimoto"},
@@ -222,6 +260,7 @@ def _build_split(
         "inputs": {
             "query_sha256": sha256_file(query_path),
             "train_sha256": sha256_file(train_path),
+            "training_parents": len(parent_rows),
             "evidence_manifest_sha256": sha256_file(evidence_manifest),
         },
     }
@@ -238,7 +277,9 @@ def _build_split(
     return manifest
 
 
-def _write_index(task: str, root: Path, evidence_manifest: Path) -> dict[str, Any]:
+def _write_index(
+    task: str, root: Path, evidence_manifest: Path, split_policy: str,
+) -> dict[str, Any]:
     evidence = json.loads(evidence_manifest.read_text(encoding="utf-8"))
     splits = {}
     for subset in SUBSETS:
@@ -255,7 +296,7 @@ def _write_index(task: str, root: Path, evidence_manifest: Path) -> dict[str, An
         "profile": PROFILE,
         "task_id": task,
         "status": "complete",
-        "label_release": {"benchmark": "tdc", "version": "v1"},
+        "label_release": {"benchmark": "tdc"},
         "pool": "all",
         "parent_capacity": CAPACITY,
         "levels_independent": True,
@@ -279,7 +320,9 @@ def _write_index(task: str, root: Path, evidence_manifest: Path) -> dict[str, An
     return index
 
 
-def _validate(task: str, root: Path, train: list[dict[str, Any]]) -> dict[str, Any]:
+def _validate(
+    task: str, root: Path, train: list[dict[str, Any]], split_policy: str,
+) -> dict[str, Any]:
     index_path = root / "RELEASE_INDEX.json"
     index = json.loads(index_path.read_text(encoding="utf-8"))
     if (
@@ -299,10 +342,15 @@ def _validate(task: str, root: Path, train: list[dict[str, Any]]) -> dict[str, A
         or evidence["content_id"] != index["evidence"]["content_id"]
     ):
         raise ValueError(f"invalid TDC evidence projection hashes: {task}")
-    expected_members = {
-        str(row["benchmark_row_id"]): list(map(str, row["source_record_ids"]))
-        for row in train
-    }
+    grouped_members: dict[str, list[str]] = {}
+    for row in train:
+        parent_id, _ = _parent(row)
+        context_id = (
+            str(row["benchmark_row_id"]) if split_policy == "scaffold_conditioned"
+            else f"TDC_V2_PARENT_{_digest({'task': task, 'parent': parent_id})[:20]}"
+        )
+        grouped_members.setdefault(context_id, []).extend(map(str, row["source_record_ids"]))
+    expected_members = grouped_members
     train_scaffolds = {
         str(row["molecule_identity_key"]): str(row.get("bemis_murcko_scaffold") or "")
         for row in train
@@ -385,20 +433,24 @@ def _validate(task: str, root: Path, train: list[dict[str, Any]]) -> dict[str, A
     return receipt
 
 
-def build_task(task: str, output_root: Path = DEFAULT_OUTPUT) -> dict[str, Any]:
-    destination = output_root / task
+def build_task(
+    task: str, output_root: Path = DEFAULT_OUTPUT, split_policy: str | None = None,
+) -> dict[str, Any]:
+    split_policy = split_policy or tdc_config(task)["split_policy"]
+    destination = output_root / task / "l1"
     if destination.exists():
         raise FileExistsError(f"Refusing to replace TDC ranked cache: {destination}")
     train_path = tdc_task_root(task) / "train_molecule_condition_labels.jsonl"
     train = read_jsonl(train_path)
-    output_root.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix=f".{task}.", dir=output_root) as temporary:
+    staging_parent = output_root if split_policy == "scaffold_conditioned" else output_root.parent
+    staging_parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=f".{task}.", dir=staging_parent) as temporary:
         root = Path(temporary)
-        evidence_manifest = _write_projection(task, train_path, train, root)
+        evidence_manifest = _write_projection(task, train_path, train, root, split_policy)
         for subset in SUBSETS:
-            _build_split(task, subset, train_path, train, evidence_manifest, root)
-        index = _write_index(task, root, evidence_manifest)
-        validation = _validate(task, root, train)
+            _build_split(task, subset, train_path, train, evidence_manifest, root, split_policy)
+        index = _write_index(task, root, evidence_manifest, split_policy)
+        validation = _validate(task, root, train, split_policy)
         os.replace(root, destination)
     return {
         "task_id": task,
@@ -414,7 +466,11 @@ def main() -> int:
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args()
     tasks = TASKS if args.tasks == ["all"] else tuple(dict.fromkeys(args.tasks))
-    print(json.dumps({task: build_task(task, args.output_root) for task in tasks}, indent=2))
+    results = {}
+    for task in tasks:
+        output_root = args.output_root
+        results[task] = build_task(task, output_root)
+    print(json.dumps(results, indent=2))
     return 0
 
 

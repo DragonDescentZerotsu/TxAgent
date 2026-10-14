@@ -11,11 +11,7 @@ from pathlib import Path
 import re
 from typing import Any, Iterable, Mapping
 
-from tools.chembl_tool.common.molecule_identity import (
-    IDENTITY_NORMALIZER_VERSION,
-    bemis_murcko_scaffold,
-    normalize_molecule_identity,
-)
+from predict.retrieval.policies import IDENTITY_NORMALIZER_VERSION, bemis_murcko_scaffold, normalize_molecule_identity
 
 
 NUMBER_PATTERN = r"[+-]?(?:\d+(?:\.\d+)?|\.\d+)"

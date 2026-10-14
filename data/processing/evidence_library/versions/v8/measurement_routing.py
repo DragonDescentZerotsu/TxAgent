@@ -30,7 +30,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any, Callable, Literal
 
-from tools.chembl_tool.common.units import canonicalize_unit
+from data.processing.evidence_library.units import canonicalize_unit
 from data.processing.evidence_library.versions.v8.task_registry import import_task_module
 
 

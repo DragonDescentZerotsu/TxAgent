@@ -16,7 +16,7 @@ from data.processing.evidence_library.versions.v10.tasks.dili import (
 ROOT = Path(__file__).resolve().parents[6]
 GOLD_PATH = (
     ROOT
-    / "tests/chembl_tool/common/measurement_resolution_quality/gold/dili.v10.3.jsonl"
+    / "tests/data/evidence_library/measurement_resolution_quality/gold/dili.v10.3.jsonl"
 )
 STAGE1_PATH = ROOT / "data/evidence_libraries/dili/v10/01_cleaned/records.parquet"
 PLAIN_DECIMAL = re.compile(r"^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$")

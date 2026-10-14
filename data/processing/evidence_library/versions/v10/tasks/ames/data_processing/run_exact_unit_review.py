@@ -31,7 +31,7 @@ from data.processing.evidence_library.versions.v10.tasks.ames.starling_measureme
     DEEPSEEK_PROVIDER,
     ENDPOINT_CONCURRENCY_BUDGET,
 )
-from data.processing.llm_api import openai_compatible_client
+from predict.api_client.transport import openai_compatible_client
 
 MODEL = DEEPSEEK_MODEL
 PROVIDER = DEEPSEEK_PROVIDER

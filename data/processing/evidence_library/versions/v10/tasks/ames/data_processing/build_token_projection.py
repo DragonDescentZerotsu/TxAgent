@@ -37,7 +37,7 @@ from data.processing.evidence_library.versions.v10.tasks.ames.starling_measureme
 
 GPT_CREDENTIALS = frozenset({"OPENAI_API_KEY_ONE", "OPENAI_API_KEY_TWO"})
 DEFAULT_GOLD = Path(
-    "tests/chembl_tool/common/measurement_resolution_quality/gold/ames.v10.jsonl"
+    "tests/data/evidence_library/measurement_resolution_quality/gold/ames.v10.jsonl"
 )
 
 

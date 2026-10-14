@@ -85,3 +85,17 @@ validation on 2026-09-16 but remain inactive while both tasks use `CURRENT=v1`.
 The aggregation gate runs before split assignment, so it applies to train,
 valid, and test: 70% for null-condition cards, 60% for external-condition cards,
 plus the documented two-thirds migration-preservation exception above.
+
+## Canonical TDC
+
+`data/gold_labels/TDC/manifest.json` configures every task's labels, split policy,
+retrieval indexes, optimizer L1 cards and level limits. Label files live directly
+under `TDC/<Task>/`. Oral and Skin preserve the scaffold-conditioned cohorts;
+BBB, Ames, DILI and Carcinogens preserve the original-source cohorts. Source
+rows, labels and UIDs are unchanged. `build_tdc_benchmark` validates this frozen
+publication; it does not choose a dataset version.
+
+Old label editions and original cache headers live under `data/legacy/tdc/`.
+`relocations.json` maps exact historical metadata paths and moved payload prefixes;
+readers use it only when the recorded path is absent. Completed runs retain
+their original scientific identities and are never relabeled as canonical TDC.

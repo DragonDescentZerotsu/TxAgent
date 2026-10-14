@@ -25,7 +25,7 @@ import pandas as pd
 import pyarrow.parquet as pq
 
 from data.processing.evidence_library.shared.v2.normalization.cleaning import file_sha256
-from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
+from predict.retrieval.policies import normalize_molecule_identity
 from data.processing.evidence_library.shared.v2.pair_bucket_transfer_policy import (
     MAX_REFERENCE_PAIRS,
     MIN_ASSAY_TRANSFER_SAMPLES,

@@ -116,7 +116,7 @@ def prepare(task, output, mappings=(), caches=()):
             count += 1
         receipts.append({'cache':str(cache_path), 'sha256':digest(cache_path), 'reused_rows':count})
     excluded = set()
-    for fixture in Path('tests/chembl_tool/common/measurement_resolution_quality/gold').glob(task+'.*.jsonl'):
+    for fixture in Path('tests/data/evidence_library/measurement_resolution_quality/gold').glob(task+'.*.jsonl'):
         for line in fixture.read_text().splitlines()[1:]:
             case = json.loads(line)
             excluded.add(case['audit_case_id'].split(':',1)[-1])

@@ -1,0 +1,47 @@
+{
+  "task": "dili",
+  "task_directory": "DILI",
+  "benchmark": "tdc",
+  "version": "v1",
+  "release_id": "tdc_v1",
+  "contract": "tdc_conditioned_benchmark.v1",
+  "status": "complete",
+  "target_definition": "TDC drug-induced liver injury label; 1 is DILI-positive and 0 is DILI-negative.",
+  "source_rows": 475,
+  "normalized_rows": 475,
+  "accepted_source_rows": 475,
+  "accepted_parents": 474,
+  "rejected_source_rows": 0,
+  "conflicting_source_rows": 0,
+  "conflicting_parents": 0,
+  "split_repairs": 0,
+  "splits": {
+    "train": {
+      "n": 331,
+      "positive": 154
+    },
+    "valid": {
+      "n": 47,
+      "positive": 31
+    },
+    "test": {
+      "n": 96,
+      "positive": 51
+    }
+  },
+  "source_manifest": "data/raw/tdc/DILI/v1/source_manifest.json",
+  "source_manifest_sha256": "feaf9908f476c84cac1852a8e133c8d91670b0d7682b26158dc2df9d99824206",
+  "outputs": {
+    "conflicting_parent_labels.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "heldout_molecule_condition_labels.jsonl": "cc7347eabc885044d40058bbe7e13f8056c2358a2cb4c48c5b180a010e514a43",
+    "rejected_source_rows.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "split_repairs.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "test.jsonl": "8b592aaeb1e29cfb7899e27f77105fa44e8f0591d9940fae9503103f365b38bb",
+    "test_molecule_condition_labels.jsonl": "9bdca309503a20ab1bfd958ab6175168ce5b3b7fe767fcda95c48a92971448d4",
+    "train.jsonl": "677644352553460c7a01af20d614ddb9f663253f7c385037794b14a9cfc728fd",
+    "train_molecule_condition_labels.jsonl": "21311e802e040c3c5b1c5d519a01aaf75a8fd7d9bdf4f58989e4cd7a2e5b3608",
+    "valid.jsonl": "14a3dbda5a1ce84c90ada256e7012c54165806e38ab2759844fad0aefced3ff4",
+    "valid_molecule_condition_labels.jsonl": "eb5171a943bb1953053e0ed8e2675e1651620ce22376170ee74c529738920542"
+  },
+  "current_pointer_changed": false
+}

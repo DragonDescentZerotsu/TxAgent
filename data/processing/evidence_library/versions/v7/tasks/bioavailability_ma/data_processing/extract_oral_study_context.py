@@ -14,7 +14,7 @@ from typing import Any
 import pandas as pd
 from openai import OpenAI
 
-from tools.chembl_tool.common.llm_client import openai_client
+from predict.api_client.transport import openai_client
 from data.processing.evidence_library.versions.v7.prompts import PROMPT_ROOT
 
 

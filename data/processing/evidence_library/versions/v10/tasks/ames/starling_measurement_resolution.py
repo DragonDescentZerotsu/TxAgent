@@ -55,7 +55,7 @@ ENFORCE_EXACT_UNITS_DURING_EXTRACTION = False
 DEFAULT_BASE_MAPPING_PATH = None
 DEFAULT_GOLD_FIXTURE = (
     REPO_ROOT
-    / "tests/chembl_tool/common/measurement_resolution_quality/gold/ames.v10.1.jsonl"
+    / "tests/data/evidence_library/measurement_resolution_quality/gold/ames.v10.1.jsonl"
 )
 TEMPLATE_PATH = TASK_PROMPT_ROOT / "measurement_resolution_v6.jinja"
 

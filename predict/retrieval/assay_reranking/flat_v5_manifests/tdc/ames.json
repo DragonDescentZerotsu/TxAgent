@@ -1,0 +1,196 @@
+{
+  "schema_version": "flat_v5_artifact_bundle.v1",
+  "status": "complete",
+  "bundle_id": "flat_v5/tdc/ames",
+  "task": "ames",
+  "benchmark": "tdc",
+  "harness_version": "full-flat-context-v5",
+  "max_level": null,
+  "cache_config": {
+    "path": "data/gold_labels/TDC/manifest.json",
+    "sha256": "6374b29701d0cf5faa591b8f9f8b873be8c7ba098c08e9e5f418a87122cff9ea"
+  },
+  "artifacts": [
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l1/RELEASE_INDEX.json",
+      "size": 2543,
+      "sha256": "875f2c9c303a7b07b1cf81a7190cbe19d310cc8607caa13896c13a149db3f440"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l1/evidence/VERSION.json",
+      "size": 601,
+      "sha256": "e292b2c2b004b4c866dffe485947cbf65b0817fb7701c1afbb080c2a726d6bd3"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l1/evidence/records.parquet",
+      "size": 927261,
+      "sha256": "667b8d564e8c195b8de8bc51632eb0e9223fa23b1cd92cfbc01401dbc7dab301"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l1/scaffold/test/L1/VERSION.json",
+      "size": 226086,
+      "sha256": "14ba8661e1ff92024b3c9f29f161b0e045aeb35c7fea5dabb5f0c89170346d75"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l1/scaffold/test/L1/rankings.sqlite3",
+      "size": 72667136,
+      "sha256": "9c0796ed972c1fdc28f109a2cb75ed9b85baf614e7c586349880a6a3d04f1013"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l1/scaffold/valid/L1/VERSION.json",
+      "size": 113760,
+      "sha256": "dac602955f3366a63d21a3f1f6600a0b589d6ef8e73aa36e4a1b8bd9239e1e50"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l1/scaffold/valid/L1/rankings.sqlite3",
+      "size": 37322752,
+      "sha256": "4b2ed4da7bbfee72a69d0bbe0f37bc54f8b009af42298ca52543ba2e86f36666"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l1_cards/RELEASE_INDEX.json",
+      "size": 1584,
+      "sha256": "6592c073ae792327ae3a144dcee0f04dec450380e7db637c69450d42e603278d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l1_cards/evidence/VERSION.json",
+      "size": 986,
+      "sha256": "f65dbf6b557c59c4391a0196ae90ff90f925ea0267b11f65c2f7eec68aa9c346"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l1_cards/evidence/records.parquet",
+      "size": 1625565,
+      "sha256": "14023d27e74a87f07c757883ca499cf4917bd0cd41289a9b18f012f1e41a645e"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l1_cards/scaffold/test/L1/VERSION.json",
+      "size": 266477,
+      "sha256": "fcdad54e90eacfc934c453502215ee0c2db4f21203acb959664bc2d157890ec1"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l1_cards/scaffold/test/L1/rankings.sqlite3",
+      "size": 63967232,
+      "sha256": "51d5d4c0ffe2b5de748c47d45063503dab5161b213c4c5002b8b2ee73ac825f2"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l1_cards/scaffold/valid/L1/VERSION.json",
+      "size": 133643,
+      "sha256": "cf635999f82e869e2b2e5c502e71eb331b693b47e5a9341b9cf66a85af584224"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l1_cards/scaffold/valid/L1/rankings.sqlite3",
+      "size": 33419264,
+      "sha256": "6ccb9ecf3c40770ed5df85c05b41c82ecc2f332e770ab0b5eef61e161f7bb19d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/RELEASE_INDEX.json",
+      "size": 4253,
+      "sha256": "93ddfb3ab61e47609920c537fde0c920caac76208ba62ff21db72128768e1b76"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/scaffold/test/L2/VERSION.json",
+      "size": 241281,
+      "sha256": "93facbdc568dda1bcaca508a808bb1d1be9c77d2ad199828e76a2c67c0bda41d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/scaffold/test/L2/rankings.sqlite3",
+      "size": 292896768,
+      "sha256": "f837e041636d4766f7e2c412a50322674ed3aa7f28e2c791a4b7986e3f522c6b"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/scaffold/test/L3/VERSION.json",
+      "size": 241178,
+      "sha256": "56945f7424d8483c106bc34693406687fe5ac617f5f667d97882d10763cc1a90"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/scaffold/test/L3/rankings.sqlite3",
+      "size": 305639424,
+      "sha256": "b45f741e917dc57b738dbc6aac0e35b67a0fc9a78c0b50d3f6c694cf3b380696"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/scaffold/test/L4/VERSION.json",
+      "size": 242024,
+      "sha256": "083689b1fbe880986b4b594e02bcd879c8ab58e517bdaa750d797b65790e811a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/scaffold/test/L4/rankings.sqlite3",
+      "size": 462729216,
+      "sha256": "88113363fe6dbe9decdd09b2ebd9c417e3e841ed43a79d8f738a67d62437c5f6"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/scaffold/test/L5/VERSION.json",
+      "size": 242022,
+      "sha256": "9e1c074863a153fb372ea4c1bdcb593240e6d1d9972a5ba11926374f000f338c"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/scaffold/test/L5/rankings.sqlite3",
+      "size": 388734976,
+      "sha256": "dbf83b83372031dc44be9c80723203eeb2f4e57fd7928f257287a9087694bff2"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/scaffold/test/PARENT_UNIVERSE.json",
+      "size": 7521020,
+      "sha256": "0142a6bc93dd43a37c2fab3ec726c552ab2f725d1149939e5caeac1c8e45a527"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/scaffold/valid/L2/VERSION.json",
+      "size": 121816,
+      "sha256": "b86460ee60cdac15a889e4bf339f9809d92a02bc450d8d548b4ef3697af6cb6b"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/scaffold/valid/L2/rankings.sqlite3",
+      "size": 156512256,
+      "sha256": "35316a1ce1fb170701069c9295d3cf2f029e7395409bf5e7337ac714d068b4f7"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/scaffold/valid/L3/VERSION.json",
+      "size": 121701,
+      "sha256": "feae9643a052d8ad1374999acbb76d814733a691ca9396b7c32c6bd8a2558a61"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/scaffold/valid/L3/rankings.sqlite3",
+      "size": 137072640,
+      "sha256": "c5eb6815e30c73e94fbf67e434f9054963eed21ce07348a5913009da760dfb32"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/scaffold/valid/L4/VERSION.json",
+      "size": 122241,
+      "sha256": "e39190d6f1c2495b0adc396cc1c9c1bd8feedf1541787dcf15f8e268ed172ca7"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/scaffold/valid/L4/rankings.sqlite3",
+      "size": 274132992,
+      "sha256": "03ba1b2ba3edd618e7a5605bb6fe574f47ac30de9251c2acd71a36a05be928be"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/scaffold/valid/L5/VERSION.json",
+      "size": 122262,
+      "sha256": "20a426fe8e5978de2e4dc16ca82adba98b964528f64c8e09c9fda30bd443e404"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/scaffold/valid/L5/rankings.sqlite3",
+      "size": 251629568,
+      "sha256": "748d7ff1f7452ae7d33abefbdd38aab7569c3452a6e2d1602c78015c081c9a6f"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/scaffold/valid/PARENT_UNIVERSE.json",
+      "size": 3786349,
+      "sha256": "a069b1a0866fec26051afc0e11233a88d8f2f24dbbe5af97d539ca71e7aa6f03"
+    },
+    {
+      "path": "data/evidence_libraries/ames/v10_main_universe_v3/retrieval_projection/ranked_evidence_safety_v27_v1/VERSION.json",
+      "size": 1963,
+      "sha256": "deef928e70b5b70bf9efb90d4609e1e949e3c8e52f472a05206098b9eeea73da"
+    },
+    {
+      "path": "data/evidence_libraries/ames/v10_main_universe_v3/retrieval_projection/ranked_evidence_safety_v27_v1/records.parquet",
+      "size": 848038715,
+      "sha256": "b8596a0484d272e45495f498f19819154cd59504142e6a9f6a9fe7c439d880fc"
+    },
+    {
+      "path": "data/gold_labels/TDC/manifest.json",
+      "size": 11417,
+      "sha256": "6374b29701d0cf5faa591b8f9f8b873be8c7ba098c08e9e5f418a87122cff9ea"
+    }
+  ],
+  "missing": []
+}

@@ -7,6 +7,8 @@ record-level: repeated parents under different conditions remain distinct.
 
 from __future__ import annotations
 
+from predict.baselines.manual_evidence import add_manual_arguments, run_manual
+
 import argparse
 import csv
 import json
@@ -154,7 +156,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         type=Path,
         default=DEFAULT_CACHE_ROOT,
     )
+    add_manual_arguments(parser)
     args = parser.parse_args(argv)
+    if args.uids is not None or args.uids_file is not None:
+        print(run_manual(args))
+        return 0
     widths = sorted(set(args.morgan_widths))
     if args.k <= 0 or not widths or widths[0] <= 0:
         raise ValueError("Require k > 0 and positive Morgan widths")

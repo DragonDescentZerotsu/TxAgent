@@ -19,7 +19,7 @@ from data.processing.evidence_library.build_source_uid_levels import (
     _git_bytes,
     _membership,
 )
-from tools.chembl_tool.common.json_utils import write_json_atomic
+from predict.utils.json import write_json_atomic
 
 
 ROOT = Path(__file__).resolve().parents[3]

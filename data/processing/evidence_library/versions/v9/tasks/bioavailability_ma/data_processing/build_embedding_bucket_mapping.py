@@ -22,7 +22,7 @@ import torch
 from sklearn.cluster import KMeans
 from transformers import AutoModel, AutoTokenizer
 
-from tools.chembl_tool.common.llm_client import openai_client
+from predict.api_client.transport import openai_client
 from data.processing.evidence_library.versions.v9.prompts import PROMPT_ROOT
 
 

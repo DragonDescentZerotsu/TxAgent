@@ -35,7 +35,7 @@ DEFAULT_UNITS = (
 )
 DEFAULT_GOLD = (
     ROOT
-    / "tests/chembl_tool/common/measurement_resolution_quality/gold/dili.v10.2.jsonl"
+    / "tests/data/evidence_library/measurement_resolution_quality/gold/dili.v10.2.jsonl"
 )
 
 ALLOWED_UNIT_GUARDS = {

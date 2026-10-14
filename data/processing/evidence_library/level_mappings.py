@@ -16,7 +16,7 @@ from data.processing.paths import (
     evidence_library_root,
     task_id,
 )
-from tools.chembl_tool.common.json_utils import write_json_atomic
+from predict.utils.json import write_json_atomic
 
 
 INDEX_PATH = EVIDENCE_LIBRARIES_ROOT / "level_mappings.v1.json"

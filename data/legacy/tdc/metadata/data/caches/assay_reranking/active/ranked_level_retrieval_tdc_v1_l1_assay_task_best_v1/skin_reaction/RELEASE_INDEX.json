@@ -1,0 +1,61 @@
+{
+  "assay_transfer_status": "complete",
+  "base_profile": "ranked_level_retrieval_tdc_v1",
+  "evidence": {
+    "content_id": "87788388ba4192629ea1275a0a497ffe79e0478127192b6b62c08703dbb9bb4c",
+    "manifest": "evidence/VERSION.json",
+    "manifest_sha256": "3b3a0090d621bb1f2c9d99948a9c170ac155d81672465455f31962b5bf14e0de",
+    "record_count": 282
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v1"
+  },
+  "levels_independent": true,
+  "model": {
+    "checkpoint_step": 80,
+    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v9-0-2-tdc-v2-skin-reaction-best",
+    "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
+    "revision": "870f401c451b4324a93af5049bec02c529119c20"
+  },
+  "morgan_fingerprint": {
+    "bits": 2048,
+    "radius": 2,
+    "similarity": "Tanimoto"
+  },
+  "neighbor_identity_policy_by_level": {
+    "L1": "scaffold_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1",
+  "ranking_modes": [
+    "morgan",
+    "assay-transfer"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "scoring_contract_version": "assay_transfer_chat_first_divergent_token_bf16_backbone_fp32_head.v2",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L1": {
+          "content_id": "5e0a120975e2857c92ce2292cb5fd9b9fa3fb59378bc539c574017ce41ac00fb",
+          "manifest": "scaffold/test/L1/VERSION.json",
+          "manifest_sha256": "6cd2f56da3ce7c78d9cbdd88b17e5b0f30bddd3399cbf4667aa56abdb3ac6835"
+        }
+      }
+    },
+    "valid": {
+      "levels": {
+        "L1": {
+          "content_id": "1944a5b5f1527854173032ac7bab0e010034ecc2e39f0569490331fa149ea18b",
+          "manifest": "scaffold/valid/L1/VERSION.json",
+          "manifest_sha256": "77b37c05ae78752a378c5eb288e3041bdbedb354d21b77a5a72da55494199196"
+        }
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "skin_reaction"
+}

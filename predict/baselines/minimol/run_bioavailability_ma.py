@@ -1,4 +1,4 @@
-"""Train and evaluate a MiniMol baseline on Bioavailability_Ma.
+"""Train and evaluate a MiniMol baseline on supplied molecular benchmark splits.
 
 This follows the downstream head used by MiniMol's TDC leaderboard script, but
 uses the repo's fixed train/valid/test JSONL splits instead of TDC folds.
@@ -13,6 +13,7 @@ import random
 from copy import deepcopy
 from dataclasses import asdict, dataclass
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import torch
@@ -20,6 +21,7 @@ import torch.nn as nn
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 from torch.utils.data import DataLoader
 
+from predict.baselines.conditioned_knn import benchmark_row_metadata, condition_metrics
 from predict.baselines.minimol.embedding_runtime import (
     DEFAULT_MINIMOL_SOURCE,
     create_featurizer,
@@ -47,6 +49,7 @@ class SplitData:
     smiles: list[str]
     labels: list[int]
     conditions: list[str] | None = None
+    metadata: list[dict[str, Any]] | None = None
 
 
 @dataclass
@@ -126,6 +129,7 @@ def load_split(path: Path, *, condition_field: str | None = None) -> SplitData:
     smiles: list[str] = []
     labels: list[int] = []
     conditions: list[str] | None = [] if condition_field else None
+    metadata: list[dict[str, Any]] = []
     with path.open() as f:
         for line_number, line in enumerate(f, start=1):
             row = json.loads(line)
@@ -141,7 +145,10 @@ def load_split(path: Path, *, condition_field: str | None = None) -> SplitData:
                     conditions.append(value)
             except KeyError as exc:
                 raise ValueError(f"{path}:{line_number} is missing required key {exc!s}") from exc
-    return SplitData(smiles=smiles, labels=labels, conditions=conditions)
+            metadata.append(benchmark_row_metadata(row))
+            if labels[-1] not in (0, 1):
+                raise ValueError(f"{path}:{line_number} has non-binary Y={labels[-1]}")
+    return SplitData(smiles=smiles, labels=labels, conditions=conditions, metadata=metadata)
 
 
 def _json_safe(value):
@@ -178,9 +185,12 @@ def featurize_splits(
     for split_name, split in splits.items():
         path = embedding_cache_path(args, split_name)
         if path.exists() and not args.force_embed:
-            payload = torch.load(path, map_location="cpu")
-            if payload["smiles"] == split.smiles:
-                embeddings[split_name] = payload["embeddings"].float()
+            payload = torch.load(path, map_location="cpu", weights_only=False)
+            if payload["smiles"] == split.smiles and list(payload["labels"]) == split.labels:
+                tensor = payload["embeddings"].detach().cpu().float()
+                if tensor.ndim != 2 or tensor.shape[0] != len(split.smiles) or not torch.isfinite(tensor).all():
+                    raise ValueError(f"Invalid MiniMol embedding cache: {path}")
+                embeddings[split_name] = tensor
                 continue
             print(f"[minimol] cache mismatch for {split_name}; recomputing embeddings")
         pending[split_name] = split
@@ -212,6 +222,8 @@ def featurize_splits(
                 f"({n_reused} reused, {len(split.smiles) - n_reused} newly embedded)"
             )
             tensor = torch.stack([reusable[smiles] for smiles in split.smiles]).float()
+            if tensor.ndim != 2 or tensor.shape[0] != len(split.smiles) or not torch.isfinite(tensor).all():
+                raise ValueError(f"Invalid MiniMol embeddings for {split_name}")
             path = embedding_cache_path(args, split_name)
             path.parent.mkdir(parents=True, exist_ok=True)
             torch.save(
@@ -252,14 +264,17 @@ def _load_reusable_embeddings(
         if path.is_file()
     )
     for path in files:
-        payload = torch.load(path, map_location="cpu")
+        payload = torch.load(path, map_location="cpu", weights_only=False)
         smiles = list(map(str, payload["smiles"]))
         tensor = payload["embeddings"].float()
-        if len(smiles) != len(tensor):
+        if tensor.ndim != 2 or len(smiles) != len(tensor) or not torch.isfinite(tensor).all():
             raise ValueError(f"Embedding cache row mismatch: {path}")
         for molecule, row in zip(smiles, tensor, strict=True):
             previous = registry.get(molecule)
-            if previous is not None and not torch.allclose(previous, row, rtol=1e-5, atol=1e-6):
+            if previous is not None and (
+                previous.shape != row.shape
+                or not torch.allclose(previous, row, rtol=1e-5, atol=1e-6)
+            ):
                 raise ValueError(f"Conflicting cached MiniMol embedding for {molecule!r}")
             registry[molecule] = row
     return registry, files
@@ -328,6 +343,14 @@ def main() -> None:
         condition_field=args.condition_field,
     )
 
+    vocabulary = condition_vocabulary(train.conditions) if train.conditions is not None else None
+    if vocabulary is not None and not args.embeddings_only:
+        for split in (valid, test):
+            if split is not None and split.conditions is not None:
+                unknown = sorted(set(split.conditions) - set(vocabulary))
+                if unknown:
+                    raise ValueError(f"Condition values are absent from train: {unknown}")
+
     print(
         "[minimol] loaded splits: "
         f"train={len(train.labels)} "
@@ -339,6 +362,9 @@ def main() -> None:
     if valid is not None:
         embedding_splits["valid"] = valid
     split_embeddings = featurize_splits(embedding_splits, args)
+    dimensions = {tensor.shape[1] for tensor in split_embeddings.values()}
+    if len(dimensions) != 1:
+        raise ValueError("MiniMol embedding dimensions differ between splits")
     if args.embeddings_only:
         (args.output_dir / "embeddings_only_manifest.json").write_text(
             json.dumps(
@@ -363,11 +389,6 @@ def main() -> None:
         print("[minimol] embeddings-only cache materialization complete")
         return
     molecule_embedding_dim = int(split_embeddings["train"].shape[1])
-    vocabulary = (
-        condition_vocabulary(train.conditions)
-        if train.conditions is not None
-        else None
-    )
     train_embeddings = append_condition_one_hot(
         split_embeddings["train"], train.conditions, vocabulary
     )
@@ -551,16 +572,27 @@ def main() -> None:
     metrics_path = args.output_dir / "metrics.json"
     predictions_path = args.output_dir / f"{args.evaluation_split}_predictions.jsonl"
     checkpoint_path = args.output_dir / "best_ensemble.pt"
+    predictions = []
+    for index, (smiles, label, score) in enumerate(
+        zip(test.smiles, test.labels, test_scores, strict=True)
+    ):
+        row = {
+            "query_index": index,
+            **(test.metadata[index] if test.metadata is not None else {}),
+            "drug": smiles, "Y": label, "score": float(score),
+            "prediction": int(score >= threshold),
+        }
+        if args.condition_field is not None and test.conditions is not None:
+            row[args.condition_field] = test.conditions[index]
+        predictions.append(row)
+    condition_field = args.condition_field or "condition_group"
+    if any(condition_field in row for row in predictions):
+        output["condition_metrics"] = condition_metrics(predictions, field=condition_field)
     with metrics_path.open("w") as f:
         json.dump(output, f, indent=2)
         f.write("\n")
     with predictions_path.open("w") as f:
-        for index, (smiles, label, score) in enumerate(
-            zip(test.smiles, test.labels, test_scores, strict=True)
-        ):
-            row = {"drug": smiles, "Y": label, "score": float(score), "prediction": int(score >= threshold)}
-            if args.condition_field is not None and test.conditions is not None:
-                row[args.condition_field] = test.conditions[index]
+        for row in predictions:
             f.write(json.dumps(row) + "\n")
     torch.save(
         {

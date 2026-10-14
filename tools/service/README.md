@@ -19,9 +19,9 @@ tools/service/runtime.py
   Native-library thread caps applied before model initialization.
 tools/service/molgpka_predictor.py
   Process-resident acid/base MolGpKa networks reused by molecule_properties.
-tools/chembl_tool/common/openai_reasoning_client.py
+predict/api_client/client.py
   Batch-capable client with backward-compatible fallback to individual invokes.
-tools/chembl_tool/common/identity_blind.py
+predict/harnesses/branches/visibility.py
   Retriever-agnostic assembly of the fixed per-sample tool bundle.
 ```
 
@@ -71,7 +71,7 @@ branches must not duplicate this logic.
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
-  python -m pytest -q tests/service tests/chembl_tool/common/test_identity_blind.py
+  python -m pytest -q tests/service tests/predict/test_identity_blind.py
 
 curl -fsS http://127.0.0.1:8765/health
 ```

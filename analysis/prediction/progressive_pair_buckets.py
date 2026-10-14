@@ -90,26 +90,27 @@ def _effective_pool(requested_pool: str, level: int) -> str:
 
 
 def _selected_records(
-    *, task: str, mode: str, requested_pool: str, cache_config: Path
+    *, task: str, mode: str, requested_pool: str, cache_config: Path, last_level: int,
+    subset: str = "valid", molecule_limit: int = 10, l1_limit: int = 10, later_limit: int = 25
 ) -> tuple[dict[str, dict[str, list[dict[str, Any]]]], dict[str, Any]]:
-    query_path = split_path(task, "valid").with_name(
-        "valid_molecule_condition_labels.jsonl"
+    query_path = split_path(task, subset).with_name(
+        f"{subset}_molecule_condition_labels.jsonl"
     )
     queries = {
         str(row["benchmark_row_id"]): str(row["drug"])
         for row in read_jsonl(query_path)
     }
     policy = load_cache_policy(
-        cache_config, task, "valid", mode, max_level=TASK_LEVELS[task]
+        cache_config, task, subset, mode, max_level=last_level
     )
     molecules, later, audit = load_candidates(
         queries,
         task=task,
-        subset="valid",
+        subset=subset,
         policy=policy,
-        molecule_limit=10,
-        l1_limit=10,
-        later_limit=25,
+        molecule_limit=molecule_limit,
+        l1_limit=l1_limit,
+        later_limit=later_limit,
         tie_seed=0,
         cache_pool=POOLS[requested_pool],
     )
@@ -134,12 +135,16 @@ def _selected_records(
     }
 
 
-def analyze(cache_config: Path) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
+def analyze(cache_config: Path, *, task_levels=None, modes=MODES, pools=None,
+            subset="valid", molecule_limit=10, l1_limit=10, later_limit=25) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
+    task_levels, pools = task_levels or TASK_LEVELS, pools or tuple(POOLS)
+    if min(molecule_limit, l1_limit, later_limit) < 1:
+        raise ValueError("record budgets must be positive")
     per_query: list[dict[str, Any]] = []
     frequencies: dict[tuple[str, str, str, int, str, str, str], Counter[str]] = defaultdict(Counter)
     provenance: dict[str, Any] = {}
 
-    for task, last_level in TASK_LEVELS.items():
+    for task, last_level in task_levels.items():
         bucket_lookup, records_path, stage_manifest = _pair_bucket_lookup(task)
         provenance[task] = {
             "pair_bucket_records": str(records_path.resolve()),
@@ -148,13 +153,14 @@ def analyze(cache_config: Path) -> tuple[list[dict[str, Any]], list[dict[str, An
             "pair_bucket_manifest_sha256": _sha256(stage_manifest),
             "conditions": {},
         }
-        for mode in MODES:
-            for requested_pool in POOLS:
+        for mode in modes:
+            for requested_pool in pools:
                 selected, inputs = _selected_records(
                     task=task,
                     mode=mode,
                     requested_pool=requested_pool,
-                    cache_config=cache_config,
+                    cache_config=cache_config, last_level=last_level, subset=subset,
+                    molecule_limit=molecule_limit, l1_limit=l1_limit, later_limit=later_limit,
                 )
                 provenance[task]["conditions"][f"{mode}:{requested_pool}"] = inputs
                 for query_id, levels in selected.items():
@@ -204,10 +210,10 @@ def analyze(cache_config: Path) -> tuple[list[dict[str, Any]], list[dict[str, An
     ordered_groups = sorted(
         grouped_queries.items(),
         key=lambda item: (
-            list(TASK_LEVELS).index(item[0][0]),
-            list(POOLS).index(item[0][1]),
+            list(task_levels).index(item[0][0]),
+            list(pools).index(item[0][1]),
             int(item[0][5][1:]),
-            list(MODES).index(item[0][3]),
+            list(modes).index(item[0][3]),
         ),
     )
     for key, rows in ordered_groups:
@@ -304,11 +310,21 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cache-config", type=Path, default=DEFAULT_CACHE_CONFIG)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--task-levels", nargs="+", default=[f"{task}:{level}" for task, level in TASK_LEVELS.items()], help="task:max-level pairs")
+    parser.add_argument("--modes", nargs="+", choices=MODES, default=MODES)
+    parser.add_argument("--pools", nargs="+", choices=list(POOLS), default=list(POOLS))
+    parser.add_argument("--subset", choices=("train", "valid", "test"), default="valid")
+    parser.add_argument("--molecule-limit", type=int, default=10)
+    parser.add_argument("--l1-limit", type=int, default=10)
+    parser.add_argument("--later-limit", type=int, default=25)
     args = parser.parse_args()
+    task_levels = {task: int(level) for task, level in (value.rsplit(":", 1) for value in args.task_levels)}
 
     cache_config = args.cache_config.resolve()
     output = args.output_dir.resolve()
-    summary, per_query, frequencies, provenance = analyze(cache_config)
+    summary, per_query, frequencies, provenance = analyze(cache_config, task_levels=task_levels, modes=args.modes, pools=args.pools,
+                                                             subset=args.subset, molecule_limit=args.molecule_limit,
+                                                             l1_limit=args.l1_limit, later_limit=args.later_limit)
     output.mkdir(parents=True, exist_ok=False)
 
     summary_path = output / "pair_bucket_summary.tsv"
@@ -324,13 +340,13 @@ def main() -> None:
         "version": "progressive_pair_bucket_distribution.v1",
         "created_at": datetime.now(timezone.utc).isoformat(),
         "scope": {
-            "tasks": list(TASK_LEVELS),
-            "subset": "valid",
-            "run_modes": list(MODES),
-            "requested_pools": list(POOLS),
-            "l1_molecules": 10,
-            "l1_records_per_molecule": 10,
-            "later_records_per_level": 25,
+            "tasks": task_levels,
+            "subset": args.subset,
+            "run_modes": args.modes,
+            "requested_pools": args.pools,
+            "l1_molecules": args.molecule_limit,
+            "l1_records_per_molecule": args.l1_limit,
+            "later_records_per_level": args.later_limit,
             "level_view": "records_introduced_at_each_level",
         },
         "cache_config": str(cache_config),

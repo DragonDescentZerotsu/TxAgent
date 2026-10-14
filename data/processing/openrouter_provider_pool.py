@@ -21,8 +21,8 @@ from typing import Any, Mapping, Sequence
 
 import httpx
 
-from data.processing.llm_api import DEFAULT_ENV_FILE, openai_compatible_client, resolve_api_key
-from tools.chembl_tool.common.json_utils import write_json_atomic
+from predict.api_client.transport import DEFAULT_ENV_FILE, openai_compatible_client, resolve_api_key
+from predict.utils.json import write_json_atomic
 
 
 VERSION = "openrouter_provider_pool.v1"

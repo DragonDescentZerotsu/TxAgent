@@ -1,0 +1,377 @@
+{
+  "capacity": 100,
+  "content_id": "47802686ef1101d474e2c0b2b9d04a426a4c1c1395e794f04b717838cbecb07f",
+  "database": "rankings.sqlite3",
+  "database_sha256": "fc8f36d7a126590388cb94dbd6cf164d7a83257d4d7f21ca0e5a3044b80b60ba",
+  "inputs": {
+    "evidence_manifest_sha256": "c4391ed6d429c59d870e6061ac9b84d6325d897f2685d6c49c9aada5438f739a",
+    "query_sha256": "cb1edfb3118bbe56828a3492fe19142c623bcd3f83640a737baab528b836b719"
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v1"
+  },
+  "level": "L3",
+  "model": {
+    "checkpoint_step": 380,
+    "dataset": "jiosephlee/assay-transfer-record-level-v27-skin-reaction-combined-intern",
+    "dataset_revision": "1fa33cf3a7df7b6bd07a3b959f37502f951fc8ed",
+    "measurement_display": "canonical_first_atomic_source_fallback.v27_skin",
+    "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v27-skin-reaction-combined-best",
+    "projection_sha256": "404d75c26b9ebd228d6459f6c57621701645eb5aed89b6d94dd03f261c40eceb",
+    "prompt_profile": "v27_skin",
+    "prompt_sha256": "b76517548cc5f432dacd2b15e46aef4035ccbe49a65961842b78c322ad45d21d",
+    "revision": "398a41ccb38cadd120ee26b989bdbce5cab6c021",
+    "source_snapshot": {
+      "level_mapping": "5414abdbc607b9a3de25158f5aca075cf47b4e4d9d1c1987692df5c177598a65",
+      "records": "819cce097a2459f8509e136f70f600b5ef50ad8cc48e14ebf283d44ce636484a",
+      "source_contract": "b283445be0b1ef5012fa07e135ee65cdce9597c02749eea5a66c12a9f34b3ff9"
+    },
+    "training_prompt_sha256": "435d70f963d9b55ac9b13da6f8c32af5414ee402d2af3af08fc5be01c4c7203d"
+  },
+  "neighbor_identity_policy": "parent_disjoint",
+  "parent_capacity": 100,
+  "pool": "all",
+  "query_count": 82,
+  "query_counts": {
+    "TDC_SKIN_REACTION_00CE69155DD970D88D2C": {
+      "candidate_parents": 100,
+      "candidate_records": 1325
+    },
+    "TDC_SKIN_REACTION_03E424B01860631E0E10": {
+      "candidate_parents": 100,
+      "candidate_records": 679
+    },
+    "TDC_SKIN_REACTION_10B92BEB32682FFC6851": {
+      "candidate_parents": 100,
+      "candidate_records": 730
+    },
+    "TDC_SKIN_REACTION_125359F03F94E64FD3D2": {
+      "candidate_parents": 100,
+      "candidate_records": 1110
+    },
+    "TDC_SKIN_REACTION_125E5B0D96303EE04BF1": {
+      "candidate_parents": 100,
+      "candidate_records": 1190
+    },
+    "TDC_SKIN_REACTION_1780C0F6FC2130F32BB4": {
+      "candidate_parents": 100,
+      "candidate_records": 585
+    },
+    "TDC_SKIN_REACTION_18DE6C1FA98953C27DCA": {
+      "candidate_parents": 100,
+      "candidate_records": 652
+    },
+    "TDC_SKIN_REACTION_1AAFF183FF6C34DDD5F0": {
+      "candidate_parents": 100,
+      "candidate_records": 490
+    },
+    "TDC_SKIN_REACTION_267AEE937F3885697A84": {
+      "candidate_parents": 100,
+      "candidate_records": 1995
+    },
+    "TDC_SKIN_REACTION_27E79AFC82CED3399AFD": {
+      "candidate_parents": 100,
+      "candidate_records": 695
+    },
+    "TDC_SKIN_REACTION_2C72A0081006E1D4AD14": {
+      "candidate_parents": 100,
+      "candidate_records": 576
+    },
+    "TDC_SKIN_REACTION_2CB1311F4D10D85A3BE4": {
+      "candidate_parents": 100,
+      "candidate_records": 1888
+    },
+    "TDC_SKIN_REACTION_31AEBDDB351691E2A881": {
+      "candidate_parents": 100,
+      "candidate_records": 1508
+    },
+    "TDC_SKIN_REACTION_3520E0297A23A0578BBE": {
+      "candidate_parents": 100,
+      "candidate_records": 307
+    },
+    "TDC_SKIN_REACTION_364AC39475839C0A9045": {
+      "candidate_parents": 100,
+      "candidate_records": 924
+    },
+    "TDC_SKIN_REACTION_38E8F74A47BC763E4484": {
+      "candidate_parents": 100,
+      "candidate_records": 1644
+    },
+    "TDC_SKIN_REACTION_3EAA1C519F41DB278544": {
+      "candidate_parents": 100,
+      "candidate_records": 2400
+    },
+    "TDC_SKIN_REACTION_423BEFC426C8357F2FF1": {
+      "candidate_parents": 100,
+      "candidate_records": 813
+    },
+    "TDC_SKIN_REACTION_49F7F18936E2AA825879": {
+      "candidate_parents": 100,
+      "candidate_records": 711
+    },
+    "TDC_SKIN_REACTION_4FDD4BB2479D93FFA0D1": {
+      "candidate_parents": 100,
+      "candidate_records": 611
+    },
+    "TDC_SKIN_REACTION_5066A1DF05618F5399B4": {
+      "candidate_parents": 100,
+      "candidate_records": 2154
+    },
+    "TDC_SKIN_REACTION_50A99FFCB2E9BE2685B5": {
+      "candidate_parents": 100,
+      "candidate_records": 703
+    },
+    "TDC_SKIN_REACTION_51AE3957BD9A4BC972CB": {
+      "candidate_parents": 100,
+      "candidate_records": 513
+    },
+    "TDC_SKIN_REACTION_56E1348F1B675D546665": {
+      "candidate_parents": 100,
+      "candidate_records": 917
+    },
+    "TDC_SKIN_REACTION_58C499866BBB18FB95DF": {
+      "candidate_parents": 100,
+      "candidate_records": 676
+    },
+    "TDC_SKIN_REACTION_5EBDCF647C5315B56989": {
+      "candidate_parents": 100,
+      "candidate_records": 869
+    },
+    "TDC_SKIN_REACTION_654E470830E2D051BE9B": {
+      "candidate_parents": 100,
+      "candidate_records": 759
+    },
+    "TDC_SKIN_REACTION_670364E0C680B0A2B338": {
+      "candidate_parents": 100,
+      "candidate_records": 698
+    },
+    "TDC_SKIN_REACTION_6915FCEA418694ED3D4F": {
+      "candidate_parents": 100,
+      "candidate_records": 2183
+    },
+    "TDC_SKIN_REACTION_6B369F67D32F11AD59A4": {
+      "candidate_parents": 100,
+      "candidate_records": 665
+    },
+    "TDC_SKIN_REACTION_6DD0E6D6079BD18A5B21": {
+      "candidate_parents": 100,
+      "candidate_records": 479
+    },
+    "TDC_SKIN_REACTION_7427112E5AC8168336D7": {
+      "candidate_parents": 100,
+      "candidate_records": 683
+    },
+    "TDC_SKIN_REACTION_75AE0E1C5CC25E8D01A1": {
+      "candidate_parents": 100,
+      "candidate_records": 692
+    },
+    "TDC_SKIN_REACTION_783A28C867EB1A6D2389": {
+      "candidate_parents": 100,
+      "candidate_records": 595
+    },
+    "TDC_SKIN_REACTION_7977C1095897E3139E9E": {
+      "candidate_parents": 100,
+      "candidate_records": 404
+    },
+    "TDC_SKIN_REACTION_7AA0C12DE6AC3AF63C6E": {
+      "candidate_parents": 100,
+      "candidate_records": 559
+    },
+    "TDC_SKIN_REACTION_7B194E2B5DF759393963": {
+      "candidate_parents": 100,
+      "candidate_records": 1060
+    },
+    "TDC_SKIN_REACTION_7B2E1EC1FDFDB42C9AD0": {
+      "candidate_parents": 100,
+      "candidate_records": 601
+    },
+    "TDC_SKIN_REACTION_7BC5CE723701A3AAE842": {
+      "candidate_parents": 100,
+      "candidate_records": 890
+    },
+    "TDC_SKIN_REACTION_8197DF2B48EE4089DCC9": {
+      "candidate_parents": 100,
+      "candidate_records": 561
+    },
+    "TDC_SKIN_REACTION_8708DFDEF3BF478724AF": {
+      "candidate_parents": 100,
+      "candidate_records": 427
+    },
+    "TDC_SKIN_REACTION_877E80A9239F481B3274": {
+      "candidate_parents": 100,
+      "candidate_records": 508
+    },
+    "TDC_SKIN_REACTION_87C291CDA98E72CCCFA7": {
+      "candidate_parents": 100,
+      "candidate_records": 643
+    },
+    "TDC_SKIN_REACTION_883E153E13D5C68AF085": {
+      "candidate_parents": 100,
+      "candidate_records": 459
+    },
+    "TDC_SKIN_REACTION_8906C34717785742FAA8": {
+      "candidate_parents": 100,
+      "candidate_records": 519
+    },
+    "TDC_SKIN_REACTION_8B3E8DF07AE1907664AA": {
+      "candidate_parents": 100,
+      "candidate_records": 1231
+    },
+    "TDC_SKIN_REACTION_90EC86F05D7DFF25E7B5": {
+      "candidate_parents": 100,
+      "candidate_records": 520
+    },
+    "TDC_SKIN_REACTION_9304EA804E42A69D37BC": {
+      "candidate_parents": 100,
+      "candidate_records": 738
+    },
+    "TDC_SKIN_REACTION_97B0006ACDE181A7787B": {
+      "candidate_parents": 100,
+      "candidate_records": 559
+    },
+    "TDC_SKIN_REACTION_9A7B0307161690D76DF7": {
+      "candidate_parents": 100,
+      "candidate_records": 502
+    },
+    "TDC_SKIN_REACTION_AACA5AD2375DBE65DC7D": {
+      "candidate_parents": 100,
+      "candidate_records": 591
+    },
+    "TDC_SKIN_REACTION_ACD50C0C40B4E2F02D56": {
+      "candidate_parents": 100,
+      "candidate_records": 724
+    },
+    "TDC_SKIN_REACTION_AD5F23BC9161AB757726": {
+      "candidate_parents": 100,
+      "candidate_records": 1233
+    },
+    "TDC_SKIN_REACTION_B04F7C58CA83D57E77BE": {
+      "candidate_parents": 100,
+      "candidate_records": 557
+    },
+    "TDC_SKIN_REACTION_B058D8511AE44B84152F": {
+      "candidate_parents": 100,
+      "candidate_records": 1137
+    },
+    "TDC_SKIN_REACTION_B112DD245059C99F089F": {
+      "candidate_parents": 100,
+      "candidate_records": 422
+    },
+    "TDC_SKIN_REACTION_B30FD37566F92BEDC6A3": {
+      "candidate_parents": 100,
+      "candidate_records": 753
+    },
+    "TDC_SKIN_REACTION_B44E7C93D9F31C03E198": {
+      "candidate_parents": 100,
+      "candidate_records": 642
+    },
+    "TDC_SKIN_REACTION_C11E7C2666F620C496DD": {
+      "candidate_parents": 100,
+      "candidate_records": 1052
+    },
+    "TDC_SKIN_REACTION_C25A37AEBBAF0034AF67": {
+      "candidate_parents": 100,
+      "candidate_records": 428
+    },
+    "TDC_SKIN_REACTION_C59835AE7F02FC209A1D": {
+      "candidate_parents": 100,
+      "candidate_records": 1094
+    },
+    "TDC_SKIN_REACTION_CBB9882278C9AB020C18": {
+      "candidate_parents": 100,
+      "candidate_records": 385
+    },
+    "TDC_SKIN_REACTION_CBC78E76195A68B68C92": {
+      "candidate_parents": 100,
+      "candidate_records": 584
+    },
+    "TDC_SKIN_REACTION_CC9D541FDF196423746E": {
+      "candidate_parents": 100,
+      "candidate_records": 556
+    },
+    "TDC_SKIN_REACTION_CD9ABF5EB90667EC795B": {
+      "candidate_parents": 100,
+      "candidate_records": 681
+    },
+    "TDC_SKIN_REACTION_CDEDBA005905322F78A3": {
+      "candidate_parents": 100,
+      "candidate_records": 545
+    },
+    "TDC_SKIN_REACTION_CF07DDB720EF61AF9F99": {
+      "candidate_parents": 100,
+      "candidate_records": 1444
+    },
+    "TDC_SKIN_REACTION_D2AC20DF8514184FB590": {
+      "candidate_parents": 100,
+      "candidate_records": 924
+    },
+    "TDC_SKIN_REACTION_D33BC70C507009A61B9E": {
+      "candidate_parents": 100,
+      "candidate_records": 1325
+    },
+    "TDC_SKIN_REACTION_D451AFBD3FE76118389B": {
+      "candidate_parents": 100,
+      "candidate_records": 552
+    },
+    "TDC_SKIN_REACTION_D88428F66FCC035BBF63": {
+      "candidate_parents": 100,
+      "candidate_records": 1150
+    },
+    "TDC_SKIN_REACTION_DF8602C159662162A9CC": {
+      "candidate_parents": 100,
+      "candidate_records": 487
+    },
+    "TDC_SKIN_REACTION_E2C8DEAF57D72D5FD6DE": {
+      "candidate_parents": 100,
+      "candidate_records": 565
+    },
+    "TDC_SKIN_REACTION_E6D77F822E3A0ED65700": {
+      "candidate_parents": 100,
+      "candidate_records": 1077
+    },
+    "TDC_SKIN_REACTION_E9AFA5C3A5128434D965": {
+      "candidate_parents": 100,
+      "candidate_records": 597
+    },
+    "TDC_SKIN_REACTION_EAD650D2857A421ED4E2": {
+      "candidate_parents": 100,
+      "candidate_records": 527
+    },
+    "TDC_SKIN_REACTION_EBCD2B53BE9AA9F0433F": {
+      "candidate_parents": 100,
+      "candidate_records": 729
+    },
+    "TDC_SKIN_REACTION_F8528E666B2ED856F440": {
+      "candidate_parents": 100,
+      "candidate_records": 1206
+    },
+    "TDC_SKIN_REACTION_F8FE8BC70200F3AF991C": {
+      "candidate_parents": 100,
+      "candidate_records": 1838
+    },
+    "TDC_SKIN_REACTION_FB0631A7396CDE28E64A": {
+      "candidate_parents": 100,
+      "candidate_records": 614
+    },
+    "TDC_SKIN_REACTION_FBAA7BB1333482067084": {
+      "candidate_parents": 100,
+      "candidate_records": 1357
+    },
+    "TDC_SKIN_REACTION_FEA0D491B9750AF9B37D": {
+      "candidate_parents": 100,
+      "candidate_records": 380
+    }
+  },
+  "ranking_rows_sha256": "ef2231dbc7e55e203be6589e1bdd2843f002f74e14a8157292011d8cc19f2135",
+  "schema_version": "ranked_uid_retrieval.v1",
+  "score_counts": {
+    "exact_reuse": 0,
+    "fresh": 69756
+  },
+  "shared_candidate_universe": true,
+  "status": "complete",
+  "stored_rows": 69756,
+  "subset": "test",
+  "task_id": "skin_reaction"
+}

@@ -1,0 +1,8 @@
+version: 24
+caches:
+  bioavailability_ma:
+    L1: ../../../data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/bioavailability_ma/RELEASE_INDEX.json
+    later: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v1/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/RELEASE_INDEX.json
+  skin_reaction:
+    L1: ../../../data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/skin_reaction/RELEASE_INDEX.json
+    later: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v1/skin_reaction/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/skin_reaction/RELEASE_INDEX.json

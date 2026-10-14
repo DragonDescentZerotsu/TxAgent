@@ -12,10 +12,7 @@ from data.processing.evidence_library.shared.v2.normalization.measurements impor
     parse_point_measurement,
     render_point_measurement,
 )
-from tools.chembl_tool.common.units import (
-    canonicalize_measurement,
-    canonicalize_unit,
-)
+from data.processing.evidence_library.units import canonicalize_measurement, canonicalize_unit
 
 
 TASK_ID = "bioavailability_ma"

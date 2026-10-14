@@ -1,10 +1,5 @@
 """Behavioral checks for the BBB V24.1 level-cache contract."""
 
-from predict.harnesses.progressive.runner import (
-    _record_level_names,
-    _run_levels,
-    parse_args,
-)
 from predict.retrieval.assay_reranking.v24_1_levels import (
     LEVELS,
     MODELS,
@@ -75,16 +70,3 @@ def test_binary_projection_uses_semantic_display_and_result_tail():
     assert payload["unit_text"] == "BBB permeability"
     assert list(payload)[-2:] == ["measurement_text", "unit_text"]
     assert "bbb_permeability_label" not in payload
-
-
-def test_level_models_and_runner_profile_are_split_specific():
-    assert tuple(MODELS) == LEVELS
-    assert MODELS["L2"]["revision"] == "88a5f51f7b7903c0fa5ffc1811d8156b3f0f8eac"
-    args = parse_args([
-        "--tasks", "bbb_martins", "--max-level", "4",
-        "--query-prior", "none",
-        "--prepare-only",
-        "--skip-tool-prefetch",
-    ])
-    assert _record_level_names(args, "bbb_martins") == LEVELS
-    assert [row["level"] for row in _run_levels(args, "bbb_martins")] == [1, 2, 3, 4]

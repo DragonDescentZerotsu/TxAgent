@@ -1,0 +1,20 @@
+version: 22
+caches:
+  bbb_martins:
+    L1: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l1/query_pure/reused_task_best_v1/original/RELEASE_INDEX.json
+    later: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/query_pure/reused_v1/original/bbb_martins/RELEASE_INDEX.json
+  bioavailability_ma:
+    L1: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/bioavailability_ma/l1/assay_transfer/reused_task_best_v1/original/RELEASE_INDEX.json
+    later: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/bioavailability_ma/l2plus/query_pure/reused_v1/original/bioavailability_ma/RELEASE_INDEX.json
+  skin_reaction:
+    L1: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l1/assay_transfer/reused_task_best_v1/original/RELEASE_INDEX.json
+    later: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l2plus/query_pure/reused_v1/original/skin_reaction/RELEASE_INDEX.json
+  ames:
+    L1: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l1/query_pure/reused_task_best_v1/original/RELEASE_INDEX.json
+    later: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original/ames/RELEASE_INDEX.json
+  dili:
+    L1: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l1/query_pure/reused_task_best_v1/original/RELEASE_INDEX.json
+    later: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/reused_v1/original/dili/RELEASE_INDEX.json
+  carcinogens:
+    L1: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/carcinogens/l1/query_pure/reused_task_best_v1/original/RELEASE_INDEX.json
+    later: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/carcinogens/l2plus/query_pure/reused_v1/original/carcinogens/RELEASE_INDEX.json

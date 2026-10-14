@@ -22,7 +22,7 @@ from data.processing.evidence_library.shared.v1.categorical_response import (
 from data.processing.evidence_library.shared.v1.normalization.measurements import (
     parse_point_measurement,
 )
-from tools.chembl_tool.common.units import canonicalize_unit
+from data.processing.evidence_library.units import canonicalize_unit
 
 
 NORMALIZATION_DOMAIN_RULES_VERSION = "skin_reaction_normalization_domains.v1"

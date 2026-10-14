@@ -6,7 +6,7 @@ import hashlib
 import json
 import math
 import sqlite3
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
@@ -15,6 +15,9 @@ BACKBONE_DTYPE = "bfloat16"
 LOGIT_EXTRACTION_DTYPE = "float32"
 SCORING_CONTRACT_VERSION = (
     "assay_transfer_chat_first_divergent_token_bf16_backbone_fp32_head.v2"
+)
+FA3_SCORING_CONTRACT_VERSION = (
+    "assay_transfer_chat_first_divergent_token_bf16_backbone_fp32_head.fa3.v1"
 )
 COMPACT_CACHE_SCHEMA_VERSION = "txagent_assay_transfer_compact_cache.v1"
 REQUIRED_TRANSFORMERS_VERSION = "4.57.6"
@@ -48,6 +51,8 @@ ACTIVE_CACHE_PROFILES = frozenset(
         "v25/morgan75_l3_builder",
         "flat_v5/gold_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2",
         "flat_v5/tdc_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2",
+        "flat_v5/tdc_v1/skin_reaction/l1/assay_transfer/joint_gold_tdc/cached_mean_v2",
+        "flat_v5/tdc_v1/skin_reaction/l1/assay_transfer/joint_gold_tdc/cached_mean_test_v1",
         "flat_v5/gold_v1/ames/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2",
         "flat_v5/gold_v1/dili/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2",
         "flat_v5/gold_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2",
@@ -136,11 +141,6 @@ def cache_profile_root(profile: str) -> Path:
     return parent / profile
 
 
-def canonical_cache_profile(profile: str, *, benchmark: str = "gold_v1") -> str | None:
-    """Map a historical profile name to its semantic flat-v5 successor."""
-    from predict.retrieval.assay_reranking.artifact_bundle import canonical_cache_alias
-
-    return canonical_cache_alias(profile, benchmark=benchmark)
 MODEL_ROLES = (
     "direct", "direct_v10_3", "direct_v10_3_0_2", "direct_v10_4",
     "direct_task_best", "direct_tdc_best",
@@ -376,14 +376,6 @@ def build_prompt_task(
     )
 
 
-def prompt_task_to_dict(task: PromptTask) -> dict[str, Any]:
-    return asdict(task)
-
-
-def prompt_task_from_dict(payload: Mapping[str, Any]) -> PromptTask:
-    return PromptTask(**dict(payload))
-
-
 class CompactScoreCache:
     """Read finalized scores keyed by query, group, molecule, and record."""
 
@@ -606,32 +598,81 @@ def resolve_model_snapshot(
     )
 
 
-def load_model(snapshot: str, *, device: int = 0) -> tuple[Any, Any]:
+def load_model(
+    snapshot: str, *, device: int = 0, attention_backend: str | None = None,
+) -> tuple[Any, Any]:
     """Load one InternS1 checkpoint replica and its pinned tokenizer."""
     import torch
     import transformers
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
-    if transformers.__version__ != REQUIRED_TRANSFORMERS_VERSION:
+    backend = attention_backend or (
+        "sgl_fa3" if torch.cuda.get_device_capability(device)[0] >= 9
+        else "flash_attention_2"
+    )
+    required = {
+        "flash_attention_2": REQUIRED_TRANSFORMERS_VERSION,
+        "sgl_fa3": "5.12.1",
+    }
+    if backend not in required:
+        raise ValueError(f"Unsupported assay attention backend: {backend}")
+    if transformers.__version__ != required[backend]:
         raise RuntimeError(
-            f"Assay reranking requires transformers {REQUIRED_TRANSFORMERS_VERSION}; "
+            f"Assay reranking with {backend} requires transformers {required[backend]}; "
             f"observed {transformers.__version__}"
         )
-    tokenizer = AutoTokenizer.from_pretrained(
-        snapshot, trust_remote_code=True, local_files_only=True
-    )
-    tokenizer.pad_token = tokenizer.pad_token or tokenizer.eos_token
-    tokenizer.padding_side = "left"
+    tokenizer = None
+    if backend != "sgl_fa3":
+        tokenizer = AutoTokenizer.from_pretrained(
+            snapshot, trust_remote_code=True, local_files_only=True
+        )
+        tokenizer.pad_token = tokenizer.pad_token or tokenizer.eos_token
+        tokenizer.padding_side = "left"
     model = AutoModelForCausalLM.from_pretrained(
         snapshot,
         torch_dtype=torch.bfloat16,
-        attn_implementation="flash_attention_2",
+        attn_implementation="eager" if backend == "sgl_fa3" else backend,
         trust_remote_code=True,
         local_files_only=True,
     ).to(f"cuda:{device}")
+    if backend == "sgl_fa3":
+        _register_sgl_fa3()
+        model.config._attn_implementation = "sgl_fa3"
     model.eval()
     model.config.use_cache = False
     return model, tokenizer
+
+
+_fa3_lengths: tuple[int, ...] = ()
+
+
+def _register_sgl_fa3() -> None:
+    """Use the installed SGLang FA3 kernel for pretokenized, right-padded batches."""
+    import torch
+    from sgl_kernel.flash_attn import flash_attn_varlen_func
+    from transformers import AttentionInterface
+
+    def forward(module, query, key, value, attention_mask, **kwargs):
+        if not _fa3_lengths or len(_fa3_lengths) != query.shape[0]:
+            raise ValueError("FA3 score batch lengths are missing")
+        lengths = torch.tensor(_fa3_lengths, dtype=torch.int32, device=query.device)
+        offsets = torch.cat((lengths.new_zeros(1), lengths.cumsum(0).to(torch.int32)))
+        def pack(tensor):
+            rows = tensor.transpose(1, 2)
+            return torch.cat([rows[i, :n] for i, n in enumerate(_fa3_lengths)], dim=0)
+        output = flash_attn_varlen_func(
+            pack(query), pack(key), pack(value), offsets, offsets,
+            max_seqlen_q=max(_fa3_lengths), max_seqlen_k=max(_fa3_lengths),
+            softmax_scale=kwargs.get("scaling"), causal=True,
+            window_size=(-1, -1) if kwargs.get("sliding_window") is None
+            else (kwargs["sliding_window"], 0),
+        )
+        padded = output.new_zeros((query.shape[0], query.shape[2], query.shape[1], query.shape[3]))
+        for i, (start, n) in enumerate(zip(offsets[:-1].tolist(), _fa3_lengths)):
+            padded[i, :n] = output[start:start + n]
+        return padded, None
+
+    AttentionInterface.register("sgl_fa3", forward)
 
 
 def score_prompt_batch(
@@ -641,26 +682,45 @@ def score_prompt_batch(
     """Score the first token where the `(A)` and `(B)` answers diverge."""
     import torch
 
+    if tokenizer is None and tokenized is None:
+        raise ValueError("SGLang FA3 scoring requires frozen tokenized prefixes")
     prefixes, a_tokens, b_tokens = tokenized or _answer_prefixes(tokenizer, tasks)
-    encoded = tokenizer.pad({"input_ids": prefixes}, padding=True, return_tensors="pt")
-    encoded = {key: value.to(f"cuda:{device}") for key, value in encoded.items()}
+    global _fa3_lengths
+    if tokenizer is None:
+        lengths = tuple(map(len, prefixes))
+        width = max(lengths)
+        ids = torch.zeros((len(prefixes), width), dtype=torch.long, device=f"cuda:{device}")
+        for i, prefix in enumerate(prefixes):
+            ids[i, :len(prefix)] = torch.tensor(prefix, device=ids.device)
+        encoded = {"input_ids": ids, "attention_mask": torch.arange(width, device=ids.device)[None, :] < torch.tensor(lengths, device=ids.device)[:, None]}
+        _fa3_lengths = lengths
+    else:
+        encoded = tokenizer.pad({"input_ids": prefixes}, padding=True, return_tensors="pt")
+        encoded = {key: value.to(f"cuda:{device}") for key, value in encoded.items()}
     positions = torch.arange(
         encoded["attention_mask"].shape[1], device=encoded["input_ids"].device
     )
     last = (encoded["attention_mask"] * positions).max(dim=1).values
     with torch.inference_mode():
-        hidden = model.get_decoder()(**encoded, use_cache=False).last_hidden_state
+        if tokenizer is None:
+            hidden = model.get_decoder()(
+                input_ids=encoded["input_ids"],
+                attention_mask={"full_attention": None, "sliding_attention": None},
+                use_cache=False,
+            ).last_hidden_state
+        else:
+            hidden = model.get_decoder()(**encoded, use_cache=False).last_hidden_state
+    _fa3_lengths = ()
     rows = torch.arange(hidden.shape[0], device=hidden.device)
     last_hidden = hidden[rows, last].float()
     output_head = model.get_output_embeddings().weight
+    with torch.inference_mode():
+        logits = torch.stack([
+            (last_hidden[index] * output_head[token].float()).sum()
+            for index, pair in enumerate(zip(a_tokens, b_tokens)) for token in pair
+        ]).reshape(-1, 2).cpu().tolist()
     output = []
-    for index, task in enumerate(tasks):
-        logit_a = float(
-            (last_hidden[index] * output_head[a_tokens[index]].float()).sum().item()
-        )
-        logit_b = float(
-            (last_hidden[index] * output_head[b_tokens[index]].float()).sum().item()
-        )
+    for task, (logit_a, logit_b) in zip(tasks, logits):
         output.append(
             PromptScore(
                 cache_key=task.cache_key,

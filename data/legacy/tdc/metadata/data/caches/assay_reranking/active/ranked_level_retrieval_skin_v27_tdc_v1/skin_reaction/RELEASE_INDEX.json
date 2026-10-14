@@ -1,0 +1,59 @@
+{
+  "evidence": {
+    "content_id": "3e0358ab8304ffa64383afef4fd5c0d3c46487b3d04e1debcfc25e58fa234885",
+    "manifest": "../../../../../evidence_libraries/skin_reaction/v10_main_universe_v5/retrieval_projection/ranked_evidence_v1/VERSION.json",
+    "manifest_sha256": "c4391ed6d429c59d870e6061ac9b84d6325d897f2685d6c49c9aada5438f739a",
+    "record_count": 24494
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v1"
+  },
+  "later_candidate_universe": "all_uids_under_morgan_top_100_parents",
+  "levels_independent": true,
+  "neighbor_identity_policy_by_level": {
+    "L2": "parent_disjoint",
+    "L3": "parent_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "ranked_level_retrieval_skin_v27_tdc_v1",
+  "ranking_modes": [
+    "morgan",
+    "assay-transfer"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L2": {
+          "content_id": "b37af85b2e62473b4433b47214b13ccf0a148fc59aeba120d8ccce1b67734cb9",
+          "manifest": "scaffold/test/L2/VERSION.json",
+          "manifest_sha256": "d0c12840c9cc30dd5496bc443442110954220bba9db247673f99ab96164fa15b"
+        },
+        "L3": {
+          "content_id": "47802686ef1101d474e2c0b2b9d04a426a4c1c1395e794f04b717838cbecb07f",
+          "manifest": "scaffold/test/L3/VERSION.json",
+          "manifest_sha256": "1bbe6a70a163f569a4059c0a3161e5bff98bf37b0097535e92daa636f61162cb"
+        }
+      }
+    },
+    "valid": {
+      "levels": {
+        "L2": {
+          "content_id": "38d3782e7a381db768c8da032e3116535dcdfdb3b33142a7f24c589619803dda",
+          "manifest": "scaffold/valid/L2/VERSION.json",
+          "manifest_sha256": "53eb8dc6bb2b7536293d597594b9fcc21e810a27314e1bc0312c89d22ee3e3ff"
+        },
+        "L3": {
+          "content_id": "0e3d20989fa816662a6c33a69dca980001868b87c29d5c211a7201de5bb39430",
+          "manifest": "scaffold/valid/L3/VERSION.json",
+          "manifest_sha256": "38f57dfc0e13af6d06fb4ab5186954b75852bbc72888fbc9e0260c147020870a"
+        }
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "skin_reaction"
+}

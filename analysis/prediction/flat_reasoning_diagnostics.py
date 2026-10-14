@@ -12,6 +12,8 @@ requires complete matrices and every expected final output and is immutable.
 
 from __future__ import annotations
 
+from predict.harnesses.branches.manifests import read_record, read_run
+
 import argparse
 import csv
 import hashlib
@@ -47,7 +49,9 @@ QUERY_FIELDS = [
     "matched_reference_occurrences", "unknown_reference_ids", "ambiguous_reference_ids",
     "ambiguous_reference_occurrences", "reasoning_char_count", "reasoning_word_count",
     "reasoning_tokens", "claim_count", "supportive_claim_count", "contradictory_claim_count",
-    "other_claim_count", "request_sha256", "output_sha256",
+    "other_claim_count", "reasoning_text_available", "reasoning_token_source",
+    "final_mentioned_molecule_count", "final_mentioned_record_count",
+    "request_sha256", "output_sha256",
 ]
 SUMMARY_DIMENSIONS = [
     "benchmark", "matrix_path", "task", "evaluation_subset", "selection_method",
@@ -63,6 +67,8 @@ SUMMARY_METRICS = [
     "mean_reasoning_char_count", "mean_reasoning_word_count", "n_reasoning_token_values",
     "mean_reasoning_tokens", "claim_count", "supportive_claim_count",
     "contradictory_claim_count", "other_claim_count", "mean_claim_count",
+    "n_reasoning_text_available", "mean_final_mentioned_molecule_count",
+    "mean_final_mentioned_record_count",
 ]
 GAP_FIELDS = [
     "matrix_path", "task", "evaluation_subset", "query_index", "run_id", "stage", "reason",
@@ -71,7 +77,7 @@ GAP_FIELDS = [
 
 def _read_json(path: Path) -> tuple[dict[str, Any], str]:
     raw = path.read_bytes()
-    value = json.loads(raw)
+    value = read_record(path) if path.name == "manifest.json" else json.loads(raw)
     if not isinstance(value, dict):
         raise ValueError(f"expected a JSON object: {path}")
     return value, hashlib.sha256(raw).hexdigest()
@@ -215,8 +221,19 @@ def _measure_run(
         return None
 
     reasoning = llm["reasoning_content"]
-    found, occurrences, unknown, ambiguous, ambiguous_occurrences = match_references(
-        reasoning, index
+    usage = llm.get("usage") if isinstance(llm.get("usage"), dict) else {}
+    details = usage.get("completion_tokens_details") or {}
+    reasoning_tokens = _number(details.get("reasoning_tokens"))
+    if reasoning_tokens is None:
+        reasoning_tokens = _number(usage.get("reasoning_tokens"))
+    token_source = "provider" if reasoning_tokens is not None else ""
+    if reasoning_tokens is None and reasoning:
+        from predict.harnesses.branches.inference import _deepseek_tokenizer
+        reasoning_tokens = len(_deepseek_tokenizer().encode(reasoning).ids)
+        token_source = "deepseek_tokenizer_estimate"
+    text_available = bool(reasoning) or reasoning_tokens == 0
+    found, occurrences, unknown, ambiguous, ambiguous_occurrences = (
+        match_references(reasoning, index) if text_available else (set(), 0, [], [], 0)
     )
     kinds_by_stable: dict[str, set[str]] = defaultdict(set)
     visible: Counter[str] = Counter()
@@ -237,31 +254,47 @@ def _measure_run(
             mentioned["record"] += 1
 
     claims = content["claims"]
+    cited = " ".join(
+        str(value)
+        for claim in claims if isinstance(claim, dict)
+        for field in ("molecule_ids", "record_ids")
+        for value in (claim.get(field) or [])
+    )
+    final_found, _, _, _, _ = match_references(cited, index)
+    final_mentioned = Counter()
+    for stable_id in final_found:
+        kinds = kinds_by_stable.get(stable_id, set())
+        if kinds & MOLECULE_KINDS:
+            final_mentioned["molecule"] += 1
+        if "record" in kinds:
+            final_mentioned["record"] += 1
     roles = [
         str(claim.get("evidence_role") or "").casefold()
         for claim in claims if isinstance(claim, dict)
     ]
     supportive = roles.count("supportive")
     contradictory = roles.count("contradictory")
-    usage = llm.get("usage") if isinstance(llm.get("usage"), dict) else {}
-    reasoning_tokens = _number(usage.get("reasoning_tokens"))
     return {
         **metadata,
         "run_id": run_id,
         "query_index": expected_index,
         "visible_molecule_count": visible["molecule"],
-        "mentioned_molecule_count": mentioned["molecule"],
-        "molecule_coverage": _ratio(mentioned["molecule"], visible["molecule"]),
+        "mentioned_molecule_count": mentioned["molecule"] if text_available else "",
+        "molecule_coverage": _ratio(mentioned["molecule"], visible["molecule"]) if text_available else "",
         "visible_record_count": visible["record"],
-        "mentioned_record_count": mentioned["record"],
-        "record_coverage": _ratio(mentioned["record"], visible["record"]),
-        "matched_reference_occurrences": occurrences,
+        "mentioned_record_count": mentioned["record"] if text_available else "",
+        "record_coverage": _ratio(mentioned["record"], visible["record"]) if text_available else "",
+        "matched_reference_occurrences": occurrences if text_available else "",
         "unknown_reference_ids": json.dumps(unknown, ensure_ascii=False),
         "ambiguous_reference_ids": json.dumps(ambiguous, ensure_ascii=False),
         "ambiguous_reference_occurrences": ambiguous_occurrences,
-        "reasoning_char_count": len(reasoning),
-        "reasoning_word_count": len(reasoning.split()),
+        "reasoning_char_count": len(reasoning) if text_available else "",
+        "reasoning_word_count": len(reasoning.split()) if text_available else "",
         "reasoning_tokens": "" if reasoning_tokens is None else reasoning_tokens,
+        "reasoning_text_available": int(text_available),
+        "reasoning_token_source": token_source,
+        "final_mentioned_molecule_count": final_mentioned["molecule"],
+        "final_mentioned_record_count": final_mentioned["record"],
         "claim_count": len(claims), "supportive_claim_count": supportive,
         "contradictory_claim_count": contradictory,
         "other_claim_count": len(claims) - supportive - contradictory,
@@ -288,16 +321,17 @@ def _summarize(
         molecule_denominator = total("visible_molecule_count")
         record_denominator = total("visible_record_count")
         token_values = sum(item["reasoning_tokens"] != "" for item in group)
+        text_rows = [item for item in group if item["reasoning_text_available"]]
         metric_values = {
             "query_count": len(group),
             "expected_query_count": expected_by_group.get(dimensions, len(group)),
             "visible_molecule_count": molecule_denominator,
             "mentioned_molecule_count": total("mentioned_molecule_count"),
-            "molecule_coverage": _ratio(total("mentioned_molecule_count"), molecule_denominator),
+            "molecule_coverage": _ratio(total("mentioned_molecule_count"), sum(int(item["visible_molecule_count"]) for item in text_rows)),
             "mean_molecule_coverage": mean("molecule_coverage"),
             "visible_record_count": record_denominator,
             "mentioned_record_count": total("mentioned_record_count"),
-            "record_coverage": _ratio(total("mentioned_record_count"), record_denominator),
+            "record_coverage": _ratio(total("mentioned_record_count"), sum(int(item["visible_record_count"]) for item in text_rows)),
             "mean_record_coverage": mean("record_coverage"),
             "matched_reference_occurrences": total("matched_reference_occurrences"),
             "unknown_reference_id_count": sum(
@@ -313,6 +347,9 @@ def _summarize(
             "contradictory_claim_count": total("contradictory_claim_count"),
             "other_claim_count": total("other_claim_count"),
             "mean_claim_count": mean("claim_count"),
+            "n_reasoning_text_available": len(text_rows),
+            "mean_final_mentioned_molecule_count": mean("final_mentioned_molecule_count"),
+            "mean_final_mentioned_record_count": mean("final_mentioned_record_count"),
         }
         summary.append({**row, **metric_values})
     return summary
@@ -342,8 +379,9 @@ def _report(
         "",
         "Reasoning mentions are exact, case-insensitive visible identifiers from each saved request. ",
         "Molecule and record coverage count unique referenced units; occurrence counts retain repeats. ",
-        "Reasoning text is measured in memory and is not copied into these outputs. Empty reasoning ",
-        "and zero mentions are valid observations. Missing outputs are gaps, never zero-valued rows.",
+        "Reasoning text is measured in memory and is not copied into these outputs. ",
+        "Hidden reasoning has unavailable mention counts; visible reasoning with no references is zero. ",
+        "Missing outputs are gaps, never zero-valued rows.",
         "",
         "## Matrix roots",
         "",
@@ -426,12 +464,6 @@ def build(
                         inputs, _recorded_path(value, matrix_path.parent),
                         str(selection[hash_key]) if hash_key and selection.get(hash_key) else None,
                     )
-            if (
-                selection.get("selection_contract_sha256")
-                and cache_manifest.get("selection_contract_sha256")
-                != selection["selection_contract_sha256"]
-            ):
-                raise ValueError(f"selection contract hash disagrees with matrix: {selection_path}")
 
             task = str(selection.get("task") or "")
             subset = str(selection.get("evaluation_subset") or "")
@@ -444,25 +476,14 @@ def build(
                 match = RUN_INDEX_RE.search(run_dir.name)
                 query_index = int(match.group(1)) if match else None
                 run_manifest_path = run_dir / "manifest.json"
-                if run_manifest_path.is_file():
-                    try:
-                        run_manifest, digest = _read_json(run_manifest_path)
-                        inputs[str(run_manifest_path.resolve())] = digest
-                        if run_manifest.get("query_index") != query_index:
-                            _gap(
-                                gaps, matrix_path, task, subset, query_index or "",
-                                run_dir.name, "run", "run_manifest_index_mismatch",
-                            )
-                    except (OSError, json.JSONDecodeError, ValueError):
-                        _gap(
-                            gaps, matrix_path, task, subset, "", run_dir.name,
-                            "run", "invalid_run_manifest",
-                        )
-                else:
-                    _gap(
-                        gaps, matrix_path, task, subset, "", run_dir.name,
-                        "run", "missing_run_manifest",
-                    )
+                try:
+                    run_manifest = read_run(run_dir, batch=condition_manifest)
+                    if run_manifest.get("query_index") != query_index:
+                        _gap(gaps, matrix_path, task, subset, query_index or "",
+                             run_dir.name, "run", "run_manifest_index_mismatch")
+                except (OSError, json.JSONDecodeError, ValueError):
+                    _gap(gaps, matrix_path, task, subset, "", run_dir.name,
+                         "run", "invalid_run_manifest")
                 if query_index is None:
                     _gap(
                         gaps, matrix_path, task, subset, "", run_dir.name,

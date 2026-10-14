@@ -1,20 +1,9 @@
-"""Prepare, launch, resume, and summarize standard reasoning batches.
-
-Inputs are a task ``BatchConfig`` and CLI arguments. ``prepare_batch`` validates
-the requested run, selects query rows, verifies retrieval/reranker contracts,
-and writes the batch manifest. ``main`` then gives all prepared queries to the
-global ready-queue scheduler. Completion helpers collect per-query checkpoints
-and write predictions, metrics, reports, and combined traces.
-
-This module owns execution bookkeeping, not evidence semantics. The current
-``mode_main`` translates the public organization and task into the matching
-task contract while leaving evidence organization in ``direct.py``, ``flat.py``,
-or ``full.py``.
-"""
+"""Prepare, resume and summarize FINAL flat batches and native query priors."""
 
 from __future__ import annotations
 
 import argparse
+import csv
 import concurrent.futures
 import ctypes
 import gc
@@ -42,20 +31,6 @@ from predict.harnesses.branches.assay_transfer import (
     validate_assay_transfer_diversity,
     validate_assay_transfer_records_per_molecule,
 )
-from predict.harnesses.branches.reasoning.final_evidence import (
-    SUMMARY_ONLY,
-    add_final_evidence_surface_argument,
-)
-from predict.harnesses.branches.reasoning.final_decision import (
-    GENERAL_FINAL_DECISION_PROFILES,
-    STANDARD_FINAL_DECISION,
-    add_final_decision_profile_argument,
-)
-from predict.harnesses.branches.reasoning.coverage import (
-    COVERAGE_MMP_LEDGER_NEIGHBOR_CONTEXT,
-    NEIGHBOR_CONTEXT_PROFILES,
-    STANDARD_NEIGHBOR_CONTEXT,
-)
 from predict.retrieval.policies import (
     NEIGHBOR_SELECTORS,
     SIMILARITY_SELECTOR,
@@ -70,11 +45,8 @@ from predict.tasks.prompt_profiles import (
     prompt_profile_from_manifest,
     require_matching_prompt_profiles,
 )
-from predict.harnesses.branches.analogous_flat_prompt import (
-    PROMPT_IDENTITY_VIEW,
-    prompt_provenance as analogous_flat_prompt_provenance,
-)
 from predict.harnesses.branches.flat import (
+    ACTIVE_HARNESS_PROMPTS,
     CONTEXT_V4_LAYOUTS,
     CONTEXT_V4_PROMPT_VERSION,
     CONTEXT_V4_VARIANTS,
@@ -82,6 +54,15 @@ from predict.harnesses.branches.flat import (
     CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
+    TDC_SKIN_LLNA_PROMPT_VERSION,
+    TDC_SKIN_LLNA_SCORES_PROMPT_VERSION,
+    TDC_V2_MIXED_PROMPT_VERSION,
+    DILI_TDC_V2_MIXED_V3_PROMPT_VERSION,
+    DILI_TDC_V2_POLARIZED_PROMPT_VERSION,
+    FINAL_FULL_FLAT_PROMPT_VERSION,
+    FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
+    FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
     CONTEXT_PROMPT_VERSIONS,
     EVIDENCE_PROJECTION,
     EXTRA_DETAILS_POLICY,
@@ -98,10 +79,19 @@ from predict.utils.json import sha256_file
 from predict.api_client.pool import (
     DEFAULT_PROVIDER_POOL_CONFIG,
     build_provider_pool,
+    canonical_provider_model,
     load_provider_pool_config,
     select_healthy_providers,
 )
 from predict.retrieval.assay_reranking.runtime import ARCHIVE_CACHE_ROOT
+from predict.harnesses.branches.manifests import selection_parameters, run_directory, read_record, read_run, write_batch, scientific_settings, require_query_ids, require_artifact_versions
+
+
+SUMMARY_ONLY = "summary_only"
+STANDARD_FINAL_DECISION = "standard"
+GENERAL_FINAL_DECISION_PROFILES = (STANDARD_FINAL_DECISION,)
+STANDARD_NEIGHBOR_CONTEXT = "standard"
+NEIGHBOR_CONTEXT_PROFILES = (STANDARD_NEIGHBOR_CONTEXT,)
 
 
 def add_retrieval_strategy_args(parser: argparse.ArgumentParser) -> None:
@@ -228,10 +218,7 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
         raise ValueError("full-batch inference requires --provider-pool-config")
     if args.provider_pool_config:
         candidate_config = load_provider_pool_config(args.provider_pool_config)
-        models = {provider.model for provider in candidate_config.providers}
-        if len(models) != 1:
-            raise ValueError("provider pool must use one exact model across endpoints")
-        args.model = next(iter(models))
+        args.model = canonical_provider_model(candidate_config)
         if not args.prepare_only:
             selection = select_healthy_providers(candidate_config, args.parallelism)
             provider_config = selection.config
@@ -355,23 +342,12 @@ def mode_main(mode: str, argv: list[str] | None = None) -> int:
 
 def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatch:
     """Materialize stable batch metadata without choosing a scheduling policy."""
-    _validate_analogous_reasoning_only(config, args)
     _validate_flat_prompt(config, args)
     requested_top_k_per_group = args.top_k_per_group
     is_assay_transfer = args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
     _validate_assay_transfer_scores(config, args)
-    group_prompt_instruction_provenance = _group_prompt_instruction_provenance(
-        args.group_prompt_instructions_file
-    )
-    if group_prompt_instruction_provenance:
-        args.group_prompt_instructions_file = str(
-            group_prompt_instruction_provenance["path"]
-        )
-        args.group_prompt_instructions_sha256 = str(
-            group_prompt_instruction_provenance["sha256"]
-        )
-    else:
-        args.group_prompt_instructions_sha256 = ""
+    group_prompt_instruction_provenance = {}
+    args.group_prompt_instructions_sha256 = ""
     if _is_versioned_flat(args):
         group_prompt_provenance = flat_prompt_provenance(
             config.pipeline_module.split(".")[-2],
@@ -379,17 +355,6 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
             task_prompt_profile=str(args.task_prompt_profile),
             prompt_version=str(args.flat_prompt_version),
             flat_reranking=str(args.flat_reranking),
-        )
-    elif (
-        config.group_prompt_provenance is not None
-        and args.group_prompt_format in {"morganfingerprint", "assay_transfer_tool"}
-        and not _is_analogous_flat(args)
-    ):
-        group_prompt_provenance = config.group_prompt_provenance(
-            args.group_prompt_format,
-            prompt_version=args.group_prompt_version,
-            instructions_file=args.group_prompt_instructions_file or None,
-            output_schema_profile=args.group_output_schema,
         )
     else:
         group_prompt_provenance = {}
@@ -406,7 +371,6 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
             args.final_only_source_batch,
         ),
     )
-    _validate_final_decision_profile_contract(args, batch_dir)
     _validate_prompt_profile_contract(config, args, batch_dir)
     logs_dir = _ensure_dir(batch_dir / "logs")
     batch_run_root = _ensure_dir(batch_dir / "runs")
@@ -481,7 +445,10 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
     manifest = {
         "batch_id": batch_id,
         "input_jsonl": args.input_jsonl,
-        "input_jsonl_sha256": sha256_file(Path(args.input_jsonl)),
+        "task": config.pipeline_module.split(".")[-2],
+        "reasoning_effort": args.reasoning_effort,
+        "endpoint_selection": args.endpoint_selection,
+        "provider_profile": Path(args.provider_pool_config).stem if args.provider_pool_config else "",
         "smiles_field": args.smiles_field,
         "label_field": args.label_field,
         "n_items": len(items),
@@ -499,7 +466,6 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
         "provider_pool_config": (
             {
                 "path": str(Path(args.provider_pool_config).resolve()),
-                "sha256": sha256_file(Path(args.provider_pool_config)),
                 "selection": args.endpoint_selection,
             }
             if args.provider_pool_config
@@ -511,6 +477,7 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
         "harness_version": flat_selection.get("harness_version", ""),
         "flat_reranking": flat_selection.get("reranking", ""),
         "flat_layout": args.flat_layout,
+        "flat_one_call": args.flat_prompt_version in CONTEXT_PROMPT_VERSIONS and args.experiment_mode == "full_flat",
         "flat_query_prior": args.flat_query_prior,
         "evaluation_subset": flat_selection.get("evaluation_subset", ""),
         "record_pool": flat_selection.get("record_pool", ""),
@@ -518,13 +485,9 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
         "allow_frozen_l1_vote_scores": flat_selection.get(
             "allow_frozen_l1_vote_scores", False
         ),
-        "flat_selection_contract_sha256": flat_selection.get(
-            "selection_contract_sha256", ""
-        ),
         "flat_selection_manifest": (
             {
                 "path": str(Path(args.flat_selection_manifest).resolve()),
-                "sha256": sha256_file(Path(args.flat_selection_manifest)),
             }
             if flat_selection
             else {}
@@ -542,29 +505,20 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
         "assay_transfer_template_profile": args.assay_transfer_template_profile,
         "group_prompt_format": args.group_prompt_format,
         "group_prompt_version": (
-            "analogous_flat_v1"
-            if _is_analogous_flat(args)
-            else args.flat_prompt_version or args.group_prompt_version
+            args.flat_prompt_version or args.group_prompt_version
         ),
         "group_prompt_provenance": group_prompt_provenance,
         "group_output_schema": (
-            "analogous_flat_minimal_v1"
-            if _is_analogous_flat(args)
-            else args.group_output_schema
+            args.group_output_schema
         ),
         "group_prompt_instructions_file": group_prompt_instruction_provenance.get(
             "path", ""
-        ),
-        "group_prompt_instructions_sha256": group_prompt_instruction_provenance.get(
-            "sha256", ""
         ),
         "group_prompt_instruction_count": group_prompt_instruction_provenance.get(
             "instruction_count", 0
         ),
         "group_evidence_presentation": (
-            "analogous_flat_minimal.v1"
-            if _is_analogous_flat(args)
-            else EVIDENCE_PROJECTION
+            EVIDENCE_PROJECTION
             if args.flat_prompt_version == JOSEPH_PROMPT_VERSION
             else f"{args.flat_prompt_version}.v1"
             if _is_versioned_flat(args)
@@ -609,49 +563,39 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
         "group_tools_enabled": (
             not args.disable_group_tools
             and not args.disable_flat_tools
-            and not args.analogous_reasoning_only
+            and not False
         ),
         "flat_group_tool_policy": (
             "omitted.v1"
-            if args.disable_flat_tools or args.analogous_reasoning_only
+            if args.disable_flat_tools or False
             else "standard.v1"
         ),
-        "analogous_reasoning_only": args.analogous_reasoning_only,
+        "analogous_reasoning_only": False,
         "single_branch_execution": (
-            "omitted" if args.analogous_reasoning_only else "executed_or_reused"
+            "executed_or_reused"
         ),
         "single_branch_omission_reason": (
-            "analogous_reasoning_only" if args.analogous_reasoning_only else ""
+            ""
         ),
         "query_tool_execution": (
-            "omitted" if args.analogous_reasoning_only else "enabled"
+            "enabled"
         ),
         "group_query_tool_instruction_policy": (
             "omitted.v1"
-            if args.analogous_reasoning_only or args.disable_flat_tools
+            if False or args.disable_flat_tools
             else "standard.v1"
         ),
         "final_prompt_provenance": (
-            config.final_prompt_provenance(
-                analogous_reasoning_only=args.analogous_reasoning_only
-            )
-            if config.final_prompt_provenance is not None and not _is_analogous_flat(args)
-            else {}
+            {}
         ),
         "analogous_flat_prompt_provenance": (
-            analogous_flat_prompt_provenance(config.pipeline_module.split(".")[-2])
-            if _is_analogous_flat(args)
-            else {}
+            {}
         ),
         "harness_prefetch_tools": (
-            False
-            if args.analogous_reasoning_only
-            else args.identity_blind or args.harness_prefetch_tools
+            args.identity_blind or args.harness_prefetch_tools
         ),
         "visibility_mode": (
-            PROMPT_IDENTITY_VIEW
-            if _is_analogous_flat(args)
-            else "identity_blind"
+            "identity_blind"
             if args.identity_blind
             else "deployment_visible_prefetched"
             if args.harness_prefetch_tools
@@ -665,6 +609,7 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
         "single_analysis_source_batch": args.single_analysis_source_batch,
         "group_analysis_source_batch": args.group_analysis_source_batch,
         "retrieval_replay_source_batch": args.retrieval_replay_source_batch,
+        "flat_request_replay_root": args.flat_request_replay_root,
         "prefetched_tool_replay_source_batch": args.prefetched_tool_replay_source_batch,
         "tier1_replacement_index": args.tier1_replacement_index,
         "tier1_replacement_groups": args.tier1_replacement_groups or [],
@@ -681,7 +626,10 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
             "logs": str(logs_dir),
         },
     }
-    _write_json(batch_dir / "manifest.json", manifest)
+    if flat_selection:
+        manifest["selection_parameters"] = selection_parameters(flat_selection)
+    write_batch(batch_dir / "manifest.json", manifest,
+                records=[(item.index, item.record) for item in items])
 
     _log(config, f"batch_id={batch_id}")
     _log(config, f"items={len(items)} parallelism={args.parallelism}")
@@ -855,335 +803,18 @@ def _exclusive_run_lock(run_dir: Path):
             fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
 
 
-def _prepare_final_only_run_dir(args: argparse.Namespace, query_index: int, run_id: str, run_dir: Path) -> None:
-    source_batch_dir = Path(args.final_only_source_batch)
-    if not source_batch_dir.exists():
-        raise FileNotFoundError(f"Final-only source batch does not exist: {source_batch_dir}")
-    source_runs_dir = source_batch_dir / "runs"
-    matches = sorted(source_runs_dir.glob(f"*_idx{query_index:05d}"))
-    if not matches:
-        raise FileNotFoundError(f"No source run for query index {query_index}: {source_runs_dir}")
-    if len(matches) > 1:
-        raise RuntimeError(f"Ambiguous source runs for query index {query_index}: {matches}")
-    source_run_dir = matches[0]
-    run_dir.mkdir(parents=True, exist_ok=True)
-    for name in ("retrieval.json", "single_molecule_reasoning_output.json", "group_reasoning_outputs.jsonl"):
-        source_path = source_run_dir / name
-        if not source_path.exists():
-            raise FileNotFoundError(f"Missing source artifact for final-only rerun: {source_path}")
-        shutil.copy2(source_path, run_dir / name)
-
-    manifest_path = source_run_dir / "manifest.json"
-    manifest = _read_json(manifest_path) if manifest_path.exists() else {}
-    manifest["run_id"] = run_id
-    manifest["final_only_source_run_dir"] = str(source_run_dir)
-    manifest["final_only_source_batch"] = str(source_batch_dir)
-    manifest["final_evidence_surface"] = getattr(
-        args,
-        "final_evidence_surface",
-        SUMMARY_ONLY,
-    )
-    manifest["final_decision_profile"] = getattr(
-        args,
-        "final_decision_profile",
-        STANDARD_FINAL_DECISION,
-    )
-    if args.final_only_groups:
-        filter_audit = _filter_final_only_run_artifacts(run_dir, args.final_only_groups)
-        manifest["final_only_group_filter"] = filter_audit
-        manifest["n_groups_with_neighbors"] = filter_audit["n_retained_groups_with_neighbors"]
-    manifest.setdefault("paths", {})
-    manifest["paths"].update(
-        {
-            "retrieval": str(run_dir / "retrieval.json"),
-            "single_molecule_reasoning_output": str(run_dir / "single_molecule_reasoning_output.json"),
-            "group_reasoning_outputs": str(run_dir / "group_reasoning_outputs.jsonl"),
-            "final_reasoning_output": str(run_dir / "final_reasoning_output.json"),
-            "trace_messages": str(run_dir / "trace_messages.jsonl"),
-        }
-    )
-    _write_json(run_dir / "manifest.json", manifest)
-
-
-def _filter_final_only_run_artifacts(run_dir: Path, requested_group_ids: list[str]) -> dict[str, Any]:
-    """Restrict copied retrieval/group artifacts before a final-only rerun."""
-    requested = list(dict.fromkeys(str(group_id) for group_id in requested_group_ids if group_id))
-    if not requested:
-        raise ValueError("Final-only group filtering requires at least one group id.")
-    requested_set = set(requested)
-
-    retrieval_path = run_dir / "retrieval.json"
-    group_path = run_dir / "group_reasoning_outputs.jsonl"
-    retrieval = _read_json(retrieval_path)
-    groups = list(retrieval.get("groups") or [])
-    available = {str(group.get("group_id") or "") for group in groups}
-    missing = sorted(requested_set - available)
-    if missing:
-        raise ValueError(
-            "Final-only group ids are absent from copied retrieval: "
-            + ", ".join(missing)
-        )
-
-    retained_groups = [
-        group for group in groups if str(group.get("group_id") or "") in requested_set
-    ]
-    outputs = _read_jsonl(group_path)
-    retained_outputs = [
-        output
-        for output in outputs
-        if str(output.get("group_id") or "") in requested_set
-    ]
-    retained_output_ids = [str(output.get("group_id") or "") for output in retained_outputs]
-    expected_output_ids = [
-        str(group.get("group_id") or "")
-        for group in retained_groups
-        if group.get("neighbors")
-    ]
-    if retained_output_ids != expected_output_ids:
-        raise ValueError(
-            "Copied group outputs do not match retained retrieval groups with neighbors: "
-            f"expected={expected_output_ids}, found={retained_output_ids}"
-        )
-
-    coverage = dict(retrieval.get("coverage") or {})
-    coverage.update(
-        {
-            "n_groups": len(retained_groups),
-            "n_groups_with_neighbors": len(expected_output_ids),
-            "n_neighbors_total": sum(
-                len(group.get("neighbors") or []) for group in retained_groups
-            ),
-        }
-    )
-    retrieval["groups"] = retained_groups
-    retrieval["coverage"] = coverage
-    retrieval.setdefault("experiment", {})["final_only_group_filter"] = {
-        "requested_group_ids": requested,
-        "source_group_ids": [str(group.get("group_id") or "") for group in groups],
-        "retained_group_ids": [str(group.get("group_id") or "") for group in retained_groups],
-    }
-    _write_json(retrieval_path, retrieval)
-    _write_jsonl(group_path, retained_outputs)
-    return {
-        "requested_group_ids": requested,
-        "source_group_ids": [str(group.get("group_id") or "") for group in groups],
-        "retained_group_ids": [str(group.get("group_id") or "") for group in retained_groups],
-        "n_source_group_outputs": len(outputs),
-        "n_retained_group_outputs": len(retained_outputs),
-        "n_retained_groups_with_neighbors": len(expected_output_ids),
-    }
-
-
-def _single_run_command(
-    config: BatchConfig,
-    args: argparse.Namespace,
-    query_index: int,
-    run_id: str,
-    run_root: Path,
-) -> list[str]:
+def _single_run_command(config: BatchConfig, args: argparse.Namespace,
+                        query_index: int, run_id: str, run_root: Path) -> list[str]:
     command = [
-        args.python_executable,
-        "-m",
-        config.pipeline_module,
-        "--input-jsonl",
-        args.input_jsonl,
-        "--query-index",
-        str(query_index),
-        "--smiles-field",
-        args.smiles_field,
-        "--index",
-        args.index,
-        "--out-root",
-        str(run_root),
-        "--run-id",
-        run_id,
-        "--env-file",
-        args.env_file,
-        "--api-key-env",
-        args.api_key_env,
-        "--base-url",
-        args.base_url,
-        "--tool-service-url",
-        args.tool_service_url,
-        "--model",
-        args.model,
-        "--timeout-s",
-        str(args.timeout_s),
-        "--max-tokens",
-        str(args.max_tokens),
-        "--max-tool-rounds",
-        str(args.max_tool_rounds),
-        "--reasoning-effort",
-        args.reasoning_effort,
-        "--top-k-per-group",
-        str(args.top_k_per_group),
-        "--min-similarity",
-        str(args.min_similarity),
+        args.python_executable, "-m", config.pipeline_module,
+        "--input-jsonl", str(args.input_jsonl), "--query-index", str(query_index),
+        "--smiles-field", args.smiles_field, "--out-root", str(run_root),
+        "--run-id", run_id, "--experiment-mode", args.experiment_mode,
     ]
-    if config.supports_shared_retrieval_contract:
-        command.extend(
-            [
-                "--experiment-mode",
-                args.experiment_mode,
-                "--retrieval-source",
-                args.retrieval_source,
-                "--neighbor-identity-policy",
-                args.neighbor_identity_policy,
-                "--morgan-neighbor-selector",
-                args.neighbor_selector,
-                "--neighbor-context-profile",
-                args.neighbor_context_profile,
-            ]
-        )
-    if args.assay_transfer_min_score is not None:
-        command.extend(
-            ["--assay-transfer-min-score", str(args.assay_transfer_min_score)]
-        )
-    if args.assay_transfer_diversity_mode != ASSAY_TRANSFER_DIVERSITY_NONE:
-        command.extend(
-            [
-                "--assay-transfer-diversity-mode",
-                args.assay_transfer_diversity_mode,
-                "--assay-transfer-diversity-score-slack",
-                str(args.assay_transfer_diversity_score_slack),
-            ]
-        )
-    if args.assay_transfer_selection_unit != ASSAY_TRANSFER_SELECTION_SCORED_RECORD:
-        command.extend(
-            ["--assay-transfer-selection-unit", args.assay_transfer_selection_unit]
-        )
-    if (
-        args.assay_transfer_records_per_molecule
-        != ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT
-    ):
-        command.extend(
-            [
-                "--assay-transfer-records-per-molecule",
-                str(args.assay_transfer_records_per_molecule),
-            ]
-        )
-    if args.group_prompt_format:
-        command.extend(["--group-prompt-format", args.group_prompt_format])
-    if args.group_prompt_version:
-        command.extend(["--group-prompt-version", args.group_prompt_version])
-    if args.group_output_schema:
-        command.extend(["--group-output-schema", args.group_output_schema])
-    if args.group_prompt_instructions_file:
-        command.extend(
-            [
-                "--group-prompt-instructions-file",
-                args.group_prompt_instructions_file,
-                "--group-prompt-instructions-sha256",
-                args.group_prompt_instructions_sha256,
-            ]
-        )
-    if args.group_prompt_min_similarity is not None:
-        command.extend(
-            ["--group-prompt-min-similarity", str(args.group_prompt_min_similarity)]
-        )
-    if config.group_prompt_formats and getattr(args, "presentation_style", "legacy") != "legacy":
-        command.extend(["--presentation-style", args.presentation_style])
-    if config.supports_shared_retrieval_contract:
-        final_surface = getattr(args, "final_evidence_surface", SUMMARY_ONLY)
-        if final_surface != SUMMARY_ONLY:
-            command.extend(["--final-evidence-surface", final_surface])
-        final_decision_profile = getattr(args, "final_decision_profile", STANDARD_FINAL_DECISION)
-        if config.supports_final_decision_profiles and final_decision_profile != STANDARD_FINAL_DECISION:
-            command.extend(["--final-decision-profile", final_decision_profile])
-    if config.prompt_profile_option:
-        command.extend(
-            [
-                config.prompt_profile_option,
-                str(args.task_prompt_profile),
-            ]
-        )
-    if not args.enable_thinking:
-        command.append("--disable-thinking")
-    else:
-        command.append("--enable-thinking")
-    if args.max_groups:
-        command.extend(["--max-groups", str(args.max_groups)])
-    if args.groups:
-        command.append("--groups")
-        command.extend(args.groups)
-    if args.tier1_replacement_index and config.supports_shared_retrieval_contract:
-        command.extend(["--tier1-replacement-index", args.tier1_replacement_index])
-        if args.tier1_replacement_groups:
-            command.append("--tier1-replacement-groups")
-            command.extend(args.tier1_replacement_groups)
-    if args.disable_group_tools:
-        command.append("--disable-group-tools")
-    if args.disable_flat_tools:
-        command.append("--disable-flat-tools")
-    if args.analogous_reasoning_only:
-        command.append("--analogous-reasoning-only")
-    if args.identity_blind and config.supports_shared_retrieval_contract:
-        command.append("--identity-blind")
-    elif args.harness_prefetch_tools and config.supports_shared_retrieval_contract:
-        command.append("--harness-prefetch-tools")
-    if config.supports_retrieval_strategy:
-        command.extend(["--retrieval-strategy", args.retrieval_strategy])
-    if args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY:
-        command.extend(
-            [
-                "--assay-transfer-initial-morgan-filter",
-                str(args.assay_transfer_initial_morgan_filter),
-                "--assay-transfer-profile",
-                args.assay_transfer_profile,
-                "--rerank-catalog",
-                args.rerank_catalog,
-                "--rerank-cache",
-                args.rerank_cache,
-                "--rerank-candidate-manifest",
-                args.rerank_candidate_manifest,
-                "--rerank-cache-mode",
-                args.rerank_cache_mode,
-                "--assay-transfer-model",
-                args.assay_transfer_model,
-                "--assay-transfer-model-revision",
-                args.assay_transfer_model_revision,
-                "--assay-transfer-template-profile",
-                args.assay_transfer_template_profile,
-            ]
-        )
-    if args.enable_assay_transfer_scores:
-        command.append("--enable-assay-transfer-scores")
-    if args.single_analysis_source_batch and config.supports_shared_retrieval_contract:
-        source_batch = Path(args.single_analysis_source_batch)
-        source_run_id = f"{source_batch.name}_idx{query_index:05d}"
-        command.extend(
-            [
-                "--single-analysis-source-run-dir",
-                str(source_batch / "runs" / source_run_id),
-            ]
-        )
-    if args.group_analysis_source_batch and config.supports_shared_retrieval_contract:
-        source_batch = Path(args.group_analysis_source_batch)
-        source_run_id = f"{source_batch.name}_idx{query_index:05d}"
-        command.extend(
-            [
-                "--group-analysis-source-run-dir",
-                str(source_batch / "runs" / source_run_id),
-            ]
-        )
-    if args.retrieval_replay_source_batch and config.supports_shared_retrieval_contract:
-        source_batch = Path(args.retrieval_replay_source_batch)
-        source_run_id = f"{source_batch.name}_idx{query_index:05d}"
-        command.extend(
-            [
-                "--retrieval-replay-run-dir",
-                str(source_batch / "runs" / source_run_id),
-            ]
-        )
-    if args.prefetched_tool_replay_source_batch and config.supports_shared_retrieval_contract:
-        source_batch = Path(args.prefetched_tool_replay_source_batch)
-        source_run_id = f"{source_batch.name}_idx{query_index:05d}"
-        command.extend(
-            [
-                "--prefetched-tool-replay-run-dir",
-                str(source_batch / "runs" / source_run_id),
-            ]
-        )
+    if args.retrieval_replay_source_batch:
+        source = Path(args.retrieval_replay_source_batch)
+        command.extend(["--retrieval-replay-run-dir",
+                        str(source / "runs" / f"{source.name}_idx{query_index:05d}")])
     return command
 
 
@@ -1270,7 +901,7 @@ def _collect_result(
     final_output = _read_json(final_path) if final_path.exists() else {}
     single_output = _read_json(single_path) if single_path.exists() else {}
     group_outputs = _read_jsonl(group_path) if group_path.exists() else []
-    manifest = _read_json(manifest_path) if manifest_path.exists() else {}
+    manifest = read_run(run_dir) if ((run_dir.parent.parent / "manifest.json").exists() or manifest_path.exists()) else {}
     reuse_path = run_dir / "reuse.json"
     reuse = _read_json(reuse_path) if reuse_path.exists() else {}
     content = ((final_output.get("llm") or {}).get("content") or {}) if isinstance(final_output, dict) else {}
@@ -1295,7 +926,8 @@ def _collect_result(
         "correct": correct,
         "final_status": (final_output.get("status") if isinstance(final_output, dict) else None),
         "single_status": (single_output.get("status") if isinstance(single_output, dict) else None),
-        "analogous_reasoning_only": bool(manifest.get("analogous_reasoning_only")),
+        "analogous_reasoning_only": False,
+        "query_prior_only": bool(manifest.get("query_prior_only")),
         "flat_one_call": bool(manifest.get("flat_one_call")),
         "flat_query_prior": manifest.get("flat_query_prior", ""),
         "n_group_outputs": len(group_outputs),
@@ -1314,6 +946,8 @@ def _collect_result(
 
 
 def _result_is_complete(result: dict[str, Any]) -> bool:
+    if result.get("query_prior_only"):
+        return result.get("single_status") == "ok"
     if result.get("final_status") != "ok" or result.get("pred_label") is None:
         return False
     acceptable_single_status = "omitted" if (
@@ -1335,6 +969,16 @@ def _result_is_complete(result: dict[str, Any]) -> bool:
 
 
 def compute_metrics(config: BatchConfig, rows: list[dict[str, Any]]) -> dict[str, Any]:
+    if rows and all(row.get("query_prior_only") for row in rows):
+        return {
+            "n_total": len(rows), "n_evaluable": 0,
+            "n_successful": sum(row.get("status") == "ok" for row in rows),
+            "n_failed_runs": sum(row.get("status") != "ok" for row in rows),
+            "accuracy": None, "accuracy_including_failed": None, "macro_f1": None,
+            "per_class": {}, "positive_class_precision": None,
+            "positive_class_recall": None, "positive_class_f1": None,
+            "confusion_matrix": {}, "prediction_distribution": {},
+        }
     evaluable = [row for row in rows if row.get("label") in (0, 1)]
     successful = [row for row in evaluable if row.get("status") == "ok"]
     correct = sum(1 for row in successful if row.get("correct"))
@@ -1511,10 +1155,13 @@ def _read_jsonl(path: Path) -> list[dict[str, Any]]:
 
 
 def _read_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
+    return read_record(path) if path.name == "manifest.json" else json.loads(path.read_text(encoding="utf-8"))
 
 
 def _write_json(path: Path, data: Any) -> None:
+    if path.name == "manifest.json":
+        write_batch(path, data)
+        return
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=str) + "\n", encoding="utf-8")
 
 
@@ -1545,8 +1192,8 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     parser.add_argument("--index", default=config.default_index)
     parser.add_argument(
         "--experiment-mode",
-        choices=["none", "direct", "full_flat", "full_mechanism", "native"],
-        default="native",
+        choices=["none", "full_flat"],
+        default="full_flat",
     )
     parser.add_argument("--retrieval-source", default="chembl")
     parser.add_argument(
@@ -1555,28 +1202,11 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         default="operational",
     )
     parser.add_argument("--identity-blind", action="store_true")
-    if config.supports_analogous_reasoning_only:
-        parser.add_argument(
-            "--analogous-reasoning-only",
-            "--analogous_reasoning_only",
-            dest="analogous_reasoning_only",
-            action="store_true",
-            help=(
-                "Bioavailability full_mechanism only: omit the single-molecule "
-                "branch and every model-facing query tool."
-            ),
-        )
-    else:
-        parser.set_defaults(analogous_reasoning_only=False)
+    parser.set_defaults(analogous_reasoning_only=False)
     parser.add_argument(
         "--single-analysis-source-batch",
         default="",
         help="Reuse each query's frozen single-molecule branch from another batch.",
-    )
-    parser.add_argument(
-        "--group-analysis-source-batch",
-        default="",
-        help="Reuse independent group branches with identical LLM-visible retrieval input.",
     )
     parser.add_argument(
         "--retrieval-replay-source-batch",
@@ -1584,26 +1214,18 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         help="Reuse each query's frozen retrieval.json from another batch.",
     )
     parser.add_argument(
+        "--flat-request-replay-root",
+        default="",
+        help="Replay frozen per-query request.json files from a completed flat arm's runs directory.",
+    )
+    parser.add_argument("--flat-prompt-successor-replay", action="store_true")
+    parser.add_argument(
         "--prefetched-tool-replay-source-batch",
         default="",
         help="Reuse each query's frozen harness-prefetched tool outputs from another batch.",
     )
     parser.add_argument("--batch-root", default=config.default_batch_root)
     parser.add_argument("--batch-id", default="")
-    parser.add_argument(
-        "--final-only-source-batch",
-        default="",
-        help="Existing batch directory whose retrieval/single/group artifacts should be reused for final-only reruns.",
-    )
-    parser.add_argument(
-        "--final-only-groups",
-        nargs="*",
-        default=None,
-        help=(
-            "Optional exact group ids retained from --final-only-source-batch before final synthesis. "
-            "This filters copied retrieval and group outputs without rerunning earlier reasoning stages."
-        ),
-    )
     parser.add_argument("--python-executable", default=sys.executable)
     parser.add_argument("--indices", nargs="*", default=None, help="Indices or inclusive ranges, e.g. 0 3 5-8.")
     parser.add_argument("--start", type=int, default=0)
@@ -1762,11 +1384,6 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         default=config.assay_transfer_template_profile_default,
     )
     parser.add_argument(
-        "--group-prompt-format",
-        choices=list(config.group_prompt_formats) or None,
-        default=config.default_group_prompt_format,
-    )
-    parser.add_argument(
         "--flat-prompt-version",
         choices=[TIANANG_PROMPT_VERSION, *JOSEPH_PROMPT_VERSIONS],
         default="",
@@ -1794,31 +1411,7 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     )
     parser.add_argument("--flat-selection-manifest", default="", help=argparse.SUPPRESS)
     parser.add_argument("--flat-replay-subset", action="store_true", help=argparse.SUPPRESS)
-    parser.add_argument("--group-prompt-min-similarity", type=float, default=None)
-    parser.add_argument(
-        "--presentation-style",
-        choices=["legacy", "full"],
-        default="legacy",
-        help="Record presentation style for text group prompts: legacy or per-source full.",
-    )
-    parser.add_argument(
-        "--group-output-schema",
-        choices=list(config.group_output_schemas) or None,
-        default=config.default_group_output_schema,
-    )
-    if config.group_prompt_versions:
-        parser.add_argument(
-            "--group-prompt-version",
-            choices=config.group_prompt_versions,
-            default=config.default_group_prompt_version,
-        )
-    else:
-        parser.set_defaults(group_prompt_version="")
-    parser.add_argument(
-        "--group-prompt-instructions-file",
-        default="",
-        help="Optional UTF-8 instruction file for a non-legacy text group prompt format.",
-    )
+    parser.set_defaults(group_prompt_version="")
     parser.add_argument(
         "--rerank-expected-score-count",
         type=int,
@@ -1830,19 +1423,7 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         default=config.rerank_version_manifest_default,
         help="Optional VERSION.json whose model, template, catalog, manifest, and count must match preflight.",
     )
-    parser.add_argument(
-        "--neighbor-context-profile",
-        choices=NEIGHBOR_CONTEXT_PROFILES,
-        default=STANDARD_NEIGHBOR_CONTEXT,
-    )
-    add_final_evidence_surface_argument(parser)
-    if config.supports_final_decision_profiles:
-        add_final_decision_profile_argument(
-            parser,
-            choices=config.final_decision_profile_choices,
-        )
-    else:
-        parser.set_defaults(final_decision_profile=STANDARD_FINAL_DECISION)
+    parser.set_defaults(final_evidence_surface=SUMMARY_ONLY, final_decision_profile=STANDARD_FINAL_DECISION)
     if config.prompt_profile_option:
         parser.add_argument(
             config.prompt_profile_option,
@@ -1852,19 +1433,6 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         )
     else:
         parser.set_defaults(task_prompt_profile="")
-    parser.add_argument("--groups", nargs="*", default=None, help="Optional exact Tier.endpoint_group ids to reason over.")
-    parser.add_argument(
-        "--tier1-replacement-index",
-        default="",
-        help="Optional pipeline-specific neighbor index used to replace base Tier 1 retrieval groups.",
-    )
-    parser.add_argument(
-        "--tier1-replacement-groups",
-        nargs="*",
-        default=None,
-        help="Optional group ids to retrieve from --tier1-replacement-index.",
-    )
-    parser.add_argument("--max-groups", type=int, default=0)
     parser.add_argument("--disable-group-tools", action="store_true")
     parser.add_argument(
         "--disable-flat-tools",
@@ -1875,6 +1443,7 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         ),
     )
     parser.add_argument("--harness-prefetch-tools", action="store_true")
+    parser.set_defaults(group_analysis_source_batch='', final_only_source_batch='', final_only_groups=None, group_prompt_format='legacy', group_prompt_min_similarity=None, presentation_style='legacy', group_output_schema='', group_prompt_instructions_file='', neighbor_context_profile='standard', tier1_replacement_index='', tier1_replacement_groups=None, groups=None, max_groups=0)
     args = parser.parse_args(argv)
     if args.assay_transfer_profile == "v9_direct_gold":
         custom_v9_cache = args.rerank_cache != config.rerank_cache_default
@@ -1959,6 +1528,10 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         parser.error("--legacy requires an archived assay-reranking cache")
     if args.final_only_groups and not args.final_only_source_batch:
         parser.error("--final-only-groups requires --final-only-source-batch")
+    if args.flat_request_replay_root and not (
+        args.experiment_mode == "full_flat" and args.flat_prompt_version in CONTEXT_PROMPT_VERSIONS
+    ):
+        parser.error("--flat-request-replay-root requires a full-flat context prompt")
     if min(args.max_stage_requeues, args.transport_max_retries) < 0:
         parser.error("stage requeues and transport retries must be non-negative")
     if args.disable_flat_tools and args.experiment_mode != "full_flat":
@@ -1999,86 +1572,21 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     return args
 
 
-def _validate_analogous_reasoning_only(
-    config: BatchConfig,
-    args: argparse.Namespace,
-) -> None:
-    if not args.analogous_reasoning_only:
-        return
-    if not config.supports_analogous_reasoning_only:
-        raise SystemExit(
-            f"Pipeline {config.pipeline_module} does not support --analogous-reasoning-only"
-        )
-    if args.experiment_mode not in config.analogous_reasoning_modes:
-        raise SystemExit(
-            "--analogous-reasoning-only requires --experiment-mode "
-            + " or ".join(config.analogous_reasoning_modes)
-        )
-    if args.experiment_mode == "full_flat":
-        if not args.identity_blind:
-            raise SystemExit(
-                "flat --analogous-reasoning-only requires --identity-blind"
-            )
-        if args.retrieval_strategy not in {
-            ASSAY_TRANSFER_TOOL_STRATEGY,
-            "morgan_fingerprint",
-        }:
-            raise SystemExit(
-                "flat --analogous-reasoning-only requires --retrieval-strategy "
-                "assay_transfer_tool or morgan_fingerprint"
-            )
-        if (
-            args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
-            and not args.enable_assay_transfer_scores
-        ):
-            raise SystemExit(
-                "flat --analogous-reasoning-only requires "
-                "--enable-assay-transfer-scores for assay_transfer_tool retrieval"
-            )
-    incompatible = {
-        "--single-analysis-source-batch": args.single_analysis_source_batch,
-        "--group-analysis-source-batch": args.group_analysis_source_batch,
-        "--prefetched-tool-replay-source-batch": args.prefetched_tool_replay_source_batch,
-        "--final-only-source-batch": args.final_only_source_batch,
-    }
-    used = [name for name, value in incompatible.items() if value]
-    if used:
-        raise SystemExit(
-            "--analogous-reasoning-only requires fresh reasoning and cannot use: "
-            + ", ".join(used)
-        )
-    if args.neighbor_context_profile == COVERAGE_MMP_LEDGER_NEIGHBOR_CONTEXT:
-        raise SystemExit(
-            "--analogous-reasoning-only cannot use --neighbor-context-profile "
-            "coverage_mmp_ledger because it invokes query comparison tools"
-        )
-    if getattr(args, "final_evidence_surface", SUMMARY_ONLY) != SUMMARY_ONLY:
-        raise SystemExit(
-            "--analogous-reasoning-only requires --final-evidence-surface summary_only"
-        )
-    if getattr(args, "final_decision_profile", STANDARD_FINAL_DECISION) != STANDARD_FINAL_DECISION:
-        raise SystemExit(
-            "--analogous-reasoning-only requires --final-decision-profile standard"
-        )
-
-
-def _is_analogous_flat(args: argparse.Namespace) -> bool:
-    return bool(args.analogous_reasoning_only) and args.experiment_mode == "full_flat"
-
-
 def _is_versioned_flat(args: argparse.Namespace) -> bool:
     return bool(args.flat_prompt_version) and args.experiment_mode == "full_flat"
 
 
 def _validate_flat_prompt(config: BatchConfig, args: argparse.Namespace) -> None:
     if not args.flat_prompt_version:
+        if args.experiment_mode == "full_flat":
+            raise SystemExit("FINAL inference requires a versioned prompt; use --organization flat")
         return
     if args.experiment_mode != "full_flat":
         raise SystemExit("--flat-prompt-version requires --experiment-mode full_flat")
-    if args.analogous_reasoning_only:
-        raise SystemExit(
-            "--flat-prompt-version cannot be combined with --analogous-reasoning-only"
-        )
+    if args.flat_prompt_version not in ACTIVE_HARNESS_PROMPTS.values() and not (
+        args.flat_request_replay_root or args.flat_prompt_successor_replay
+    ):
+        raise SystemExit("Retired prompt requires frozen request replay")
     if args.group_prompt_format != "legacy":
         raise SystemExit(
             "--flat-prompt-version uses the flat JSON group-prompt shape; "
@@ -2098,6 +1606,15 @@ def _validate_flat_prompt(config: BatchConfig, args: argparse.Namespace) -> None
                 f"{args.flat_prompt_version} requires its cache-matched reranking mode"
             )
         task_id = config.pipeline_module.split(".")[-2]
+        if args.flat_prompt_version in {TDC_SKIN_LLNA_PROMPT_VERSION, TDC_SKIN_LLNA_SCORES_PROMPT_VERSION} and (
+            task_id != "skin_reaction" or not args.flat_prompt_successor_replay
+            or Path(args.input_jsonl).resolve() not in {
+                (Path("data/gold_labels/TDC/Skin_Reaction/v1/scaffold")
+                 / f"{subset}_molecule_condition_labels.jsonl").resolve()
+                for subset in ("valid", "test")
+            }
+        ):
+            raise SystemExit("TDC Skin LLNA prompt requires pinned TDC-v1 replay")
         supported = (
             set(TASKS)
             if args.flat_prompt_version in {
@@ -2105,6 +1622,15 @@ def _validate_flat_prompt(config: BatchConfig, args: argparse.Namespace) -> None
                 CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
                 CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
                 CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+                CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
+                TDC_SKIN_LLNA_PROMPT_VERSION,
+                TDC_SKIN_LLNA_SCORES_PROMPT_VERSION,
+                TDC_V2_MIXED_PROMPT_VERSION,
+                DILI_TDC_V2_MIXED_V3_PROMPT_VERSION,
+                DILI_TDC_V2_POLARIZED_PROMPT_VERSION,
+                FINAL_FULL_FLAT_PROMPT_VERSION,
+                FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
+                FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
             }
             else {"bbb_martins", "bioavailability_ma"}
         )
@@ -2114,6 +1640,15 @@ def _validate_flat_prompt(config: BatchConfig, args: argparse.Namespace) -> None
                 CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
                 CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
                 CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+                CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
+                TDC_SKIN_LLNA_PROMPT_VERSION,
+                TDC_SKIN_LLNA_SCORES_PROMPT_VERSION,
+                TDC_V2_MIXED_PROMPT_VERSION,
+                DILI_TDC_V2_MIXED_V3_PROMPT_VERSION,
+                DILI_TDC_V2_POLARIZED_PROMPT_VERSION,
+                FINAL_FULL_FLAT_PROMPT_VERSION,
+                FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
+                FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
             }:
                 raise SystemExit("Joseph flat is enabled only for BBB and oral")
             raise SystemExit(f"{args.flat_prompt_version} does not support {task_id}")
@@ -2177,26 +1712,40 @@ def _validated_flat_selection_manifest(
     if path.parent != Path(args.retrieval_replay_source_batch).resolve():
         raise SystemExit("flat selection manifest must own the retrieval replay batch")
     manifest = _read_json(path)
+    predecessor = bool(getattr(args, "flat_prompt_successor_replay", False))
+    if predecessor and (
+        args.flat_prompt_version not in {TDC_SKIN_LLNA_PROMPT_VERSION, TDC_SKIN_LLNA_SCORES_PROMPT_VERSION}
+        or config.pipeline_module.split(".")[-2] != "skin_reaction"
+        or not getattr(args, "flat_replay_subset", False)
+        or Path(args.input_jsonl).resolve() not in {
+            (Path("data/gold_labels/TDC/Skin_Reaction/v1/scaffold")
+             / f"{subset}_molecule_condition_labels.jsonl").resolve()
+            for subset in ("valid", "test")
+        }
+    ):
+        raise SystemExit("Prompt-successor replay is limited to TDC Skin retrieval")
     expected = {
-        "harness_version": JOSEPH_PROMPT_HARNESSES[args.flat_prompt_version],
-        "prompt_version": args.flat_prompt_version,
+        "harness_version": JOSEPH_PROMPT_HARNESSES[
+            CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION
+            if predecessor else args.flat_prompt_version
+        ],
+        "prompt_version": (
+            CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION
+            if predecessor else args.flat_prompt_version
+        ),
         "task": config.pipeline_module.split(".")[-2],
         "reranking": args.flat_reranking,
         "input_jsonl": str(Path(args.input_jsonl).resolve()),
-        "input_sha256": sha256_file(Path(args.input_jsonl)),
     }
     source_indices = manifest.get("indices")
     if getattr(args, "flat_replay_subset", False):
         if not isinstance(source_indices, list) or not set(indices).issubset(set(source_indices)):
             raise SystemExit("flat replay indices are not a subset of the source manifest")
-        retrieval_hashes = manifest.get("retrieval_sha256_by_index") or {}
         for index in indices:
-            expected_hash = retrieval_hashes.get(str(index))
             retrieval_path = (
-                path.parent / "runs" / f"{path.parent.name}_idx{index:05d}"
-                / "retrieval.json"
+                run_directory(path.parent, index) / "retrieval.json"
             )
-            if not expected_hash or not retrieval_path.is_file() or sha256_file(retrieval_path) != expected_hash:
+            if not retrieval_path.is_file():
                 raise SystemExit(f"flat replay retrieval changed or is missing: {retrieval_path}")
     else:
         expected["indices"] = indices
@@ -2205,6 +1754,11 @@ def _validated_flat_selection_manifest(
             layout=args.flat_layout,
             query_prior=args.flat_query_prior,
         )
+    require_artifact_versions(manifest, {"input_jsonl": args.input_jsonl})
+    if not getattr(args, "flat_replay_subset", False) and source_indices != indices:
+        raise SystemExit("flat selection query membership differs")
+    expected = scientific_settings(expected)
+    require_query_ids(manifest, _read_jsonl(Path(args.input_jsonl)), indices)
     mismatches = {
         key: {"expected": value, "observed": manifest.get(key)}
         for key, value in expected.items()
@@ -2216,8 +1770,14 @@ def _validated_flat_selection_manifest(
         "assay-transfer-trained", "all_transfer_eligible", "all"
     } or manifest.get("cache_pool") not in {"tool-accepted", "tool-compatible", "all"}:
         raise SystemExit("flat selection manifest has an invalid record pool")
-    if not manifest.get("selection_contract_sha256"):
-        raise SystemExit("flat selection manifest lacks its contract hash")
+    if args.flat_request_replay_root:
+        root = Path(args.flat_request_replay_root).resolve()
+        arm = _read_json(root.parent / "manifest.json")
+        if arm.get("task") != expected["task"] or arm.get("n_queries") != len(indices):
+            raise SystemExit("frozen request arm does not match this batch")
+        require_query_ids(arm, _read_jsonl(Path(args.input_jsonl)), indices)
+        if any(not (root / f"{index:05d}" / "request.json").is_file() for index in indices):
+            raise SystemExit("frozen request files do not cover this batch")
     if args.flat_prompt_version in {JOSEPH_PROMPT_VERSION, *CONTEXT_PROMPT_VERSIONS}:
         expected_projection = {
             "evidence_projection": EVIDENCE_PROJECTION,
@@ -2267,25 +1827,13 @@ def _validate_assay_transfer_scores(config: BatchConfig, args: argparse.Namespac
         raise SystemExit(
             "The selected assay-transfer template requires its matching profile"
         )
-    # --retrieval-strategy is the source of truth; it locks the compatible group-prompt-format.
     if is_assay_transfer:
-        expected_prompt_format = "legacy" if _is_versioned_flat(args) else "assay_transfer_tool"
-        if args.group_prompt_format != expected_prompt_format:
-            raise SystemExit(
-                "--retrieval-strategy assay_transfer_tool requires "
-                f"--group-prompt-format {expected_prompt_format}"
-            )
         if args.morgan_neighbor_selector != SIMILARITY_SELECTOR:
             raise SystemExit(
                 "--morgan-neighbor-selector applies only to "
                 "--retrieval-strategy morgan_fingerprint"
             )
     else:  # morgan_fingerprint
-        if args.group_prompt_format == "assay_transfer_tool":
-            raise SystemExit(
-                "--group-prompt-format assay_transfer_tool requires "
-                "--retrieval-strategy assay_transfer_tool"
-            )
         if args.assay_transfer_min_score is not None:
             raise SystemExit(
                 "--assay-transfer-min-score requires --retrieval-strategy assay_transfer_tool"
@@ -2316,42 +1864,12 @@ def _validate_assay_transfer_scores(config: BatchConfig, args: argparse.Namespac
             "--assay-transfer-records-per-molecule greater than 1 requires "
             "--retrieval-strategy assay_transfer_tool"
         )
-    if args.group_prompt_format and not config.group_prompt_formats:
-        raise SystemExit(f"Pipeline {config.pipeline_module} does not support --group-prompt-format")
-    if args.group_output_schema and not config.group_output_schemas:
-        raise SystemExit(
-            f"Pipeline {config.pipeline_module} does not support --group-output-schema"
-        )
-    if (
-        args.group_output_schema == "assay-transfer"
-        and args.group_prompt_format != "assay_transfer_tool"
-    ):
-        raise SystemExit(
-            "--group-output-schema assay-transfer requires "
-            "--group-prompt-format assay_transfer_tool"
-        )
-    if args.group_prompt_instructions_file and args.group_prompt_format == "legacy":
-        raise SystemExit(
-            "--group-prompt-instructions-file requires a non-legacy text group prompt format"
-        )
-    if (
-        args.group_prompt_instructions_file
-        and args.group_prompt_version
-        and args.group_prompt_version != "legacy_unversioned"
-    ):
-        raise SystemExit(
-            "A named --group-prompt-version is immutable and cannot be combined with "
-            "--group-prompt-instructions-file"
-        )
     if not args.enable_assay_transfer_scores:
         return
     if not config.supports_assay_transfer_scores:
         raise SystemExit(f"Pipeline {config.pipeline_module} does not support --enable-assay-transfer-scores")
-    if args.experiment_mode not in {"full_flat", "full_mechanism"}:
-        raise SystemExit(
-            "--enable-assay-transfer-scores requires --experiment-mode "
-            "full_flat or full_mechanism"
-        )
+    if args.experiment_mode != "full_flat":
+        raise SystemExit("--enable-assay-transfer-scores requires --experiment-mode full_flat")
     if args.retrieval_source != "starling":
         raise SystemExit(
             "--enable-assay-transfer-scores requires --retrieval-source starling"
@@ -2374,7 +1892,7 @@ def _validate_prompt_profile_contract(
     existing_manifest = batch_dir / "manifest.json"
     if existing_manifest.exists():
         existing = prompt_profile_from_manifest(
-            json.loads(existing_manifest.read_text(encoding="utf-8")),
+            read_record(existing_manifest),
             historical_profile=config.historical_prompt_profile,
         )
         if existing != target:
@@ -2411,6 +1929,7 @@ def _validate_group_prompt_contract(
         if not path.exists():
             raise ValueError(f"Group-prompt {label} lacks manifest: {path.parent}")
         existing = _read_json(path).get("group_prompt_provenance") or {}
+        existing, target = scientific_settings(existing), scientific_settings(target)
         named_target = target.get("prompt_version") != "legacy_unversioned"
         if (named_target and existing != target) or (existing and existing != target):
             existing_hash = existing.get("contract_sha256") or existing.get(
@@ -2427,35 +1946,6 @@ def _validate_group_prompt_contract(
             )
 
 
-def _validate_final_decision_profile_contract(
-    args: argparse.Namespace,
-    batch_dir: Path,
-) -> None:
-    """Keep the final-only prior opt-in and prevent mixed batch lineages."""
-    target = str(
-        getattr(args, "final_decision_profile", STANDARD_FINAL_DECISION)
-    )
-    if target != STANDARD_FINAL_DECISION and not args.final_only_source_batch:
-        raise ValueError(
-            f"{target} is a final-only experiment and requires "
-            "--final-only-source-batch"
-        )
-    existing_manifest = batch_dir / "manifest.json"
-    if not existing_manifest.exists():
-        return
-    existing = str(
-        json.loads(existing_manifest.read_text(encoding="utf-8")).get(
-            "final_decision_profile"
-        )
-        or STANDARD_FINAL_DECISION
-    )
-    if existing != target:
-        raise ValueError(
-            "Batch final-decision profile mismatch: "
-            f"existing={existing!r} target={target!r} batch={batch_dir}"
-        )
-
-
 def _normalize_group_args(groups: list[str] | None) -> list[str] | None:
     if not groups:
         return groups
@@ -2470,31 +1960,3 @@ def _normalize_group_args(groups: list[str] | None) -> list[str] | None:
             normalized.append(group)
             i += 1
     return normalized
-
-
-def _group_prompt_instruction_provenance(path_value: str) -> dict[str, Any]:
-    if not path_value:
-        return {}
-    path = Path(path_value)
-    try:
-        resolved = path.expanduser().resolve(strict=True)
-        raw = resolved.read_bytes()
-        text = raw.decode("utf-8")
-    except (OSError, UnicodeError) as exc:
-        raise SystemExit(
-            f"Cannot read group prompt instructions file {path}: {exc}"
-        ) from exc
-    instructions = [
-        line.strip()
-        for line in text.splitlines()
-        if line.strip() and not line.lstrip().startswith("#")
-    ]
-    if not instructions:
-        raise SystemExit(
-            f"Group prompt instructions file has no instruction lines: {resolved}"
-        )
-    return {
-        "path": str(resolved),
-        "sha256": hashlib.sha256(raw).hexdigest(),
-        "instruction_count": len(instructions),
-    }

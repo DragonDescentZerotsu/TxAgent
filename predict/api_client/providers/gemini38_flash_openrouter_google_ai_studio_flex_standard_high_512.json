@@ -1,0 +1,52 @@
+{
+  "version": "openai_provider_pool.v1",
+  "providers": [
+    {
+      "name": "openrouter_google_ai_studio_flex",
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "google/gemini-3.8-flash",
+      "api_key_env": "OPEN_ROUTER_KEY_TWO",
+      "max_inflight": 256,
+      "initial_latency_s": 120,
+      "timeout_s": 3600,
+      "request_extra_body": {
+        "service_tier": "flex",
+        "expected_service_tier": "flex",
+        "min_request_interval_ms": 250,
+        "allowed_served_models": ["google/gemini-3.8-flash"],
+        "expected_upstream_provider": "Google AI Studio",
+        "provider": {
+          "only": ["google-ai-studio"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        },
+        "reasoning_effort_override": "high"
+      }
+    },
+    {
+      "name": "openrouter_google_ai_studio_standard",
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "google/gemini-3.8-flash",
+      "api_key_env": "OPEN_ROUTER_KEY_TWO",
+      "max_inflight": 256,
+      "initial_latency_s": 120,
+      "timeout_s": 3600,
+      "request_extra_body": {
+        "service_tier": "default",
+        "expected_service_tier": "default",
+        "min_request_interval_ms": 250,
+        "allowed_served_models": ["google/gemini-3.8-flash"],
+        "expected_upstream_provider": "Google AI Studio",
+        "provider": {
+          "only": ["google-ai-studio"],
+          "allow_fallbacks": false,
+          "require_parameters": true
+        },
+        "reasoning_effort_override": "high"
+      }
+    }
+  ],
+  "failure_threshold": 512,
+  "cooldown_seconds": 0,
+  "max_failovers": 0
+}

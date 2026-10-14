@@ -1,0 +1,5 @@
+version: 23
+caches:
+  dili:
+    L1: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l1/query_pure/reused_task_best_v1/original/RELEASE_INDEX.json
+    later: ../../../data/caches/assay_reranking/active/flat_v5/tdc_v2/dili/l2plus/query_pure/parent_disjoint_v2/original/dili/RELEASE_INDEX.json

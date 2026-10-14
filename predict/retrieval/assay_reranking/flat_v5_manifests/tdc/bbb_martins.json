@@ -1,0 +1,186 @@
+{
+  "schema_version": "flat_v5_artifact_bundle.v1",
+  "status": "complete",
+  "bundle_id": "flat_v5/tdc/bbb_martins",
+  "task": "bbb_martins",
+  "benchmark": "tdc",
+  "harness_version": "full-flat-context-v5",
+  "max_level": null,
+  "cache_config": {
+    "path": "data/gold_labels/TDC/manifest.json",
+    "sha256": "6374b29701d0cf5faa591b8f9f8b873be8c7ba098c08e9e5f418a87122cff9ea"
+  },
+  "artifacts": [
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1/RELEASE_INDEX.json",
+      "size": 2609,
+      "sha256": "a2928dc0c38ff08d9097d781cec6f872a2cfcc56791d55a019f8d845076d964d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1/evidence/VERSION.json",
+      "size": 615,
+      "sha256": "40392abc39b23de5667771336e64e56fafbf32a9e8a404f0d36ae5639ee45eed"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1/evidence/records.parquet",
+      "size": 294422,
+      "sha256": "3d4d80fcbdcad4ff96740f02612998c53af38758f7b7ceaf447cdb198f754c85"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1/scaffold/test/L1/VERSION.json",
+      "size": 66564,
+      "sha256": "c7bfe4e4c540aa7e777b32212c629b89c09d2224d8ce7f7a7723a71174efa048"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1/scaffold/test/L1/rankings.sqlite3",
+      "size": 18104320,
+      "sha256": "ca002a6a5d31579fdb9d60feacdb9ae63afc2444d62c0683c5c2fbc8ff408f2b"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1/scaffold/valid/L1/VERSION.json",
+      "size": 34288,
+      "sha256": "d963be8bdb3a0cadf19c514fe9d9435b7c8f2b7da028ee42cee41530ad878ade"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1/scaffold/valid/L1/rankings.sqlite3",
+      "size": 9760768,
+      "sha256": "a53cf2e3d18a8b3afde9c0ed1719b8bd8cb06693453c801ac460b2f711972237"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1_cards/RELEASE_INDEX.json",
+      "size": 1591,
+      "sha256": "571d78bf0c1c450565590de2f64ae62c515715d609239d0f82d59d70c3391571"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1_cards/evidence/VERSION.json",
+      "size": 1014,
+      "sha256": "0be52437ee6d004dcb7034d61a9085827a4a67b44a9851f69857e9dc51329bc0"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1_cards/evidence/records.parquet",
+      "size": 484662,
+      "sha256": "7eef1176a0a207c712029c98c727b2f013c4a464f945adb59f4f36c56c334341"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1_cards/scaffold/test/L1/VERSION.json",
+      "size": 77760,
+      "sha256": "05694602dbf00cb4ceb24d8f5525771cbd8e66817d063c7ecf614b805af6cd75"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1_cards/scaffold/test/L1/rankings.sqlite3",
+      "size": 21594112,
+      "sha256": "e49337df34fb847f5e55d308dc30ecc9830ba8595326f3baf50ede5cf63a0de3"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1_cards/scaffold/valid/L1/VERSION.json",
+      "size": 39589,
+      "sha256": "b892212cfefd5e30039b513b6ecf06c1d6a2970623e96096dc9ca30a1de64afb"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1_cards/scaffold/valid/L1/rankings.sqlite3",
+      "size": 11509760,
+      "sha256": "9d9a545da875856e3623626351a7fef3fe8249d536b0ad16a7f330eeb7540c57"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/RELEASE_INDEX.json",
+      "size": 3842,
+      "sha256": "cc67599ed771740189d8e901c321a5c6f6bcd4ac25140ae62bec41d25d2fbddc"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/scaffold/test/L2/VERSION.json",
+      "size": 73057,
+      "sha256": "fa5ca5727eee051d6f1c4755e15218e5e05ac9ac52fd2ba19cfa27b06409c53f"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/scaffold/test/L2/rankings.sqlite3",
+      "size": 320159744,
+      "sha256": "cb73c94d717d6921d8a654fe5ae43f02a8d959623004aa272fd74146c39106f3"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/scaffold/test/L3/VERSION.json",
+      "size": 72557,
+      "sha256": "82392e8164c895cb0d6a50eae6f97fd9a6599fc07b4a9050054ce760db67db57"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/scaffold/test/L3/rankings.sqlite3",
+      "size": 62713856,
+      "sha256": "faca98831209fdb61f298e9fe638a52f2913d4627e391553282b3a741bc21240"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/scaffold/test/L4/VERSION.json",
+      "size": 73123,
+      "sha256": "496afdcd50fa36edcd6a8c1505fd00abde9c6c12f1e73d74ffc2e182e39c6a88"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/scaffold/test/L4/rankings.sqlite3",
+      "size": 349364224,
+      "sha256": "cbdb6d25f5d9f659a3454120df5ab6e6be062c0c29436c442b021d20f1577cac"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/scaffold/test/L5/VERSION.json",
+      "size": 72662,
+      "sha256": "14eafe1bce3f236d5caf0bc6cb85201ad8d227dc13adf5ec11e7d8b7467d827e"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/scaffold/test/L5/rankings.sqlite3",
+      "size": 311640064,
+      "sha256": "5e910a321f7183b2eccaed039e03cf37945f9dd265a61a25a33f3045814477ad"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/scaffold/valid/L2/VERSION.json",
+      "size": 37890,
+      "sha256": "2de5081919089d7b40aa23b31719a8f97b28f4d3afdc92d7935f640de1e939e4"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/scaffold/valid/L2/rankings.sqlite3",
+      "size": 157454336,
+      "sha256": "45960f351af5089ce860224d983a09c65580a867f5e850cfb86b004797972f38"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/scaffold/valid/L3/VERSION.json",
+      "size": 37631,
+      "sha256": "0671b845eac9b31790270cae9f10474622678c60c7eb70e1408fe7f491bfd204"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/scaffold/valid/L3/rankings.sqlite3",
+      "size": 30040064,
+      "sha256": "7c163ebb1872e4f60d750e5ccc30d8101219313f3483428a5468f6d2a4db6fd5"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/scaffold/valid/L4/VERSION.json",
+      "size": 37944,
+      "sha256": "9ca0428e1dc9914b3358ecbeb89ac6aa7cc000571219df602cd466206e15fa4d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/scaffold/valid/L4/rankings.sqlite3",
+      "size": 204300288,
+      "sha256": "9f46c2de93a5fece48f58553c9a6cb2164d164b5be275027842347a67628cbb4"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/scaffold/valid/L5/VERSION.json",
+      "size": 37443,
+      "sha256": "6d29f2a48f4542e4f0d3f8438c2378d6d57f7cb3974df39a8f9ca450b79d26bc"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/scaffold/valid/L5/rankings.sqlite3",
+      "size": 114921472,
+      "sha256": "9d30b47514ac099f91f703ee220a4c4cbd300e2b533a607b3ff5998f4e1841ea"
+    },
+    {
+      "path": "data/evidence_libraries/bbb_martins/v10_main_universe_v3/retrieval_projection/ranked_evidence_v2/VERSION.json",
+      "size": 1812,
+      "sha256": "0481e9ab3dc262243cedc65dd76eb5828f22dc52195e9f586b1eb75665f1eb15"
+    },
+    {
+      "path": "data/evidence_libraries/bbb_martins/v10_main_universe_v3/retrieval_projection/ranked_evidence_v2/records.parquet",
+      "size": 216274416,
+      "sha256": "885206183b06909af58830e52c06443d01ede77144f5bc16f2e4d1a389838cb2"
+    },
+    {
+      "path": "data/gold_labels/TDC/manifest.json",
+      "size": 11417,
+      "sha256": "6374b29701d0cf5faa591b8f9f8b873be8c7ba098c08e9e5f418a87122cff9ea"
+    }
+  ],
+  "missing": []
+}

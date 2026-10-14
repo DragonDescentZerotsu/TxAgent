@@ -1,0 +1,1067 @@
+{
+  "assay_transfer_status": "query_pure_partial",
+  "capacity": 100,
+  "content_id": "28b87f66f2de3737a04c693893bca012bfba54186832a48ba8794274ded8469a",
+  "database": "rankings.sqlite3",
+  "database_sha256": "a53cf2e3d18a8b3afde9c0ed1719b8bd8cb06693453c801ac460b2f711972237",
+  "inputs": {
+    "evidence_manifest_sha256": "d329d0b579fd08312133ad1bd15bce21f99b6e92815f3d4848d96fd7640b3f79",
+    "query_sha256": "9abf8a8472b9245ae94ccf014f091af4eaadf6e2cf07189207d2e2c0135e8e13",
+    "train_sha256": "38358d35479029a6aa03d8d71eeacee12215e03ff0bb23b3a0bf52fa53933b5f",
+    "training_parents": 1375
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v2"
+  },
+  "level": "L1",
+  "model": {
+    "checkpoint_step": 130,
+    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-bbb-martins-best",
+    "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
+    "revision": "42cb4afa224c102898d75fe4ad48e166254952b5"
+  },
+  "morgan_fingerprint": {
+    "bits": 2048,
+    "radius": 2,
+    "similarity": "Tanimoto"
+  },
+  "neighbor_identity_policy": "scaffold_disjoint",
+  "parent_capacity": 100,
+  "pool": "fixed",
+  "prompt_assets": {
+    "projection_sha256": "822aed0c08feea7a0d28b0f2c235cbc97b0888d5957721b963796f734230dbf1",
+    "template_sha256": "0126e8d0ca1f53c0a47b0675c7b8133ce693e4abba8fbcd6939d6a58fe269dc9"
+  },
+  "query_count": 203,
+  "query_counts": {
+    "TDC_BBB_MARTINS_0046223CE4477D2C6A75": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 107
+    },
+    "TDC_BBB_MARTINS_03C087DDA1FF436002CC": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 101
+    },
+    "TDC_BBB_MARTINS_09971A8D495EAFDFBB37": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 101
+    },
+    "TDC_BBB_MARTINS_0CEF6B94071E4FA8208E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_117D63D8C9E1C225D9AF": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_1213010D038A79BDCF96": {
+      "assay_candidate_records": 102,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_122D1BED876ACDF6D97B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_12DA5B4FE4BF5BC0168B": {
+      "assay_candidate_records": 104,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_135B3856AAE1B4D559CD": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_1522799C832FB3351270": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_16571DF42D4A5FAF8C03": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_168F0FB1C5E67F2CCB85": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_177F5C02ADBFF0E30D2C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 109
+    },
+    "TDC_BBB_MARTINS_17CBD7F364DDCCAB7969": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_18A3A29140AA0EA4C375": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_1E031166D969792E8602": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_1E5B20A19807387E1019": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 107
+    },
+    "TDC_BBB_MARTINS_1ED53EFDC8B7A0D6EEAA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 101
+    },
+    "TDC_BBB_MARTINS_20DBF421C1F55D1C22B5": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_211C0D76B75A5BCAD8FE": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_223225B58063FA25575C": {
+      "assay_candidate_records": 101,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 101
+    },
+    "TDC_BBB_MARTINS_226658543ED02EB46AE0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_243894E0957C039C9FDC": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_24C7E052D8958726550F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_28480187D6199F2F1225": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_28CA019C3D151C8012AF": {
+      "assay_candidate_records": 104,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_297E5C6B864D062856A4": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_29C27DDDA79AB2EFE867": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 108
+    },
+    "TDC_BBB_MARTINS_2CEDFC63B2CA537FFB12": {
+      "assay_candidate_records": 104,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_2D44C529B431C219434B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 107
+    },
+    "TDC_BBB_MARTINS_31A2E48443E03ECAF292": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 110
+    },
+    "TDC_BBB_MARTINS_3596CF9DCF7D414184A6": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_362ADA36F95E25085F3E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_39D0A95783B4EF9B590B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_3A80D4FD247ACB350ED6": {
+      "assay_candidate_records": 107,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 107
+    },
+    "TDC_BBB_MARTINS_3AC84029EE229029371B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_3C52C45A9D18A0B4F81B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_3EB2BAC2973CBA279D23": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 110
+    },
+    "TDC_BBB_MARTINS_3EB581D1616FFF653396": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_3F4443F900174E663F20": {
+      "assay_candidate_records": 103,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_424214F85AD6C6336588": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_4347303C0AD27D5B3A67": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_4352B0AD97C90F4F4D0D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_4491BD0554E819DA9DC0": {
+      "assay_candidate_records": 105,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_453E8B83E8EE08E0D20D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_49165669BCCAD2277CFE": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BBB_MARTINS_49F61168CD6B6B709857": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_4A4C4CF823C83B5D6B4C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 101
+    },
+    "TDC_BBB_MARTINS_4E08737C1C6AEDF64021": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_4E63420E9A4212E914F4": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 107
+    },
+    "TDC_BBB_MARTINS_5067217EFC27E38F843F": {
+      "assay_candidate_records": 103,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_51AA683FAE4DAEDBCBF0": {
+      "assay_candidate_records": 102,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_51CD5EDC3560E7098566": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_524F3C2D88FC89403797": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 108
+    },
+    "TDC_BBB_MARTINS_5395B1A16743D704AC40": {
+      "assay_candidate_records": 102,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_53AC926FCA89A1B4D9A2": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_53CD698901D5C093CFF7": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_55B971885EA0F8B37F65": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_55DE55BAEB1D78D338BB": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 107
+    },
+    "TDC_BBB_MARTINS_5802CCA3CE3B5B7E294B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_5A2FF98325087DFD13B1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_5A74E39F4FA87D078A28": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_5B82751B87F7FA9835E8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_5D48C0DF4B5C516F2C4F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_5E6CE636AFCD7895BCDB": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 107
+    },
+    "TDC_BBB_MARTINS_5FFC9F261C584A4411F7": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 101
+    },
+    "TDC_BBB_MARTINS_6157B83CF7C269E8C940": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_616AEACC91CC04CF2E9D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_6177F4B886371A7321BB": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_61C253245A334543F3E5": {
+      "assay_candidate_records": 103,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_6263299A0E2D3ACA72CE": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_626A0C52DE4BD033F8F7": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 109
+    },
+    "TDC_BBB_MARTINS_62A8136BA818EE4FBAF8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_6347F0A0702575F3B14A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_639D04F3E5F771D066BD": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_63AE0A0D7475D7873C54": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_63C87B4122D2F137267C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_64ACB8CF02040A41419B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_650D801F7AD7447CC4AA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_65247804A78C581EDD4C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 101
+    },
+    "TDC_BBB_MARTINS_65398EE1531D826EF8E0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_664E829401CEA6130219": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_68B2C258FE09E628D135": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 107
+    },
+    "TDC_BBB_MARTINS_690BFBED44EF311F4EB2": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_69C21E8C1EC3BA71A06A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_6AB8F3D7A19F4AC3C372": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_6F446D62EE12ED70E802": {
+      "assay_candidate_records": 108,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 108
+    },
+    "TDC_BBB_MARTINS_6F87586CB7C294B5F410": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_715B386731EA88A76D0F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_71DE9A7610CB466DDE34": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_71EEA9A283263643CEFA": {
+      "assay_candidate_records": 107,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 107
+    },
+    "TDC_BBB_MARTINS_72AD3A1D6B2D9E06C570": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 107
+    },
+    "TDC_BBB_MARTINS_733C0B5FE92DDD6C1B88": {
+      "assay_candidate_records": 100,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BBB_MARTINS_73C2521BBBA284F3C229": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_740B6217A9ED4DE414D5": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 107
+    },
+    "TDC_BBB_MARTINS_7431331EFA49D8422E5B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_772040874AE82D37277D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 101
+    },
+    "TDC_BBB_MARTINS_773A2ABF651BA4D2EBCB": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_784FC534A3B390FE2FA4": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 101
+    },
+    "TDC_BBB_MARTINS_7A90E97E23937FAFD096": {
+      "assay_candidate_records": 103,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_7B63CF930A108CBE4041": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 113
+    },
+    "TDC_BBB_MARTINS_7B77AB0F71CDD70DDB6F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 107
+    },
+    "TDC_BBB_MARTINS_7C2D089263F2C40E35CE": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_7D80928ADD8AC15DFF75": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_8250C2E4FC2F3CF00937": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 101
+    },
+    "TDC_BBB_MARTINS_83894CC356FB1971B438": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_8948CFE6C03BCEE98023": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_8A47CB8152BDEADD978E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_8A5E2E1D111FA8C212F8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_8B1766AFC6D345854D9C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 108
+    },
+    "TDC_BBB_MARTINS_8C37C95BA8B7DF27D147": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 108
+    },
+    "TDC_BBB_MARTINS_8C773CC91A93AF8CB053": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_8F07152CDF029443A4CA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_8FF63E46031F57325180": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_930F404E5E6BD2A6F52E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_96A8EEBA2AC476509DBA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BBB_MARTINS_97A94061401AF01B7530": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_97CF3268DDF1B1D8DCE1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_994F3B0F831B2D49D2DB": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_9B51ABE3E1406D25629E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_9DB66AE56C1D41922D87": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_A00094420C79FA6F9751": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 108
+    },
+    "TDC_BBB_MARTINS_A02E020BF44070B78695": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_A0903A94FEFD18E96694": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_A1EE2129B9C5C73676A3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_A2111F79AD4415683358": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_A24A7769618B5709FCC7": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_A45066BC5315DD60E815": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_A931704C5B015E1148A4": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_A9AE557CC4072D3D2ECD": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 109
+    },
+    "TDC_BBB_MARTINS_AB261B6F7F8B37C7ED48": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_AC06F12EE6ACD7B2C385": {
+      "assay_candidate_records": 100,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BBB_MARTINS_AC820FBFF51780B7E7B8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_ACB9D3C1B837EA4AAEC7": {
+      "assay_candidate_records": 100,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BBB_MARTINS_ADA4A58B3AEC21005503": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_ADE4173B570CB4A7459C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 101
+    },
+    "TDC_BBB_MARTINS_B0F35949E5F0A9834CCF": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 101
+    },
+    "TDC_BBB_MARTINS_B19192108369CDB1466D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_B3234578BD20F1FD3BC3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_B3C0B66E2BBC065449F2": {
+      "assay_candidate_records": 108,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 108
+    },
+    "TDC_BBB_MARTINS_B4F2FA75A18AB284DD55": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_B5D24A9DC54E36D6CF43": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_B5D44C7A7BBD3E597AF3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_B7392D04A3E954434E93": {
+      "assay_candidate_records": 108,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 108
+    },
+    "TDC_BBB_MARTINS_B7A8E3E6FDB6D3A26680": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_BF7046BD60C9CC196532": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_C05E7FDC44C6377D7E60": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BBB_MARTINS_C257FE7331B261ECA513": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_C523AA7944298A4C88E0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_C59ED6679462376C0B18": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_CA22C54BEA7ED68E9312": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_CABC90FC036C60F963B0": {
+      "assay_candidate_records": 102,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_CCD9982D3079684A6C1E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_CE6E3E7395FD81394592": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 101
+    },
+    "TDC_BBB_MARTINS_D03B58F68677011FB48B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 101
+    },
+    "TDC_BBB_MARTINS_D06939B3AAA083AEAB31": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_D129E6BE1597CF80003F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 107
+    },
+    "TDC_BBB_MARTINS_D134C5F7D7A7BCF89794": {
+      "assay_candidate_records": 102,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_D42AF8F14B3CCAB74DD1": {
+      "assay_candidate_records": 102,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_D4C1F6ACF92E968CF065": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_D5E56E904EB485CE976C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 107
+    },
+    "TDC_BBB_MARTINS_D748802979B51D415609": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 108
+    },
+    "TDC_BBB_MARTINS_D932C540FC0061E15CA6": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_D9A7F336B90C6EC22683": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_DA71406E84B077922809": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_DB259C612E8511E47070": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_DCA86AD5B3626A3F268F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_DCF6B839078563D87EBA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_DF9E889306B602C2D47F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_DFA780FC0E495F9B7193": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 107
+    },
+    "TDC_BBB_MARTINS_E0B04872213F96B36F44": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_E19C2ABC8D2F1CF61D50": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_E3C0E40B34165A881652": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_E47B037FC42A121B8686": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_E49D8A15376DEF72938F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 108
+    },
+    "TDC_BBB_MARTINS_E50AE28EA1DFD2C9ABEF": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_E64E61DAEF6836E9DED7": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 107
+    },
+    "TDC_BBB_MARTINS_E734BA66E073A98E8D9C": {
+      "assay_candidate_records": 100,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BBB_MARTINS_E7971B7970199E697F76": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_E7F48EFF62BC9E08E70B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 107
+    },
+    "TDC_BBB_MARTINS_E82EDA308178386F6A28": {
+      "assay_candidate_records": 103,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_E85D351EBAF420791EF9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 111
+    },
+    "TDC_BBB_MARTINS_E9E38E68F1AD94FED2B6": {
+      "assay_candidate_records": 106,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_EA87E6601F9EF18EEAE2": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_EDD01CE89ECBECCCF6F6": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_EDFBB1C3F054DFA5D312": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 101
+    },
+    "TDC_BBB_MARTINS_EE5F5D14740D5CB958B8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_EF20612F80E86A95708F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_F08C85070A4B2BA3462E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_F2750DF0B83D1467C931": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 109
+    },
+    "TDC_BBB_MARTINS_F3192A6FE1894463B36C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 103
+    },
+    "TDC_BBB_MARTINS_F4E9E6BC294D1BC051C4": {
+      "assay_candidate_records": 105,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_F59B0F4D28D7FB361567": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 105
+    },
+    "TDC_BBB_MARTINS_F7AB10E8B028B7F09565": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 106
+    },
+    "TDC_BBB_MARTINS_F7E32B01F014FA9FC2A3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_F8D7249317843E7BB544": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_F901CF865CAFC9DC56AA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 104
+    },
+    "TDC_BBB_MARTINS_FA9C0B7171103520964F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 102
+    },
+    "TDC_BBB_MARTINS_FB89CEA1F83A2509F968": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 101
+    },
+    "TDC_BBB_MARTINS_FB9AD8CB110D122870D5": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 110
+    },
+    "TDC_BBB_MARTINS_FCD582734166AFE3233C": {
+      "assay_candidate_records": 108,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 108
+    },
+    "TDC_BBB_MARTINS_FCE01628930ABFF6FDA9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 101
+    },
+    "TDC_BBB_MARTINS_FDFCFAF6A8CFFB92BF85": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 108
+    }
+  },
+  "ranking_rows_sha256": "32259c33179eb4fe9b2f23d5fe305f6429cb288795dda729885c68b077e6b8b8",
+  "schema_version": "ranked_uid_retrieval.v1",
+  "score_count": 2800,
+  "score_reuse": {
+    "method": "exact_v1_score_key",
+    "source_release_index_sha256": "86662e2e4bdbfa5bfa6dc7ba1c09574fab1367f502cb9c362fdabdfbdb0d1345"
+  },
+  "scoring_contract_version": "assay_transfer_chat_first_divergent_token_bf16_backbone_fp32_head.v2",
+  "shared_candidate_universe": true,
+  "status": "complete",
+  "stored_rows": 20300,
+  "subset": "valid",
+  "task_id": "bbb_martins"
+}

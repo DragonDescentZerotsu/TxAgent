@@ -14,12 +14,6 @@ from pathlib import Path
 import re
 from typing import Any
 
-from predict.harnesses.branches.reasoning.coverage import (
-    COVERAGE_MMP_LEDGER_NEIGHBOR_CONTEXT,
-    STANDARD_NEIGHBOR_CONTEXT,
-    attach_mmp_coverage_ledger,
-    attach_neighbor_context,
-)
 from predict.llm_io.evidence import (
     evidence_for_group_llm,
     evidence_for_llm,
@@ -165,14 +159,6 @@ def prepare_harness_prefetched_retrieval(
     return output
 
 
-def prepare_identity_blind_retrieval(
-    retrieval: dict[str, Any],
-    tool_service: ToolServiceClient,
-) -> dict[str, Any]:
-    """Return a redacted LLM-facing copy with fixed prefetched tools."""
-    return prepare_harness_prefetched_retrieval(retrieval, tool_service, identity_blind=True)
-
-
 def prepare_reasoning_retrieval(
     retrieval: dict[str, Any],
     tool_service: ToolServiceClient,
@@ -180,28 +166,16 @@ def prepare_reasoning_retrieval(
     identity_blind: bool,
     harness_prefetch_tools: bool,
     prefetched_tool_replay_run_dir: str = "",
-    neighbor_context_profile: str = STANDARD_NEIGHBOR_CONTEXT,
+    neighbor_context_profile: str = "standard",
     include_query_tools: bool = True,
     include_neighbor_tools: bool | None = None,
 ) -> dict[str, Any]:
     """Apply the requested paper tool-execution contract to retrieval."""
     if not include_query_tools and prefetched_tool_replay_run_dir:
         raise ValueError("Query-tool omission cannot use prefetched tool replay")
-    if not include_query_tools and neighbor_context_profile == COVERAGE_MMP_LEDGER_NEIGHBOR_CONTEXT:
-        raise ValueError(
-            "coverage_mmp_ledger requires query comparison tools and is incompatible "
-            "with query-tool omission"
-        )
-    if neighbor_context_profile == COVERAGE_MMP_LEDGER_NEIGHBOR_CONTEXT and identity_blind:
-        raise ValueError(
-            "coverage_mmp_ledger is visible-only and cannot be used with identity_blind"
-        )
-    reasoning_input = attach_neighbor_context(
-        retrieval,
-        profile=neighbor_context_profile,
-    )
-    if neighbor_context_profile == COVERAGE_MMP_LEDGER_NEIGHBOR_CONTEXT:
-        reasoning_input = attach_mmp_coverage_ledger(reasoning_input, tool_service)
+    if neighbor_context_profile != "standard":
+        raise ValueError("Only standard neighbor context is supported")
+    reasoning_input = deepcopy(retrieval)
     if identity_blind:
         return prepare_harness_prefetched_retrieval(
             reasoning_input,
@@ -378,14 +352,6 @@ def prepare_prefetched_final_retrieval(
         output["query"]["prefetched_molecule_properties"] = prefetched
     output.setdefault("experiment", {})["tool_execution_mode"] = "harness_prefetch"
     return output
-
-
-def prepare_identity_blind_final_retrieval(
-    retrieval: dict[str, Any],
-    single_output: dict[str, Any],
-) -> dict[str, Any]:
-    """Redact a persisted retrieval before a final-only retry."""
-    return prepare_prefetched_final_retrieval(retrieval, single_output, identity_blind=True)
 
 
 def sanitize_identity_blind_branch_outputs(

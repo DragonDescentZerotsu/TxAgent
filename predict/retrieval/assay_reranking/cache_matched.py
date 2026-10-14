@@ -20,7 +20,8 @@ import sqlite3
 
 import yaml
 
-from predict.utils.json import sha256_file
+from predict.utils.json import sha256_file, read_json
+from data.processing.paths import REPO_ROOT, resolve_legacy_path
 
 TASKS = {
     "bbb_martins": ("BBB_Martins", 5),
@@ -82,8 +83,17 @@ def verify_cached_level_records(cached_path, current_path, membership, levels):
 
 def load_cache_policy(path, task, subset, reranking, max_level=0):
     path = Path(path).resolve()
-    document = yaml.safe_load(path.read_text())
-    if not isinstance(document, dict) or set(document) != {'version', 'caches'}:
+    document = yaml.safe_load(resolve_legacy_path(path).read_text())
+    canonical = document.get("benchmark") == "tdc" and "tasks" in document
+    if canonical:
+        spec = document["tasks"][task]
+        document = {"caches": {task: {key: str(REPO_ROOT / value) for key, value in spec["retrieval"].items()}},
+                    "ranking_policy": spec["ranking_policy"]}
+    version = document.get("version")
+    query_pure = document.get("ranking_policy") == "query_pure" or version in {22, 23}
+    hybrid = version == 21
+    composite = canonical or version in {20, 21, 22, 23}
+    if not isinstance(document, dict) or (not canonical and set(document) != {'version', 'caches'}):
         raise ValueError('Cache bundle requires version and caches only')
     if task not in TASKS or reranking not in {
         'morgan', 'morgan-contrastive', 'joint', 'assay-transfer',
@@ -94,17 +104,17 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
     }:
         raise ValueError('Unsupported task or reranking mode')
     if ((reranking in {'morgan-contrastive', 'assay-transfer-within-morgan'}
-         and document['version'] not in {6, 9})
+         and version not in {6, 9})
             or (reranking == 'assay-transfer-contrastive'
-                and document['version'] not in {6, 9, 19, 20})
-            or (document['version'] in {6, 9} and reranking not in {
+                and version not in {6, 9, 19, 20} and not canonical)
+            or (version in {6, 9} and reranking not in {
                 'morgan', 'morgan-contrastive', 'assay-transfer',
                 'assay-transfer-within-morgan',
                 'assay-transfer-contrastive'
             })):
         raise ValueError('L1 context cache and contrastive reranking must be selected together')
     last = max_level or TASKS[task][1]
-    supported_last = (7 if document['version'] in {20, 21} and task in {'dili', 'carcinogens'}
+    supported_last = (7 if composite and task in {'dili', 'carcinogens'}
                       else TASKS[task][1])
     if not 1 <= last <= supported_last:
         raise ValueError(f'{task} ends at L{supported_last}')
@@ -118,17 +128,34 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
         stages['L1'] = 'assay_transfer_within_morgan'
     if reranking == 'joint':
         stages['L1'] = 'joint'
-    if document['version'] in {20, 21}:
+    if composite:
         if reranking == 'joint':
             raise ValueError('composite ranked UID retrieval does not support joint mode')
         sources = document['caches'][task]
         if not isinstance(sources, dict) or set(sources) != {'L1', 'later'}:
             raise ValueError(f'{task}: composite cache requires L1 and later indexes')
         later_index = (
-            json.loads((path.parent / sources['later']).resolve().read_text())
+            read_json((path.parent / sources['later']).resolve())
             if last > 1 else None
         )
-        if document['version'] == 21:
+        if query_pure:
+            if reranking not in {'morgan', 'assay-transfer'}:
+                raise ValueError('query-pure ranked UID retrieval supports Morgan and assay-transfer only')
+            expected = {
+                'schema_version': 'query_pure' if canonical else 'tdc_v2_query_pure.v1',
+                'scope': 'query_level',
+                'complete_order': 'assay_transfer',
+                'incomplete_order': 'morgan',
+                'incomplete_prompt_scores': 'hidden',
+            }
+            if later_index is not None and later_index.get('query_pure_policy') != expected:
+                raise ValueError(f'{task}: version 22 requires the query-pure L2+ policy')
+            if version == 23 and (task != 'dili' or (later_index is not None
+                    and later_index.get('parent_relation_filter') != 'parent_disjoint')):
+                raise ValueError('version 23 requires the DILI parent-disjoint L2+ release')
+            if reranking == 'assay-transfer':
+                stages = {level: 'assay_transfer_complete_else_morgan' for level in stages}
+        if version == 21:
             expected_hybrid = {
                 'schema_version': 'assay_complete_or_hidden_morgan_tail.v1',
                 'scope': 'query_level',
@@ -145,7 +172,7 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
                 for level in stages:
                     if level != 'L1':
                         stages[level] = 'assay_transfer_complete_or_hidden'
-        if (document['version'] == 20 and later_index is not None
+        if ((canonical or version == 20) and not query_pure and later_index is not None
                 and reranking != 'morgan' and 'L5' in stages
                 and task in {'ames', 'dili', 'carcinogens'}
                 and str(later_index.get('later_candidate_universe', '')).startswith(
@@ -157,12 +184,24 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
             source = 'L1' if level == 'L1' else 'later'
             index_path = (path.parent / sources[source]).resolve()
             index = (later_index if source == 'later'
-                     else json.loads(index_path.read_text()))
+                     else read_json(index_path))
             if (index.get('schema_version') != 'ranked_uid_task_release_index.v1'
                     or index.get('status') != 'complete'
                     or index.get('task_id') != task
                     or index.get('pool') != 'all'):
                 raise ValueError(f'{task}: incomplete composite {source} release index')
+            if query_pure and index.get('label_release') != (
+                    {'benchmark': 'tdc'} if canonical else {'benchmark': 'tdc', 'version': 'v2'}):
+                raise ValueError(f'{task}: version 22 requires TDC-v2 labels')
+            if query_pure and source == 'L1':
+                pure_l1 = index.get('query_pure_policy', {}).get('schema_version') == ('query_pure_l1' if canonical else 'tdc_v2_l1_query_pure.v1')
+                complete_l1 = (
+                    task in {'bioavailability_ma', 'skin_reaction'}
+                    and index.get('assay_transfer_status') == 'complete'
+                    and index.get('ranking_modes') == ['morgan', 'assay-transfer']
+                )
+                if not (pure_l1 or complete_l1):
+                    raise ValueError(f'{task}: version 22 requires complete or query-pure L1 scores')
             try:
                 entry = index['splits'][subset]['levels'][level]
             except KeyError as exc:
@@ -183,13 +222,13 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
             cache_manifests=cache_manifests, inputs=inputs,
             all_later_records=all_later_records,
         )
-    if document['version'] in {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19}:
-        if document['version'] in {18, 19}:
+    if version in {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19}:
+        if version in {18, 19}:
             if reranking == 'joint':
                 raise ValueError('ranked level retrieval does not support joint mode')
             index_path = (path.parent / document['caches'][task]).resolve()
-            index = json.loads(index_path.read_text())
-            expected = ('ranked_level_task_release_index.v2' if document['version'] == 18
+            index = read_json(index_path)
+            expected = ('ranked_level_task_release_index.v2' if version == 18
                         else 'ranked_uid_task_release_index.v1')
             if (index.get('schema_version') != expected
                     or index.get('status') != 'complete'
@@ -201,13 +240,13 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
             for level, method in stages.items():
                 try:
                     entry = split['levels'][level]
-                    relative = (entry[method] if document['version'] == 18 else entry)['manifest']
+                    relative = (entry[method] if version == 18 else entry)['manifest']
                 except KeyError as exc:
                     raise ValueError(f'{task}/{subset}: missing {level}/{method} cache') from exc
                 cache_manifests[level] = str((index_path.parent / relative).resolve())
             return dict(
                 selection_contract=(
-                    'ranked_level_retrieval.v2' if document['version'] == 18
+                    'ranked_level_retrieval.v2' if version == 18
                     else 'ranked_uid_retrieval.v1'
                 ), reranking=reranking,
                 stages=stages, cache_index=str(index_path), cache_manifests=cache_manifests,
@@ -232,22 +271,22 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
             17: 'ranked_evidence_retrieval.v1',
             18: 'ranked_level_retrieval.v2',
             19: 'ranked_uid_retrieval.v1',
-        }.get(document['version']) or f"cache_matched_retrieval.v{document['version'] - 1}")
-        if document['version'] == 7:
+        }.get(version) or f"cache_matched_retrieval.v{version - 1}")
+        if version == 7:
             if reranking not in {'morgan', 'semantic-lap'} or last != 2:
                 raise ValueError('Context-L2 cache requires Morgan or semantic-lap through L2')
             stages = {'L1': 'morgan', 'L2': reranking.replace('-', '_')}
-        if document['version'] == 8:
+        if version == 8:
             if reranking not in {'morgan', 'semantic-weighted'} or last != 2:
                 raise ValueError('Weighted context-L2 cache requires Morgan or semantic-weighted through L2')
             stages = {'L1': 'morgan', 'L2': reranking.replace('-', '_')}
-        if document['version'] in {10, 11, 12, 13}:
+        if version in {10, 11, 12, 13}:
             if reranking not in {'morgan-parent-control', 'morgan-parent-semantic'} or last != 2:
                 raise ValueError('Molecule-first context-L2 requires a matched parent mode through L2')
             stages = {'L1': 'morgan', 'L2': reranking.replace('-', '_')}
-        if document['version'] in {14, 15, 16}:
+        if version in {14, 15, 16}:
             allowed = {'morgan-parent-control', 'morgan-parent-semantic'}
-            if document['version'] == 16:
+            if version == 16:
                 allowed.add('morgan-parent-llm-semantic')
             if reranking not in allowed or last not in {2, 3, 4}:
                 raise ValueError('Indirect-only cache requires one Morgan-parent arm at L2, L3, or L4')
@@ -255,7 +294,7 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
         return dict(selection_contract=contract, reranking=reranking,
                     stages=stages, cache_manifest=str((path.parent / manifest).resolve()),
                     inputs={str(path): sha256_file(path)})
-    if document['version'] != 2:
+    if version != 2:
         raise ValueError(
             'Cache bundle version must be 2 (legacy), 3 (v2), 4 (v3), '
             '5 (semantic), 6 (L1 context v1), 7 (context L2), '
@@ -839,12 +878,12 @@ def load_candidates(queries, *, task, subset, library=None, mapper=None, policy,
                     cache_pool='tool-accepted', joint_panel_sizes=None,
                     min_contrast=3, morgan_primary_parent_width=100,
                     preselected_uids=None, preselected_contexts=None,
-                    preselected_uid_budget=None):
+                    preselected_uid_budget=None, physical_selection=None):
     """Load a complete v2 cache directly, or explicitly replay a legacy bundle."""
     if policy.get('selection_contract') in {
         'ranked_level_retrieval.v2', 'ranked_uid_retrieval.v1'
     }:
-        if (preselected_uids is not None
+        if ((preselected_uids is not None or physical_selection is not None)
                 and policy['selection_contract'] != 'ranked_uid_retrieval.v1'):
             raise ValueError('Preselected UIDs require ranked_uid_retrieval.v1')
         if preselected_uid_budget is not None and policy['selection_contract'] != 'ranked_uid_retrieval.v1':
@@ -860,7 +899,7 @@ def load_candidates(queries, *, task, subset, library=None, mapper=None, policy,
             min_contrast=min_contrast,
             morgan_primary_parent_width=morgan_primary_parent_width,
             **(
-                {'preselected_uids': preselected_uids}
+                {'preselected_uids': preselected_uids, 'physical_selection': physical_selection}
                 if policy['selection_contract'] == 'ranked_uid_retrieval.v1'
                 else {}
             ),
@@ -875,7 +914,7 @@ def load_candidates(queries, *, task, subset, library=None, mapper=None, policy,
                 else {}
             ),
         )
-    if (preselected_uids is not None or preselected_contexts is not None
+    if (physical_selection is not None or preselected_uids is not None or preselected_contexts is not None
             or preselected_uid_budget is not None):
         raise ValueError('Preselected UIDs and contexts require ranked_uid_retrieval.v1')
     if policy.get('selection_contract') == 'cache_matched_retrieval.v2':

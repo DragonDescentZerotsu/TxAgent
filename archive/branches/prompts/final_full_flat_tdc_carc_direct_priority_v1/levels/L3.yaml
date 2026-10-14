@@ -1,0 +1,14 @@
+bbb_martins:
+  description: Passive permeability evidence.
+bioavailability_ma:
+  description: Oral AUC or Cmax exposure evidence.
+skin_reaction:
+  description: Sensitization mechanisms and AOP key events.
+ames:
+  description: Other gene
+  chromosome: null
+  and cytogenetic damage evidence.: null
+dili:
+  description: Additional indirect liver-related evidence at this reviewed level.
+carcinogens:
+  description: Additional indirect carcinogenicity-related evidence at this reviewed level.

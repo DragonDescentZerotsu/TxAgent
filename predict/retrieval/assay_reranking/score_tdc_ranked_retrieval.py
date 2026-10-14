@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from data.processing.gold_labels.conditioned_benchmark import tdc_config, TASK_DIRECTORIES
+from data.processing.paths import REPO_ROOT
+
 import argparse
 from dataclasses import asdict
 import hashlib
@@ -57,10 +60,8 @@ def _lineage(task: str) -> str:
 def _profile(task: str, release: str = "legacy") -> str:
     if release == "gold-v1":
         return GOLD_PROFILE
-    if release == "tdc-v1":
-        if task in GOLD_TASKS:
-            return f"flat_v5/tdc_v1/{task}/l1/assay_transfer/v10_3/tdc_pinned_v1"
-        return TDC_PROFILE
+    if release == "tdc":
+        return "flat_v5/tdc_direct_scored"
     return SKIN_PROFILE if task == "skin_reaction" else PROFILE
 
 
@@ -69,7 +70,7 @@ def _base_profile(release: str) -> str:
 
 
 def _model_profile(task: str, release: str) -> dict[str, Any]:
-    if release == "tdc-v1" and task in GOLD_TASKS:
+    if release == "tdc" and task in GOLD_TASKS:
         return runtime_model_profile(task, "direct_tdc_best")
     return (
         model_profile(task, _lineage(task))
@@ -185,7 +186,10 @@ def _rows(task: str, release: str, subset: str) -> tuple[Path, list[dict[str, An
             }
             rows = [{**row, "voter_mean": voters[str(row["benchmark_row_id"])]} for row in rows]
         return path, rows
-    root = tdc_task_root(task)
+    if release not in {"legacy", "tdc"}:
+        raise ValueError("release must be legacy, gold-v1 or canonical tdc")
+    root = (REPO_ROOT / "data/gold_labels/TDC" / TASK_DIRECTORIES[task] / "v1/scaffold"
+            if release == "legacy" else tdc_task_root(task))
     path = root / f"{subset}_molecule_condition_labels.jsonl"
     return path, read_jsonl(path)
 
@@ -201,7 +205,7 @@ def _provenance(task: str, release: str, profile: dict[str, Any]) -> dict[str, A
         "model": profile,
         "prompt_contract": profile["prompt_profile"],
         "dataset_revision": _json(CONFIG_PATH)[
-            "tdc_upstream" if release == "tdc-v1" and task in GOLD_TASKS else "upstream"
+            "tdc_upstream" if release == "tdc" and task in GOLD_TASKS else "upstream"
         ][task]["dataset_revision"],
     }
     if release == "gold-v1":
@@ -216,7 +220,8 @@ def prepare(task: str, output_root: Path, release: str = "legacy") -> dict[str, 
         raise ValueError(f"{task} is not supported by {release}")
     lineage, profile_name = _lineage(task), _profile(task, release)
     base_profile = _base_profile(release)
-    source = cache_profile_root(base_profile) / task
+    source = ((REPO_ROOT / tdc_config(task)["retrieval"]["L1"]).parent
+              if release == "tdc" else cache_profile_root(base_profile) / task)
     target = output_root / task
     if target.exists():
         raise FileExistsError(f"Refusing to replace prepared cache: {target}")
@@ -282,7 +287,7 @@ def prepare(task: str, output_root: Path, release: str = "legacy") -> dict[str, 
         build.mkdir()
         prompt_path = build / "prompts.parquet"
         pq.write_table(pa.Table.from_pylist([prompts[key] for key in sorted(prompts)]), prompt_path, compression="zstd")
-        _write_json(build / "PREPARED.json", {"status": "prepared", "task_id": task, "release": release, "profile": profile_name, "base_profile": base_profile, "prompt_count": len(prompts), "prompts_sha256": sha256_file(prompt_path), "base_files": base_files, "model": profile, "inputs": {"train": str(train_path), "train_sha256": sha256_file(train_path)}})
+        _write_json(build / "PREPARED.json", {"status": "prepared", "task_id": task, "release": release, "profile": profile_name, "base_profile": base_profile, "base_index": str(source / "RELEASE_INDEX.json"), "prompt_count": len(prompts), "prompts_sha256": sha256_file(prompt_path), "base_files": base_files, "model": profile, "inputs": {"train": str(train_path), "train_sha256": sha256_file(train_path)}})
         index = _json(root / "RELEASE_INDEX.json")
         index.update({"profile": profile_name, "status": "prepared", "assay_transfer_status": "prepared"})
         _write_json(root / "RELEASE_INDEX.json", index)
@@ -364,7 +369,7 @@ def finalize(task: str, output_root: Path, num_shards: int) -> dict[str, Any]:
             identity.update({"query_counts": query_counts, "assay_transfer_status": "complete", "score_count": len(rows)})
             final_manifest = _write_complete(connection, database, task=task, subset=subset, level="L1", identity=identity, target=level)
         index["splits"][subset]["levels"]["L1"].update({"manifest_sha256": sha256_file(manifest_path), "content_id": final_manifest["content_id"]})
-    index.update({"profile": profile_name, "base_profile": prepared["base_profile"], "status": "complete", "ranking_modes": ["morgan", "assay-transfer"], "assay_transfer_status": "complete", "model": prepared["model"], "scoring_contract_version": SCORING_CONTRACT_VERSION})
+    index.update({"profile": profile_name, "base_profile": prepared["base_profile"], "base_index": prepared.get("base_index"), "status": "complete", "ranking_modes": ["morgan", "assay-transfer"], "assay_transfer_status": "complete", "model": prepared["model"], "scoring_contract_version": SCORING_CONTRACT_VERSION})
     _write_json(root / "RELEASE_INDEX.json", index)
     report = validate(task, output_root)
     _write_json(root / "VALIDATION.json", report)
@@ -375,7 +380,8 @@ def finalize(task: str, output_root: Path, num_shards: int) -> dict[str, Any]:
 def validate(task: str, output_root: Path) -> dict[str, Any]:
     root = output_root / task
     index = _json(root / "RELEASE_INDEX.json")
-    base = cache_profile_root(str(index.get("base_profile") or BASE_PROFILE)) / task
+    base = (Path(index["base_index"]).parent if index.get("base_index") else
+            cache_profile_root(str(index.get("base_profile") or BASE_PROFILE)) / task)
     if index.get("ranking_modes") != ["morgan", "assay-transfer"] or index.get("assay_transfer_status") != "complete":
         raise ValueError("Assay-transfer release is not complete")
     result = {"status": "complete", "task_id": task, "profile": index["profile"], "splits": {}}
@@ -420,7 +426,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("command", choices=("prepare", "score", "finalize", "validate"))
     parser.add_argument("--task", choices=TASKS, required=True)
-    parser.add_argument("--release", choices=("legacy", "gold-v1", "tdc-v1"), default="legacy")
+    parser.add_argument("--release", choices=("legacy", "gold-v1", "tdc"), default="legacy")
     parser.add_argument("--output-root", type=Path)
     parser.add_argument("--shard-index", type=int, default=0)
     parser.add_argument("--num-shards", type=int, default=4)

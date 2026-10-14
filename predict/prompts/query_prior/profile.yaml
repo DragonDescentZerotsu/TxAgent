@@ -1,0 +1,14 @@
+instructions:
+- Use only the supplied structure and property-tool text, without analog evidence or memorized assay labels.
+- Explain plausible structural and mechanistic liabilities, exposure limitations, and uncertainty.
+- A structural alert is a hypothesis, not an observed endpoint. Absence of an alert does not establish
+  a negative result.
+- Do not invent species, population, strain, activation, exposure, or organism conditions.
+required_json_schema:
+  endpoint_prior: ''
+  property_drivers:
+  - string
+  confidence: high | moderate | low
+  reasoning_summary: string
+  caveats:
+  - string

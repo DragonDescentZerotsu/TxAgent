@@ -2144,7 +2144,7 @@ _DILI_REVIEWED_PREDICTIONS = {
 def _dili_gold_cases() -> dict[str, dict[str, object]]:
     historical_gold = (
         measurement_config.REPO_ROOT
-        / "tests/chembl_tool/common/measurement_resolution_quality/gold/dili.v10.jsonl"
+        / "tests/data/evidence_library/measurement_resolution_quality/gold/dili.v10.jsonl"
     )
     entries = [
         json.loads(line)

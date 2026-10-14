@@ -1,0 +1,22 @@
+{
+  "assay_transfer_status": "not_computed",
+  "content_id": "8660ee461a158e17e15f46a6ce2e0c7fff79dbbded93399d32664ffef10b3399",
+  "ranking_modes": [
+    "morgan"
+  ],
+  "schema_version": "ranked_uid_release_validation.v1",
+  "splits": {
+    "test": {
+      "content_id": "79c8fc9072a681f803bead6c21c86bfb4edb9aa4ffb0e7b6d6b6bd116b23d80a",
+      "queries": 1457,
+      "stored_rows": 145700
+    },
+    "valid": {
+      "content_id": "9d982dac0fc96cc13d6e5e256b8c6318f7d9e19a45f374a87f90fba5ebc2f241",
+      "queries": 727,
+      "stored_rows": 72700
+    }
+  },
+  "status": "complete",
+  "task_id": "ames"
+}

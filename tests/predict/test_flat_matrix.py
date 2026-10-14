@@ -10,6 +10,7 @@ from predict.harnesses.branches import matrix as flat_matrix
 from predict.harnesses.branches import runner as flat_runner
 from predict.harnesses.branches.runtime import synchronize_configured_single_reuse
 from predict.api_client.pool import ProviderPoolConfig
+from predict.harnesses.branches.manifests import write_batch, read_record
 from predict.utils.json import sha256_file
 
 
@@ -21,6 +22,12 @@ def test_matrix_splits_full_capacity_evenly() -> None:
     assert flat_matrix.endpoint_allocations(capacity) == [
         (provider.name, provider.max_inflight) for provider in providers
     ]
+
+
+def test_tdc_version_switch_is_retired(capsys) -> None:
+    with pytest.raises(SystemExit):
+        flat_matrix.main(["--benchmark", "tdc", "--tdc-label-version", "v1"])
+    assert "unrecognized arguments: --tdc-label-version v1" in capsys.readouterr().err
 
 
 def test_upstream_v5_matrix_uses_reviewed_safety_levels(tmp_path: Path) -> None:
@@ -60,6 +67,19 @@ def test_upstream_v2_routes_preselected_test_without_changing_budgets(tmp_path: 
     assert args.harness_version == flat_matrix.flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_HARNESS_VERSION
     assert args.evaluation_subset == "test"
     assert args.l1_molecules == 10
+
+
+def test_gold_direct_matrix_can_use_valid_small_input(tmp_path: Path) -> None:
+    cohort = tmp_path / "valid_small_molecule_condition_labels.jsonl"
+    cohort.write_text('{"benchmark_row_id":"q1","drug":"C"}\n', encoding="utf-8")
+    args = flat_matrix._selection_args(
+        "skin_reaction", tmp_path, limit=0, benchmark="gold",
+        evaluation_subset="valid", input_jsonl=cohort,
+        context_v5_six_tasks=True,
+        six_task_prompt_version=flat_matrix.flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+    )
+    assert args.input_jsonl == cohort.resolve()
+    assert args.prompt_version == flat_matrix.flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION
 
 
 def test_recovery_subset_still_validates_full_direct_manifest(tmp_path: Path) -> None:
@@ -170,12 +190,14 @@ def test_provider_split_uses_selected_query_order_across_profiles(tmp_path: Path
         assert selected == ["together", "together", "together", "cohere"] * 2
 
 
-def test_matrix_builds_progressive_matched_record10_command(tmp_path: Path) -> None:
+def test_matrix_builds_final_record10_command(tmp_path: Path) -> None:
     args = flat_matrix._selection_args("bbb_martins", tmp_path, limit=0)
     source = args.batch_root / args.batch_id / "cache_matched_retrieval"
     command = flat_matrix._batch_command(args, source).command
 
     assert args.records_per_level == 10
+    assert args.harness_version == flat_matrix.flat.FINAL_FULL_FLAT_HARNESS_VERSION
+    assert args.prompt_version == flat_matrix.flat.FINAL_FULL_FLAT_PROMPT_VERSION
     assert args.l1_molecules == 10
     assert args.l1_records_per_molecule == 10
     assert args.max_level == 0
@@ -188,7 +210,7 @@ def test_matrix_builds_progressive_matched_record10_command(tmp_path: Path) -> N
     assert command[2] == "predict.harnesses.branches.tasks.bbb_martins.contract"
     assert command[command.index("--experiment-mode") + 1] == "full_flat"
     for pair in (
-        ("--flat-prompt-version", "joseph_flat_v2"),
+        ("--flat-prompt-version", "final_full_flat"),
         ("--flat-reranking", "morgan"),
         ("--max-tokens", "262144"),
         ("--reasoning-effort", "high"),
@@ -310,13 +332,13 @@ def test_preselected_command_forwards_exact_indices(tmp_path: Path) -> None:
     assert "--limit" not in command
 
 
-def test_replay_subset_uses_hash_pinned_source_retrievals(tmp_path: Path) -> None:
+def test_replay_subset_uses_query_uids_and_frozen_retrievals(tmp_path: Path) -> None:
     source = tmp_path / "cache_matched_retrieval"
     retrieval = source / "runs" / f"{source.name}_idx00001" / "retrieval.json"
     retrieval.parent.mkdir(parents=True)
     retrieval.write_text('{"query": 1}', encoding="utf-8")
     input_jsonl = tmp_path / "queries.jsonl"
-    input_jsonl.write_text('{"drug": "C"}\n', encoding="utf-8")
+    input_jsonl.write_text('{"drug":"C","benchmark_row_id":"q0"}\n{"drug":"N","benchmark_row_id":"q1"}\n', encoding="utf-8")
     prompt_version = flat_matrix.flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION
     manifest = {
         "harness_version": flat_runner.JOSEPH_PROMPT_HARNESSES[prompt_version],
@@ -338,7 +360,8 @@ def test_replay_subset_uses_hash_pinned_source_retrievals(tmp_path: Path) -> Non
         "group_tools_enabled": False,
     }
     path = source / "manifest.json"
-    path.write_text(json.dumps(manifest), encoding="utf-8")
+    write_batch(path, manifest)
+    manifest = read_record(path)
     args = SimpleNamespace(
         flat_prompt_version=prompt_version,
         flat_selection_manifest=str(path),
@@ -350,20 +373,21 @@ def test_replay_subset_uses_hash_pinned_source_retrievals(tmp_path: Path) -> Non
         flat_replay_subset=True,
     )
     config = SimpleNamespace(pipeline_module="predict.harnesses.branches.tasks.bbb_martins.contract")
+    args.flat_request_replay_root = ""
     assert flat_runner._validated_flat_selection_manifest(config, args, [1]) == manifest
     with pytest.raises(SystemExit, match="not a subset"):
         flat_runner._validated_flat_selection_manifest(config, args, [2])
-    retrieval.write_text("changed", encoding="utf-8")
+    retrieval.unlink()
     with pytest.raises(SystemExit, match="changed or is missing"):
         flat_runner._validated_flat_selection_manifest(config, args, [1])
     args.flat_replay_subset = False
-    with pytest.raises(SystemExit, match="manifest mismatch"):
+    with pytest.raises(SystemExit, match="membership differs"):
         flat_runner._validated_flat_selection_manifest(config, args, [1])
 
 
 def test_chained_recovery_accepts_only_previous_missing_cohort(tmp_path: Path, monkeypatch) -> None:
     input_jsonl = tmp_path / "queries.jsonl"
-    input_jsonl.write_text('{"drug":"C"}\n{"drug":"N"}\n{"drug":"O"}\n', encoding="utf-8")
+    input_jsonl.write_text('{"drug":"C","benchmark_row_id":"q0"}\n{"drug":"N","benchmark_row_id":"q1"}\n{"drug":"O","benchmark_row_id":"q2"}\n', encoding="utf-8")
     mixed = tmp_path / "mixed.json"
     mixed.write_text("{}", encoding="utf-8")
     cache = tmp_path / "cache.yaml"
@@ -373,7 +397,8 @@ def test_chained_recovery_accepts_only_previous_missing_cohort(tmp_path: Path, m
     args = SimpleNamespace(
         task="bbb_martins", evaluation_subset="valid", input_jsonl=input_jsonl,
         prompt_version="full_flat_context_v5_six_tasks_upstream_v1",
-        flat_mixed_selection=mixed, assay_transfer_cache=cache,
+        flat_mixed_selection=mixed, flat_preselected_contexts=None,
+        assay_transfer_cache=cache,
     )
     manifest = {
         "task": args.task, "evaluation_subset": args.evaluation_subset,
@@ -383,10 +408,12 @@ def test_chained_recovery_accepts_only_previous_missing_cohort(tmp_path: Path, m
         "prompt_assets": {"sha256": "frozen-prompt"},
         "flat_mixed_selection": str(mixed),
         "flat_mixed_selection_sha256": sha256_file(mixed),
+        "flat_preselected_contexts": "",
+        "flat_preselected_contexts_sha256": "",
         "assay_transfer_cache": str(cache), "indices": [1, 2],
     }
     path = source / "manifest.json"
-    path.write_text(json.dumps(manifest), encoding="utf-8")
+    write_batch(path, manifest)
     previous = {"path": str(path), "sha256": sha256_file(path),
                 "assay_transfer_cache_sha256": sha256_file(cache)}
     monkeypatch.setattr(flat_matrix.flat, "_preselected_query_indices", lambda *a, **kw: [0, 1, 2])
@@ -395,10 +422,24 @@ def test_chained_recovery_accepts_only_previous_missing_cohort(tmp_path: Path, m
     assert flat_matrix._missing_from_previous_batch(previous, args, [2]) == ([2], 0)
     monkeypatch.setattr(flat_matrix, "collect_completed_item", lambda *a: {"run_dir": str(tmp_path)})
     assert flat_matrix._missing_from_previous_batch(previous, args, [2]) == ([], 1)
+    args.batch_id = "bbb_martins__ga000_mc000_label000"
+    matrix_path = tmp_path / "resume" / "matrix.json"
+    replayed_batch = (matrix_path.parent / "ga000_mc000_label000" / "with_query_prior"
+                      / "run" / args.task / args.batch_id)
+    replayed_batch.mkdir(parents=True)
+    (replayed_batch / "manifest.json").write_text("{}", encoding="utf-8")
+    observed = []
+    def completed_from_replayed_batch(prepared, item):
+        observed.append(prepared.batch_dir)
+        return {"run_dir": str(tmp_path)}
+    monkeypatch.setattr(flat_matrix, "collect_completed_item", completed_from_replayed_batch)
+    assert flat_matrix._missing_from_previous_batch(
+        previous, args, [2], matrix_path=matrix_path,
+    ) == ([], 1)
+    assert observed == [replayed_batch]
+    monkeypatch.setattr(flat_matrix, "collect_completed_item", lambda *a: {"run_dir": str(tmp_path)})
     with pytest.raises(ValueError, match="different query cohort"):
         flat_matrix._missing_from_previous_batch(previous, args, [0])
-    monkeypatch.setattr(flat_matrix.flat, "prompt_asset_manifest", lambda *a: {"sha256": "changed"})
-    assert flat_matrix._missing_from_previous_batch(previous, args, [2]) == ([2], 0)
     batch_dir = source.parent
     (batch_dir / "manifest.json").write_text(json.dumps({
         "task_prompt_profile": "test", "flat_layout": "global", "flat_reranking": "morgan",
@@ -457,6 +498,38 @@ def test_mixed_test_grids_allow_task_specific_winners(tmp_path: Path) -> None:
     }
     with pytest.raises(ValueError, match="Incompatible mixed selection grid"):
         flat_matrix.load_mixed_selection_grids(grids, benchmark="gold", subset="valid")
+
+
+@pytest.mark.parametrize("selection_subset", ("valid", "valid_small"))
+def test_gold_mixed_validation_grid_accepts_its_selection_cohort(
+    tmp_path: Path, selection_subset: str,
+) -> None:
+    task, profile = "skin_reaction", "ga025_mc010_sr010_sd010_ld010_rd010"
+    indirect = tmp_path / "indirect" / profile / task / "manifest.json"
+    indirect.parent.mkdir(parents=True)
+    indirect.write_text("{}\n", encoding="utf-8")
+    mixed = tmp_path / "mixed" / profile / task / "manifest.json"
+    mixed.parent.mkdir(parents=True)
+    mixed.write_text(json.dumps({
+        "schema_version": "gold_mixed_selection.v1", "status": "complete",
+        "task_id": task, "benchmark": "gold_v1", "subset": selection_subset,
+        "indirect": {"sha256": sha256_file(indirect)},
+    }), encoding="utf-8")
+    grid = tmp_path / "indirect_grid_manifest.json"
+    grid.write_text(json.dumps({
+        "schema_version": "gold_submodular_selection_grid.v1",
+        "status": "complete", "kind": "indirect", "benchmark": "gold_v1",
+        "subset": selection_subset, "tasks": [task], "profile_count": 1,
+        "profiles": [{"name": profile, "task_manifests": {
+            task: {"path": str(indirect.relative_to(tmp_path)),
+                   "sha256": sha256_file(indirect)}
+        }}],
+    }), encoding="utf-8")
+    assert len(flat_matrix.load_mixed_selection_grids(
+        [grid], benchmark="gold", subset="valid"
+    )) == 1
+    with pytest.raises(ValueError, match="Incompatible mixed selection grid"):
+        flat_matrix.load_mixed_selection_grids([grid], benchmark="gold", subset="test")
 
 
 @pytest.mark.parametrize("budget", (25, 100))
@@ -590,20 +663,34 @@ def test_direct_grid_preserves_its_evaluation_subset(tmp_path: Path) -> None:
     tasks = flat_matrix.TASKS
     for task in tasks:
         path = tmp_path / f"{task}.json"
-        path.write_text(json.dumps({"subset": "test"}) + "\n", encoding="utf-8")
+        path.write_text(json.dumps({"benchmark": "gold_v1", "subset": "test",
+                                    "task_id": task, "profile": "winner"}) + "\n", encoding="utf-8")
         task_manifests[task] = {"path": path.name, "sha256": sha256_file(path)}
     grid = tmp_path / "direct.json"
     grid.write_text(json.dumps({
         "schema_version": "direct_context_selection_grid.v2",
-        "status": "complete", "kind": "direct", "profile_count": 1,
+        "status": "complete", "kind": "direct", "benchmark": "gold_v1",
+        "subset": "test", "profile_count": 1,
         "tasks": tasks,
         "profiles": [{"name": "winner", "task_manifests": task_manifests}],
     }), encoding="utf-8")
 
-    profiles = flat_matrix.load_preselected_direct_grid(grid)
+    profiles = flat_matrix.load_preselected_direct_grid(grid, benchmark="gold_v1", subset="test")
 
     assert profiles[0]["subset"] == "test"
     assert profiles[0]["tasks"] == tasks
+    with pytest.raises(ValueError, match="Invalid completed direct selection grid"):
+        flat_matrix.load_preselected_direct_grid(grid, benchmark="tdc_v2", subset="test")
+    with pytest.raises(ValueError, match="Invalid completed direct selection grid"):
+        flat_matrix.load_preselected_direct_grid(grid, benchmark="gold_v1", subset="valid")
+    leaf = tmp_path / f"{tasks[0]}.json"
+    leaf.write_text(json.dumps({"benchmark": "tdc_v1", "subset": "test",
+                                "task_id": tasks[0], "profile": "winner"}) + "\n", encoding="utf-8")
+    document = json.loads(grid.read_text(encoding="utf-8"))
+    document["profiles"][0]["task_manifests"][tasks[0]]["sha256"] = sha256_file(leaf)
+    grid.write_text(json.dumps(document), encoding="utf-8")
+    with pytest.raises(ValueError, match="Direct selection identity differs"):
+        flat_matrix.load_preselected_direct_grid(grid, benchmark="gold_v1", subset="test")
 
 
 def test_direct_grid_accepts_task_specific_profiles(tmp_path: Path) -> None:
@@ -611,7 +698,8 @@ def test_direct_grid_accepts_task_specific_profiles(tmp_path: Path) -> None:
     profiles = []
     for task in tasks:
         path = tmp_path / f"{task}.json"
-        path.write_text(json.dumps({"subset": "valid"}) + "\n", encoding="utf-8")
+        path.write_text(json.dumps({"benchmark": "gold_v1", "subset": "valid",
+                                    "task_id": task, "profile": f"winner_{task}"}) + "\n", encoding="utf-8")
         profiles.append({
             "name": f"winner_{task}",
             "task_manifests": {task: {"path": path.name, "sha256": sha256_file(path)}},
@@ -619,11 +707,12 @@ def test_direct_grid_accepts_task_specific_profiles(tmp_path: Path) -> None:
     grid = tmp_path / "direct.json"
     grid.write_text(json.dumps({
         "schema_version": "direct_context_selection_grid.v2",
-        "status": "complete", "kind": "direct", "profile_count": 2,
+        "status": "complete", "kind": "direct", "benchmark": "gold_v1",
+        "subset": "valid", "profile_count": 2,
         "tasks": tasks, "profiles": profiles,
     }), encoding="utf-8")
 
-    loaded = flat_matrix.load_preselected_direct_grid(grid)
+    loaded = flat_matrix.load_preselected_direct_grid(grid, benchmark="gold_v1", subset="valid")
 
     assert [profile["tasks"] for profile in loaded] == [(task,) for task in tasks]
 
@@ -665,9 +754,11 @@ def test_synchronized_query_prior_is_not_rewritten(tmp_path: Path) -> None:
     run.mkdir()
     target = run / "single_molecule_reasoning_output.json"
     target.write_text('{"already": "frozen"}\n')
-    (run / "manifest.json").write_text(json.dumps({
-        "single_analysis_source_run_dir": str(source),
-    }))
+    (run / "stage_resume.json").write_text(json.dumps({"single_analysis_source_run_uid": "source-uid"}))
+    write_batch(batch / "manifest.json", {"batch_id": "source"}, records=[(0, {"benchmark_row_id": "q"})])
+    source_record = json.loads((batch / "manifest.json").read_text())
+    source_record["run_uid"] = "source-uid"
+    (batch / "manifest.json").write_text(json.dumps(source_record))
 
     synchronize_configured_single_reuse(
         SimpleNamespace(args=SimpleNamespace(single_analysis_source_batch=str(batch))),

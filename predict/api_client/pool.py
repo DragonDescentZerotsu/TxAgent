@@ -8,6 +8,9 @@ variable, concurrency budget, health state, and trace provenance.
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import asyncio
+from functools import partial
+from types import SimpleNamespace
 from dataclasses import dataclass, replace
 import json
 import math
@@ -23,6 +26,11 @@ import uuid
 
 POOL_CONFIG_VERSION = "openai_provider_pool.v1"
 SPEND_BUDGET_VERSION = "openrouter_spend_budget.v1"
+DEEPSEEK_V4_ALIASES = frozenset({
+    "deepseek-ai/DeepSeek-V4-Flash-0731",
+    "deepseek-v4-flash-0731",
+    "deepseek/deepseek-v4-flash-0731",
+})
 _NANODOLLARS = 1_000_000_000
 DEFAULT_PROVIDER_POOL_CONFIG = (
     Path(__file__).resolve().parent / "providers/current_endpoints.json"
@@ -83,6 +91,8 @@ class ProviderSpec:
             raise ValueError(f"provider {self.name!r} initial_latency_s must be positive")
         if self.timeout_s is not None and self.timeout_s < 1:
             raise ValueError(f"provider {self.name!r} timeout_s must be positive")
+        if float((self.request_extra_body or {}).get("min_request_interval_ms") or 0) < 0:
+            raise ValueError(f"provider {self.name!r} min_request_interval_ms must be non-negative")
         if self.priority < 0:
             raise ValueError(f"provider {self.name!r} priority must be non-negative")
         effort = (self.request_extra_body or {}).get("reasoning_effort_override")
@@ -262,6 +272,15 @@ def load_provider_pool_config(path: str | Path) -> ProviderPoolConfig:
     return ProviderPoolConfig.from_mapping(payload)
 
 
+def canonical_provider_model(config: ProviderPoolConfig) -> str:
+    models = {provider.model for provider in config.providers}
+    if len(models) == 1:
+        return next(iter(models))
+    if models <= DEEPSEEK_V4_ALIASES:
+        return "deepseek-ai/DeepSeek-V4-Flash-0731"
+    raise ValueError("provider candidates must use one model or reviewed aliases")
+
+
 def primary_capacity(config: ProviderPoolConfig) -> int:
     """Return capacity available before using a fallback priority tier."""
     priority = min(provider.priority for provider in config.providers)
@@ -288,7 +307,7 @@ def preflight_provider_models(
     """Verify every endpoint advertises its exact configured model."""
     receipts = []
     for provider in config.providers:
-        with urlopen(provider.base_url.rstrip("/") + "/models", timeout=timeout_s) as response:
+        with urlopen(_models_request(provider), timeout=timeout_s) as response:
             payload = json.load(response)
         models = [str(row.get("id") or "") for row in payload.get("data") or []]
         if provider.model not in models:
@@ -306,6 +325,14 @@ def preflight_provider_models(
     return receipts
 
 
+def _models_request(provider: ProviderSpec) -> Request:
+    # Runpod's proxy rejects urllib's default Python-urllib User-Agent (CF 1010).
+    return Request(
+        provider.base_url.rstrip("/") + "/models",
+        headers={"User-Agent": "TxAgent/1.0"},
+    )
+
+
 def select_healthy_providers(
     config: ProviderPoolConfig,
     requested_parallelism: int,
@@ -315,9 +342,7 @@ def select_healthy_providers(
     """Probe candidates concurrently and retain every healthy exact-model endpoint."""
     if requested_parallelism < 1:
         raise ValueError("requested parallelism must be positive")
-    models = {provider.model for provider in config.providers}
-    if len(models) != 1:
-        raise ValueError("provider candidates must use one exact model")
+    canonical_provider_model(config)
 
     def probe(provider: ProviderSpec) -> dict[str, Any]:
         receipt: dict[str, Any] = {
@@ -327,9 +352,7 @@ def select_healthy_providers(
             "max_inflight": provider.max_inflight,
         }
         try:
-            with urlopen(
-                provider.base_url.rstrip("/") + "/models", timeout=timeout_s
-            ) as response:
+            with urlopen(_models_request(provider), timeout=timeout_s) as response:
                 payload = json.load(response)
             advertised = [
                 str(row.get("id") or "") for row in payload.get("data") or []
@@ -473,7 +496,7 @@ def build_provider_pool(
     response_format: Mapping[str, Any] | None = None,
 ) -> "OpenAIProviderPool":
     """Build every configured provider through the shared credential loader."""
-    from data.processing.llm_api import openai_compatible_client
+    from predict.api_client.transport import openai_compatible_client
     from predict.api_client.client import OpenAICompatibleClient
 
     if config.spend_budget is not None and transport_max_retries:
@@ -485,6 +508,9 @@ def build_provider_pool(
         request_extra_body = dict(spec.request_extra_body or {})
         provider_reasoning_effort = request_extra_body.pop(
             "reasoning_effort_override", reasoning_effort
+        )
+        provider_enable_thinking = request_extra_body.pop(
+            "enable_thinking_override", enable_thinking
         )
         transport, _ = openai_compatible_client(
             base_url=spec.base_url,
@@ -505,7 +531,7 @@ def build_provider_pool(
             enable_group_tools=enable_group_tools,
             max_tool_rounds=max_tool_rounds,
             reasoning_effort=provider_reasoning_effort,
-            enable_thinking=enable_thinking,
+            enable_thinking=provider_enable_thinking,
             transport_max_retries=transport_max_retries,
             request_extra_body=request_extra_body,
             response_format=response_format,
@@ -513,25 +539,6 @@ def build_provider_pool(
         )
 
     return OpenAIProviderPool(config, client_factory=factory)
-
-
-def load_env_file(path: str | Path, *, override: bool = False) -> None:
-    """Load simple KEY=VALUE entries without logging credential values."""
-
-    env_path = Path(path)
-    if not env_path.is_file():
-        return
-    for raw_line in env_path.read_text(encoding="utf-8").splitlines():
-        line = raw_line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        key, value = line.split("=", 1)
-        key = key.strip()
-        if not key:
-            continue
-        value = value.strip().strip('"').strip("'")
-        if override or key not in os.environ:
-            os.environ[key] = value
 
 
 @dataclass
@@ -794,6 +801,8 @@ class OpenAIProviderPool:
         self.config = config
         self._clock = clock
         self._condition = threading.Condition()
+        self._dispatch_lock = threading.Lock()
+        self._next_dispatch_at: dict[str, float] = {}
         self._spend_ledger = (
             _SpendLedger(config.spend_budget) if config.spend_budget else None
         )
@@ -831,6 +840,13 @@ class OpenAIProviderPool:
                     raise
             started = self._clock()
             try:
+                interval_ms = float((state.spec.request_extra_body or {}).get("min_request_interval_ms") or 0)
+                if interval_ms:
+                    with self._dispatch_lock:
+                        dispatch_at = max(self._clock(), self._next_dispatch_at.get(state.spec.name, 0))
+                        self._next_dispatch_at[state.spec.name] = dispatch_at + interval_ms / 1000
+                    time.sleep(max(0, dispatch_at - self._clock()))
+                    started = self._clock()
                 token_override = {"max_tokens": max_tokens} if max_tokens else {}
                 if tokenized_completion:
                     response = state.client.chat_json(
@@ -854,6 +870,12 @@ class OpenAIProviderPool:
                     raise ValueError(
                         f"provider {state.spec.name!r} returned upstream "
                         f"{response.get('provider')!r}"
+                    )
+                expected_tier = controls.get("expected_service_tier")
+                if expected_tier and response.get("service_tier") != expected_tier:
+                    raise ValueError(
+                        f"provider {state.spec.name!r} returned service tier "
+                        f"{response.get('service_tier')!r}"
                     )
             except Exception as exc:  # noqa: BLE001 - provider boundary
                 latency_s = max(0.0, self._clock() - started)
@@ -1040,3 +1062,86 @@ def _is_transport_or_provider_failure(exc: Exception) -> bool:
     name = type(exc).__name__.lower()
     tokens = ("timeout", "connection", "transport", "ratelimit", "apierror")
     return any(token in name or token in module for token in tokens)
+
+
+class ProviderPoolCompletionAdapter:
+    """Expose the shared JSON provider pool through the legacy completion API."""
+
+    def __init__(self, pool: Any) -> None:
+        self._pool = pool
+        self.chat = SimpleNamespace(completions=self)
+
+    def create(self, **kwargs: Any) -> Any:
+        response = self._pool.chat_json(
+            list(kwargs["messages"]),
+            max_tokens=int(
+                kwargs.get("max_tokens")
+                or kwargs.get("max_completion_tokens")
+            ),
+        )
+        execution = dict(response.get("execution_provider") or {})
+        usage_values = dict(response.get("usage") or {})
+        usage = SimpleNamespace(**usage_values)
+        usage.model_dump = lambda: dict(usage_values)
+        return SimpleNamespace(
+            id=response.get("id"),
+            model=response.get("model"),
+            usage=usage,
+            choices=[SimpleNamespace(message=SimpleNamespace(
+                content=json.dumps(response["content"], sort_keys=True, separators=(",", ":"), ensure_ascii=False),
+                reasoning_content=response.get("reasoning_content"),
+                reasoning=None,
+                model_extra={},
+            ))],
+            provider_name=execution.get("provider"),
+            provider_base_url=execution.get("base_url"),
+            requested_model=execution.get("requested_model"),
+            allowed_served_models=tuple(
+                spec.model
+                for spec in self._pool.config.providers
+            ) + tuple(
+                alias
+                for spec in self._pool.config.providers
+                for alias in (spec.request_extra_body or {}).get(
+                    "allowed_served_models", ()
+                )
+            ),
+            execution_provider=execution,
+            execution_provider_attempts=response.get(
+                "execution_provider_attempts", []
+            ),
+        )
+
+    def snapshot(self) -> dict[str, Any]:
+        return self._pool.snapshot()
+
+
+
+def async_completion_pool(config: ProviderPoolConfig, *, max_tokens: int = 20_480,
+                          reasoning_effort: str = "high", env_file: Path | None = None,
+                          timeout_s: int = 3600) -> Any:
+    """Expose shared routing to async scoring without limiting it to 32 threads."""
+    pool = build_provider_pool(
+        config, env_file=env_file, timeout_s=timeout_s, max_tokens=max_tokens,
+        temperature=None, tool_service_url="http://127.0.0.1:1",
+        enable_group_tools=False, max_tool_rounds=0, reasoning_effort=reasoning_effort,
+        enable_thinking=False, transport_max_retries=0,
+        response_format={"type": "json_object"},
+    )
+    adapter = ProviderPoolCompletionAdapter(pool)
+    executor = ThreadPoolExecutor(max_workers=sum(p.max_inflight for p in config.providers))
+
+    async def create(**kwargs: Any) -> Any:
+        return await asyncio.get_running_loop().run_in_executor(
+            executor, partial(adapter.create, **kwargs)
+        )
+
+    async def close() -> None:
+        executor.shutdown(wait=True)
+        for state in pool._states:
+            transport = getattr(state.client, "client", None)
+            if transport is not None:
+                transport.close()
+
+    return SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)),
+                           snapshot=adapter.snapshot, close=close)

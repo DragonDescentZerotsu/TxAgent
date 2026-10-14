@@ -21,8 +21,8 @@ from typing import Any, Mapping, Sequence
 import pandas as pd
 import pyarrow.parquet as pq
 
-from tools.chembl_tool.common.llm_client import openai_client
-from data.processing.llm_api import DEFAULT_ENV_FILE
+from predict.api_client.transport import openai_client
+from predict.api_client.transport import DEFAULT_ENV_FILE
 from data.processing.evidence_library.shared.v1.normalization.cleaning import file_sha256
 from data.processing.evidence_library.shared.v1.reference_semantics import (
     ENDPOINT_RATIO_BASES,
