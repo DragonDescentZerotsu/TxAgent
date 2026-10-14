@@ -1,0 +1,30 @@
+{
+  "status": "complete",
+  "source_modules_before": 22,
+  "source_modules_after": 17,
+  "source_lines_before": 12498,
+  "source_lines_after": 9868,
+  "verified_json_grids": [
+    "dili_geomean_tied12",
+    "dili_geomean_tied16",
+    "direct",
+    "gold_ames_tied_record12",
+    "gold_carcinogens_tied_record12",
+    "gold_skin_tied_record12",
+    "historical",
+    "sqrt48",
+    "tied_record12"
+  ],
+  "tests_passed": 283,
+  "dependency_tests_excluded": 7,
+  "missing_dependencies": [
+    "torch",
+    "transformers"
+  ],
+  "selected_semantic_files_byte_identical": 155,
+  "dili_scorer_byte_identical": true,
+  "l1_cache_catalog": "data/caches/assay_reranking/active/flat_v5/canonical_l1_cards_v1/manifest.json",
+  "model_calls": 0,
+  "inference_runs": 0,
+  "publications": 0
+}

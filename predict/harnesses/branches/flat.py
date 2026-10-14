@@ -1,21 +1,4 @@
-"""Run legacy or cache-matched flat molecular-evidence inference.
-
-The public entry point defaults to ``joseph-flat-v2``. It validates the official
-BBB or oral split, asks the current cache-matched SQLite contract for the same frozen
-level-specific record assignments consumed by progressive, then groups those
-already-selected records by normalized parent into one ``Flat.all_evidence``
-branch. It materializes a provenance-bound replay artifact and delegates
-single/group/final model scheduling and checkpoints to ``branches.runner``.
-
-``joseph-flat-v2`` presents source-contract-complete semantic cards without
-group comparison tools. ``joseph-flat-v1`` and ``tianang-flat-v1`` retain their
-historical presentation. Joseph supports Morgan, assay-transfer, and joint
-cache-matched modes plus the three finalized record pools. Single-molecule and
-final prompts remain task-owned in every version.
-
-``retrieve_flat_evidence`` remains the legacy mechanism-family collapse;
-``cache_matched_flat_retrieval`` performs only Joseph's presentation merge.
-"""
+"""Render frozen molecular evidence and run the FINAL flat harness. Historical prompt renderers support offline replay."""
 
 from __future__ import annotations
 
@@ -24,6 +7,7 @@ import csv
 import hashlib
 import json
 import re
+import sqlite3
 import sys
 import time
 from copy import deepcopy
@@ -32,8 +16,10 @@ from pathlib import Path
 from typing import Any, Callable, Mapping
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
+from predict.prompts import ROOT as PROMPT_ROOT, bundle_directory, flat_task_profiles, template_environment
 import yaml
 
+from optimization.selection.pool import load_coverage
 from predict.harnesses.branches.assay_transfer import (
     ASSAY_TRANSFER_DIVERSITY_NONE,
     ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
@@ -48,10 +34,13 @@ from predict.harnesses.branches.retrieval import (
     retrieval_coverage,
 )
 from predict.retrieval.policies import NeighborIdentityPolicy, SIMILARITY_SELECTOR
+
 from predict.retrieval.policies import normalize_molecule_identity, selector_metadata
 from predict.llm_io.evidence import minimal_evidence_from_row
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
-from data.processing.gold_labels.conditioned_benchmark import split_path, tdc_split_path
+from predict.harnesses.branches.manifests import (run_directory, read_record, write_batch, scientific_settings,
+    require_query_ids, require_artifact_versions, canonical_location)
+from data.processing.gold_labels.conditioned_benchmark import split_path, tdc_split_path, tdc_config, TDC_MANIFEST
 from predict.retrieval.assay_reranking.artifact_bundle import (
     ArtifactBundleError,
     bundle_manifest_path,
@@ -59,6 +48,11 @@ from predict.retrieval.assay_reranking.artifact_bundle import (
     require_receipt,
 )
 
+
+DEFAULT_PROVIDER_CONFIG = (
+    Path(__file__).resolve().parents[2] / "api_client/providers"
+    / "deepseek_v4_flash_0731_openrouter_auto_128_high.json"
+)
 
 TIANANG_PROMPT_VERSION = "tianang_flat_v1"
 JOSEPH_V1_PROMPT_VERSION = "joseph_flat_v1"
@@ -71,7 +65,21 @@ CONTEXT_V8_PROMPT_VERSION = "full_flat_context_v8_context_scoped_transfer_v1"
 CONTEXT_V5_SIX_TASKS_PROMPT_VERSION = "full_flat_context_v5_six_tasks_v1"
 CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION = "full_flat_context_v5_six_tasks_upstream_v1"
 CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION = "full_flat_context_v5_six_tasks_upstream_v2"
+CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION = "full_flat_context_v5_six_tasks_upstream_v3"
+TDC_SKIN_LLNA_PROMPT_VERSION = "full_flat_context_v5_six_tasks_tdc_skin_llna_v1"
+TDC_SKIN_LLNA_SCORES_PROMPT_VERSION = "full_flat_context_v5_six_tasks_tdc_skin_llna_scores_v2"
+TDC_V2_MIXED_PROMPT_VERSION = "full_flat_context_v5_six_tasks_tdc_v2_mixed_v1"
+DILI_TDC_V2_MIXED_V3_PROMPT_VERSION = "full_flat_context_v5_six_tasks_dili_tdc_v2_mixed_v3"
+DILI_TDC_V2_POLARIZED_PROMPT_VERSION = "full_flat_context_v5_six_tasks_dili_tdc_v2_polarized_v1"
 CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION = "full_flat_context_v5_six_tasks_upstream_scores_v2"
+FINAL_FULL_FLAT_PROMPT_VERSION = "final_full_flat"
+FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION = "final_full_flat_tdc_carc_direct_priority_v1"
+FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION = "final_full_flat_tdc_carc_strong_direct_v1"
+FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION = "final_full_flat_tdc_carc_direct_positive_gate_v1"
+FINAL_FULL_FLAT_PROMPT_VERSIONS = {
+    FINAL_FULL_FLAT_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
+    FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
+}
 CONTEXT_CLAIMS_PROMPT_VERSIONS = {
     CONTEXT_V5_PROMPT_VERSION,
     CONTEXT_V6_PROMPT_VERSION,
@@ -79,7 +87,16 @@ CONTEXT_CLAIMS_PROMPT_VERSIONS = {
     CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
+    TDC_SKIN_LLNA_PROMPT_VERSION,
+    TDC_SKIN_LLNA_SCORES_PROMPT_VERSION,
+    TDC_V2_MIXED_PROMPT_VERSION,
+    DILI_TDC_V2_MIXED_V3_PROMPT_VERSION,
+    DILI_TDC_V2_POLARIZED_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
+    FINAL_FULL_FLAT_PROMPT_VERSION,
+    FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
+    FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
 }
 CONTEXT_NUMBERED_PROMPT_VERSIONS = {
     *CONTEXT_CLAIMS_PROMPT_VERSIONS,
@@ -96,12 +113,21 @@ JOSEPH_PROMPT_VERSIONS = (
     CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
+    TDC_SKIN_LLNA_PROMPT_VERSION,
+    TDC_SKIN_LLNA_SCORES_PROMPT_VERSION,
+    TDC_V2_MIXED_PROMPT_VERSION,
+    DILI_TDC_V2_MIXED_V3_PROMPT_VERSION,
+    DILI_TDC_V2_POLARIZED_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
+    FINAL_FULL_FLAT_PROMPT_VERSION,
+    FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
+    FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
 )
 # Backward-compatible default for direct prompt-library callers. The public
 # The unified branches CLI selects Joseph flat behavior below.
 PROMPT_VERSION = TIANANG_PROMPT_VERSION
-PUBLIC_HARNESS_VERSION = "joseph-flat-v2"
+PUBLIC_HARNESS_VERSION = "final-full-flat"
 CONTEXT_V4_HARNESS_VERSION = "joseph-flat-context-v4-v1"
 CONTEXT_V5_HARNESS_VERSION = "full-flat-context-v5"
 CONTEXT_V6_HARNESS_VERSION = "full-flat-context-v6-oral-high-low"
@@ -110,34 +136,46 @@ CONTEXT_V8_HARNESS_VERSION = "full-flat-context-v8-context-scoped-transfer-v1"
 CONTEXT_V5_SIX_TASKS_HARNESS_VERSION = "full-flat-context-v5-six-tasks-v1"
 CONTEXT_V5_SIX_TASKS_UPSTREAM_HARNESS_VERSION = "full-flat-context-v5-six-tasks-upstream-v1"
 CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_HARNESS_VERSION = "full-flat-context-v5-six-tasks-upstream-v2"
+CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_HARNESS_VERSION = "full-flat-context-v5-six-tasks-upstream-v3"
+TDC_SKIN_LLNA_HARNESS_VERSION = "full-flat-context-v5-six-tasks-tdc-skin-llna-v1"
+TDC_SKIN_LLNA_SCORES_HARNESS_VERSION = "full-flat-context-v5-six-tasks-tdc-skin-llna-scores-v2"
+TDC_V2_MIXED_HARNESS_VERSION = "full-flat-context-v5-six-tasks-tdc-v2-mixed-v1"
+DILI_TDC_V2_MIXED_V3_HARNESS_VERSION = "full-flat-context-v5-six-tasks-dili-tdc-v2-mixed-v3"
+DILI_TDC_V2_POLARIZED_HARNESS_VERSION = "full-flat-context-v5-six-tasks-dili-tdc-v2-polarized-v1"
 CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_HARNESS_VERSION = "full-flat-context-v5-six-tasks-upstream-scores-v2"
+FINAL_FULL_FLAT_HARNESS_VERSION = "final-full-flat"
+FINAL_FULL_FLAT_TDC_CARC_HARNESS_VERSION = "final-full-flat-tdc-carc-direct-priority-v1"
+FINAL_FULL_FLAT_TDC_CARC_STRONG_HARNESS_VERSION = "final-full-flat-tdc-carc-strong-direct-v1"
+FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_HARNESS_VERSION = "final-full-flat-tdc-carc-direct-positive-gate-v1"
 JOSEPH_V1_HARNESS_VERSION = "joseph-flat-v1"
 LEGACY_HARNESS_VERSION = "tianang-flat-v1"
 
 
-def resolve_default_cache_bundle(
-    task: str, benchmark: str, configured: Path
-) -> Path:
-    """Select the task/benchmark cache bundle while preserving explicit paths."""
+def resolve_default_cache_bundle(task: str, benchmark: str, configured: Path) -> Path:
     from predict.retrieval.assay_reranking.cache_matched import DEFAULT_CACHE_BUNDLE
-
     configured = Path(configured)
     if configured.resolve() != DEFAULT_CACHE_BUNDLE.resolve():
         return configured
     if benchmark == "tdc":
-        return Path(__file__).resolve().parents[2] / (
-            "retrieval/assay_reranking/ranked_level_retrieval_tdc_v1.yaml"
-        )
+        return TDC_MANIFEST
     if task not in {"bbb_martins", "bioavailability_ma"}:
-        return Path(__file__).resolve().parents[2] / (
-            "retrieval/assay_reranking/ranked_level_retrieval_gold_v1_all_tasks_v1.yaml"
-        )
+        return Path(__file__).resolve().parents[2] / "retrieval/assay_reranking/ranked_level_retrieval_gold_v1_all_tasks_v1.yaml"
     return configured
+
+
+def require_current_cache_bundle(path: Path) -> None:
+    """Validate the canonical TDC bundle without selecting a historical edition."""
+    bundle = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if bundle.get("benchmark") == "tdc":
+        if bundle.get("status") != "complete" or set(bundle.get("tasks", {})) != set(TASKS):
+            raise ValueError("Canonical TDC bundle must cover all six tasks")
+    elif "tdc" in str(path) or "tdc" in str(path):
+        raise ValueError("Historical TDC bundles require explicit legacy replay")
 
 
 JOSEPH_HARNESS_PROMPTS = {
     JOSEPH_V1_HARNESS_VERSION: JOSEPH_V1_PROMPT_VERSION,
-    PUBLIC_HARNESS_VERSION: JOSEPH_PROMPT_VERSION,
+    "joseph-flat-v2": JOSEPH_PROMPT_VERSION,
     CONTEXT_V4_HARNESS_VERSION: CONTEXT_V4_PROMPT_VERSION,
     CONTEXT_V5_HARNESS_VERSION: CONTEXT_V5_PROMPT_VERSION,
     CONTEXT_V6_HARNESS_VERSION: CONTEXT_V6_PROMPT_VERSION,
@@ -146,12 +184,37 @@ JOSEPH_HARNESS_PROMPTS = {
     CONTEXT_V5_SIX_TASKS_HARNESS_VERSION: CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_HARNESS_VERSION: CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_HARNESS_VERSION: CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_HARNESS_VERSION: CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
+    TDC_SKIN_LLNA_HARNESS_VERSION: TDC_SKIN_LLNA_PROMPT_VERSION,
+    TDC_SKIN_LLNA_SCORES_HARNESS_VERSION: TDC_SKIN_LLNA_SCORES_PROMPT_VERSION,
+    TDC_V2_MIXED_HARNESS_VERSION: TDC_V2_MIXED_PROMPT_VERSION,
+    DILI_TDC_V2_MIXED_V3_HARNESS_VERSION: DILI_TDC_V2_MIXED_V3_PROMPT_VERSION,
+    DILI_TDC_V2_POLARIZED_HARNESS_VERSION: DILI_TDC_V2_POLARIZED_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_HARNESS_VERSION: CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
+    FINAL_FULL_FLAT_HARNESS_VERSION: FINAL_FULL_FLAT_PROMPT_VERSION,
+    FINAL_FULL_FLAT_TDC_CARC_HARNESS_VERSION: FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
+    FINAL_FULL_FLAT_TDC_CARC_STRONG_HARNESS_VERSION: FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION,
+    FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_HARNESS_VERSION: FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
 }
 JOSEPH_PROMPT_HARNESSES = {
     prompt: harness for harness, prompt in JOSEPH_HARNESS_PROMPTS.items()
 }
-PROMPT_DIR = Path(__file__).with_name("prompts")
+ACTIVE_HARNESS_PROMPTS = {
+    harness: prompt for harness, prompt in JOSEPH_HARNESS_PROMPTS.items()
+    if prompt in {
+        FINAL_FULL_FLAT_PROMPT_VERSION,
+        FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION,
+        FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
+        CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
+        CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+        CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+        CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
+        TDC_V2_MIXED_PROMPT_VERSION,
+        DILI_TDC_V2_MIXED_V3_PROMPT_VERSION,
+        DILI_TDC_V2_POLARIZED_PROMPT_VERSION,
+    }
+}
+PROMPT_DIR = PROMPT_ROOT
 MORGAN_VARIANT = "morgan"
 ASSAY_TRANSFER_VARIANT = "assay-transfer"
 JOINT_VARIANT = "joint"
@@ -168,6 +231,9 @@ CONTEXT_V4_SELECTION_CONTRACT = "joseph_flat_context_retrieval.v1"
 CONTEXT_V5_SELECTION_CONTRACT = "joseph_flat_context_retrieval.v2"
 PRESELECTED_UID_SCHEMA = "flat_preselected_uids.v1"
 PRESELECTED_MIXED_SCHEMA = "gold_mixed_selection.v1"
+TDC_V2_MIXED_SCHEMA = "tdc_mixed_selection"
+DILI_TDC_V2_MIXED_SCHEMA = "tdc_dili_geomean_mixed_selection"
+TDC_V2_BBB_FILTERED_SCHEMA = "tdc_bbb_filtered_selection"
 PRESELECTED_DIRECT_SCHEMA = "gold_direct_context_selection.v1"
 PRESELECTED_DIRECT_SCHEMAS = {
     PRESELECTED_DIRECT_SCHEMA,
@@ -192,7 +258,12 @@ def default_query_prior_root(prompt_version: str, benchmark: str, subset: str) -
     if benchmark == "gold" and prompt_version in {
         CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
         CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+        CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
+        TDC_V2_MIXED_PROMPT_VERSION,
         CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
+        FINAL_FULL_FLAT_PROMPT_VERSION,
+        FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
+        FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
     }:
         current = json.loads(QUERY_PRIOR_CURRENT.read_text(encoding="utf-8"))
         if current.get("schema_version") != "query_prior_current.v1":
@@ -238,7 +309,17 @@ PROMPT_VARIANTS = {
     CONTEXT_V5_SIX_TASKS_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
+    TDC_SKIN_LLNA_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
+    TDC_SKIN_LLNA_SCORES_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
+    TDC_V2_MIXED_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
+    DILI_TDC_V2_MIXED_V3_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
+    DILI_TDC_V2_POLARIZED_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
+    FINAL_FULL_FLAT_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
+    FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
+    FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
+    FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
 }
 TASKS = {
     "bbb_martins": 5,
@@ -253,19 +334,31 @@ TASKS = {
 def prompt_task_max_level(
     task: str, prompt_version: str, cache_bundle: Path | None = None,
 ) -> int:
+    if cache_bundle is not None and Path(cache_bundle).resolve() == TDC_MANIFEST.resolve():
+        return int(tdc_config(task)["max_level"])
     if (prompt_version in {
             CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
             CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+            CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
+            TDC_V2_MIXED_PROMPT_VERSION,
+            DILI_TDC_V2_MIXED_V3_PROMPT_VERSION,
+            DILI_TDC_V2_POLARIZED_PROMPT_VERSION,
             CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
+            FINAL_FULL_FLAT_PROMPT_VERSION,
+            FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
+            FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
         }
             and task in {"dili", "carcinogens"}
             and cache_bundle is not None
             and Path(cache_bundle).name in {
                 "ranked_level_retrieval_gold_v1_v27_successors_v1.yaml",
                 "ranked_level_retrieval_tdc_v1_v27_successors_v1.yaml",
+                "ranked_level_retrieval_tdc_v2_dili_parent_disjoint_v2.yaml",
                 "ranked_level_retrieval_gold_v1_v27_partial_snapshot_v1.yaml",
+                "ranked_level_retrieval_gold_v1_v27_carcinogens_parent100_partial_snapshot_v1.yaml",
                 "ranked_level_retrieval_tdc_v1_v27_partial_snapshot_v1.yaml",
                 "ranked_level_retrieval_gold_v1_v27_carcinogens_hybrid_v1.yaml",
+                "ranked_level_retrieval_tdc_v2_query_pure_v1.yaml",
             }):
         return 7
     return TASKS[task]
@@ -386,7 +479,7 @@ def prompt_directory(version: str) -> Path:
     """Resolve one explicit flat prompt bundle without fallback."""
     if Path(version).name != version or version not in PROMPT_VARIANTS:
         raise ValueError(f"Unknown flat prompt version: {version!r}")
-    directory = PROMPT_DIR / version
+    directory = bundle_directory(version)
     if not directory.is_dir():
         raise ValueError(f"Flat prompt bundle is missing: {directory}")
     return directory
@@ -396,7 +489,7 @@ def prompt_directory(version: str) -> Path:
 def prompt_assets(version: str = PROMPT_VERSION) -> dict[str, Any]:
     """Load and validate one version-owned flat group prompt contract."""
     directory = prompt_directory(version)
-    tasks = yaml.safe_load((directory / "tasks.yaml").read_text(encoding="utf-8"))
+    tasks = flat_task_profiles(version)
     modes = {} if version in CONTEXT_NUMBERED_PROMPT_VERSIONS else {
         mode: yaml.safe_load(
             (directory / "modes" / mode / "user.yaml").read_text(encoding="utf-8")
@@ -442,7 +535,9 @@ def prompt_asset_manifest(version: str = PROMPT_VERSION) -> dict[str, Any]:
         for path in sorted(directory.rglob("*"))
         if path.suffix in {".jinja", ".json", ".yaml"}
     }
-    assembly = {"flat.py": _sha256(Path(__file__))}
+    if not (directory / "tasks.yaml").is_file():
+        hashes.update({f"tasks/{task}/profiles.yaml": _sha256(PROMPT_ROOT / "tasks" / task / "profiles.yaml") for task in TASKS})
+    assembly = {"flat.py": _sha256(Path(__file__)), "prompts/__init__.py": _sha256(PROMPT_ROOT / "__init__.py")}
     digest = hashlib.sha256(
         json.dumps(
             {"files_sha256": hashes, "assembly_files_sha256": assembly},
@@ -646,7 +741,7 @@ def flat_prompt_provenance(
         "task_id": task_id,
         "task_prompt_profile": task_prompt_profile,
         "upstream_commit": upstream.get("upstream_commit", ""),
-        "upstream_sources": upstream["tasks"][task_id]["upstream_sources"],
+        "upstream_sources": upstream["tasks"][task_id].get("upstream_sources", []),
         "asset_manifest_sha256": manifest["sha256"],
         "asset_files_sha256": manifest["files_sha256"],
         "assembly_files_sha256": manifest["assembly_files_sha256"],
@@ -694,12 +789,7 @@ def _task_contract(
 
 @lru_cache(maxsize=1)
 def _environment() -> Environment:
-    return Environment(
-        loader=FileSystemLoader(str(PROMPT_DIR)),
-        undefined=StrictUndefined,
-        autoescape=False,
-        keep_trailing_newline=False,
-    )
+    return template_environment()
 
 
 def _compact_prompt(text: str) -> str:
@@ -794,15 +884,33 @@ def build_flat_context_request(
         raise ValueError(f"Unsupported flat context prompt: {prompt_version!r}")
     contract = _task_contract(task_id, task_prompt_profile, prompt_version)
     assets = prompt_assets(prompt_version)
+    if prompt_version in FINAL_FULL_FLAT_PROMPT_VERSIONS:
+        benchmark = retrieval.get("benchmark")
+        if benchmark not in {"gold_v1", "tdc"}:
+            raise ValueError("final_full_flat requires an explicit Gold-v1 or TDC benchmark")
+        if benchmark == "tdc" and (contract.get("tdc_task_instructions") or contract.get("tdc_v2_task_instructions")):
+            contract = {**contract, "task_instructions": (contract.get("tdc_task_instructions") or contract["tdc_v2_task_instructions"])}
+    if (prompt_version == CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION
+            and retrieval.get("tdc_score_visibility") in {"high", "middle", "low"}
+            and task_id == "bbb_martins"):
+        contract = {**contract, "task_instructions":
+                    (contract.get("tdc_task_instructions") or contract["tdc_v2_task_instructions"])}
     sections, aliases, references = _flat_context_sections(
         groups[0], layout=layout, prompt_version=prompt_version
     )
+    if task_id == "skin_reaction" and prompt_version == CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION:
+        # Preserve the Skin request surface used by the original V3 evaluation.
+        for section in sections:
+            for molecule in section["molecules"]:
+                molecule.pop("morgan_similarity", None)
     for section in sections:
         level = str(section.get("level") or "")
+        level_contract = ((assets.get("levels") or {}).get(level) or {}).get(task_id, {})
         section["description"] = str(
-            ((assets.get("levels") or {}).get(level) or {}).get(task_id, {}).get(
-                "description", ""
-            )
+            level_contract.get("tdc_description", level_contract.get("tdc_v2_description", level_contract.get("description", "")))
+            if prompt_version in FINAL_FULL_FLAT_PROMPT_VERSIONS
+            and retrieval.get("benchmark") == "tdc"
+            else level_contract.get("description", "")
         )
     query = deepcopy(dict(retrieval.get("query") or {}))
     query.pop("fingerprint", None)
@@ -815,7 +923,11 @@ def build_flat_context_request(
     }
     system_arguments = {
         **contract,
-        "mode": "morgan" if reranking.startswith("morgan") else reranking,
+        "mode": (
+            "morgan" if reranking.startswith("morgan")
+            or (retrieval.get("score_visibility") or retrieval.get("tdc_score_visibility")) in {"low", "middle"}
+            else reranking
+        ),
         "query_prior_visible": bool(query_prior),
     }
     if prompt_version not in CONTEXT_NUMBERED_PROMPT_VERSIONS:
@@ -829,7 +941,16 @@ def build_flat_context_request(
     if prompt_version in {
         CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
         CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+        CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
+        TDC_SKIN_LLNA_PROMPT_VERSION,
+        TDC_SKIN_LLNA_SCORES_PROMPT_VERSION,
+        TDC_V2_MIXED_PROMPT_VERSION,
+        DILI_TDC_V2_MIXED_V3_PROMPT_VERSION,
+        DILI_TDC_V2_POLARIZED_PROMPT_VERSION,
         CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
+        FINAL_FULL_FLAT_PROMPT_VERSION,
+        FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
+        FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
     }:
         system, user = _compact_prompt(system), _compact_prompt(user)
     return [
@@ -1025,6 +1146,10 @@ def _flat_context_sections(
                             _set_consistent(molecule_scores, target, provenance[name])
                         elif not (
                             prompt_version in CONTEXT_NUMBERED_PROMPT_VERSIONS
+                            and prompt_version not in {*FINAL_FULL_FLAT_PROMPT_VERSIONS,
+                                                       TDC_V2_MIXED_PROMPT_VERSION,
+                                                       DILI_TDC_V2_MIXED_V3_PROMPT_VERSION,
+                                                       DILI_TDC_V2_POLARIZED_PROMPT_VERSION}
                             and name == "assay_transfer_score" and level == "L5"
                         ):
                             card[target] = provenance[name]
@@ -1048,7 +1173,20 @@ def _flat_context_sections(
                 "evidence_cards": cards,
                 **molecule_scores,
             }
-            if prompt_version == CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION:
+            if (prompt_version in {
+                CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+                CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
+                FINAL_FULL_FLAT_PROMPT_VERSION,
+                FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
+                FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
+            } and molecule.get("morgan_similarity") is None):
+                if not str(neighbor.get("similarity_metric") or "").startswith("Morgan "):
+                    raise ValueError("Dual-score prompt requires Morgan-ranked neighbor similarity")
+                molecule["morgan_similarity"] = round(float(neighbor["similarity"]), 4)
+            if prompt_version in {
+                CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
+                TDC_SKIN_LLNA_SCORES_PROMPT_VERSION,
+            }:
                 if not str(neighbor.get("similarity_metric") or "").startswith("Morgan "):
                     raise ValueError("Dual-score prompt requires Morgan-ranked neighbor similarity")
                 molecule["morgan_similarity"] = round(float(neighbor["similarity"]), 4)
@@ -1195,6 +1333,7 @@ def cache_matched_flat_retrieval(
     for row, molecule in selected:
         record_id = str(row["record_id"])
         payload = dict(row["payload"])
+        payload["progressive_level"] = "L" + str(payload["progressive_level"]).removeprefix("L")
         physical_uid = str(payload.get("source_row_uid") or "")
         if preserve_physical_records and not physical_uid:
             raise ValueError(f"Selected record lacks a physical source UID: {record_id}")
@@ -1231,12 +1370,16 @@ def cache_matched_flat_retrieval(
             retrieval["morgan_rank"] = int(row["morgan_rank"])
         if row.get("assay_rank") is not None:
             retrieval["assay_rank"] = int(row["assay_rank"])
-        if morgan_method or method == JOINT_VARIANT:
+        if morgan_method or method == JOINT_VARIANT or prompt_version in FINAL_FULL_FLAT_PROMPT_VERSIONS:
             retrieval["morgan_similarity"] = round(
                 float(row.get("morgan_similarity", molecule.get("morgan_similarity"))), 4
             )
         transfer_score = row.get("transfer_likelihood", molecule.get("transfer_likelihood"))
-        if assay_method or method == JOINT_VARIANT:
+        if prompt_version in FINAL_FULL_FLAT_PROMPT_VERSIONS and transfer_score is not None:
+            retrieval["assay_transfer_score"] = round(float(transfer_score), 4)
+        elif (assay_method or method == JOINT_VARIANT) and not (
+            transfer_score is None and row.get("ranking_method") == "assay_transfer_partial_hidden"
+        ):
             if transfer_score is None:
                 raise ValueError(f"Selected assay-transfer record lacks a score: {record_id}")
             retrieval["assay_transfer_score"] = round(float(transfer_score), 4)
@@ -1683,6 +1826,7 @@ def _load_preselected_contexts(
     queries: Mapping[str, str],
     budget: int,
     allow_subset: bool = False,
+    benchmark: str | None = None,
 ) -> tuple[dict[str, list[str]], dict[str, Any]]:
     """Validate an ordered direct-card panel while leaving hydration to the cache."""
     path = path.resolve()
@@ -1692,6 +1836,7 @@ def _load_preselected_contexts(
         or document.get("status") != "complete"
         or document.get("task_id") != task
         or int(document.get("budget", -1)) != budget
+        or (benchmark is not None and document.get("benchmark") != benchmark)
     ):
         raise ValueError(f"Incompatible preselected direct manifest: {path}")
     query_ids = [str(value) for value in document.get("benchmark_row_ids") or []]
@@ -1713,6 +1858,9 @@ def _load_preselected_contexts(
         expected = [
             "benchmark_row_id", "selection_rank", "context_id", "parent_id", "gold_label"
         ]
+        score_policy = document.get("score_policy")
+        if score_policy:
+            expected += ["assay_transfer_score", "score_key"]
         if reader.fieldnames != expected:
             raise ValueError("Preselected direct TSV has an incompatible schema")
         rows = list(reader)
@@ -1729,13 +1877,81 @@ def _load_preselected_contexts(
     for query_id, context_ids in selected.items():
         if len(context_ids) != budget or len(set(context_ids)) != budget:
             raise ValueError(f"Preselected direct count is invalid: {query_id}")
-    return {query_id: selected[query_id] for query_id in queries}, {
+    receipt = {
         "path": str(path),
         "sha256": sha256_file(path),
         "records_path": str(records_path),
         "records_sha256": records["sha256"],
         "objective": deepcopy(document.get("objective") or {}),
     }
+    if score_policy:
+        if benchmark != "tdc" or score_policy.get("version") not in {
+            "tdc_exact_direct_40_70", "available_scores.v1",
+        }:
+            raise ValueError("Exact-score direct selection requires TDC")
+        overlay = Path(score_policy["overlay_manifest"]).resolve()
+        if sha256_file(overlay) != score_policy["overlay_manifest_sha256"]:
+            raise ValueError("Exact-score overlay manifest changed")
+        for name in ("cache_bundle", "later_index"):
+            source = Path(score_policy[name]).resolve()
+            if sha256_file(source) != score_policy[f"{name}_sha256"]:
+                raise ValueError(f"Exact-score {name} changed")
+        overlay_manifest = json.loads(overlay.read_text(encoding="utf-8"))
+        if (overlay_manifest.get("status") != "complete"
+                or overlay_manifest.get("task") != task
+                or overlay_manifest.get("database_sha256") != score_policy["database_sha256"]):
+            raise ValueError("Exact-score overlay identity differs")
+        coverage_entry = score_policy["coverage"]
+        coverage_path = (path.parent / coverage_entry["path"]).resolve()
+        if not coverage_path.is_relative_to(path.parent) or sha256_file(coverage_path) != coverage_entry["sha256"]:
+            raise ValueError("Exact-score coverage table changed")
+        with coverage_path.open(encoding="utf-8", newline="") as handle:
+            reader = csv.DictReader(handle, delimiter="\t")
+            expected_fields = (["benchmark_row_id", "scored_candidates", "candidate_count",
+                                "direct_scored", "indirect_scored"]
+                               if score_policy["version"] == "available_scores.v1" else
+                               ["benchmark_row_id", "scored_candidates", "candidate_count",
+                                "coverage_band", "direct_scored", "indirect_scored"])
+            if reader.fieldnames != expected_fields:
+                raise ValueError("Exact-score coverage schema differs")
+            coverage_rows = list(reader)
+        if len(coverage_rows) != coverage_entry["row_count"]:
+            raise ValueError("Exact-score coverage count differs")
+        bands = {}
+        for row in coverage_rows:
+            query_id = row["benchmark_row_id"]
+            scored, total = int(row["scored_candidates"]), int(row["candidate_count"])
+            band = "high" if 10 * scored >= 7 * total else "low" if 5 * scored <= 2 * total else "middle"
+            expected_band = "available" if score_policy["version"] == "available_scores.v1" else band
+            if (query_id not in selected or query_id in bands or total < 100
+                    or not 0 <= scored <= total
+                    or int(row["direct_scored"]) + int(row["indirect_scored"]) != scored
+                    or (score_policy["version"] != "available_scores.v1"
+                        and row["coverage_band"] != expected_band)):
+                raise ValueError(f"Exact-score coverage band differs: {query_id}")
+            bands[query_id] = expected_band
+        if set(bands) != set(selected):
+            raise ValueError("Exact-score coverage omits queries")
+        database = overlay.with_name(overlay_manifest["database"])
+        scores = {query_id: {} for query_id in queries}
+        with sqlite3.connect(f"file:{database.resolve()}?mode=ro&immutable=1", uri=True) as connection:
+            for row in rows:
+                query_id, context_id, parent = row["benchmark_row_id"], row["context_id"], row["parent_id"]
+                raw, key = row["assay_transfer_score"], row["score_key"]
+                if bool(raw) != bool(key):
+                    raise ValueError("Exact-score score/key mismatch")
+                score = float(raw) if raw else None
+                frozen = connection.execute(
+                    "SELECT parent_id,score,score_key FROM scores WHERE query_id=? AND level='L1' AND item_id=?",
+                    (query_id, context_id)).fetchone()
+                if (frozen is None) != (score is None) or (frozen is not None and
+                        (frozen[0] != parent or frozen[1] != score or frozen[2] != key)):
+                    raise ValueError(f"Exact-score snapshot differs: {query_id}/{context_id}")
+                if query_id in scores:
+                    scores[query_id][("L1", parent)] = score
+        receipt["score_visibility"] = {query_id: bands[query_id] for query_id in queries}
+        receipt["_selected_scores"] = scores
+    return {query_id: selected[query_id] for query_id in queries}, receipt
 
 
 def _load_mixed_selection(
@@ -1747,10 +1963,17 @@ def _load_mixed_selection(
     """Resolve a frozen ten-card/joint-UID selection; cache readers hydrate its IDs."""
     path = path.resolve()
     mixed = json.loads(path.read_text(encoding="utf-8"))
+    if mixed.get("schema_version") in {TDC_V2_MIXED_SCHEMA, DILI_TDC_V2_MIXED_SCHEMA, TDC_V2_BBB_FILTERED_SCHEMA}:
+        return _load_tdc_v2_mixed_selection(
+            path, mixed=mixed, task=task, benchmark=benchmark, subset=subset,
+            queries=queries, levels=levels, cache_index=cache_index,
+            cache_config=cache_config, allow_subset=allow_subset,
+        )
     expected = {
         "schema_version": PRESELECTED_MIXED_SCHEMA, "status": "complete",
         "benchmark": f"{benchmark}_v1", "task_id": task,
-        "subset": "valid_small" if benchmark == "gold" and subset == "valid" else subset,
+        "subset": (mixed.get("subset") if benchmark == "gold" and subset == "valid"
+                   and mixed.get("subset") in {"valid", "valid_small"} else subset),
         "direct_budget": 10,
     }
     budget = int(mixed.get("indirect_budget") or 0)
@@ -1775,6 +1998,34 @@ def _load_mixed_selection(
         )) or child.get("budget") != mixed[f"{kind}_budget"]:
             raise ValueError(f"Mixed {kind} manifest disagrees with its parent")
         children[kind] = (child_path, child)
+    if mixed.get("score_policy") == "query_mean_missing_scores.v1" and (
+        benchmark != "gold" or task != "carcinogens" or any(
+            child.get("objective", {}).get("assay_score_policy") != mixed["score_policy"]
+            for _, child in children.values()
+        )
+    ):
+        raise ValueError("Gold query-mean selection policy differs from its children")
+    score_visibility = None
+    coverage_entry = mixed.get("score_coverage")
+    if coverage_entry:
+        if (benchmark != "gold" or any(
+            child.get("score_coverage") != coverage_entry for _, child in children.values()
+        )):
+            raise ValueError("Gold mixed score coverage differs from selections")
+        coverage_path = Path(coverage_entry["path"])
+        if sha256_file(coverage_path) != coverage_entry["sha256"]:
+            raise ValueError("Gold mixed score coverage changed")
+        direct_index = Path(children["direct"][1]["inputs"]["direct_cache"]["release_index"])
+        coverage = load_coverage(
+            coverage_path, task=task, queries=mixed_query_ids,
+            direct_index=direct_index, later_index=cache_index,
+            cache_bundle=cache_config,
+        )
+        score_visibility = {
+            query_id: ("available" if mixed.get("score_policy") == "available_scores.v1"
+                       else coverage["queries"][query_id]["coverage_band"])
+            for query_id in queries
+        }
     contexts, direct_receipt = _load_preselected_contexts(
         children["direct"][0], task=task, queries=queries, budget=10,
         allow_subset=allow_subset,
@@ -1817,10 +2068,262 @@ def _load_mixed_selection(
     return contexts, {query_id: selected[query_id] for query_id in queries}, {
         "path": str(path), "sha256": sha256_file(path),
         "indirect_budget": budget,
+        "score_policy": mixed.get("score_policy"),
         "direct": direct_receipt,
         "indirect": {"path": str(indirect_path), "sha256": sha256_file(indirect_path),
                      "records_path": str(records_path), "records_sha256": records["sha256"]},
+        **({"score_visibility": score_visibility,
+            "score_coverage": coverage_entry} if score_visibility is not None else {}),
     }
+
+
+def _load_tdc_v2_mixed_selection(
+    path: Path, *, mixed: dict[str, Any], task: str, benchmark: str, subset: str,
+    queries: Mapping[str, str], levels: set[str], cache_index: Path,
+    cache_config: Path, allow_subset: bool,
+) -> tuple[dict[str, list[str]], dict[str, dict[str, list[str]]], dict[str, Any]]:
+    if (benchmark != "tdc" or mixed.get("status") != "complete"
+            or mixed.get("benchmark") != "tdc" or mixed.get("task_id") != task
+            or mixed.get("subset") != subset or mixed.get("direct_budget") != 10
+            or type(mixed.get("indirect_budget")) is not int
+            or not 1 <= mixed["indirect_budget"] <= 100
+            or mixed.get("semantic_policy") not in {
+                "selected_central_ledger_with_task_level_mean_fallback",
+                "pinned_candidate_snapshot.v1"}):
+        raise ValueError("Incompatible TDC mixed selection")
+    excluded = set()
+    if mixed["schema_version"] == TDC_V2_BBB_FILTERED_SCHEMA:
+        if task != "bbb_martins":
+            raise ValueError("Filtered TDC selection is BBB-specific")
+        filter_entry = mixed.get("prediction_filter") or {}
+        filter_path = Path(filter_entry.get("path") or "")
+        if not filter_path.is_file() or sha256_file(filter_path) != filter_entry.get("sha256"):
+            raise ValueError("BBB prediction filter receipt changed")
+        filter_manifest = json.loads(filter_path.read_text(encoding="utf-8"))
+        if (filter_manifest.get("schema_version") != "bbb_prediction_only_filter.v1"
+                or filter_manifest.get("status") != "complete"
+                or filter_manifest.get("subset") != subset
+                or filter_manifest.get("excluded_count") != filter_entry.get("excluded_count")):
+            raise ValueError("BBB prediction filter receipt differs")
+        from predict.tasks.bbb_martins.prediction_filter import prediction_only
+        if filter_manifest.get("predicate_sha256") != sha256_file(Path(prediction_only.__code__.co_filename)):
+            raise ValueError("BBB prediction predicate changed")
+        table = filter_path.with_name("eligibility.tsv")
+        if sha256_file(table) != filter_manifest["files"]["eligibility.tsv"]["sha256"]:
+            raise ValueError("BBB prediction filter table changed")
+        with table.open(encoding="utf-8", newline="") as handle:
+            decisions = list(csv.DictReader(handle, delimiter="\t"))
+        if len(decisions) != filter_manifest["files"]["eligibility.tsv"]["rows"]:
+            raise ValueError("BBB prediction filter table count differs")
+        excluded = {row["source_row_uid"] for row in decisions if row["prediction_only"] == "1"}
+        if len(excluded) != filter_entry["excluded_count"]:
+            raise ValueError("BBB prediction filter exclusion count differs")
+    query_ids = list(map(str, mixed.get("benchmark_row_ids") or []))
+    if (len(query_ids) != len(set(query_ids))
+            or (not set(queries).issubset(query_ids) if allow_subset else set(queries) != set(query_ids))):
+        raise ValueError("TDC mixed selection queries differ")
+    cohort = mixed.get("query_ids_file")
+    if cohort:
+        source = Path(cohort["path"])
+        if (sha256_file(source) != cohort["sha256"]
+                or source.read_text(encoding="utf-8").splitlines() != query_ids):
+            raise ValueError("TDC frozen query cohort changed")
+    inputs = {str(canonical_location(k)): v for k, v in (mixed.get("inputs") or {}).items()}
+    from data.processing.gold_labels.conditioned_benchmark import tdc_split_path, tdc_manifest
+    release_manifest = tdc_manifest(task, subset)
+    query_path = tdc_split_path(task, subset)
+    for source in (release_manifest, query_path):
+        if inputs.get(str(source.resolve())) != sha256_file(source):
+            raise ValueError(f"TDC original-split input changed: {source}")
+    bundle = yaml.safe_load(cache_config.read_text(encoding="utf-8"))
+    direct_index = (cache_config.parent / bundle["caches"][task]["L1"]).resolve()
+    dili_successor = mixed["schema_version"] == DILI_TDC_V2_MIXED_SCHEMA
+    overlay_entry = mixed.get("score_overlay") or {}
+    overlay = (Path(overlay_entry["path"]) if overlay_entry else
+               Path(__file__).resolve().parents[3] / (
+                   f"data/caches/assay_reranking/active/flat_v5/tdc/{task}/scores/manifest.json"))
+    if overlay_entry and sha256_file(overlay) != overlay_entry.get("sha256"):
+        raise ValueError("TDC selected score overlay changed")
+    if dili_successor:
+        from optimization.selection.record_scores import load_scores as load_dili_scores
+        tool = mixed.get("dili_tool_scores") or {}
+        direct = mixed.get("direct_manifest") or {}
+        if (task != "dili" or mixed.get("semantic_relevance_formula") != "sqrt(dili_tool_score * semantic_weight)"
+                or sha256_file(overlay) != mixed["score_overlay"]["sha256"]
+                or sha256_file(Path(direct["path"])) != direct["sha256"]):
+            raise ValueError("DILI mixed successor provenance differs")
+        _, audit = load_dili_scores(Path(tool["manifest"]))
+        if (audit["manifest_sha256"] != tool["manifest_sha256"]
+                or audit["release_index_sha256"] != sha256_file(cache_index)):
+            raise ValueError("DILI tool score release differs")
+        if mixed.get("semantic_policy") != "pinned_candidate_snapshot.v1":
+            extension = mixed.get("semantic_extension") or {}
+            extension_path = Path(extension.get("path") or "")
+            if not extension_path.is_file() or sha256_file(extension_path) != extension.get("sha256"):
+                raise ValueError("DILI semantic extension changed")
+            extension_manifest = json.loads(extension_path.read_text(encoding="utf-8"))
+            extension_table = extension_path.with_name(extension_manifest["projection"]["path"])
+            if (extension_manifest.get("schema_version") != "semantic_retrieval_mean_weights.v2"
+                    or sha256_file(extension_table) != extension_manifest["projection"]["sha256"]):
+                raise ValueError("DILI semantic extension payload changed")
+    for source in (cache_config.resolve(), cache_index.resolve(), direct_index, overlay.resolve()):
+        if inputs.get(str(source)) != sha256_file(source):
+            raise ValueError(f"TDC selection input changed: {source}")
+    if dili_successor:
+        cache_release = json.loads(cache_index.read_text(encoding="utf-8"))
+        if (cache_release.get("parent_relation_filter") != "parent_disjoint"
+                or cache_release.get("identity_normalizer_version") != "rdkit_fragment_parent.v2"):
+            raise ValueError("DILI successor cache lacks the reviewed parent policy")
+    if mixed["schema_version"] == TDC_V2_BBB_FILTERED_SCHEMA:
+        for source, digest in filter_manifest["inputs"].items():
+            if inputs.get(source) != digest:
+                raise ValueError(f"BBB filter source differs from selection: {source}")
+    overlay_manifest = json.loads(overlay.read_text(encoding="utf-8"))
+    available = (mixed.get("score_policy") or {}).get("version") == "available_scores.v1"
+    if available and overlay_manifest.get("score_count") != sum(overlay_manifest.get("counts", {}).values()):
+        raise ValueError("TDC exact-score snapshot is incomplete")
+    database = overlay.with_name(overlay_manifest["database"])
+    if inputs.get(str(database.resolve())) != overlay_manifest.get("database_sha256"):
+        raise ValueError("TDC selected score database differs")
+    candidate_semantics = None
+    if mixed["semantic_policy"] == "pinned_candidate_snapshot.v1":
+        from optimization.semantic_buckets.inputs import load_skin_candidate_snapshot, load_dili_candidate_snapshot
+        entry = mixed.get("semantic_snapshot") or {}
+        snapshot = canonical_location(entry.get("path") or "")
+        if (task not in {"skin_reaction", "dili"}
+                or sha256_file(snapshot) != entry.get("sha256")):
+            raise ValueError("TDC candidate snapshot changed")
+        loader = load_dili_candidate_snapshot if task == "dili" else load_skin_candidate_snapshot
+        candidate_semantics, pins = loader(snapshot)
+        if any(inputs.get(source) != digest for source, digest in pins.items()):
+            raise ValueError("TDC candidate lineage changed")
+    else:
+        from optimization.semantic_buckets.inputs import resolve_semantic_bucket_artifacts
+        semantic_artifacts = resolve_semantic_bucket_artifacts(task, "CURRENT")
+        semantic_path = semantic_artifacts.manifest.resolve()
+        if sha256_file(semantic_path) != inputs.get(str(semantic_path)):
+            raise ValueError("TDC selected semantic release changed")
+        semantic_release = json.loads(semantic_path.read_text(encoding="utf-8"))
+        if (semantic_release.get("central_ledger_generation") is None
+                or semantic_release.get("provisional_retrieval_weight_policy")
+                != "mean_of_reviewed_semantic_buckets_in_task_level"):
+            raise ValueError("TDC selection lacks an official semantic ledger")
+        for key in ("central_ledger", "semantic_bucket_weights", "record_relevance_rankings",
+                    "weight_projection_manifest", "pending_uid_worklist"):
+            entry = (semantic_release.get("files") or {}).get(key) or {}
+            source = (semantic_path.parent / str(entry.get("path") or "")).resolve()
+            if inputs.get(str(source)) != entry.get("sha256"):
+                raise ValueError(f"TDC selected semantic ledger differs: {key}")
+    tables = {}
+    fields = {
+        "selected_contexts.tsv": ["benchmark_row_id", "selection_rank", "context_id", "parent_id", "gold_label", "assay_transfer_score", "score_key"],
+        "selected_uids.tsv": ["benchmark_row_id", "selection_rank", "level", "source_row_uid", "parent_id", "assay_transfer_score", "score_key", "semantic_bucket_id", "semantic_weight", "semantic_weight_source"],
+        "coverage.tsv": (["benchmark_row_id", "scored_candidates", "candidate_count", "direct_scored", "indirect_scored"]
+                         if (mixed.get("score_policy") or {}).get("version") == "available_scores.v1" else
+                         ["benchmark_row_id", "scored_candidates", "candidate_count", "coverage_band", "direct_scored", "indirect_scored"]),
+    }
+    for name, expected in fields.items():
+        source = (path.parent / name).resolve()
+        entry = (mixed.get("files") or {}).get(name) or {}
+        if not source.is_relative_to(path.parent) or sha256_file(source) != entry.get("sha256"):
+            raise ValueError(f"TDC selection table changed: {name}")
+        with source.open(encoding="utf-8", newline="") as handle:
+            reader = csv.DictReader(handle, delimiter="\t")
+            if reader.fieldnames != expected:
+                raise ValueError(f"TDC selection table schema differs: {name}")
+            tables[name] = list(reader)
+        if len(tables[name]) != entry.get("rows"):
+            raise ValueError(f"TDC selection table count differs: {name}")
+    if mixed.get("direct_manifest"):
+        direct_entry = mixed["direct_manifest"]
+        direct_path = Path(direct_entry["path"])
+        if sha256_file(direct_path) != direct_entry["sha256"]:
+            raise ValueError("TDC frozen direct manifest changed")
+        with direct_path.with_name("selected_contexts.tsv").open(
+            encoding="utf-8", newline=""
+        ) as handle:
+            frozen = [(row["benchmark_row_id"], row["selection_rank"], row["context_id"])
+                      for row in csv.DictReader(handle, delimiter="\t")]
+        selected = [(row["benchmark_row_id"], row["selection_rank"], row["context_id"])
+                    for row in tables["selected_contexts.tsv"]]
+        if frozen != selected:
+            raise ValueError("TDC mixed selection changed the frozen direct panel")
+    bands = {}
+    for row in tables["coverage.tsv"]:
+        query_id = row["benchmark_row_id"]
+        scored, total = int(row["scored_candidates"]), int(row["candidate_count"])
+        band = ("available" if available else
+                "high" if 10 * scored >= 7 * total else "low" if 5 * scored <= 2 * total else "middle")
+        if (query_id in bands or query_id not in query_ids or total < 100
+                or not 0 <= scored <= total
+                or (not available and row["coverage_band"] != band)
+                or int(row["direct_scored"]) + int(row["indirect_scored"]) != scored):
+            raise ValueError(f"TDC score band differs: {query_id}")
+        bands[query_id] = band
+    if set(bands) != set(query_ids):
+        raise ValueError("TDC score bands omit queries")
+    contexts = {query_id: [] for query_id in query_ids}
+    uids = {query_id: {level: [] for level in levels} for query_id in query_ids}
+    scores = {query_id: {} for query_id in query_ids}
+    score_db = sqlite3.connect(f"file:{database.resolve()}?mode=ro&immutable=1", uri=True)
+    for name, budget in (("selected_contexts.tsv", 10),
+                         ("selected_uids.tsv", mixed["indirect_budget"])):
+        ranks = {query_id: 0 for query_id in query_ids}
+        for row in tables[name]:
+            query_id = row["benchmark_row_id"]
+            if query_id not in ranks or int(row["selection_rank"]) != ranks[query_id] + 1:
+                raise ValueError(f"TDC selection ranks differ: {query_id}")
+            ranks[query_id] += 1
+            level = "L1" if name == "selected_contexts.tsv" else row["level"]
+            item = row["parent_id"] if level == "L1" else row["source_row_uid"]
+            if level != "L1" and level not in levels:
+                raise ValueError(f"TDC UID level differs: {level}")
+            if level != "L1" and item in excluded:
+                raise ValueError(f"Prediction-only UID entered BBB selection: {item}")
+            if level != "L1":
+                source = row["semantic_weight_source"]
+                if (source not in {"reviewed_family_mean", "provisional_task_level_mean",
+                                   "candidate_family_mean", "candidate_calibrated_v2"}
+                        or bool(row["semantic_bucket_id"]) == (source == "provisional_task_level_mean")
+                        or not 0 <= float(row["semantic_weight"]) <= 1):
+                    raise ValueError(f"TDC semantic weight provenance differs: {query_id}/{item}")
+                if candidate_semantics is not None:
+                    frozen = candidate_semantics.get((item, level))
+                    if (frozen is None
+                            or frozen["semantic_bucket_id"] != row["semantic_bucket_id"]
+                            or frozen["semantic_weight"] != float(row["semantic_weight"])):
+                        raise ValueError(f"TDC candidate semantic weight differs: {query_id}/{item}")
+            key = (level, item)
+            if not item or key in scores[query_id]:
+                raise ValueError(f"TDC selected unit repeats: {query_id}/{key}")
+            raw_score, score_key = row["assay_transfer_score"], row["score_key"]
+            if bool(raw_score) != bool(score_key):
+                raise ValueError(f"TDC score/key mismatch: {query_id}/{key}")
+            score = float(raw_score) if raw_score else None
+            if score is not None and not 0 <= score <= 1:
+                raise ValueError(f"TDC score out of range: {query_id}/{key}")
+            lookup = row["context_id"] if level == "L1" else row["source_row_uid"]
+            frozen = score_db.execute(
+                "SELECT parent_id,score,score_key FROM scores WHERE query_id=? AND level=? AND item_id=?",
+                (query_id, level, lookup),
+            ).fetchone()
+            if (frozen is None) != (score is None) or (frozen is not None and
+                    (frozen[0] != row["parent_id"] or frozen[1] != score or frozen[2] != score_key)):
+                raise ValueError(f"TDC selected score differs from frozen snapshot: {query_id}/{key}")
+            scores[query_id][key] = score
+            if level == "L1":
+                contexts[query_id].append(row["context_id"])
+            else:
+                uids[query_id][level].append(item)
+        if any(count != budget for count in ranks.values()):
+            raise ValueError(f"TDC selection must contain {budget} {name} per query")
+    score_db.close()
+    return ({query_id: contexts[query_id] for query_id in queries},
+            {query_id: uids[query_id] for query_id in queries},
+            {"path": str(path), "sha256": sha256_file(path),
+             "indirect_budget": mixed["indirect_budget"],
+             "score_visibility": {query_id: bands[query_id] for query_id in queries},
+             "_selected_scores": {query_id: scores[query_id] for query_id in queries}})
 
 
 def _load_flat_context_candidates(
@@ -1845,9 +2348,91 @@ def _load_flat_context_candidates(
     )
     active_levels = {level for level in policy["stages"] if level != "L1"}
     all_later_records = policy.get("all_later_records") is True
+    physical_selection = None
+    manual_uids = getattr(args, "uids", None)
+    manual_file = getattr(args, "uids_file", None)
+    manual_receipt = None
+    if manual_uids is not None or manual_file is not None:
+        from predict.retrieval.selection import read_selection
+        if manual_file is not None:
+            physical_selection, manual_receipt = read_selection(
+                manual_file, task=args.task, subset=args.evaluation_subset, queries=queries,
+            )
+        else:
+            if len(queries) != 1 or not getattr(args, "uid_level", None):
+                raise ValueError("--uids requires exactly one query and --uid-level")
+            query_id = next(iter(queries))
+            physical_selection = [dict(benchmark_row_id=query_id, level=args.uid_level,
+                                       source_row_uid=uid) for uid in manual_uids]
+            manual_receipt = {"uids": list(manual_uids), "level": args.uid_level}
+        if policy.get("selection_contract") != "ranked_uid_retrieval.v1":
+            raise ValueError("Manual physical UIDs require a frozen ranked UID cache")
+        if manual_file is not None and "manifest" in manual_receipt:
+            pins = manual_receipt["manifest"]["cache_manifests"]
+            if args.benchmark == "tdc" and "L1" in pins:
+                from data.processing.paths import REPO_ROOT
+                from predict.retrieval.selection import indexed_manifests
+                card_index = REPO_ROOT / tdc_config(args.task)["selection"]["direct_cache"]
+                card_manifest = indexed_manifests(card_index, args.evaluation_subset, ("L1",))["L1"]
+                if pins["L1"]["sha256"] == sha256_file(card_manifest):
+                    policy = {**policy,
+                              "stages": {**policy["stages"], "L1": "morgan"},
+                              "cache_indexes": {**policy["cache_indexes"], "L1": str(card_index)},
+                              "cache_manifests": {**policy["cache_manifests"], "L1": str(card_manifest)},
+                              "inputs": {**policy["inputs"], str(card_index): sha256_file(card_index),
+                                         str(card_manifest): sha256_file(card_manifest)}}
+            if "L1" in pins:
+                canonical_manifest = Path(pins["L1"]["path"])
+                canonical_header = json.loads(canonical_manifest.read_text())
+                if canonical_header.get("context_identity") == "canonical_context_molecule.v1":
+                    canonical_index = canonical_manifest.parents[3] / "RELEASE_INDEX.json"
+                    from predict.retrieval.selection import indexed_manifests
+                    checked = indexed_manifests(canonical_index, args.evaluation_subset, ("L1",))["L1"]
+                    if sha256_file(checked) != pins["L1"]["sha256"]:
+                        raise ValueError("Canonical L1 index differs from the selected cards")
+                    policy = {**policy, "stages": {**policy["stages"], "L1": "morgan"},
+                              "cache_indexes": {**policy["cache_indexes"], "L1": str(canonical_index)},
+                              "cache_manifests": {**policy["cache_manifests"], "L1": str(checked)}}
+            for level, entry in pins.items():
+                active = Path(policy["cache_manifests"][level])
+                if sha256_file(active) != entry["sha256"]:
+                    raise ValueError("Manual selection differs from the requested cache release")
     preselected_uids = None
     preselected_contexts = None
     preselection_receipt = None
+    mixed_scores = None
+    if manual_receipt and "manifest" in manual_receipt:
+        uid_manifest = manual_receipt["manifest"]
+        snapshot = uid_manifest.get("provenance", {}).get("optimizer_snapshot")
+        if snapshot:
+            canonical_path = Path(manual_receipt["path"])
+            snapshot_path = (canonical_path.parent / snapshot["path"]).resolve()
+            if sha256_file(snapshot_path) != snapshot["sha256"]:
+                raise ValueError("Optimizer scientific provenance changed")
+            source = json.loads(snapshot_path.read_text())
+            if source["schema_version"] in {"context_selection.v1", "combined_context_selection.v1"}:
+                from optimization.selection.search import selected_scores
+                scientific_manifest = Path(manual_receipt.get("optimizer_manifest", {}).get("path") or snapshot_path.parent / "manifest.json")
+                mixed_scores = selected_scores(scientific_manifest)
+                if set(mixed_scores) != set(queries):
+                    raise ValueError("Canonical selection score cohort differs")
+                preselection_receipt = {"score_visibility": {query: "available" for query in queries}}
+            elif source["schema_version"] in PRESELECTED_DIRECT_SCHEMAS:
+                _, preselection_receipt = _load_preselected_contexts(
+                    snapshot_path, task=args.task, queries=queries, budget=args.l1_molecules,
+                    allow_subset=bool(args.indices),
+                    benchmark="gold_v1" if args.benchmark == "gold" else "tdc",
+                )
+                mixed_scores = preselection_receipt.pop("_selected_scores", None)
+            elif source["schema_version"] in {PRESELECTED_MIXED_SCHEMA, TDC_V2_MIXED_SCHEMA,
+                                           DILI_TDC_V2_MIXED_SCHEMA, TDC_V2_BBB_FILTERED_SCHEMA}:
+                _, _, preselection_receipt = _load_mixed_selection(
+                    snapshot_path, task=args.task, benchmark=args.benchmark,
+                    subset=args.evaluation_subset, queries=queries, levels=active_levels,
+                    cache_index=Path(policy["cache_indexes"]["L2"]), cache_config=args.assay_transfer_cache,
+                    allow_subset=False,
+                )
+                mixed_scores = preselection_receipt.pop("_selected_scores", None)
     if getattr(args, "flat_mixed_selection", None):
         preselected_contexts, preselected_uids, preselection_receipt = _load_mixed_selection(
             args.flat_mixed_selection,
@@ -1857,6 +2442,10 @@ def _load_flat_context_candidates(
             cache_config=args.assay_transfer_cache,
             allow_subset=bool(getattr(args, "flat_mixed_selection_subset", False)),
         )
+        mixed_scores = preselection_receipt.pop("_selected_scores", None)
+        if (preselection_receipt.get("score_policy") == "query_mean_missing_scores.v1"
+                and args.evaluation_subset == "valid"):
+            policy = {**policy, "allow_unscored_preselected": True}
     if getattr(args, "flat_preselected_uids", None):
         preselected_uids, preselection_receipt = _load_preselected_uids(
             args.flat_preselected_uids,
@@ -1876,7 +2465,11 @@ def _load_flat_context_candidates(
             task=args.task,
             queries=queries,
             budget=args.l1_molecules,
+            allow_subset=bool(args.indices),
+            benchmark=("gold_v1" if args.benchmark == "gold" else
+                       "tdc"),
         )
+        mixed_scores = preselection_receipt.pop("_selected_scores", None)
     molecules, ranked_later, audit = load_candidates(
         queries,
         task=args.task,
@@ -1897,6 +2490,7 @@ def _load_flat_context_candidates(
         cache_pool="all",
         preselected_uids=preselected_uids,
         preselected_contexts=preselected_contexts,
+        physical_selection=physical_selection,
         preselected_uid_budget=(
             preselection_receipt["indirect_budget"]
             if getattr(args, "flat_mixed_selection", None) else None
@@ -1919,12 +2513,12 @@ def _load_flat_context_candidates(
             limit = args.record_limits_by_level[level]
             records = (
                 list(group["records"])
-                if all_later_records or getattr(args, "flat_mixed_selection", None) else [
+                if all_later_records or physical_selection is not None or getattr(args, "flat_mixed_selection", None) else [
                     row for row in group["records"]
                     if str(row["record_id"]) not in l1_record_ids
                 ][:limit]
             )
-            if (not all_later_records and not getattr(args, "flat_mixed_selection", None)
+            if (not all_later_records and physical_selection is None and not getattr(args, "flat_mixed_selection", None)
                     and args.prompt_version in CONTEXT_NUMBERED_PROMPT_VERSIONS
                     and len(records) != limit and not group.get("allow_shortfall")):
                 raise ValueError(
@@ -1939,7 +2533,7 @@ def _load_flat_context_candidates(
                 "records": records,
                 "selected_records": len(records),
                 "selected_molecules": selected_molecules,
-                "shortfall": 0 if all_later_records or getattr(args, "flat_mixed_selection", None)
+                "shortfall": 0 if all_later_records or physical_selection is not None or getattr(args, "flat_mixed_selection", None)
                 else max(0, limit - len(records)),
             }
             query_audits[query_id][level] = {
@@ -1953,6 +2547,15 @@ def _load_flat_context_candidates(
         if level != "L1"
     }
     return molecules, later, {
+        "_tdc_selected_scores": mixed_scores,
+        "_tdc_score_visibility": (
+            preselection_receipt.get("score_visibility") if mixed_scores is not None else None
+        ),
+        "_gold_score_visibility": (
+            preselection_receipt.get("score_visibility") if mixed_scores is None
+            and preselection_receipt is not None else None
+        ),
+        "manual_uid_selection": manual_receipt,
         "selection_policy": selection_contract,
         "inputs": dict(audit.get("inputs") or {}),
         "contract": {
@@ -2058,21 +2661,92 @@ def _attach_molecule_descriptions(
         else:
             missing.append(smiles)
     return sorted(set(missing))
+
+
+def _apply_tdc_v2_scores(
+    retrieval: dict[str, Any], selected: Mapping[tuple[str, str], float | None], band: str,
+) -> None:
+    if band not in {"low", "middle", "high", "available"}:
+        raise ValueError("TDC selection has no valid score band")
+    seen = set()
+    for neighbor in retrieval["groups"][0]["neighbors"]:
+        parent = str(neighbor["standard_inchi_key"])
+        (neighbor.get("_prompt_scores") or {}).pop("transfer_likelihood", None)
+        for row in neighbor["evidence_rows"]:
+            provenance = row["selection_provenance"]
+            level = str(provenance["level"])
+            uid = str(row["source_provenance"]["source_row_uid"])
+            card_key = ("L1", str(provenance.get("diagnostic_context_id") or ""))
+            key = (card_key if card_key in selected else ("L1", parent)) if level == "L1" else (level, uid)
+            if key not in selected:
+                raise ValueError(f"TDC rendered an unselected unit: {key}")
+            seen.add(key)
+            provenance.pop("assay_transfer_score", None)
+            provenance.pop("assay_rank", None)
+            provenance.pop("assay_transfer_panel_rank", None)
+            card = row["prompt_evidence"]
+            card.pop("transfer_likelihood", None)
+            (card.get("_molecule_scores") or {}).pop("transfer_likelihood", None)
+            score = selected[key]
+            if band in {"high", "available"} and score is not None:
+                provenance["assay_transfer_score"] = round(score, 4)
+    if seen != set(selected):
+        raise ValueError(f"TDC selected units were not fully rendered: {len(seen)}/{len(selected)}")
+    retrieval["tdc_score_visibility"] = band
+
+
+def _apply_gold_score_visibility(retrieval: dict[str, Any], band: str) -> None:
+    if band not in {"low", "middle", "high", "available"}:
+        raise ValueError("Gold selection has no valid score band")
+    if band in {"low", "middle"}:
+        for neighbor in retrieval["groups"][0]["neighbors"]:
+            (neighbor.get("_prompt_scores") or {}).pop("transfer_likelihood", None)
+            for row in neighbor["evidence_rows"]:
+                provenance = row["selection_provenance"]
+                for key in ("assay_transfer_score", "assay_rank", "assay_transfer_panel_rank"):
+                    provenance.pop(key, None)
+                card = row["prompt_evidence"]
+                card.pop("transfer_likelihood", None)
+                (card.get("_molecule_scores") or {}).pop("transfer_likelihood", None)
+    retrieval["score_visibility"] = band
+
+
 def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Path, dict[str, Any]]:
     from predict.retrieval.assay_reranking.cache_matched import (
         load_cache_policy,
         load_candidates,
     )
 
+    if args.prompt_version in FINAL_FULL_FLAT_PROMPT_VERSIONS:
+        require_current_cache_bundle(args.assay_transfer_cache)
+        selection_path = args.flat_mixed_selection or args.flat_preselected_contexts
+        if selection_path is None and not (getattr(args, "uids", None) or getattr(args, "uids_file", None)):
+            raise ValueError("final_full_flat requires a new direct/mixed selection or manual UIDs")
+        if selection_path is not None:
+            selection = json.loads(Path(selection_path).read_text(encoding="utf-8"))
+            policy = (selection.get("score_policy") or {}).get("version") if args.benchmark == "tdc" else (
+                selection.get("score_policy") if args.flat_mixed_selection else
+                (selection.get("objective") or {}).get("assay_score_policy")
+            )
+            if policy != "available_scores.v1" and not (
+                args.benchmark == "gold" and args.task == "carcinogens"
+                and policy == "query_mean_missing_scores.v1"
+            ):
+                raise ValueError("final_full_flat requires an available_scores.v1 selection")
+
     artifact_receipt = None
     if args.prompt_version in CONTEXT_NUMBERED_PROMPT_VERSIONS:
+        artifact_benchmark = (
+            "tdc" if args.benchmark == "tdc"
+            else args.benchmark
+        )
         artifact_manifest = Path(
             getattr(args, "flat_artifact_manifest", None)
-            or bundle_manifest_path(args.task, args.benchmark)
+            or bundle_manifest_path(args.task, artifact_benchmark)
         ).resolve()
         artifact_receipt_path = Path(
             getattr(args, "flat_artifact_receipt", None)
-            or bundle_receipt_path(args.task, args.benchmark)
+            or bundle_receipt_path(args.task, artifact_benchmark)
         ).resolve()
         try:
             artifact_receipt = require_receipt(
@@ -2081,7 +2755,7 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
                 verify=bool(getattr(args, "verify_flat_artifacts", False)),
                 expected_cache_config=Path(args.assay_transfer_cache),
                 expected_task=args.task,
-                expected_benchmark=args.benchmark,
+                expected_benchmark=artifact_benchmark,
                 expected_max_level=args.max_level,
             )
         except ArtifactBundleError as error:
@@ -2089,17 +2763,28 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
                 f"full-flat artifact preflight failed for {args.task}/{args.benchmark}: {error}\n"
                 "Restore the bundle, or inventory and verify it with: "
                 "python -m predict.retrieval.assay_reranking.artifact_bundle "
-                f"inventory --task {args.task} --benchmark {args.benchmark}_v1 "
+                f"inventory --task {args.task} --benchmark {artifact_benchmark} "
                 f"--cache-config {args.assay_transfer_cache} "
                 f"--output {artifact_manifest}"
             ) from error
         args.flat_artifact_manifest = artifact_manifest
         args.flat_artifact_receipt = artifact_receipt_path
+    args.uids = getattr(args, "uids", None)
+    args.uids_file = getattr(args, "uids_file", None)
+    args.uid_level = getattr(args, "uid_level", None)
     args.flat_preselected_uids = getattr(args, "flat_preselected_uids", None)
     args.flat_preselected_contexts = getattr(args, "flat_preselected_contexts", None)
     args.flat_mixed_selection = getattr(args, "flat_mixed_selection", None)
     records = read_jsonl(args.input_jsonl)
     indices = _selected_indices(args, len(records))
+    if args.uids_file and not args.indices and args.start == 0 and args.limit == 0:
+        from predict.retrieval.selection import selection_query_ids
+        requested = selection_query_ids(args.uids_file)
+        by_id = {str(row["benchmark_row_id"]): index for index, row in enumerate(records)}
+        if set(requested) - by_id.keys():
+            raise ValueError("Manual UID query identities are absent from the declared input")
+        indices = [by_id[query_id] for query_id in requested]
+        args.indices = [str(index) for index in indices]
     preselected_manifest = (
         args.flat_mixed_selection or args.flat_preselected_uids or args.flat_preselected_contexts
     )
@@ -2111,6 +2796,8 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
             subset=args.evaluation_subset,
         )
         args.indices = [str(index) for index in indices]
+        if args.flat_mixed_selection and len(indices) < len(records):
+            args.flat_mixed_selection_subset = True
     queries = {
         str(records[index]["benchmark_row_id"]): str(records[index]["drug"])
         for index in indices
@@ -2126,7 +2813,7 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
     source_batch = batch_dir / "cache_matched_retrieval"
     existing_path = source_batch / "manifest.json"
     if existing_path.exists():
-        existing = json.loads(existing_path.read_text(encoding="utf-8"))
+        existing = read_record(existing_path)
         expected = {
             "harness_version": args.harness_version,
             "prompt_version": args.prompt_version,
@@ -2137,7 +2824,6 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
             "cache_pool": RECORD_POOLS[args.record_pool],
             "indices": indices,
             "input_jsonl": str(args.input_jsonl),
-            "input_sha256": sha256_file(args.input_jsonl),
             "evidence_library": str(args.evidence_library),
             "level_mapper": str(args.level_mapper),
             "assay_transfer_cache": str(args.assay_transfer_cache),
@@ -2151,24 +2837,15 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
             "record_limits_by_level": args.record_limits_by_level,
             "ranking_tie_seed": args.ranking_tie_seed,
             "max_level": args.max_level,
+            "manual_uids": args.uids,
+            "manual_uid_level": args.uid_level,
             "flat_preselected_uids": (
                 str(args.flat_preselected_uids) if args.flat_preselected_uids else ""
-            ),
-            "flat_preselected_uids_sha256": (
-                sha256_file(args.flat_preselected_uids)
-                if args.flat_preselected_uids else ""
             ),
             "flat_preselected_contexts": (
                 str(args.flat_preselected_contexts) if args.flat_preselected_contexts else ""
             ),
-            "flat_preselected_contexts_sha256": (
-                sha256_file(args.flat_preselected_contexts)
-                if args.flat_preselected_contexts else ""
-            ),
             "flat_mixed_selection": str(args.flat_mixed_selection) if args.flat_mixed_selection else "",
-            "flat_mixed_selection_sha256": (
-                sha256_file(args.flat_mixed_selection) if args.flat_mixed_selection else ""
-            ),
         }
         if artifact_receipt:
             expected.update(
@@ -2192,36 +2869,40 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
                 molecule_name_visible=False,
                 group_tools_enabled=False,
             )
-        mismatches = {
-            key: {"expected": value, "observed": existing.get(key)}
-            for key, value in expected.items()
-            if existing.get(key) != value
-        }
-        selector_path = Path(__file__).resolve().parents[2] / "retrieval/assay_reranking/cache_matched.py"
-        if (existing.get("selector_code") or {}).get("sha256") != sha256_file(selector_path):
-            mismatches["selector_code"] = "changed"
-        selection_policy = existing.get("selection_audit", {}).get("selection_policy")
-        if selection_policy in {CONTEXT_V4_SELECTION_CONTRACT, CONTEXT_V5_SELECTION_CONTRACT}:
-            for name in ("ranked_uid_retrieval.py",):
-                reader_path = selector_path.with_name(name)
-                recorded = (existing.get("cache_reader_codes") or {}).get(name) or {}
-                if recorded.get("sha256") != sha256_file(reader_path):
-                    mismatches[f"cache_reader_codes[{name}]"] = "changed"
-        if selection_policy in SQLITE_SELECTION_CONTRACTS:
-            reader_path = selector_path.with_name(SQLITE_SELECTION_CONTRACTS[selection_policy])
-            if (existing.get("cache_reader_code") or {}).get("sha256") != sha256_file(reader_path):
-                mismatches["cache_reader_code"] = "changed"
-        if (existing.get("prompt_assets") or {}).get("sha256") != prompt_asset_manifest(
-            args.prompt_version
-        )["sha256"]:
-            mismatches["prompt_assets"] = "changed"
-        retrieval_hashes = existing.get("retrieval_sha256_by_index") or {}
-        if set(retrieval_hashes) != {str(index) for index in indices}:
-            mismatches["retrieval_sha256_by_index"] = "incomplete_or_unexpected_indices"
-        for index, expected_hash in retrieval_hashes.items():
-            retrieval_path = source_batch / "runs" / f"{source_batch.name}_idx{int(index):05d}" / "retrieval.json"
-            if not retrieval_path.exists() or sha256_file(retrieval_path) != expected_hash:
-                mismatches[f"retrieval[{index}]"] = "missing_or_changed"
+        wanted = scientific_settings(expected)
+        mismatches = {key: {"expected": value, "observed": existing.get(key)}
+                      for key, value in wanted.items() if existing.get(key) != value}
+        require_query_ids(existing, records, indices)
+        require_artifact_versions(existing, {key: expected.get(key) for key in
+            ("input_jsonl", "evidence_library", "level_mapper", "assay_transfer_cache", "gold_context_mapping")})
+        if existing.get("indices") != indices:
+            mismatches["indices"] = "different query membership"
+        requested_uids = None
+        if args.uids_file:
+            from predict.retrieval.selection import read_selection
+            requested_uids, _ = read_selection(args.uids_file, task=args.task,
+                                              subset=args.evaluation_subset, queries=queries)
+        for index in indices:
+            retrieval_path = run_directory(source_batch, index) / "retrieval.json"
+            if not retrieval_path.is_file():
+                mismatches[f"retrieval[{index}]"] = "missing"
+            elif requested_uids is not None:
+                expected_uids, frozen_uids = {}, {}
+                query_id = str(records[index]["benchmark_row_id"])
+                for row in requested_uids:
+                    if str(row["benchmark_row_id"]) == query_id:
+                        expected_uids.setdefault(row["level"], []).append(row["source_row_uid"])
+                retrieval = json.loads(retrieval_path.read_text())
+                for group in retrieval.get("groups") or []:
+                    for neighbor in group.get("neighbors") or []:
+                        for row in neighbor.get("evidence_rows") or []:
+                            level = row.get("selection_provenance", {}).get("level")
+                            uid = row.get("source_provenance", {}).get("source_row_uid")
+                            if uid:
+                                frozen_uids.setdefault(level, []).append(uid)
+                if expected_uids != frozen_uids:
+                    mismatches[f"manual_uids[{index}]"] = "different ordered physical selection"
+
         if mismatches:
             raise ValueError(
                 "Existing flat selection is immutable and differs from this request: "
@@ -2292,15 +2973,26 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
             preserve_physical_records=(
                 audit["contract"].get("all_later_records") is True
                 or bool(args.flat_mixed_selection)
+                or args.uids is not None or args.uids_file is not None
             ),
         )
+        if args.prompt_version in FINAL_FULL_FLAT_PROMPT_VERSIONS:
+            retrieval["benchmark"] = "tdc" if args.benchmark == "tdc" else "gold_v1"
+        if audit.get("_tdc_selected_scores") is not None:
+            _apply_tdc_v2_scores(
+                retrieval, audit["_tdc_selected_scores"][query_id],
+                audit["_tdc_score_visibility"][query_id],
+            )
+        if audit.get("_gold_score_visibility") is not None:
+            _apply_gold_score_visibility(
+                retrieval, audit["_gold_score_visibility"][query_id],
+            )
         description_missing.update(
             _attach_molecule_descriptions(retrieval, molecule_descriptions)
         )
         run_dir = run_root / f"{source_batch.name}_idx{index:05d}"
         path = run_dir / "retrieval.json"
         write_json_atomic(path, retrieval)
-        retrieval_hashes[str(index)] = sha256_file(path)
 
     contract = deepcopy(audit["contract"])
     contract.pop("inputs", None)
@@ -2356,7 +3048,6 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
                     "status": version.get("status"),
                     "morgan_pool_size": version.get("morgan_pool_size"),
                     "models": version.get("models"),
-                    "cache_sha256": version.get("cache_sha256"),
                 }
                 for path, version in audit["cache_versions"].items()
             ],
@@ -2376,7 +3067,6 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
         "cache_pool": RECORD_POOLS[args.record_pool],
         "indices": indices,
         "input_jsonl": str(args.input_jsonl),
-        "input_sha256": sha256_file(args.input_jsonl),
         "evidence_library": str(args.evidence_library),
         "level_mapper": str(args.level_mapper),
         "assay_transfer_cache": str(args.assay_transfer_cache),
@@ -2390,32 +3080,15 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
         "record_limits_by_level": args.record_limits_by_level,
         "ranking_tie_seed": args.ranking_tie_seed,
         "max_level": args.max_level,
+        "manual_uids": args.uids,
+        "manual_uid_level": args.uid_level,
         "flat_preselected_uids": (
             str(args.flat_preselected_uids) if args.flat_preselected_uids else ""
-        ),
-        "flat_preselected_uids_sha256": (
-            sha256_file(args.flat_preselected_uids)
-            if args.flat_preselected_uids else ""
         ),
         "flat_preselected_contexts": (
             str(args.flat_preselected_contexts) if args.flat_preselected_contexts else ""
         ),
-        "flat_preselected_contexts_sha256": (
-            sha256_file(args.flat_preselected_contexts)
-            if args.flat_preselected_contexts else ""
-        ),
         "flat_mixed_selection": str(args.flat_mixed_selection) if args.flat_mixed_selection else "",
-        "flat_mixed_selection_sha256": (
-            sha256_file(args.flat_mixed_selection) if args.flat_mixed_selection else ""
-        ),
-        "retrieval_sha256_by_index": retrieval_hashes,
-        "selector_code": {
-            "path": str(Path(__file__).resolve().parents[2] / "retrieval/assay_reranking/cache_matched.py"),
-            "sha256": sha256_file(
-                Path(__file__).resolve().parents[2] / "retrieval/assay_reranking/cache_matched.py"
-            ),
-        },
-        "prompt_assets": prompt_asset_manifest(args.prompt_version),
         "selection_audit": compact_audit,
     }
     if artifact_receipt:
@@ -2443,25 +3116,6 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
             molecule_name_visible=False,
             group_tools_enabled=False,
         )
-    if audit["selection_policy"] in {CONTEXT_V4_SELECTION_CONTRACT, CONTEXT_V5_SELECTION_CONTRACT}:
-        reader_root = Path(__file__).resolve().parents[2] / "retrieval/assay_reranking"
-        manifest["cache_reader_codes"] = {
-            name: {
-                "path": str(reader_root / name),
-                "sha256": sha256_file(reader_root / name),
-            }
-            for name in ("ranked_uid_retrieval.py",)
-        }
-    elif audit["selection_policy"] in SQLITE_SELECTION_CONTRACTS:
-        reader_path = (
-            Path(__file__).resolve().parents[2]
-            / "retrieval/assay_reranking"
-            / SQLITE_SELECTION_CONTRACTS[audit["selection_policy"]]
-        )
-        manifest["cache_reader_code"] = {
-            "path": str(reader_path),
-            "sha256": sha256_file(reader_path),
-        }
     if args.prompt_version == JOSEPH_PROMPT_VERSION:
         manifest.update(
             evidence_projection=EVIDENCE_PROJECTION,
@@ -2469,25 +3123,8 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
             molecule_name_visible=False,
             group_tools_enabled=False,
         )
-    manifest["selection_contract_sha256"] = hashlib.sha256(
-        json.dumps(
-            {
-                "contract": contract,
-                "inputs": compact_audit["inputs"],
-                "selector_code_sha256": manifest["selector_code"]["sha256"],
-                "cache_reader_code_sha256": (
-                    (manifest.get("cache_reader_code") or {}).get("sha256")
-                ),
-                "cache_reader_codes_sha256": {
-                    name: value["sha256"]
-                    for name, value in (manifest.get("cache_reader_codes") or {}).items()
-                },
-            },
-            sort_keys=True,
-            separators=(",", ":"),
-        ).encode("utf-8")
-    ).hexdigest()
-    write_json_atomic(source_batch / "manifest.json", manifest)
+    write_batch(source_batch / "manifest.json", manifest,
+                records=[(index, records[index]) for index in indices])
     return source_batch, manifest
 
 
@@ -2520,7 +3157,10 @@ def _preselected_query_indices(
     document = json.loads(path.read_text(encoding="utf-8"))
     if (
         document.get("schema_version") not in {
-            PRESELECTED_UID_SCHEMA, PRESELECTED_MIXED_SCHEMA, *PRESELECTED_DIRECT_SCHEMAS
+            PRESELECTED_UID_SCHEMA, PRESELECTED_MIXED_SCHEMA, TDC_V2_MIXED_SCHEMA,
+            DILI_TDC_V2_MIXED_SCHEMA,
+            TDC_V2_BBB_FILTERED_SCHEMA,
+            *PRESELECTED_DIRECT_SCHEMAS
         }
         or document.get("status") != "complete"
         or document.get("task_id") != task
@@ -2548,7 +3188,9 @@ def _validate_query_prior_batch(
 ) -> None:
     """Bind cached prior artifacts to current stable query identities."""
     overlay_path = prior_batch / "manifest.json"
-    overlay = json.loads(overlay_path.read_text()) if overlay_path.is_file() else {}
+    overlay = read_record(overlay_path) if overlay_path.is_file() else {}
+    if overlay.get("queries") is not None:
+        require_query_ids(overlay, records, indices)
     overlay_sources = (
         overlay.get("sources") or []
         if overlay.get("schema_version") == "branch_query_prior_overlay.v1"
@@ -2556,15 +3198,14 @@ def _validate_query_prior_batch(
     )
     if overlay_sources is not None:
         if (
-            overlay.get("input_sha256") != sha256_file(Path(overlay["input_jsonl"]))
-            or len(overlay_sources) != len(records)
+            len(overlay_sources) != len(records)
         ):
             raise ValueError(f"Cached query-prior overlay differs from its input: {prior_batch}")
     for index in indices:
         run_dir = (
             Path(overlay_sources[index]["run_dir"])
             if overlay_sources is not None
-            else prior_batch / "runs" / f"{prior_batch.name}_idx{index:05d}"
+            else run_directory(prior_batch, index)
         )
         if overlay_sources is not None:
             source = overlay_sources[index]
@@ -2574,9 +3215,6 @@ def _validate_query_prior_batch(
             )
             if key != (source.get("molecule_identity_key"), source.get("condition_group")):
                 raise ValueError(f"Cached query-prior overlay identity differs at index {index}")
-            for name, expected in (source.get("files_sha256") or {}).items():
-                if sha256_file(run_dir / name) != expected:
-                    raise ValueError(f"Cached query-prior overlay hash mismatch: {run_dir / name}")
         retrieval_path = run_dir / "retrieval.json"
         single_path = run_dir / "single_molecule_reasoning_output.json"
         if not retrieval_path.is_file() or not single_path.is_file():
@@ -2605,30 +3243,10 @@ def run(argv: list[str] | None = None) -> int:
     selector = argparse.ArgumentParser(add_help=False, allow_abbrev=False)
     selector.add_argument(
         "--harness-version",
-        choices=(
-            PUBLIC_HARNESS_VERSION,
-            CONTEXT_V4_HARNESS_VERSION,
-            CONTEXT_V5_HARNESS_VERSION,
-            CONTEXT_V6_HARNESS_VERSION,
-            CONTEXT_V7_HARNESS_VERSION,
-            CONTEXT_V8_HARNESS_VERSION,
-            CONTEXT_V5_SIX_TASKS_HARNESS_VERSION,
-            CONTEXT_V5_SIX_TASKS_UPSTREAM_HARNESS_VERSION,
-            CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_HARNESS_VERSION,
-            CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_HARNESS_VERSION,
-            JOSEPH_V1_HARNESS_VERSION,
-            LEGACY_HARNESS_VERSION,
-        ),
+        choices=tuple(ACTIVE_HARNESS_PROMPTS),
         default=PUBLIC_HARNESS_VERSION,
     )
     selected, remaining = selector.parse_known_args(argv)
-    if selected.harness_version == LEGACY_HARNESS_VERSION:
-        if "--flat-prompt-version" in remaining:
-            selector.error("Tianang's harness version already fixes its prompt bundle")
-        return mode_main(
-            "full_flat",
-            [*remaining, "--flat-prompt-version", TIANANG_PROMPT_VERSION],
-        )
     return _joseph_main(["--harness-version", selected.harness_version, *remaining])
 
 
@@ -2642,10 +3260,11 @@ def _joseph_main(argv: list[str]) -> int:
         description="Run a cache-matched Joseph flat harness.", allow_abbrev=False
     )
     parser.add_argument(
-        "--harness-version", choices=tuple(JOSEPH_HARNESS_PROMPTS),
+        "--harness-version", choices=tuple(ACTIVE_HARNESS_PROMPTS),
         default=PUBLIC_HARNESS_VERSION,
     )
     parser.add_argument("--task", required=True, choices=tuple(TASKS))
+    parser.add_argument("--provider-pool-config", type=Path, default=DEFAULT_PROVIDER_CONFIG)
     parser.add_argument(
         "--reranking", choices=(*CONTEXT_V4_VARIANTS, JOINT_VARIANT),
         default=ASSAY_TRANSFER_VARIANT,
@@ -2688,6 +3307,7 @@ def _joseph_main(argv: list[str]) -> int:
     )
     parser.add_argument("--evaluation-subset", choices=("valid", "test"), default="valid")
     parser.add_argument("--benchmark", choices=("gold", "tdc"), default="gold")
+
     parser.add_argument("--input-jsonl", type=Path)
     parser.add_argument("--evidence-library", type=Path)
     parser.add_argument(
@@ -2705,6 +3325,10 @@ def _joseph_main(argv: list[str]) -> int:
     )
     parser.add_argument("--ranking-tie-seed", type=int, default=0)
     parser.add_argument("--max-level", type=int, default=0)
+    manual = parser.add_mutually_exclusive_group()
+    manual.add_argument("--uids", nargs="+", help="Ordered physical UIDs for one query and level.")
+    manual.add_argument("--uids-file", type=Path, help="Manual UID TSV or optimizer UID manifest.")
+    parser.add_argument("--uid-level", help="Evidence level for an inline --uids selection.")
     parser.add_argument("--indices", nargs="*")
     parser.add_argument("--start", type=int, default=0)
     parser.add_argument("--limit", type=int, default=0)
@@ -2727,10 +3351,20 @@ def _joseph_main(argv: list[str]) -> int:
         help="Materialize and verify flat retrieval without issuing model or tool calls.",
     )
     args, remaining = parser.parse_known_args(argv)
+    if (args.uids or args.uids_file) and (args.flat_preselected_contexts or
+            args.flat_preselected_uids or args.flat_mixed_selection):
+        parser.error("manual UIDs replace automatic or legacy preselection; do not combine them")
+    if args.uid_level and not args.uids:
+        parser.error("--uid-level applies only to --uids")
     args.prompt_version = JOSEPH_HARNESS_PROMPTS[args.harness_version]
     args.assay_transfer_cache = resolve_default_cache_bundle(
-        args.task, args.benchmark, args.assay_transfer_cache
+        args.task, args.benchmark, args.assay_transfer_cache,
+
     )
+    try:
+        require_current_cache_bundle(args.assay_transfer_cache)
+    except (OSError, ValueError) as exc:
+        parser.error(str(exc))
     task_max_level = prompt_task_max_level(
         args.task, args.prompt_version, args.assay_transfer_cache,
     )
@@ -2800,10 +3434,33 @@ def _joseph_main(argv: list[str]) -> int:
         parser.error("direct contexts and later-level preselected UIDs are mutually exclusive")
     if args.flat_mixed_selection and (args.flat_preselected_contexts or args.flat_preselected_uids):
         parser.error("mixed selection cannot be combined with other preselection flags")
-    if args.flat_mixed_selection and (
+    mixed_schema = json.loads(
+        args.flat_mixed_selection.read_text(encoding="utf-8")
+    ).get("schema_version") if args.flat_mixed_selection else None
+    mixed_tdc_v2 = mixed_schema in {TDC_V2_MIXED_SCHEMA, DILI_TDC_V2_MIXED_SCHEMA}
+    filtered_tdc_v2 = mixed_schema == TDC_V2_BBB_FILTERED_SCHEMA
+    args.flat_mixed_selection_subset = bool(filtered_tdc_v2 and args.indices)
+    mixed_prompts = (
+        {DILI_TDC_V2_MIXED_V3_PROMPT_VERSION, DILI_TDC_V2_POLARIZED_PROMPT_VERSION,
+         *FINAL_FULL_FLAT_PROMPT_VERSIONS}
+        if mixed_schema == DILI_TDC_V2_MIXED_SCHEMA
+        else {TDC_V2_MIXED_PROMPT_VERSION, CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
+              *FINAL_FULL_FLAT_PROMPT_VERSIONS}
+        if args.task in {"ames", "carcinogens"} else {TDC_V2_MIXED_PROMPT_VERSION,
+                                      *FINAL_FULL_FLAT_PROMPT_VERSIONS}
+    )
+    if mixed_tdc_v2 and (args.prompt_version not in mixed_prompts or args.benchmark != 'tdc' or args.reranking != 'assay-transfer' or (args.l1_molecules != 10) or ((args.max_level or task_max_level) != task_max_level)):
+        parser.error("TDC mixed selection requires its successor prompt, assay-transfer reader, K10, and all levels")
+    if filtered_tdc_v2 and (args.task != 'bbb_martins' or args.benchmark != 'tdc' or args.prompt_version not in {CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION, *FINAL_FULL_FLAT_PROMPT_VERSIONS} or (args.reranking != 'assay-transfer') or (args.l1_molecules != 10) or ((args.max_level or task_max_level) != task_max_level)):
+        parser.error("Filtered TDC BBB selection requires upstream-v3 and all levels")
+    if args.flat_mixed_selection and not (mixed_tdc_v2 or filtered_tdc_v2) and (
         args.prompt_version not in {
             CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
             CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+            CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
+            FINAL_FULL_FLAT_PROMPT_VERSION,
+            FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
+            FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
         }
         or args.reranking != "assay-transfer-contrastive"
         or args.morgan_primary_parent_width != 25
@@ -2812,11 +3469,36 @@ def _joseph_main(argv: list[str]) -> int:
         or args.max_level != task_max_level
     ):
         parser.error("mixed selection requires upstream V5, W25/M0/K10, and all task levels")
+    direct_tdc_v2 = bool(args.flat_preselected_contexts) and bool(json.loads(
+        args.flat_preselected_contexts.read_text(encoding="utf-8")
+    ).get("score_policy"))
+    if direct_tdc_v2 and (args.prompt_version not in {TDC_V2_MIXED_PROMPT_VERSION, DILI_TDC_V2_MIXED_V3_PROMPT_VERSION, DILI_TDC_V2_POLARIZED_PROMPT_VERSION, CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION, FINAL_FULL_FLAT_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION} or args.benchmark != 'tdc' or args.reranking != 'assay-transfer' or (args.l1_molecules != 10) or ((args.max_level or task_max_level) != 1)):
+        parser.error("TDC exact-score direct selection requires upstream-v3 or its successor prompt and L1-only assay reader")
+    if args.prompt_version in {TDC_V2_MIXED_PROMPT_VERSION, DILI_TDC_V2_MIXED_V3_PROMPT_VERSION,
+                                  DILI_TDC_V2_POLARIZED_PROMPT_VERSION,
+                                  FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
+                                  FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION} and not (mixed_tdc_v2 or direct_tdc_v2):
+        parser.error("TDC successor prompt requires an exact-score selection manifest")
+    if args.prompt_version in {FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION} and (args.task != 'carcinogens' or args.benchmark != 'tdc' or (not args.flat_mixed_selection)):
+        parser.error("Direct-priority Final Full Flat requires a TDC Carcinogens mixed selection")
+    if args.prompt_version == DILI_TDC_V2_POLARIZED_PROMPT_VERSION and (args.task != 'dili' or args.benchmark != 'tdc'):
+        parser.error("Polarized DILI prompt requires TDC DILI")
+    if args.prompt_version in {TDC_SKIN_LLNA_PROMPT_VERSION, TDC_SKIN_LLNA_SCORES_PROMPT_VERSION} and (args.benchmark != 'tdc' or args.task != 'skin_reaction' or (not args.flat_preselected_contexts)):
+        parser.error("TDC Skin LLNA prompt requires TDC-v1 Skin direct selection")
     if args.flat_preselected_contexts and args.prompt_version not in {
         CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
         CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
         CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
+        CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
+        TDC_SKIN_LLNA_PROMPT_VERSION,
+        TDC_SKIN_LLNA_SCORES_PROMPT_VERSION,
         CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
+        TDC_V2_MIXED_PROMPT_VERSION,
+        DILI_TDC_V2_MIXED_V3_PROMPT_VERSION,
+        DILI_TDC_V2_POLARIZED_PROMPT_VERSION,
+        FINAL_FULL_FLAT_PROMPT_VERSION,
+        FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
+        FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
     }:
         parser.error("--flat-preselected-contexts requires full-flat-context-v5-six-tasks-v1")
     if args.assay_transfer_cache == DEFAULT_CACHE_BUNDLE:
@@ -2841,6 +3523,8 @@ def _joseph_main(argv: list[str]) -> int:
     args.level_mapper = args.level_mapper.resolve()
     args.assay_transfer_cache = args.assay_transfer_cache.resolve()
     args.gold_context_mapping = args.gold_context_mapping.resolve()
+    if (args.benchmark == 'tdc' and args.query_prior == 'cached' and (args.prior_root is None)):
+        parser.error("TDC cached priors require an explicit reviewed --prior-root overlay")
     args.prior_root = (
         args.prior_root or default_query_prior_root(
             args.prompt_version, args.benchmark, args.evaluation_subset
@@ -2895,6 +3579,7 @@ def _joseph_main(argv: list[str]) -> int:
         )
     forwarded = [
         *remaining,
+        "--provider-pool-config", str(args.provider_pool_config),
         "--task", args.task,
         "--input-jsonl", str(args.input_jsonl),
         "--batch-root", str(args.batch_root),

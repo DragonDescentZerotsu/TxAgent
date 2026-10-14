@@ -1,0 +1,29 @@
+{
+  "purpose": "Exact pinned inputs required by the maintained top-10 retrieval builders; weights and ranking hashes are unchanged.",
+  "files": [
+    {
+      "source": "optimization/semantic_buckets/releases/bbb_martins/v10/generations/gold_v1_protected_incremental_v1/degree25_rankings/semantic_bucket_rankings.parquet",
+      "path": "assets/semantic_weighted_top10_v2/bbb_martins/semantic_bucket_rankings.parquet",
+      "bytes": 618244,
+      "sha256": "c0c1f41cf806324341091363652644cd3c7b3fee508dd035455e385ab3aca2a2"
+    },
+    {
+      "source": "optimization/semantic_buckets/releases/bbb_martins/v10/generations/gold_v1_protected_incremental_v1/degree25_rankings/record_relevance_rankings.parquet",
+      "path": "assets/semantic_weighted_top10_v2/bbb_martins/record_relevance_rankings.parquet",
+      "bytes": 83521379,
+      "sha256": "f61b7b693191f352faf4778579d7578447c91f66c67f6086a7f3341788c1650e"
+    },
+    {
+      "source": "optimization/semantic_buckets/releases/bioavailability_ma/v10/generations/gold_v1_protected_incremental_v1/degree25_rankings/semantic_bucket_rankings.parquet",
+      "path": "assets/semantic_weighted_top10_v2/bioavailability_ma/semantic_bucket_rankings.parquet",
+      "bytes": 304295,
+      "sha256": "7acd54ca968dc4f9f982e6b76ca1955d86a6665b86853b18087916988b3ec415"
+    },
+    {
+      "source": "optimization/semantic_buckets/releases/bioavailability_ma/v10/generations/gold_v1_protected_incremental_v1/degree25_rankings/record_relevance_rankings.parquet",
+      "path": "assets/semantic_weighted_top10_v2/bioavailability_ma/record_relevance_rankings.parquet",
+      "bytes": 47295575,
+      "sha256": "049f3be948165361b17d53bd4c06b3d4c3f66b7e34ed6156a5e21207de3d9856"
+    }
+  ]
+}

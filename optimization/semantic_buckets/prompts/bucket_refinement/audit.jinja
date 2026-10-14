@@ -1,0 +1,9 @@
+Audit established semantic evidence families for {{ task }} at {{ level }} from {{ source }}.
+
+For each family, decide whether its atoms and representative records address one core biological activity or scientific question. Flag a possible overmerge when distinct measured targets, biological processes, outcomes, or assay interpretations have been put together. A large record count alone is not a defect; related wording alone is not proof of coherence. Do not propose a split from representative records alone. Name the suspected distinct activities and cite the displayed atom IDs or record IDs that motivated the flag.
+
+Physical-record and atom counts describe coverage, not semantic identity.
+
+{{ cards }}
+
+Return only JSON: {"reviews":[{"id":0,"risk":"low","rationale":"one core activity"},{"id":1,"risk":"high","rationale":"distinct activities","suspected_activities":["activity A","activity B"]}]}. Include one review per ID. Risk must be low, medium, or high. Use an empty suspected_activities list when no distinct activities are suspected.

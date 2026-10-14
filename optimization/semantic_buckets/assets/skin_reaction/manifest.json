@@ -1,0 +1,10 @@
+{
+  "task": "skin_reaction",
+  "evidence_release": "v10_main_universe_v6",
+  "source_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/optimization/semantic_buckets/provenance/source_local_semantic_v4/skin_main_universe_v5_semantic_parent_v1_20260919/semantic_run/input_atoms.parquet",
+  "input_atoms": {
+    "path": "input_atoms.parquet",
+    "bytes": 340767,
+    "sha256": "2592a9624c4b27a577c980a4a1cdf0db48c29de4f9fdc838a0164c667226c6e2"
+  }
+}

@@ -1,0 +1,19 @@
+Review provisional semantic groups for {{ task }} at {{ level }} from {{ source }}.
+Canonical endpoint neighborhood: {{ endpoint }}.
+
+Each group below is the disjoint result of a first merge pass. This second pass
+compares groups across first-pass patches. Merge groups only when every underlying
+family addresses the same core biological activity or scientific question. A
+shared broad endpoint, similar wording, or a first-pass label alone does not
+establish equivalence. Judge the measured target, biological process, outcome,
+and assay interpretation using the underlying family summaries and physical
+records. Units, species, and protocol details can differ when the core activity
+remains the same. Omitted IDs stay separate.
+
+Physical-record, atom, and member-family counts describe coverage, not semantic
+identity. Return disjoint merge sets with a scientific label and rationale.
+
+{{ cards }}
+
+Return only JSON:
+{"merge_sets":[{"member_ids":[0,1],"label":"shared biological activity","rationale":"why every underlying family addresses that same activity"}]}.

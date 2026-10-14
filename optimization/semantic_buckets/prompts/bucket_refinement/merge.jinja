@@ -1,0 +1,10 @@
+Review semantic evidence families for {{ task }} at {{ level }} from {{ source }}.
+Canonical endpoint neighborhood: {{ endpoint }}.
+
+Merge families only when they address the same core biological activity or scientific question. Judge the measured target, biological process, outcome, and assay interpretation. A shared broad endpoint, similar wording, or small size alone does not justify a merge. Units, scale, species, and protocol details can differ when the core activity remains the same. Every member of a proposed merge must have one coherent biological meaning. The TF-IDF neighborhood only finds comparisons; it is not evidence of equivalence.
+
+Physical-record and atom counts describe coverage, not semantic identity. Omitted IDs stay separate. Return disjoint merge sets with a short scientific label and rationale.
+
+{{ cards }}
+
+Return only JSON: {"merge_sets":[{"member_ids":[0,1],"label":"shared biological activity","rationale":"why all members address the same core activity"}]}.

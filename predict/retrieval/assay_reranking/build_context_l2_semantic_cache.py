@@ -13,7 +13,7 @@ import tempfile
 
 import pandas as pd
 
-from semantic_buckets.artifacts import (
+from optimization.semantic_buckets.inputs import (
     resolve_semantic_bucket_artifacts,
 )
 from predict.retrieval.policies import normalize_molecule_identity, seeded_rank_tie_key

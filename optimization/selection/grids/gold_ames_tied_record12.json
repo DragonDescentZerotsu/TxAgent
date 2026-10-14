@@ -1,0 +1,139 @@
+{
+  "name": "gold_ames_tied_record12",
+  "kind": "indirect",
+  "diversity": "sqrt",
+  "profiles": [
+    {
+      "name": "ga100_mc010_sr010_sd010_ld010_rd010",
+      "gated_assay": 1,
+      "molecular": 0.1,
+      "semantic_relevance": 0.1,
+      "semantic_diversity": 0.1,
+      "level_diversity": 0.1,
+      "aliases": [],
+      "record_diversity": 0.1,
+      "dili_geomean": false
+    },
+    {
+      "name": "ga100_mc025_sr010_sd025_ld025_rd025",
+      "gated_assay": 1,
+      "molecular": 0.25,
+      "semantic_relevance": 0.1,
+      "semantic_diversity": 0.25,
+      "level_diversity": 0.25,
+      "aliases": [],
+      "record_diversity": 0.25,
+      "dili_geomean": false
+    },
+    {
+      "name": "ga100_mc010_sr025_sd010_ld010_rd010",
+      "gated_assay": 1,
+      "molecular": 0.1,
+      "semantic_relevance": 0.25,
+      "semantic_diversity": 0.1,
+      "level_diversity": 0.1,
+      "aliases": [],
+      "record_diversity": 0.1,
+      "dili_geomean": false
+    },
+    {
+      "name": "ga100_mc025_sr025_sd025_ld025_rd025",
+      "gated_assay": 1,
+      "molecular": 0.25,
+      "semantic_relevance": 0.25,
+      "semantic_diversity": 0.25,
+      "level_diversity": 0.25,
+      "aliases": [],
+      "record_diversity": 0.25,
+      "dili_geomean": false
+    },
+    {
+      "name": "ga100_mc010_sr050_sd010_ld010_rd010",
+      "gated_assay": 1,
+      "molecular": 0.1,
+      "semantic_relevance": 0.5,
+      "semantic_diversity": 0.1,
+      "level_diversity": 0.1,
+      "aliases": [],
+      "record_diversity": 0.1,
+      "dili_geomean": false
+    },
+    {
+      "name": "ga100_mc025_sr050_sd025_ld025_rd025",
+      "gated_assay": 1,
+      "molecular": 0.25,
+      "semantic_relevance": 0.5,
+      "semantic_diversity": 0.25,
+      "level_diversity": 0.25,
+      "aliases": [],
+      "record_diversity": 0.25,
+      "dili_geomean": false
+    },
+    {
+      "name": "ga125_mc010_sr010_sd010_ld010_rd010",
+      "gated_assay": 1.25,
+      "molecular": 0.1,
+      "semantic_relevance": 0.1,
+      "semantic_diversity": 0.1,
+      "level_diversity": 0.1,
+      "aliases": [],
+      "record_diversity": 0.1,
+      "dili_geomean": false
+    },
+    {
+      "name": "ga125_mc025_sr010_sd025_ld025_rd025",
+      "gated_assay": 1.25,
+      "molecular": 0.25,
+      "semantic_relevance": 0.1,
+      "semantic_diversity": 0.25,
+      "level_diversity": 0.25,
+      "aliases": [],
+      "record_diversity": 0.25,
+      "dili_geomean": false
+    },
+    {
+      "name": "ga125_mc010_sr025_sd010_ld010_rd010",
+      "gated_assay": 1.25,
+      "molecular": 0.1,
+      "semantic_relevance": 0.25,
+      "semantic_diversity": 0.1,
+      "level_diversity": 0.1,
+      "aliases": [],
+      "record_diversity": 0.1,
+      "dili_geomean": false
+    },
+    {
+      "name": "ga125_mc025_sr025_sd025_ld025_rd025",
+      "gated_assay": 1.25,
+      "molecular": 0.25,
+      "semantic_relevance": 0.25,
+      "semantic_diversity": 0.25,
+      "level_diversity": 0.25,
+      "aliases": [],
+      "record_diversity": 0.25,
+      "dili_geomean": false
+    },
+    {
+      "name": "ga125_mc010_sr050_sd010_ld010_rd010",
+      "gated_assay": 1.25,
+      "molecular": 0.1,
+      "semantic_relevance": 0.5,
+      "semantic_diversity": 0.1,
+      "level_diversity": 0.1,
+      "aliases": [],
+      "record_diversity": 0.1,
+      "dili_geomean": false
+    },
+    {
+      "name": "ga125_mc025_sr050_sd025_ld025_rd025",
+      "gated_assay": 1.25,
+      "molecular": 0.25,
+      "semantic_relevance": 0.5,
+      "semantic_diversity": 0.25,
+      "level_diversity": 0.25,
+      "aliases": [],
+      "record_diversity": 0.25,
+      "dili_geomean": false
+    }
+  ]
+}

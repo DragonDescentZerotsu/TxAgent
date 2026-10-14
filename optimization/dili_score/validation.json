@@ -1,0 +1,33 @@
+{
+  "rules_version": "dili_relevance_completeness.v5",
+  "package_version": "0.1.0",
+  "baseline_sha256": "9430b8f2bf23428dae52b1bf6b0658f82fa76733d37388b11e78e446d9b185d8",
+  "source_sha256": "c1c499bd84f7730c7758880f2a377686cbbdaf3a93578a33af48886a01d66021",
+  "full_response_equal": {
+    "candidate_records": 11103,
+    "audited_sample_records": 1068,
+    "condition_comparisons": 9612
+  },
+  "mismatches": 0,
+  "response_digest": "e5493d373b0ab74b37a129f4e4b212665999157e4a3c8919a35f3edd4072b3db",
+  "package_files_sha256": {
+    "dili_score/__init__.py": "3f3e042693e47d6a599532c3820e2d31e082f2610ad5235edc5791cc5757d7e9",
+    "dili_score/_conditions.py": "ebc09bcf8d13785edd168f74b34c04d427fb438c2da71d0d6a3cba8c0ae57744",
+    "dili_score/_schema.py": "cdc5066822745defbafdc0eb68b6dc550665dfc3f4a5771525b29f575a8758b6",
+    "dili_score/scoring.py": "e53ee460efe249a4afcd5d46c4423641a6b5f9b22613d71641ec949337641cc7"
+  },
+  "scope": "Packaging equivalence, not a new scientific accuracy audit. Invalid top-level input shapes now raise explicit TypeError.",
+  "tests": {
+    "passed": 299,
+    "command": "python -m pytest tests/dili_score tests/chembl_tool/common/test_record_selection_context.py tests/chembl_tool/common/test_record_diversity.py tests/chembl_tool/common/test_budgeted_evidence.py -q"
+  },
+  "interpretation": "Counts are full-response comparisons, not distinct evidence records or an estimate of scientific accuracy. All cached candidate payloads are compared, including records outside the older 10596-row review subset.",
+  "portable_tests": 128,
+  "clean_environment": {
+    "python": "3.12",
+    "wheel_bytes": 17440,
+    "runtime_dependencies": [],
+    "isolated_installed_import": "passed",
+    "examples_and_condition": "passed"
+  }
+}
