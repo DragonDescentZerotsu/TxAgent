@@ -122,7 +122,8 @@ _DNA_DAMAGE = _pattern(r"dna (?:damage|adduct\w*|crosslink\w*|repair|strand\w*)|
                        r"multiflow|toxtracker")
 _PHYSICAL_DNA_DAMAGE = _pattern(r"dna (?:damage|adduct\w*|crosslink\w*|strand\w*)|"
                                 r"targeted dna adduct measurement|oxidized base|oxidative dna damage|"
-                                r"32p postlab\w*|comet|strand break\w*|alkaline (?:elution|unwinding)")
+                                r"32p postlab\w*|comet|strand break\w*|alkaline (?:elution|unwinding)|"
+                                r"topoisomerase cleavage complex")
 _CHROMOSOMAL = _pattern(r"micronucle\w*|chromosom\w* (?:aberration|damage|loss|malsegregation)|"
                         r"clastogen\w*|aneuploid\w*|malsegregation|sister chromatid|polyploidy|"
                         r"kinetochore|chromosome segregation|cytogenetic\w*")
@@ -155,7 +156,7 @@ _TRANSFORMATION = _pattern(r"cell transformation|transformed foci|anchorage inde
 _GROWTH = _pattern(r"proliferation|dna synthesis|cell cycle|mitosis|receptor mediated growth|"
                    r"injury driven regeneration|injured regeneration|chromatin\w*|chromat\w* state|"
                    r"dna methylation|epigen\w*|histone\w*|gap junction|contact inhibition|"
-                   r"three dimensional architecture|inflamm\w*|senescence|wound repair|other direct growth control")
+                   r"three dimensional architecture|inflamm\w*|senescence|wound repair|oncogene expression|other direct growth control")
 
 
 def _bbb(endpoint, context, *, target=""):
@@ -163,7 +164,11 @@ def _bbb(endpoint, context, *, target=""):
     if _BRAIN_DOSING.search(context) and (_DIRECT_BBB.search(endpoint) or _BBB_PROXY.search(endpoint)):
         return .25, "brain_exposure_bypasses_barrier"
     if _BARRIER_INTEGRITY.search(endpoint):
-        return .4, "barrier_integrity_not_compound_penetration"
+        if site or re.search(r"\bbrain\b", endpoint + " | " + context):
+            return .4, "barrier_integrity_not_compound_penetration"
+        if _BBB_REMOTE.search(endpoint + " | " + context):
+            return .25, "barrier_integrity_in_distant_system"
+        return .5, "barrier_integrity_site_not_established"
     if _DIRECT_BBB.search(endpoint):
         return (.85, "bbb_model_permeability") if _BBB_MODEL.search(context) else (1., "direct_bbb_outcome")
     if _BBB_PROXY.search(endpoint):
@@ -202,7 +207,8 @@ def _ames(endpoint, context):
     if re.search(r"\b(?:reverse|back) mutation\b", endpoint) and _NONBACTERIAL.search(endpoint + " | " + context):
         return .75, "nonbacterial_reverse_mutation_proxy"
     if _MUTATION.search(endpoint):
-        if _BACTERIA.search(endpoint + " | " + context) and not _NONBACTERIAL.search(endpoint):
+        if (re.search(r"\b(?:bacterial|microbial|microorganism) (?:forward |gene |point )?mutation\b", endpoint)
+                and _BACTERIA.search(endpoint + " | " + context) and not _NONBACTERIAL.search(endpoint)):
             return .85, "other_bacterial_gene_mutation"
         return .75, "identified_gene_mutation_proxy"
     if _CHROMOSOMAL.search(endpoint):

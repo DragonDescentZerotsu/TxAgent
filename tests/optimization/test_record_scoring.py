@@ -13,11 +13,11 @@ from optimization.record_scoring import VERSIONS, score_record
     ("bbb_martins", "Kp_uu", "rat", 1),
     ("bbb_martins", "brain_to_plasma_ratio", "rat", 1),
     ("bbb_martins", "blood-to-brain transport", "in situ brain perfusion", 1),
-    ("bbb_martins", "BBB permeability", "PAMPA-BBB in vitro", .75),
-    ("bbb_martins", "Papp", "hCMEC/D3 monolayer", .75),
-    ("bbb_martins", "efflux_ratio", "brain microvascular endothelial cells", .75),
-    ("bbb_martins", "brain concentration", "rat", .75),
-    ("bbb_martins", "CSF_to_plasma_ratio", "rat", .75),
+    ("bbb_martins", "BBB permeability", "PAMPA-BBB in vitro", 0.85),
+    ("bbb_martins", "Papp", "hCMEC/D3 monolayer", 0.85),
+    ("bbb_martins", "efflux_ratio", "brain microvascular endothelial cells", 0.7),
+    ("bbb_martins", "brain concentration", "rat", 0.7),
+    ("bbb_martins", "CSF_to_plasma_ratio", "rat", 0.6),
     ("bbb_martins", "efflux inhibition outcome", "recombinant ABCB1", .5),
     ("bbb_martins", "Papp", "MDCK", .5),
     ("bbb_martins", "Papp", "Caco-2 monolayer", .25),
@@ -36,9 +36,9 @@ from optimization.record_scoring import VERSIONS, score_record
     ("ames", "tk_mouse_lymphoma", "L5178Y", .75),
     ("ames", "sequencing_based_induced_mutation", "rat", .75),
     ("ames", "micronucleus", "human lymphocytes", .5),
-    ("ames", "comet_assay", "rat hepatocytes", .5),
-    ("ames", "targeted_dna_adduct_measurement", "human", .5),
-    ("ames", "bacterial_ddr_reporter", "Salmonella", .5),
+    ("ames", "comet_assay", "rat hepatocytes", 0.6),
+    ("ames", "targeted_dna_adduct_measurement", "human", 0.6),
+    ("ames", "bacterial_ddr_reporter", "Salmonella", 0.35),
     ("ames", "unspecified_mutagenicity", "rat", .5),
     ("ames", "ROS_or_redox_assay", "human", .25),
     ("ames", "metabolite_formation_or_reaction_phenotyping", "rat", .25),
@@ -50,17 +50,17 @@ from optimization.record_scoring import VERSIONS, score_record
     ("carcinogens", "lung carcinoma", "animal carcinogenicity bioassay", 1),
     ("carcinogens", "tumor multiplicity", "mouse", 1),
     ("carcinogens", "bacterial_reverse_mutation", "Salmonella", .75),
-    ("carcinogens", "micronucleus", "human lymphocytes", .75),
-    ("carcinogens", "anchorage_independent_growth", "soft agar", .75),
-    ("carcinogens", "morphological_cell_transformation", "BALB 3T3", .75),
-    ("carcinogens", "xenograft tumor formation", "transformed cells", .75),
-    ("carcinogens", "DNA_methylation", "human", .5),
-    ("carcinogens", "proliferation or DNA synthesis", "human", .5),
-    ("carcinogens", "DNA methylation in leukocytes", "human cohort", .5),
-    ("carcinogens", "DNA adducts in cancer patients", "human cohort", .75),
-    ("carcinogens", "oncogene expression", "human cohort", .5),
-    ("carcinogens", "receptor_mediated_growth", "human", .5),
-    ("carcinogens", "injury_driven_regeneration", "rat", .5),
+    ("carcinogens", "micronucleus", "human lymphocytes", 0.65),
+    ("carcinogens", "anchorage_independent_growth", "soft agar", 0.85),
+    ("carcinogens", "morphological_cell_transformation", "BALB 3T3", 0.85),
+    ("carcinogens", "xenograft tumor formation", "transformed cells", 0.85),
+    ("carcinogens", "DNA_methylation", "human", 0.4),
+    ("carcinogens", "proliferation or DNA synthesis", "human", 0.4),
+    ("carcinogens", "DNA methylation in leukocytes", "human cohort", 0.4),
+    ("carcinogens", "DNA adducts in cancer patients", "human cohort", 0.65),
+    ("carcinogens", "oncogene expression", "human cohort", 0.4),
+    ("carcinogens", "receptor_mediated_growth", "human", 0.4),
+    ("carcinogens", "injury_driven_regeneration", "rat", 0.4),
     ("carcinogens", "lung cancer", "background patient population", .5),
     ("carcinogens", "lipid_peroxidation", "rat", .25),
     ("carcinogens", "cell viability or survival", "human", .25),
@@ -134,20 +134,20 @@ def test_uncertain_system_and_treatment_context():
 
 @pytest.mark.parametrize("task,fields,tier", [
     ("bbb_martins", {"quant_metric": "logBB", "quant_value": 0}, 1),
-    ("bbb_martins", {"metric_name": "Pe", "metric_value": 0}, .75),
-    ("bbb_martins", {"quantitative_metric": "efflux ratio", "quantitative_value": 0}, .75),
+    ("bbb_martins", {"metric_name": "Pe", "metric_value": 0}, .85),
+    ("bbb_martins", {"quantitative_metric": "efflux ratio", "quantitative_value": 0}, .7),
     ("bbb_martins", {"transport_endpoint": "blood-to-brain transport", "reported_result": 0}, 1),
     ("ames", {"assay_family": "bacterial_reverse_mutation", "mutagenicity_result": "negative"}, 1),
     ("ames", {"assay_family": "hprt_forward_mutation", "response_value": 0}, .75),
-    ("ames", {"assay_family": "comet", "response_value": 0}, .5),
+    ("ames", {"assay_family": "comet", "response_value": 0}, .6),
     ("ames", {"assay_family": "ros", "quantitative_readout_value": 0}, .25),
-    ("carcinogens", {"assay_family": "micronucleus", "result_value": 0}, .75),
+    ("carcinogens", {"assay_family": "micronucleus", "result_value": 0}, .65),
     ("carcinogens", {"endpoint_category": "glutathione_depletion", "reported_result": 0}, .25),
-    ("carcinogens", {"assay_domain": "dna_methylation", "endpoint_result": 0}, .5),
-    ("carcinogens", {"phenotype_domain": "receptor_mediated_growth", "endpoint_result": 0}, .5),
+    ("carcinogens", {"assay_domain": "dna_methylation", "endpoint_result": 0}, .4),
+    ("carcinogens", {"phenotype_domain": "receptor_mediated_growth", "endpoint_result": 0}, .4),
 ])
 def test_native_source_aliases(task, fields, tier):
-    system = "PAMPA-BBB" if task == "bbb_martins" and tier == .75 else "rat in vivo"
+    system = "PAMPA-BBB" if task == "bbb_martins" and tier in (.7, .85) else "rat in vivo"
     row = {**fields, "biological_system": system, "support_text": "Source"}
     before = copy.deepcopy(row)
     assert score_record(row, task=task)["components"] == {"relevance": tier, "completeness": 1}
@@ -169,14 +169,14 @@ def test_unknown_endpoint_is_not_vetoed_by_an_unrelated_endpoint():
 
 @pytest.mark.parametrize("task,endpoint,context,tier,reason", [
     ("bbb_martins", "IC50", "brain endothelial cells", .5, "potency_target_not_established"),
-    ("bbb_martins", "IC50", "ABCB1 in brain endothelial cells", .75, "identified_barrier_transport_or_permeability"),
+    ("bbb_martins", "IC50", "ABCB1 in brain endothelial cells", .7, "identified_barrier_transport"),
     ("bbb_martins", "IC50 cytotoxicity", "brain endothelial cells", 0, "explicit_offtask_potency"),
     ("bbb_martins", "IC50 receptor binding", "brain endothelial cells", 0, "explicit_offtask_potency"),
     ("bbb_martins", "inhibition potency", "Caco-2 accumulation assay", .25, "potency_in_distant_system"),
     ("bbb_martins", "Papp", "not a BBB model", .5, "transport_context_incomplete"),
     ("bbb_martins", "Papp", "presumed BBB model", .5, "transport_context_incomplete"),
     ("bbb_martins", "Papp", "not a BBB model; Caco-2 monolayer", .25, "transport_in_distant_system"),
-    ("bbb_martins", "CSF concentration", "rat", .75, "csf_exposure_proxy"),
+    ("bbb_martins", "CSF concentration", "rat", .6, "csf_exposure_proxy"),
     ("ames", "anti-mutagenicity in Ames test", "TA98", .25, "protective_modulation_not_mutagenicity"),
     ("ames", "mutation suppression", "Salmonella", .25, "protective_modulation_not_mutagenicity"),
     ("ames", "reverse mutation", "Saccharomyces yeast", .75, "nonbacterial_reverse_mutation_proxy"),
@@ -190,8 +190,8 @@ def test_unknown_endpoint_is_not_vetoed_by_an_unrelated_endpoint():
     ("carcinogens", "lung carcinoma", "human epidemiology", 1, "direct_carcinogenicity_evidence"),
     ("carcinogens", "cancer incidence", "human cohort", 1, "direct_carcinogenicity_evidence"),
     ("carcinogens", "anti-genotoxicity", "human cells", .25, "protective_modulation_not_carcinogenicity"),
-    ("carcinogens", "cell transformation", "BALB 3T3", .75, "cell_transformation_proxy"),
-    ("carcinogens", "DNA adducts", "human", .75, "genotoxicity_proxy"),
+    ("carcinogens", "cell transformation", "BALB 3T3", .85, "cell_transformation_proxy"),
+    ("carcinogens", "DNA adducts", "human", .65, "genomic_damage_proxy"),
 ])
 def test_specific_assay_scope_and_rule_reasons(task, endpoint, context, tier, reason):
     result = score_record(dict(endpoint=endpoint, biological_system=context), task=task)
@@ -226,14 +226,14 @@ def test_named_prediction_models_cannot_become_direct_evidence(model):
 
 def test_predictive_experimental_assay_is_not_a_computational_model():
     assert score_record(dict(bbb_permeability_label="permeable", assay_model="predictive PAMPA assay"),
-                        task="bbb_martins")["components"]["relevance"] == .75
+                        task="bbb_martins")["components"]["relevance"] == .85
 
 
 def test_structured_transporter_identity_qualifies_potency_without_supplying_anatomy():
     row = dict(endpoint="IC50", canonical_transporter_identifier="Abcb1b - ATP-dependent translocase ABCB1 [mouse]")
     assert score_record(row, task="bbb_martins")["components"]["relevance"] == .5
     row["assay_model"] = "brain endothelial monolayer"
-    assert score_record(row, task="bbb_martins")["components"]["relevance"] == .75
+    assert score_record(row, task="bbb_martins")["components"]["relevance"] == .7
     row["assay_model"] = "Caco-2 monolayer"
     assert score_record(row, task="bbb_martins")["components"]["relevance"] == .25
 
@@ -249,6 +249,49 @@ def test_reviewed_null_target_overrides_stale_canonical_target():
     row = dict(endpoint="IC50", assay_model="brain endothelial monolayer",
                canonical_transporter_identifier="ABCB1", reviewed_record_json={"transporter_identifier": None})
     assert score_record(row, task="bbb_martins")["components"]["relevance"] == .5
+
+
+@pytest.mark.parametrize("task,endpoint,context,tier", [
+    ("bbb_martins", "logBB", "rat", 1),
+    ("bbb_martins", "Papp", "hCMEC/D3 monolayer", .85),
+    ("bbb_martins", "brain concentration", "rat", .7),
+    ("bbb_martins", "CSF concentration", "rat", .6),
+    ("bbb_martins", "permeability", "unspecified system", .5),
+    ("bbb_martins", "Evans blue extravasation", "mouse brain", .4),
+    ("bbb_martins", "TEER", "hCMEC/D3 monolayer", .4),
+    ("bbb_martins", "TEER", "Caco-2 monolayer", .25),
+    ("bbb_martins", "TEER", "unspecified system", .5),
+    ("bbb_martins", "logP", "buffer", .25),
+    ("bbb_martins", "Ames", "TA98", 0),
+    ("ames", "Ames", "TA98 with mammalian liver S9", 1),
+    ("ames", "bacterial forward mutation", "E. coli", .85),
+    ("ames", "microbial forward mutation", "Salmonella", .85),
+    ("ames", "microbial forward mutation", "species unspecified", .75),
+    ("ames", "HPRT gene mutation", "CHO; compared with Salmonella assay", .75),
+    ("ames", "DNA strand breaks", "human cells", .6),
+    ("ames", "micronucleus", "human cells", .5),
+    ("ames", "gamma H2AX assay", "human cells", .35),
+    ("ames", "DNA repair kinetics", "human cells", .35),
+    ("ames", "topoisomerase catalytic assay", "purified enzyme", .35),
+    ("ames", "topoisomerase cleavage complex assay", "human cells", .6),
+    ("ames", "ROS generation", "human cells", .25),
+    ("ames", "BBB penetration", "mouse", 0),
+    ("carcinogens", "cancer incidence", "human epidemiology", 1),
+    ("carcinogens", "anchorage independent growth", "BALB 3T3", .85),
+    ("carcinogens", "HPRT gene mutation", "CHO", .75),
+    ("carcinogens", "DNA adducts", "human cells", .65),
+    ("carcinogens", "micronucleus", "human cells", .65),
+    ("carcinogens", "lung cancer", "patient population unspecified", .5),
+    ("carcinogens", "DNA methylation", "human cells", .4),
+    ("carcinogens", "gamma H2AX assay", "human cells", .4),
+    ("carcinogens", "cell viability", "human cells", .25),
+    ("carcinogens", "tumor regression", "xenograft treatment study", 0),
+])
+def test_task_specific_scientific_anchors(task, endpoint, context, tier):
+    row = dict(endpoint=endpoint, biological_system=context, reported_result=0, support_text="Source")
+    result = score_record(row, task=task)
+    assert result["components"] == {"relevance": tier, "completeness": 1}
+    assert result["score"] == tier
 
 
 @pytest.mark.parametrize("record", [None, [], {"input": []}, {"input": {"source_fields": []}},

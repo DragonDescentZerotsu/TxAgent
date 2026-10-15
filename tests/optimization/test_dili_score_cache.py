@@ -87,13 +87,13 @@ def test_oral_cache_builds_available_levels_and_roundtrips(tmp_path):
     assert cache.candidate_uids(inputs[0]) == {"one", "two"}
     manifest = cache.build_cache(*inputs)
     scores, audit = cache.load_scores(manifest)
-    assert scores == {"one": .75, "two": 1.0}
+    assert scores == {"one": .8, "two": 1.0}
     saved = json.loads(manifest.read_text())
     assert saved["schema_version"] == cache.BIOAVAILABILITY_SCHEMA
     assert saved["task_id"] == "bioavailability_ma"
     assert saved["scorer_commit"] == ""
     assert "dili_score/scoring.py" in saved["scorer_files_sha256"]
-    assert audit["scorer_version"] == "bioavailability_relevance_completeness.v2"
+    assert audit["scorer_version"] == "bioavailability_relevance_completeness.v3"
     assert pq.read_table(manifest.parent / "scores.parquet")["rule_ids"].to_pylist()
     with pytest.raises(FileExistsError):
         cache.build_cache(*inputs)
@@ -150,7 +150,7 @@ def test_new_task_caches_roundtrip_and_bind_all_scorer_dependencies(tmp_path, ta
     assert saved["task_id"] == task
     assert saved["scorer_commit"] == ""
     assert {"record_scoring.py", "bioavailability_score/scoring.py", "dili_score/scoring.py"} <= saved["scorer_files_sha256"].keys()
-    assert audit["scorer_version"] == f"{task}_relevance_completeness.v2"
+    assert audit["scorer_version"] == f"{task}_relevance_completeness.v3"
     assert pq.read_table(manifest.parent / "scores.parquet")["rule_ids"].to_pylist()
     with pytest.raises(FileExistsError):
         cache.build_cache(*inputs)

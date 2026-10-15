@@ -20,35 +20,35 @@ def record(endpoint="oral bioavailability", system="human", result="42", **extra
     ("corrected bioavailability", "oral dosing", 1),
     ("bioavailability", "human", .5),
     ("bioavailability", "subcutaneous administration", 0),
-    ("oral/IV AUC comparison", "human", .75),
-    ("AUC0_inf", "oral administration", .75),
-    ("AUC∞", "p.o.", .75),
-    ("Cmax", "gavage in rats", .75),
-    ("Tmax", "oral dose", .75),
+    ("oral/IV AUC comparison", "human", 0.8),
+    ("AUC0_inf", "oral administration", 0.8),
+    ("AUC∞", "p.o.", 0.8),
+    ("Cmax", "gavage in rats", 0.7),
+    ("Tmax", "oral dose", 0.4),
     ("AUC", "intravenous only", .25),
     ("AUC", "human", .5),
-    ("intestinal effective permeability", "rat perfusion", .75),
-    ("Papp", "Caco‐2 cell monolayer", .75),
-    ("permeability", "GI-PAMPA", .75),
+    ("intestinal effective permeability", "rat perfusion", 0.8),
+    ("Papp", "Caco‐2 cell monolayer", 0.8),
+    ("permeability", "GI-PAMPA", 0.8),
     ("caco2_mdck_pampa_permeability", "BBB-PAMPA", .25),
-    ("caco2_mdck_pampa_permeability", "GI-PAMPA", .75),
+    ("caco2_mdck_pampa_permeability", "GI-PAMPA", 0.8),
     ("permeability", "MDCK kidney-derived cells", .5),
     ("permeability", "PAMPA", .5),
-    ("P-gp efflux", "intestinal enterocytes", .75),
+    ("P-gp efflux", "intestinal enterocytes", 0.8),
     ("ABCB1 substrate", "brain endothelial cells", .25),
-    ("uptake", "Ussing chamber", .75),
-    ("solubility", "FaSSIF", .75),
-    ("dissolution", "simulated gastric fluid", .75),
-    ("GI stability", "buffer", .75),
+    ("uptake", "Ussing chamber", 0.8),
+    ("solubility", "FaSSIF", 0.6),
+    ("dissolution", "simulated gastric fluid", 0.6),
+    ("GI stability", "buffer", 0.6),
     ("dissolution", "water", .5),
     ("solubility", "aqueous buffer", .5),
-    ("hepatic extraction ratio", "rat", .75),
-    ("CLint", "human liver microsomes", .75),
-    ("intrinsic_clearance", "HLM", .75),
-    ("CYP3A4 metabolism", "intestinal microsomes", .75),
-    ("UGT glucuronidation", "human hepatocytes", .75),
-    ("FMO metabolism", "human liver", .75),
-    ("S9 stability", "liver S9", .75),
+    ("hepatic extraction ratio", "rat", 0.9),
+    ("CLint", "human liver microsomes", 0.8),
+    ("intrinsic_clearance", "HLM", 0.8),
+    ("CYP3A4 metabolism", "intestinal microsomes", 0.8),
+    ("UGT glucuronidation", "human hepatocytes", 0.8),
+    ("FMO metabolism", "human liver", 0.8),
+    ("S9 stability", "liver S9", 0.8),
     ("CYP3A4 metabolism", "recombinant CYP3A4", .5),
     ("metabolic half life", "presumed liver microsomes", .5),
     ("metabolic half life", "not a liver model", .5),
@@ -196,7 +196,7 @@ def test_generic_extraction_is_not_a_hepatic_disposition_endpoint():
 def test_route_only_study_context_does_not_supply_assay_information():
     result = score(dict(endpoint="AUC", reported_result="42", study_context="oral dose 10 mg", support_text="Source"))
     assert not result["completeness_checks"]["assay_or_system"]
-    assert result["components"]["relevance"] == .75
+    assert result["components"]["relevance"] == .8
 
 
 @pytest.mark.parametrize('endpoint,system', (
@@ -204,7 +204,7 @@ def test_route_only_study_context_does_not_supply_assay_information():
     ('substrate depletion', 'human liver microsomes'),
 ))
 def test_identified_disposition_is_a_strong_proxy(endpoint, system):
-    assert score(record(endpoint,system))['components']['relevance']==.75
+    assert score(record(endpoint,system))['components']['relevance']==.8
 
 
 def test_patient_disease_context_is_not_a_tested_organ():
@@ -213,7 +213,7 @@ def test_patient_disease_context_is_not_a_tested_organ():
     assert result["components"]["relevance"] == .5
     result = score(record(endpoint="fraction_absorbed", system="clinical oral bioavailability",
                           qualifying_conditions="renal transplant patients"))
-    assert result["components"]["relevance"] == .75
+    assert result["components"]["relevance"] == .9
 
 
 def test_hepatic_disease_population_does_not_establish_hepatic_assay():
@@ -249,7 +249,7 @@ def test_reference_formulation_does_not_hide_explicit_oral_route():
     result = score(dict(endpoint="AUC0_t", reported_result="23",
                         study_context="fasted state, reference formulation, oral tablet",
                         support_text="Source"))
-    assert result["components"]["relevance"] == .75
+    assert result["components"]["relevance"] == .8
 
 
 @pytest.mark.parametrize("endpoint,tier,reason", [
@@ -285,3 +285,39 @@ def test_unknown_alias_does_not_promote_a_known_weak_proxy():
     result = score(record(endpoint="logD", canonical_endpoint_name="unfamiliar alias"))
     assert result["components"]["relevance"] == .25
     assert "unrecognized_endpoint" in result["ambiguity_flags"]
+
+
+@pytest.mark.parametrize("endpoint,system,tier", [
+    ("oral bioavailability", "human", 1),
+    ("fraction absorbed", "human", .9),
+    ("fraction escaping intestinal first pass metabolism", "human", .9),
+    ("hepatic availability", "human", .9),
+    ("Fa", "human oral dosing", .9),
+    ("Fg", "human intestinal study", .9),
+    ("Fh", "human liver", .9),
+    ("hepatic extraction ratio", "human", .9),
+    ("hepatic first pass metabolism", "liver microsomes", .8),
+    ("Papp", "Caco-2 monolayer", .8),
+    ("AUC", "oral dosing in humans", .8),
+    ("AUC0_tmax", "oral dosing in humans", .8),
+    ("Cmax", "oral dosing in humans", .7),
+    ("maximum concentration", "oral dosing in humans", .7),
+    ("dissolution", "FaSSIF", .6),
+    ("PAMPA permeability", "tissue unspecified", .5),
+    ("Tmax", "oral dosing in humans", .4),
+    ("time to maximum concentration", "oral dosing in humans", .4),
+    ("absorption rate constant", "intestinal perfusion", .4),
+    ("fraction absorbed", "subcutaneous administration", .25),
+    ("logD", "buffer", .25),
+    ("UV absorption", "buffer", 0),
+])
+def test_oral_scientific_anchors(endpoint, system, tier):
+    result = score(record(endpoint, system))
+    assert result["components"] == {"relevance": tier, "completeness": 1}
+    assert result["score"] == tier
+
+
+def test_fraction_and_timing_qualifiers_remain_effective():
+    assert score(record("predicted fraction absorbed", "oral dosing"))["components"]["relevance"] == .5
+    assert score(record("fraction absorbed not measured", "oral dosing"))["components"]["relevance"] == .5
+    assert score(record("no oral bioavailability", "human"))["components"]["relevance"] == 1

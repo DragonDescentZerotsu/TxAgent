@@ -206,7 +206,7 @@ def _relevance(endpoint, scope):
         else:
             tier, reason = 0.5, "bioavailability_route_unknown"
     elif "availability_component" in families:
-        tier, reason = .9, "measured_availability_component"
+        tier, reason = (.25, "nonoral_absorption_component") if nonoral and not (oral or gut or liver) else (.9, "availability_component_readout")
     elif "off_task" in families and not ((gut or liver or oral) and any(
         family in families for family in ("absorption", "permeability", "transport", "dissolution_solubility", "metabolism_clearance", "exposure_pk")
     )):
