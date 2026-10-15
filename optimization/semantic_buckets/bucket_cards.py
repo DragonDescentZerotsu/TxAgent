@@ -416,21 +416,42 @@ ENRICHED_COLUMNS = {
 
 def prepare_scoring_inputs(
     task: str,
-    world_path: Path,
-    semantic_root: Path,
+    world_path: Path | None,
+    semantic_root: Path | None,
     output: Path,
     records_path: Path | None = None,
+    *,
+    release: str | None = None,
 ) -> dict:
     """Render the canonical sampled cards from an explicit frozen bucket world."""
     if output.exists():
         raise FileExistsError(output)
-    sources = {
+    if release is not None:
+        from .inputs import resolve_semantic_bucket_artifacts, _load_atoms
+        from .build import _contract, _semantic_columns
+        from .inputs import REPOSITORY_ROOT
+
+        if world_path is not None or semantic_root is not None or records_path is not None:
+            raise ValueError("selected-release cards cannot mix explicit construction inputs")
+        selected = resolve_semantic_bucket_artifacts(task, release)
+        evidence = REPOSITORY_ROOT / "data/evidence_libraries" / task / selected.release
+        record_map = selected.record_semantic_bucket_map or selected.record_readout_bucket_map
+        sources = dict(world=selected.semantic_bucket_weights, semantic_map=selected.semantic_map,
+                       record_map=record_map, release_manifest=selected.manifest,
+                       stage3=evidence / "03_pair_buckets/records.parquet",
+                       canonical_records=evidence / "02_canonicalized/records.parquet")
+        world_path = sources["world"]
+    else:
+        if world_path is None or semantic_root is None:
+            raise ValueError("cards require --release or both --world and --semantic-root")
+        sources = {
         "world": world_path,
         "semantic_map": semantic_root / "semantic_bucket_map.parquet",
         "atoms": semantic_root / "input_atoms.parquet",
         "samples": semantic_root / "sample_cards.json.gz",
     }
     world = pd.read_parquet(world_path, columns=["level", "semantic_bucket_id"])
+    world = world[world.level.str.removeprefix("L").astype(int).ge(2)]
     if world.empty or world.duplicated(["level", "semantic_bucket_id"]).any():
         raise ValueError(
             "scoring world must contain unique task-level bucket identities"
@@ -444,11 +465,31 @@ def prepare_scoring_inputs(
     ]
     if set(zip(mapping.level, mapping.semantic_bucket_id)) != wanted:
         raise ValueError("semantic map does not cover the scoring world")
-    atoms = pd.read_parquet(sources["atoms"]).set_index("atom_id", drop=False)
+    if release is not None:
+        members = pd.read_parquet(record_map, columns=["canonical_record_id", "source_row_uid", "level", "source_id", "atom_id"])
+        physical = pd.read_parquet(sources["stage3"], columns=["source_row_uid", "pair_bucket_key"])
+        members = members.merge(physical, on="source_row_uid", validate="one_to_one")
+        members["node_key"] = members["relevance_bucket"] = "{}"
+        pair_columns, semantic_columns = _semantic_columns(_contract(task))
+        policy = dict(LEVELS=tuple(world.level.unique()), EXPECTED_RECORD_COUNT=len(members),
+                      EXPECTED_ATOM_COUNT=len(mapping), RECORDS=sources["canonical_records"],
+                      PAIR_COLUMNS=pair_columns, REFINEMENT_COLUMNS=semantic_columns,
+                      PROMPT_DIMENSION_COLUMNS=semantic_columns, SAMPLE_CARD_COLUMNS=semantic_columns,
+                      INITIAL_COLUMNS={s: (c[0],) for s, c in semantic_columns.items()},
+                      PAIR_KEY_OPTIONAL_TRAILING_COLUMNS={}, INCLUDE_PAIR_BUCKET_KEY_IN_SAMPLE_CARDS=False)
+        atoms, samples = _load_atoms(policy=policy, record_map=members)
+        actual = set(atoms[["atom_id", "level", "source_id"]].itertuples(index=False, name=None))
+        expected = set(mapping[["atom_id", "level", "source_id"]].itertuples(index=False, name=None))
+        if actual != expected:
+            raise ValueError("reconstructed atoms differ from the selected semantic map")
+        atoms = atoms.set_index("atom_id", drop=False)
+    else:
+        atoms = pd.read_parquet(sources["atoms"]).set_index("atom_id", drop=False)
     if atoms.index.duplicated().any() or not set(mapping.atom_id) <= set(atoms.index):
         raise ValueError("semantic map has missing or repeated atom inputs")
-    samples = {}
-    if records_path is None:
+    if release is None:
+        samples = {}
+    if records_path is None and release is None:
         with gzip.open(sources["samples"], "rt", encoding="utf-8") as handle:
             samples = json.load(handle)
     if records_path is not None:
@@ -542,8 +583,9 @@ if __name__ == "__main__":
         description="Prepare frozen world/card inputs for semantic utility scoring."
     )
     parser.add_argument("--task", required=True, choices=tuple(TASKS))
-    parser.add_argument("--world", type=Path, required=True)
-    parser.add_argument("--semantic-root", type=Path, required=True)
+    parser.add_argument("--world", type=Path)
+    parser.add_argument("--semantic-root", type=Path)
+    parser.add_argument("--release", help="Hydrate the complete selected indirect bucket world, e.g. CURRENT.")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--enriched-records", type=Path)
     args = parser.parse_args()
@@ -555,6 +597,7 @@ if __name__ == "__main__":
                 args.semantic_root,
                 args.output,
                 args.enriched_records,
+                release=args.release,
             ),
             indent=2,
         )

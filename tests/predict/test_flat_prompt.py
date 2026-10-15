@@ -1149,6 +1149,7 @@ def test_joseph_cli_rejects_legacy_retrieval_flags() -> None:
 
 
 def test_joseph_batch_binds_selection_manifest(tmp_path: Path) -> None:
+    from predict.tasks.bbb_martins import EVIDENCE_POLICY
     input_path = Path(
         "data/gold_labels/BBB_Martins/v1/scaffold/valid_molecule_condition_labels.jsonl"
     ).resolve()
@@ -1156,6 +1157,7 @@ def test_joseph_batch_binds_selection_manifest(tmp_path: Path) -> None:
     source.mkdir()
     selection = {
         "harness_version": "joseph-flat-v2",
+        "bbb_evidence_policy": EVIDENCE_POLICY,
         "prompt_version": JOSEPH_PROMPT_VERSION,
         "task": "bbb_martins",
         "evaluation_subset": "valid",
@@ -1190,6 +1192,19 @@ def test_joseph_batch_binds_selection_manifest(tmp_path: Path) -> None:
         ],
     )
     assert _validated_flat_selection_manifest(BBB_CONFIG, args, [0]) == selection
+    selection.pop("bbb_evidence_policy")
+    manifest_path.write_text(json.dumps(selection), encoding="utf-8")
+    with pytest.raises(SystemExit, match="bbb_evidence_policy"):
+        _validated_flat_selection_manifest(BBB_CONFIG, args, [0])
+    args.flat_request_replay_root = str(tmp_path / "frozen_requests")
+    (tmp_path / "manifest.json").write_text(json.dumps({
+        "task": "bbb_martins", "n_queries": 1, "queries": selection["queries"]}))
+    request = Path(args.flat_request_replay_root) / "00000/request.json"
+    request.parent.mkdir(parents=True)
+    request.write_text("{}")
+    assert _validated_flat_selection_manifest(BBB_CONFIG, args, [0]) == selection
+    args.flat_request_replay_root = ""
+    selection["bbb_evidence_policy"] = EVIDENCE_POLICY
     selection["reranking"] = "morgan"
     manifest_path.write_text(json.dumps(selection), encoding="utf-8")
     with pytest.raises(SystemExit, match="manifest mismatch"):

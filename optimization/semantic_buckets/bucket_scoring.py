@@ -30,7 +30,7 @@ MAX_TOKENS = 20480
 TASK = "skin_reaction"
 TARGET = "skin sensitization or allergic contact dermatitis"
 PROMPT_ROOT = Path(__file__).with_name("prompts") / "bucket_scoring"
-SCORING_VERSION = "semantic_bucket_sliding.v7"
+SCORING_VERSION = "semantic_bucket_sliding.v8"
 
 
 def _now() -> str:
@@ -61,6 +61,7 @@ def _render(
     payloads: Mapping[str, Mapping[str, Any]],
     scores: Mapping[str, Mapping[str, Any]],
     *,
+    previous_weights: Mapping[str, float] | None = None,
     target: str | None = None,
     source_labels: Mapping[str, str] | None = None,
     prompt_root: Path | None = None,
@@ -68,7 +69,13 @@ def _render(
 ) -> str:
     candidate_cards = "\n\n".join(
         (
-            _card(f"Candidate {index}", payloads[bucket], source_labels=source_labels)
+            _card(
+                f"Candidate {index}" + (
+                    f"\n  Previous-pass weight (revisable): {previous_weights[bucket]:.2f}"
+                    if previous_weights is not None else ""
+                ),
+                payloads[bucket], source_labels=source_labels,
+            )
             for index, bucket in enumerate(candidates, 1)
         )
     )
@@ -89,6 +96,7 @@ def _render(
         level=level,
         candidate_cards=candidate_cards,
         anchor_cards=anchor_cards,
+        previous_weights=previous_weights,
         task_rules=rubric,
     ).strip()
     return rendered + ("\n\nTask-specific scoring rubric:\n" + rubric if rubric else "")
@@ -510,6 +518,9 @@ def prepare(
             name: dict(path=str(path), sha256=_sha256(path))
             for name, path in (("world", world_path), ("payloads", cards_path))
         }
+        if entry.get("input_manifest"):
+            path = Path(entry["input_manifest"]).resolve()
+            bindings[task]["input_manifest"] = dict(path=str(path), sha256=_sha256(path))
         if entry.get("rubric"):
             bindings[task]["rubric"] = dict(
                 path=str(rubric_path), sha256=_sha256(rubric_path)
@@ -531,8 +542,31 @@ def prepare(
         settings["chain_counts"] or settings["chains"] != 1
     ):
         raise ValueError("automatic chaining cannot accept manual chain counts")
-    root.mkdir(parents=True)
     schedule = pd.concat(schedules, ignore_index=True)
+    seed = None
+    seed_schedule = None
+    if settings.get("seed_weights"):
+        if settings["passes"] < 2:
+            raise ValueError("seeded scoring requires at least one new pass (--passes >= 2)")
+        seed_path = Path(settings["seed_weights"]).resolve()
+        seed = pd.read_parquet(seed_path).copy()
+        if "task" not in seed and len(inputs) == 1:
+            seed["task"] = next(iter(inputs))
+        keys = ["task", "level", "semantic_bucket_id"]
+        if not set(keys + ["weight"]) <= set(seed):
+            raise ValueError("seed weights require task, level, bucket and weight")
+        expected = {(r.task, r.level, b) for r in schedule.itertuples()
+                    for b in json.loads(r.candidate_bucket_ids_json)}
+        if seed.duplicated(keys).any() or set(seed[keys].itertuples(index=False, name=None)) != expected:
+            raise ValueError("seed weights must cover the exact task-level bucket world once")
+        seed["weight"] = pd.to_numeric(seed.weight, errors="raise")
+        if seed.weight.dtype.kind == "b" or not seed.weight.between(0, 1).all():
+            raise ValueError("seed weights must be finite numbers in [0, 1]")
+        bindings["baseline"] = {"seed_weights": dict(path=str(seed_path), sha256=_sha256(seed_path))}
+        seed_schedule = _pass2_schedule(seed, chain_mode=settings["chain_mode"],
+            chains=settings["chains"], chain_counts=settings["chain_counts"],
+            max_chains=settings["max_chains"], batch_size=settings["pass2_batch_size"])
+    root.mkdir(parents=True)
     _atomic_frame(schedule, root / "pass1_schedule.parquet")
     with gzip.open(
         root / "bucket_prompt_payloads.json.gz", "wt", encoding="utf-8"
@@ -540,14 +574,19 @@ def prepare(
         json.dump(payloads, handle, sort_keys=True, ensure_ascii=False)
     review = root / "prompt_review"
     review.mkdir()
-    for (task, level), group in schedule.groupby(["task", "level"]):
+    review_schedule = schedule if seed_schedule is None else seed_schedule
+    for (task, level), group in review_schedule.groupby(["task", "level"]):
         candidates = json.loads(group.iloc[0].candidate_bucket_ids_json)
+        previous_weights = None if seed is None else seed[
+            seed.task.eq(task) & seed.level.eq(level)
+        ].set_index("semantic_bucket_id").weight.to_dict()
         prompt = _render(
             candidates,
             [],
             level,
             payloads[task],
             {},
+            previous_weights=previous_weights,
             target=targets[task],
             source_labels=labels[task],
             prompt_root=Path(settings["prompt_dir"]),
@@ -572,6 +611,7 @@ def prepare(
                 level,
                 payloads[task],
                 _preview(anchors),
+                previous_weights=previous_weights,
                 target=targets[task],
                 source_labels=labels[task],
                 prompt_root=Path(settings["prompt_dir"]),
@@ -621,6 +661,15 @@ def prepare(
             )
         ),
     )
+    if seed is not None:
+        _atomic_frame(seed, root / "pass1_weights.parquet")
+        next_schedule = seed_schedule
+        _atomic_frame(next_schedule, root / "pass2_schedule.parquet")
+        manifest.update(status="pass1_complete", completed_passes=1, baseline_source="published_weights")
+        manifest["files"].update({name: _sha256(root / name)
+            for name in ("pass1_weights.parquet", "pass2_schedule.parquet")})
+        manifest["chain_counts"] = {f"{task}:{level}": int(group.chain.max()) + 1
+            for (task, level), group in next_schedule.groupby(["task", "level"])}
     write_json_atomic(root / "manifest.json", manifest)
     return manifest
 
@@ -704,6 +753,10 @@ async def _run_scoring_stage(
     from predict.api_client.transport import DEFAULT_ENV_FILE
 
     settings = dict(manifest["settings"])
+    previous_weights = None
+    if stage != "pass1":
+        previous = pd.read_parquet(root / f"pass{int(stage.removeprefix('pass')) - 1}_weights.parquet")
+        previous_weights = previous.set_index(["task", "level", "semantic_bucket_id"]).weight.to_dict()
     for field in ("fanout", "average", "batch_size"):
         settings[f"{stage}_{field}"] = settings[
             f"{('pass1' if stage == 'pass1' else 'pass2')}_{field}"
@@ -770,12 +823,16 @@ async def _run_scoring_stage(
         if not set(anchors) <= score_map.keys():
             raise ValueError(f"missing locked anchors: {task}/{level}")
         row["anchor_bucket_ids_json"] = storage._canonical_json(anchors)
+        candidates = json.loads(row["candidate_bucket_ids_json"])
         prompt = _render(
-            json.loads(row["candidate_bucket_ids_json"]),
+            candidates,
             anchors,
             level,
             payloads[task],
             score_map,
+            previous_weights=None if previous_weights is None else {
+                bucket: previous_weights[task, level, bucket] for bucket in candidates
+            },
             target=manifest["targets"][task],
             source_labels=manifest["source_labels"][task],
             prompt_root=Path(settings["prompt_dir"]),
@@ -1043,6 +1100,8 @@ def main() -> None:
             default=DEFAULT_PROVIDER_POOL_CONFIG,
         )
     parser.add_argument("--passes", type=int, default=2)
+    parser.add_argument("--seed-weights", type=Path,
+                        help="Use published weights as the completed initial pass; subsequent passes make model calls.")
     parser.add_argument("--max-tokens", type=int, default=MAX_TOKENS)
     parser.add_argument(
         "--reasoning-effort", choices=("high", "medium"), default="high"
@@ -1076,6 +1135,7 @@ def main() -> None:
         document = json.loads(args.input_manifest.read_text())
         inputs = document["tasks"]
         for entry in inputs.values():
+            entry["input_manifest"] = str(args.input_manifest.resolve())
             for key in ("world", "payloads", "rubric"):
                 if not entry.get(key):
                     continue

@@ -1752,6 +1752,9 @@ def _validated_flat_selection_manifest(
         "reranking": args.flat_reranking,
         "input_jsonl": str(Path(args.input_jsonl).resolve()),
     }
+    if expected["task"] == "bbb_martins" and not getattr(args, "flat_request_replay_root", ""):
+        from predict.tasks.bbb_martins import EVIDENCE_POLICY
+        expected["bbb_evidence_policy"] = EVIDENCE_POLICY
     source_indices = manifest.get("indices")
     if getattr(args, "flat_replay_subset", False):
         if not isinstance(source_indices, list) or not set(indices).issubset(set(source_indices)):

@@ -17,6 +17,7 @@ from .storage import _stable_id
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 RELEASE_ROOT = Path(__file__).resolve().parent / "releases"
+MEMBERSHIP_WEIGHT_RESOLUTION = "reviewed_membership_mean.v1"
 TASK_ALIASES = {
     "bbb": "bbb_martins",
     "bbb_martins": "bbb_martins",
@@ -368,6 +369,26 @@ def _cached_record_weights(
 ) -> tuple[dict[tuple[str, str], dict[str, Any]], dict[str, Any]]:
     artifacts = resolve_semantic_bucket_artifacts(task, release)
     document = json.loads(artifacts.manifest.read_text(encoding="utf-8"))
+    resolution = document.get("semantic_weight_resolution")
+    if resolution is not None:
+        if resolution != MEMBERSHIP_WEIGHT_RESOLUTION or document.get("status") != "complete_reviewed":
+            raise ValueError("unsupported or unreviewed semantic weight resolution")
+        roles = ("central_ledger", "semantic_bucket_weights", "semantic_map", "semantic_map_manifest",
+                 "record_semantic_bucket_map" if artifacts.record_semantic_bucket_map else "record_readout_bucket_map")
+        pins = {str(artifacts.manifest): manifest_sha256}
+        for role in roles:
+            path = getattr(artifacts, role)
+            expected = document.get("selected_sha256", {}).get(role)
+            entry = document.get("files", {}).get(role, {})
+            if path is None or not expected or entry.get("sha256") != expected or sha256_file(path) != expected:
+                raise ValueError(f"selected semantic membership input changed: {role}")
+            pins[str(path)] = expected
+        frame = reviewed_membership_weights(artifacts.central_ledger, artifacts.semantic_bucket_weights)
+        rows = {(str(r.source_row_uid), str(r.level)): dict(semantic_bucket_id=str(r.semantic_bucket_id),
+                semantic_weight=float(r.weight), semantic_weight_source=str(r.weight_source))
+                for r in frame.itertuples(index=False)}
+        return rows, dict(release=release, release_manifest=str(artifacts.manifest),
+                          release_manifest_sha256=manifest_sha256, weighted_record_count=len(rows), inputs=pins)
     rankings = artifacts.record_relevance_rankings
     if document.get("status") != "complete_reviewed" or rankings is None:
         raise ValueError(f"No reviewed semantic weights selected for {task}/{release}")
@@ -466,6 +487,46 @@ def _cached_record_weights(
     )
 
 
+def reviewed_membership_weights(ledger: Path, weights: Path) -> pd.DataFrame:
+    """Resolve all reviewed indirect UIDs without storing a retrieval-specific projection."""
+    import duckdb
+
+    with duckdb.connect() as db:
+        db.execute("CREATE TEMP TABLE census AS SELECT * FROM read_parquet(?)", [str(ledger)])
+        db.execute("CREATE TEMP TABLE weights AS SELECT level,semantic_bucket_id,weight FROM read_parquet(?)", [str(weights)])
+        invalid = db.execute("""SELECT count(*)-count(DISTINCT source_row_uid),
+            count(*) FILTER (WHERE source_row_uid IS NULL OR (level IS NOT NULL AND NOT regexp_full_match(level,'L[0-9]+')))
+            FROM census""").fetchone()
+        bad_weights = db.execute("""SELECT count(*)-count(DISTINCT (level,semantic_bucket_id)),
+            count(*) FILTER (WHERE weight IS NULL OR NOT isfinite(weight) OR weight < 0 OR weight > 1
+                OR semantic_bucket_id IS NULL OR level IS NULL) FROM weights""").fetchone()
+        if any(invalid) or any(bad_weights):
+            raise ValueError("invalid or duplicate UID/bucket weight identities")
+        db.execute("CREATE TEMP TABLE targets AS SELECT * FROM census WHERE try_cast(substr(level,2) AS INTEGER)>=2")
+        incomplete = db.execute("""SELECT count(*) FROM targets WHERE assignment_status IS DISTINCT FROM 'assigned'
+            OR own_level_semantic_bucket_id IS NULL OR semantic_memberships IS NULL""").fetchone()[0]
+        if incomplete:
+            raise ValueError(f"{incomplete} indirect UIDs lack reviewed semantic assignments")
+        db.execute("""CREATE TEMP TABLE components AS SELECT DISTINCT t.source_row_uid,t.level,
+            t.own_level_semantic_bucket_id AS semantic_bucket_id,m.member.level AS component_level,
+            m.member.semantic_bucket_id AS component_bucket_id
+            FROM targets t,unnest(t.semantic_memberships) m(member)""")
+        missing = db.execute("""SELECT count(*) FROM components c LEFT JOIN weights w
+            ON c.component_level=w.level AND c.component_bucket_id=w.semantic_bucket_id WHERE w.weight IS NULL""").fetchone()[0]
+        missing_own = db.execute("""SELECT count(*) FROM targets t WHERE NOT EXISTS
+            (SELECT 1 FROM components c WHERE c.source_row_uid=t.source_row_uid
+             AND c.component_level=t.level AND c.component_bucket_id=t.own_level_semantic_bucket_id)""").fetchone()[0]
+        if missing or missing_own:
+            raise ValueError(f"semantic memberships lack weights or own-level buckets: {missing}/{missing_own}")
+        frame = db.execute("""SELECT c.source_row_uid,c.level,c.semantic_bucket_id,avg(w.weight) AS weight,
+            count(*) AS component_count,'reviewed_family_mean' AS weight_source FROM components c JOIN weights w
+            ON c.component_level=w.level AND c.component_bucket_id=w.semantic_bucket_id
+            GROUP BY c.source_row_uid,c.level,c.semantic_bucket_id ORDER BY c.level,c.source_row_uid""").df()
+        if len(frame) != db.execute("SELECT count(*) FROM targets").fetchone()[0]:
+            raise ValueError("semantic membership lookup lost indirect UIDs")
+        return frame
+
+
 def load_record_bucket_map(
     task: str, release: str = "CURRENT", *, eligible_only: bool = False
 ) -> pd.DataFrame:
@@ -549,9 +610,9 @@ def parse_pair_bucket(
     return parsed
 
 
-def _load_atoms(*, policy: Mapping) -> tuple[pd.DataFrame, dict[str, dict[str, Any]]]:
+def _load_atoms(*, policy: Mapping, record_map: pd.DataFrame | None = None) -> tuple[pd.DataFrame, dict[str, dict[str, Any]]]:
     validate_column_contracts(policy=policy)
-    mapping = pq.read_table(policy["RECORD_MAP"]).to_pandas()
+    mapping = pq.read_table(policy["RECORD_MAP"]).to_pandas() if record_map is None else record_map
     mapping = mapping[mapping["level"].isin(policy["LEVELS"])].copy()
     if len(mapping) != policy["EXPECTED_RECORD_COUNT"]:
         raise ValueError(f"unexpected level-scoped record count: {len(mapping)}")

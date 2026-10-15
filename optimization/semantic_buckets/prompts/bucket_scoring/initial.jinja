@@ -26,6 +26,11 @@ display order. Do not reward the number of sources, repeated measurements, or
 unusually detailed examples. The examples only clarify each bucket's shared
 scientific meaning.
 
+{% if previous_weights is not none %}
+Each candidate includes its previous-pass weight as a revisable starting point.
+Reassess it against the rubric and explain any revision in the rationale.
+
+{% endif %}
 {{ candidate_cards }}
 
 Return only JSON in this exact shape, with one entry for every candidate in the

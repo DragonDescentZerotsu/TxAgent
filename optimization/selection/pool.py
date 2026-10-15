@@ -24,13 +24,16 @@ from predict.retrieval.assay_reranking.ranked_uid_retrieval import hydrate_uids
 from predict.retrieval.assay_reranking.artifact_bundle import DEFAULT_CACHE_SET, CACHE_SET_SCHEMA, cache_task
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
 from predict.retrieval.selection import assert_disjoint, indexed_manifests
+from predict.retrieval.policies import MOLECULAR_REPRESENTATION_POLICY, source_smiles
 from optimization.semantic_buckets.inputs import (
     load_reviewed_record_weights,
     load_skin_candidate_snapshot,
     load_dili_candidate_snapshot,
     resolve_semantic_bucket_artifacts,
+    MEMBERSHIP_WEIGHT_RESOLUTION,
 )
 from predict.tasks.bbb_martins.prediction_filter import prediction_only
+from predict.tasks.bbb_martins import EVIDENCE_POLICY as BBB_EVIDENCE_POLICY, prediction_only_uids
 
 
 def coverage_band(scored: int, total: int) -> str:
@@ -153,6 +156,11 @@ def _semantic_ledger(
         return loader(snapshot)
     artifacts = resolve_semantic_bucket_artifacts(task, "CURRENT")
     selected = json.loads(artifacts.manifest.read_text())
+    if selected.get("semantic_weight_resolution") == MEMBERSHIP_WEIGHT_RESOLUTION:
+        if extension is not None:
+            raise ValueError("complete membership weights do not accept projection extensions")
+        semantics, audit = load_reviewed_record_weights(task, "CURRENT")
+        return semantics, audit["inputs"]
     if (
         artifacts.central_ledger is None
         or selected.get("provisional_retrieval_weight_policy")
@@ -235,8 +243,6 @@ def _semantic_ledger(
 def prepare_bbb_filter(
     subset: str, target: Path, *, cache_bundle: Path | None = None, benchmark: str = "tdc"
 ) -> Path:
-    from predict.harnesses.branches.flat import _source_semantic_card
-
     "Classify the frozen BBB indirect universe once before profile optimization."
     if subset not in {"valid", "test"} or target.exists():
         raise ValueError("Expected a valid/test split and a new filter directory")
@@ -278,17 +284,9 @@ def prepare_bbb_filter(
                 )
             )
     rows = hydrate_uids(projection, uids)
-    decisions = []
-    for uid in sorted(uids):
-        card, _ = _source_semantic_card(
-            json.loads(rows[uid]["payload"]), card_id=uid, transfer_likelihood=None
-        )
-        decisions.append(
-            {
-                "source_row_uid": uid,
-                "prediction_only": int(prediction_only({"card": card})),
-            }
-        )
+    excluded = prediction_only_uids(rows)
+    decisions = [{"source_row_uid": uid, "prediction_only": int(uid in excluded)}
+                 for uid in sorted(uids)]
     target.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(
         prefix=".bbb_prediction_filter.", dir=target.parent
@@ -459,7 +457,8 @@ def load_direct(
             output[query_id] = []
             for row in rows:
                 assert_disjoint(
-                    drug, row["parent_smiles"], manifest["neighbor_identity_policy"]
+                    drug, (row["canonical_smiles"] if manifest.get("molecular_representation_policy")
+                           else row["parent_smiles"]), manifest["neighbor_identity_policy"]
                 )
                 if row["gold_label"] not in (0, 1):
                     raise ValueError(
@@ -473,11 +472,14 @@ def load_direct(
                         parent_smiles=row["parent_smiles"],
                         gold_label=row["gold_label"],
                         morgan_similarity=row["morgan_similarity"],
+                        **({"assay_transfer_score": row["assay_transfer_score"], "score_key": row["score_key"]}
+                           if manifest.get("molecular_representation_policy") else {}),
                     )
                 )
-            attach_exact_scores(
-                output[query_id], query_id=query_id, level="L1", scores=scores or {}
-            )
+            if scores is not None or not manifest.get("molecular_representation_policy"):
+                attach_exact_scores(
+                    output[query_id], query_id=query_id, level="L1", scores=scores or {}
+                )
     return (
         output,
         dict(
@@ -557,6 +559,10 @@ def load_indirect(
             )
         ):
             raise ValueError("prediction filter omits candidate UIDs")
+    elif task == "bbb_martins":
+        uids = {str(row["item_id"]) for by_query in ranked.values()
+                for rows in by_query.values() for row in rows}
+        excluded = prediction_only_uids(hydrate_uids(projection, uids))
     from predict.retrieval.policies import decide_candidate, normalize_molecule_identity
 
     disjoint_exclusions = []
@@ -611,6 +617,9 @@ def load_indirect(
             semantics=dict(pinned_inputs=semantic_pins),
             dili_tool_scores=tool_audit,
             prediction_filter=filter_pins,
+            **({"evidence_eligibility": {"policy": BBB_EVIDENCE_POLICY,
+                                         "excluded_uid_count": len(excluded)}}
+               if task == "bbb_martins" else {}),
             disjoint_candidate_filter=dict(enabled=exclude_disjoint_violations,
                                             exclusions=disjoint_exclusions),
         ),
@@ -627,6 +636,8 @@ def prepare_l1_cache(
     identity_policy: str = "scaffold_disjoint",
     membership_path: Path | None = None,
     membership_projection: Path | None = None,
+    molecular_representation_policy: str | None = None,
+    include_chirality: bool = True,
 ) -> Path:
     """Build a fresh full-molecule card cache; parents participate only in filtering."""
     import pandas as pd
@@ -646,14 +657,14 @@ def prepare_l1_cache(
     train = read_jsonl(train_path)
     if not train or len({row["benchmark_row_id"] for row in train}) != len(train):
         raise ValueError("canonical cards are empty or repeat card identities")
+    source_policy = molecular_representation_policy == MOLECULAR_REPRESENTATION_POLICY
     generator = rdFingerprintGenerator.GetMorganGenerator(
-        radius=2, fpSize=2048, includeChirality=True
+        radius=2, fpSize=2048, includeChirality=include_chirality
     )
     prepared = []
     for card in train:
-        full = card.get("molecule_identity", {}).get("canonical_smiles") or card.get(
-            "drug"
-        )
+        full = (card.get("drug") if source_policy else None) or card.get(
+            "molecule_identity", {}).get("canonical_smiles") or card.get("drug")
         if not full or card["Y"] not in (0, 1):
             raise ValueError(
                 "canonical card lacks full-molecule identity or authoritative binary label"
@@ -673,24 +684,40 @@ def prepare_l1_cache(
         )
     memberships = {}
     if membership_path:
+        columns = ["benchmark_row_id", "source_row_uid", "vote_label"]
+        if source_policy:
+            columns += ["vote_id", "physical_member_index"]
         for row in pq.read_table(
             membership_path,
-            columns=["benchmark_row_id", "source_row_uid", "vote_label"],
+            columns=columns,
         ).to_pylist():
             memberships.setdefault(str(row["benchmark_row_id"]), []).append(row)
+        if source_policy:
+            for members in memberships.values():
+                members.sort(key=lambda row: (
+                    () if task in {"ames", "dili", "carcinogens"} else (str(row["vote_id"]),),
+                    row["physical_member_index"], row["source_row_uid"],
+                ))
+    physical_records = {}
     if membership_projection:
-        if membership_path:
+        if membership_path and not source_policy:
             raise ValueError("declare one physical membership source")
-        for record in pq.read_table(membership_projection).to_pylist():
-            payload = json.loads(record["payload"])
-            memberships.setdefault(str(payload["benchmark_row_id"]), []).append(
-                dict(
-                    source_row_uid=record["source_row_uid"],
-                    vote_label=payload["Y"],
-                    payload=payload,
-                    external_record_id=record["external_record_id"],
+        needed = {row["source_row_uid"] for rows in memberships.values() for row in rows}
+        for batch in pq.ParquetFile(membership_projection).iter_batches(batch_size=10_000):
+            for record in batch.to_pylist():
+                if membership_path:
+                    if record["source_row_uid"] in needed:
+                        physical_records[record["source_row_uid"]] = record
+                    continue
+                payload = json.loads(record["payload"])
+                memberships.setdefault(str(payload["benchmark_row_id"]), []).append(
+                    dict(
+                        source_row_uid=record["source_row_uid"],
+                        vote_label=payload["Y"],
+                        payload=payload,
+                        external_record_id=record["external_record_id"],
+                    )
                 )
-            )
     sources = {
         str(train_path.resolve()): sha256_file(train_path),
         **{str(path.resolve()): sha256_file(path) for path in query_paths.values()},
@@ -727,6 +754,8 @@ def prepare_l1_cache(
                 uid = str(member["source_row_uid"])
                 uids.append(uid)
                 if uid in records:
+                    if source_policy and membership_path:
+                        continue
                     raise ValueError(
                         "physical L1 voter belongs to multiple canonical cards"
                     )
@@ -751,6 +780,13 @@ def prepare_l1_cache(
                 )
                 if member.get("payload"):
                     payload = {**member["payload"], "canonical_smiles": full}
+                if source_policy and membership_path:
+                    if uid not in physical_records:
+                        raise ValueError(f"Missing original physical voter: {uid}")
+                    records[uid] = physical_records[uid]
+                    continue
+                if source_policy:
+                    payload["molecular_representation_policy"] = molecular_representation_policy
                 records[uid] = dict(
                     source_row_uid=uid,
                     external_record_id=member.get("external_record_id", uid),
@@ -815,7 +851,7 @@ def prepare_l1_cache(
                 if not full:
                     raise ValueError("query lacks canonical full-molecule identity")
                 identity = normalize_molecule_identity(full)
-                query_mol = Chem.MolFromSmiles(full)
+                query_mol = Chem.MolFromSmiles(identity.parent_smiles if source_policy else full)
                 if query_mol is None:
                     raise ValueError("query full molecule cannot be fingerprinted")
                 connection.execute(
@@ -832,15 +868,23 @@ def prepare_l1_cache(
                     [entry[3] for entry in prepared],
                 )
                 ordered = sorted(
-                    zip(prepared, similarities), key=lambda pair: (-pair[1], pair[0][0])
+                    zip(prepared, similarities), key=lambda pair: (
+                        -pair[1],
+                        ((pair[0][2].parent_inchi_key or pair[0][2].parent_smiles), pair[0][0])
+                        if source_policy and not include_chirality else (pair[0][0],),
+                    )
                 )
                 chosen = []
                 for item, similarity in ordered:
                     card_id, card_full, card_identity, _, card = item
                     try:
                         assert_disjoint(
-                            full, card_identity.parent_smiles, identity_policy
+                            full, card_full if source_policy else card_identity.parent_smiles, identity_policy
                         )
+                        if source_policy and membership_path:
+                            for member in memberships[card_id]:
+                                voter = physical_records[member["source_row_uid"]]
+                                assert_disjoint(full, source_smiles(json.loads(voter["payload"])), identity_policy)
                     except ValueError:
                         continue
                     chosen.append((item, float(similarity)))
@@ -898,6 +942,10 @@ def prepare_l1_cache(
                 context_identity=CARD_IDENTITY,
                 neighbor_identity_policy=identity_policy,
                 parent_identity_usage="filtering_only",
+                morgan_fingerprint=dict(radius=2, bits=2048, include_chirality=include_chirality),
+                morgan_tie_break=("parent_key_then_context_id" if source_policy and not include_chirality else "context_id"),
+                **({"molecular_representation_policy": molecular_representation_policy}
+                   if source_policy else {}),
                 query_count=len(counts),
                 stored_rows=len(counts) * capacity,
                 query_counts=counts,
@@ -905,6 +953,8 @@ def prepare_l1_cache(
                 model=None,
                 scoring_contract_version="exact_query_card.v1",
             )
+            if source_policy:
+                identity["inputs"] = {**sources, "query_sha256": sha256_file(path)}
             manifest = _write_complete(
                 connection,
                 database,
@@ -932,13 +982,15 @@ def prepare_l1_cache(
             profile="canonical_context_molecule_l1_v1",
             context_identity=CARD_IDENTITY,
             parent_identity_usage="filtering_only",
+            **({"molecular_representation_policy": molecular_representation_policy}
+               if source_policy else {}),
             parent_capacity=capacity,
             card_capacity=capacity,
             levels_independent=True,
             ranking_modes=["morgan"],
             assay_transfer_status="not_computed",
             morgan_fingerprint=dict(
-                radius=2, bits=2048, include_chirality=True, similarity="Tanimoto"
+                radius=2, bits=2048, include_chirality=include_chirality, similarity="Tanimoto"
             ),
             neighbor_identity_policy_by_level={"L1": identity_policy},
             evidence=dict(
@@ -966,6 +1018,8 @@ if __name__ == "__main__":
     )
     parser.add_argument("--membership-path", type=Path)
     parser.add_argument("--membership-projection", type=Path)
+    parser.add_argument("--molecular-representation-policy", choices=(MOLECULAR_REPRESENTATION_POLICY,))
+    parser.add_argument("--disable-morgan-chirality", action="store_true")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--capacity", type=int, default=100)
     parser.add_argument(
@@ -990,5 +1044,7 @@ if __name__ == "__main__":
             identity_policy=args.identity_policy,
             membership_path=args.membership_path,
             membership_projection=args.membership_projection,
+            molecular_representation_policy=args.molecular_representation_policy,
+            include_chirality=not args.disable_morgan_chirality,
         )
     )

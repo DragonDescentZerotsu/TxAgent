@@ -36,6 +36,7 @@ from predict.harnesses.branches.retrieval import (
 from predict.retrieval.policies import NeighborIdentityPolicy, SIMILARITY_SELECTOR
 
 from predict.retrieval.policies import normalize_molecule_identity, selector_metadata
+from predict.tasks.bbb_martins import EVIDENCE_POLICY as BBB_EVIDENCE_POLICY, prediction_only_uids
 from predict.utils.evidence import minimal_evidence_from_row
 from predict.utils.response import validate_query_prior_output
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
@@ -1284,6 +1285,13 @@ def cache_matched_flat_retrieval(
         for row in later_levels[level].get("records") or []:
             selected.append((row, {}))
 
+    if task == "bbb_martins":
+        excluded = prediction_only_uids({str(row["payload"].get("source_row_uid") or f"{index}:{row['record_id']}"): row
+                                        for index, (row, _) in enumerate(selected)
+                                        if str(row["payload"].get("progressive_level")).removeprefix("L") != "1"})
+        if excluded:
+            raise ValueError(f"Prediction-only BBB evidence is ineligible: {sorted(excluded)[:5]}")
+
     neighbors: dict[str, dict[str, Any]] = {}
     seen_records: set[tuple[str, str]] = set()
     level_identity_policy = dict(neighbor_identity_policy_by_level or {
@@ -1483,6 +1491,7 @@ def cache_matched_flat_retrieval(
             "fingerprint": {"radius": 2, "bits": 2048},
         },
         "retrieval_policy": {
+            **({"bbb_evidence_policy": BBB_EVIDENCE_POLICY} if task == "bbb_martins" else {}),
             "neighbor_selector": selector,
             "neighbor_identity_policy": (
                 "level_specific_disjoint"
@@ -2168,16 +2177,22 @@ def _load_tdc_mixed_selection(
         if sha256_file(semantic_path) != inputs.get(str(semantic_path)):
             raise ValueError("TDC selected semantic release changed")
         semantic_release = json.loads(semantic_path.read_text(encoding="utf-8"))
-        if (semantic_release.get("central_ledger_generation") is None
-                or semantic_release.get("provisional_retrieval_weight_policy")
-                != "mean_of_reviewed_semantic_buckets_in_task_level"):
-            raise ValueError("TDC selection lacks an official semantic ledger")
-        for key in ("central_ledger", "semantic_bucket_weights", "record_relevance_rankings",
-                    "weight_projection_manifest", "pending_uid_worklist"):
-            entry = (semantic_release.get("files") or {}).get(key) or {}
-            source = (semantic_path.parent / str(entry.get("path") or "")).resolve()
-            if inputs.get(str(source)) != entry.get("sha256"):
-                raise ValueError(f"TDC selected semantic ledger differs: {key}")
+        from optimization.semantic_buckets.inputs import MEMBERSHIP_WEIGHT_RESOLUTION, load_reviewed_record_weights
+        if semantic_release.get("semantic_weight_resolution") == MEMBERSHIP_WEIGHT_RESOLUTION:
+            _, audit = load_reviewed_record_weights(task, "CURRENT")
+            if any(inputs.get(source) != digest for source, digest in audit["inputs"].items()):
+                raise ValueError("TDC selected semantic memberships or weights changed")
+        else:
+            if (semantic_release.get("central_ledger_generation") is None
+                    or semantic_release.get("provisional_retrieval_weight_policy")
+                    != "mean_of_reviewed_semantic_buckets_in_task_level"):
+                raise ValueError("TDC selection lacks an official semantic ledger")
+            for key in ("central_ledger", "semantic_bucket_weights", "record_relevance_rankings",
+                        "weight_projection_manifest", "pending_uid_worklist"):
+                entry = (semantic_release.get("files") or {}).get(key) or {}
+                source = (semantic_path.parent / str(entry.get("path") or "")).resolve()
+                if inputs.get(str(source)) != entry.get("sha256"):
+                    raise ValueError(f"TDC selected semantic ledger differs: {key}")
     tables = {}
     fields = {
         "selected_contexts.tsv": ["benchmark_row_id", "selection_rank", "context_id", "parent_id", "gold_label", "assay_transfer_score", "score_key"],
@@ -2525,6 +2540,7 @@ def _load_flat_context_candidates(
         "selection_policy": selection_contract,
         "inputs": dict(audit.get("inputs") or {}),
         "contract": {
+            **({"bbb_evidence_policy": BBB_EVIDENCE_POLICY} if args.task == "bbb_martins" else {}),
             "policy": {
                 "selection_contract": selection_contract,
                 "uid_retrieval": policy,
@@ -2809,6 +2825,8 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
             ),
             "flat_mixed_selection": str(args.flat_mixed_selection) if args.flat_mixed_selection else "",
         }
+        if args.task == "bbb_martins":
+            expected["bbb_evidence_policy"] = BBB_EVIDENCE_POLICY
         if artifact_receipt:
             expected.update(
                 artifact_manifest=str(args.flat_artifact_manifest),
@@ -3024,6 +3042,7 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
         )
     manifest = {
         "organization": "flat",
+        **({"bbb_evidence_policy": BBB_EVIDENCE_POLICY} if args.task == "bbb_martins" else {}),
         "run_name": getattr(args, "run_name", ""),
         "benchmark": args.benchmark,
         "prompt_version": args.prompt_version,

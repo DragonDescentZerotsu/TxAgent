@@ -321,6 +321,7 @@ def test_preselected_command_forwards_exact_indices(tmp_path: Path) -> None:
 
 
 def test_replay_subset_uses_query_uids_and_frozen_retrievals(tmp_path: Path) -> None:
+    from predict.tasks.bbb_martins import EVIDENCE_POLICY
     source = tmp_path / "cache_matched_retrieval"
     retrieval = source / "runs" / f"{source.name}_idx00001" / "retrieval.json"
     retrieval.parent.mkdir(parents=True)
@@ -330,6 +331,7 @@ def test_replay_subset_uses_query_uids_and_frozen_retrievals(tmp_path: Path) -> 
     prompt_version = flat_matrix.flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION
     manifest = {
         "harness_version": flat_matrix.flat.JOSEPH_PROMPT_HARNESSES[prompt_version],
+        "bbb_evidence_policy": EVIDENCE_POLICY,
         "prompt_version": prompt_version,
         "task": "bbb_martins",
         "reranking": "morgan",

@@ -6,9 +6,11 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
+import sqlite3
 from typing import Any, Iterable
 import pandas as pd
-from .inputs import REPOSITORY_ROOT, RELEASE_ROOT, normalize_task
+from .inputs import (REPOSITORY_ROOT, RELEASE_ROOT, normalize_task, resolve_semantic_bucket_artifacts,
+                     reviewed_membership_weights, MEMBERSHIP_WEIGHT_RESOLUTION)
 from predict.utils.json import write_json_atomic
 
 SCHEMA_VERSION = "semantic_buckets.release.v1"
@@ -273,7 +275,7 @@ def _selected_files(root: Path, manifest: dict) -> dict[str, Path]:
     return paths
 
 
-def _coverage(paths: dict[str, Path]) -> dict:
+def _coverage(paths: dict[str, Path], *, membership_weights: bool = False) -> dict:
     mapping = pd.read_parquet(
         paths["semantic_map"], columns=["level", "atom_id", "semantic_bucket_id"]
     )
@@ -304,6 +306,13 @@ def _coverage(paths: dict[str, Path]) -> dict:
         raise ValueError("weights name foreign semantic families")
     if not set(zip(records.level, records.semantic_bucket_id)) <= map_keys:
         raise ValueError("record map names foreign semantic families")
+    if membership_weights:
+        if set(zip(weights.level, weights.semantic_bucket_id)) != map_keys:
+            raise ValueError("weights omit reviewed semantic families")
+        resolved = reviewed_membership_weights(paths["central_ledger"], paths["semantic_bucket_weights"])
+        keys = ["source_row_uid", "level", "semantic_bucket_id"]
+        if set(resolved[keys].itertuples(index=False, name=None)) != set(records[keys].itertuples(index=False, name=None)):
+            raise ValueError("complete indirect UID ledger differs from the reviewed record map")
     return {
         "atoms": len(mapping),
         "physical_records": len(records),
@@ -326,7 +335,7 @@ def build_manifest(task: str, root: Path, selection_manifest: Path) -> dict:
     paths = _selected_files(root, descriptor)
     manifest = {
         **descriptor,
-        "coverage": _coverage(paths),
+        "coverage": _coverage(paths, membership_weights=descriptor.get("semantic_weight_resolution") == MEMBERSHIP_WEIGHT_RESOLUTION),
         "selected_sha256": {role: sha256_file(path) for role, path in paths.items()},
         "selection_descriptor_sha256": sha256_file(selection_manifest),
     }
@@ -337,7 +346,7 @@ def build_manifest(task: str, root: Path, selection_manifest: Path) -> dict:
 def verify_manifest(root: Path) -> dict:
     manifest = json.loads((root / "manifest.json").read_text())
     paths = _selected_files(root, manifest)
-    coverage = _coverage(paths)
+    coverage = _coverage(paths, membership_weights=manifest.get("semantic_weight_resolution") == MEMBERSHIP_WEIGHT_RESOLUTION)
     for role, expected in manifest.get("selected_sha256", {}).items():
         if sha256_file(paths[role]) != expected:
             raise ValueError(f"selected artifact changed: {role}")
@@ -380,13 +389,16 @@ def select(root: Path, approved_manifest_sha256: str) -> dict:
         raise ValueError("named evidence release is missing")
     files = [p for p in root.rglob("*") if p.is_file() and p != manifest_path]
     if root.resolve() == target.resolve() or any(
-        ((target / p.relative_to(root)).exists() for p in files)
+        ((target / p.relative_to(root)).exists()
+         and sha256_file(target / p.relative_to(root)) != sha256_file(p) for p in files)
     ):
         raise FileExistsError(
             "publication would overwrite an existing semantic payload"
         )
     target.mkdir(parents=True, exist_ok=True)
     previous = target / "manifest.json"
+    if previous.exists() and manifest.get("previous_release_manifest_sha256") not in (None, sha256_file(previous)):
+        raise ValueError("selected semantic release changed during publication")
     if previous.exists():
         receipt = target / "selection_receipts" / f"{sha256_file(previous)}.json"
         if receipt.exists() and receipt.read_bytes() != previous.read_bytes():
@@ -396,12 +408,111 @@ def select(root: Path, approved_manifest_sha256: str) -> dict:
             receipt.write_bytes(previous.read_bytes())
     for path in files:
         destination = target / path.relative_to(root)
+        if destination.exists():
+            continue
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(path, destination)
     for role, path in _selected_files(target, manifest).items():
         if sha256_file(path) != manifest["selected_sha256"][role]:
             raise ValueError(f"installed semantic payload differs: {role}")
     write_json_atomic(previous, manifest)
+    return manifest
+
+
+def refresh_weights(task: str, scoring_root: Path, output: Path, generation: str, *, activate: bool = False) -> dict:
+    """Publish complete bucket weights with direct membership resolution and frozen maps."""
+    from . import bucket_scoring, storage
+
+    task = normalize_task(task)
+    if not generation or generation in {".", ".."} or Path(generation).name != generation:
+        raise ValueError("weight generation must be a single directory name")
+    if output.exists():
+        raise FileExistsError(output)
+    run = bucket_scoring.collect(scoring_root)
+    if set(run["targets"]) != {task}:
+        raise ValueError("weight publication requires one complete task run")
+    source = resolve_semantic_bucket_artifacts(task, "CURRENT")
+    predecessor = json.loads(source.manifest.read_text())
+    descriptor_path = Path(run["source_bindings"][task]["input_manifest"]["path"])
+    lineage = json.loads(descriptor_path.read_text())["source_bindings"]
+    if sha256_file(source.manifest) != lineage["release_manifest"]["sha256"]:
+        raise ValueError("selected semantic release changed since card preparation")
+    for pin in lineage.values():
+        if sha256_file(Path(pin["path"])) != pin["sha256"]:
+            raise ValueError("frozen scoring card source changed")
+    final = pd.read_parquet(scoring_root / "semantic_bucket_weights.parquet")
+    baseline = pd.read_parquet(scoring_root / "pass1_weights.parquet")
+    keys = ["level", "semantic_bucket_id"]
+    if final.duplicated(keys).any() or not final.task.eq(task).all() or final.level.eq("L1").any():
+        raise ValueError("invalid task or indirect bucket identities")
+    with sqlite3.connect(f"file:{(scoring_root / 'requests.sqlite3').resolve()}?mode=ro", uri=True) as db:
+        db.row_factory = sqlite3.Row
+        requests = pd.read_sql_query("SELECT request_id,status,served_model,provider_name,provider_base_url,attempts,input_tokens,output_tokens FROM requests", db)
+        if not len(requests) or not requests.status.eq("complete").all():
+            raise ValueError("scoring contains incomplete requests")
+        for row in db.execute("SELECT request_id,phase FROM requests"):
+            stage = "pass1" if row["phase"].startswith("pass1/") else "pass2"
+            if not storage.all_replicas_stored(db, row["request_id"], expected_replicas=run["settings"][stage + "_fanout"]):
+                raise ValueError("scoring replica receipts are incomplete")
+            aggregate = db.execute("SELECT replica_count FROM speculative_aggregates WHERE request_id=?", (row["request_id"],)).fetchone()
+            if aggregate is None or aggregate[0] != run["settings"][stage + "_average"]:
+                raise ValueError("scoring aggregate does not contain the declared replica count")
+        receipt_models = {json.loads(row[0]).get("model") for row in db.execute(
+            "SELECT receipt_json FROM speculative_replica_receipts WHERE status='valid'")}
+    allowed_models = {provider["model"] for profile in run["provider_configs"].values()
+                      for provider in profile["config"]["providers"]}
+    if (not receipt_models or not receipt_models <= allowed_models
+            or requests.served_model.isna().any() or not set(requests.served_model) <= allowed_models):
+        raise ValueError("served model differs from frozen scoring providers")
+    final = final.merge(requests.drop(columns="status"), on="request_id", validate="many_to_one")
+    final["weight_rationale"] = final.rationale
+    final["weight_rank"] = final["level_rank"] = final.final_rank
+    count = final.groupby("level").semantic_bucket_id.transform("size")
+    final["weight_percentile"] = 100 * (1 - (final.final_rank - 1) / (count - 1).clip(lower=1))
+    weights_relative = Path("weighting") / generation
+    staged_weights = output / weights_relative
+    staged_weights.mkdir(parents=True)
+    final.to_parquet(staged_weights / "semantic_bucket_weights.parquet", index=False)
+    final[["task", *keys, "weight", "weight_rank", "level_rank", "weight_percentile", "weight_rationale"]].rename(
+        columns={"task": "task_id"}).to_parquet(staged_weights / "semantic_bucket_rankings.parquet", index=False)
+    selected = {role: path for role, path in predecessor["selected"].items()
+                if path and role not in {"semantic_bucket_weights", "semantic_bucket_rankings", "record_relevance_rankings"}}
+    for role, relative in selected.items():
+        origin, destination = source.root / relative, output / relative
+        expected = predecessor.get("selected_sha256", {}).get(role) or predecessor["files"][role]["sha256"]
+        if sha256_file(origin) != expected:
+            raise ValueError(f"selected semantic source changed: {role}")
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(origin, destination)
+    selected.update(semantic_bucket_weights=str(weights_relative / "semantic_bucket_weights.parquet"),
+                    semantic_bucket_rankings=str(weights_relative / "semantic_bucket_rankings.parquet"))
+    changes = final[keys + ["weight", "weight_rank"]].merge(baseline[keys + ["weight"]], on=keys,
+                suffixes=("_new", "_old"), validate="one_to_one")
+    if len(changes) != len(final) or len(changes) != len(baseline):
+        raise ValueError("new weights differ from the complete baseline world")
+    changes["weight_delta"] = changes.weight_new - changes.weight_old
+    changes.to_parquet(staged_weights / "weight_changes.parquet", index=False)
+    summary = changes.groupby("level").agg(buckets=("weight_new", "size"), old_mean=("weight_old", "mean"), new_mean=("weight_new", "mean"), mean_absolute_change=("weight_delta", lambda v: v.abs().mean()))
+    summary.to_csv(staged_weights / "summary.tsv", sep="\t")
+    scored_passes = run["completed_passes"] - int(run.get("baseline_source") == "published_weights")
+    (staged_weights / "report.md").write_text(f"# Semantic weight refresh\n\nCompleted {scored_passes} scored pass(es); L1 is excluded. Frozen UID memberships are unchanged.\n\n" + summary.to_string() + "\n")
+    write_json_atomic(staged_weights / "scoring_manifest.json", run)
+    write_json_atomic(staged_weights / "predecessor_manifest.json", predecessor)
+    descriptor = {**predecessor, "selected": selected, "status": "complete_reviewed",
+                  "semantic_weight_resolution": MEMBERSHIP_WEIGHT_RESOLUTION, "weight_generation": generation,
+                  "previous_release_manifest_sha256": sha256_file(source.manifest),
+                  "scoring_run": str(scoring_root.resolve()), "served_models": sorted(receipt_models),
+                  "files": {role: dict(path=path, sha256=sha256_file(output / path)) for role, path in selected.items()}}
+    descriptor.pop("provisional_retrieval_weight_policy", None)
+    descriptor.pop("selected_sha256", None)
+    selection_path = output.parent / (output.name + "_selection.json")
+    write_json_atomic(selection_path, descriptor)
+    manifest = build_manifest(task, output, selection_path)
+    verify_manifest(output)
+    with (staged_weights / "report.md").open("a") as report:
+        report.write(f"\nVerified complete L2+ UID coverage: {manifest['coverage']['physical_records']:,}. No UID weight projection or fallback means.\n")
+    if activate:
+        select(output, sha256_file(output / "manifest.json"))
     return manifest
 
 
@@ -421,6 +532,12 @@ def main() -> None:
     changes.add_argument("--snapshot-root", type=Path, required=True)
     changes.add_argument("--decisions", type=Path, required=True)
     changes.add_argument("--output", type=Path, required=True)
+    refresh = commands.add_parser("refresh-weights")
+    refresh.add_argument("--task", required=True)
+    refresh.add_argument("--scoring-root", type=Path, required=True)
+    refresh.add_argument("--output", type=Path, required=True)
+    refresh.add_argument("--generation", required=True)
+    refresh.add_argument("--activate", action="store_true")
     args = parser.parse_args()
     if args.command == "build":
         result = build_manifest(args.task, args.root, args.selection_manifest)
@@ -428,6 +545,8 @@ def main() -> None:
         result = verify_manifest(args.root)
     elif args.command == "select":
         result = select(args.root, args.approved_manifest_sha256)
+    elif args.command == "refresh-weights":
+        result = refresh_weights(args.task, args.scoring_root, args.output, args.generation, activate=args.activate)
     else:
         result = materialize(args.snapshot_root, args.decisions, args.output)
     print(json.dumps(result, indent=2, sort_keys=True))

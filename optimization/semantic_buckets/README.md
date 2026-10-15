@@ -58,9 +58,10 @@ python -m optimization.semantic_buckets.bucket_scoring collect --root /path/fres
 
 `--passes N` counts the initial pass; default 2. Pass 1 scores independent batches.
 Every later pass sorts the preceding complete pass by score, breaking ties by bucket
-ID, and executes sliding windows. Newly scored tail anchors from completed windows
-in the current pass are locked for subsequent windows. Later completions cannot
-change an anchor decision. Every scheduled candidate finishes before the next pass.
+ID, and executes sliding windows. Each candidate displays its immediately preceding
+pass weight as revisable context; pass 1 has no previous scores. Newly scored tail
+anchors from completed windows in the current pass are locked for subsequent windows.
+Later completions cannot change an anchor decision. Every scheduled candidate finishes before the next pass.
 Fixed neighboring anchors are not supported.
 
 Manual/automatic chains, overlap, advancement quorum, batch sizes, replica fanout/
@@ -73,12 +74,39 @@ medium reasoning retains the approved Luna contract. Both local and OpenRouter u
 shared transport/pools. Receipts record actual served models/providers and late replicas.
 Collection exports final-pass weights as an unselected candidate.
 
+For a selected-release refresh, use `bucket_cards --task TASK --release CURRENT --output DIR`.
+It reconstructs canonical atoms and representatives without regrouping reviewed buckets.
+`bucket_scoring prepare --seed-weights FILE --passes 2` freezes published weights as
+stage 1 and makes model calls only for the new sliding stage. Seeds set ordering
+and appear as revisable previous-pass candidate weights in the first sliding pass;
+anchors always come from completed windows in the current pass. Resume validates
+the seed, cards, input descriptor, code, prompts and provider configuration.
+
+```bash
+export RUN_ROOT=/vast/path/to/fresh-oral-semantic-run
+STAGE=prepare bash experiments/scoring/selected_refresh.sh
+STAGE=run bash experiments/scoring/selected_refresh.sh
+STAGE=publish bash experiments/scoring/selected_refresh.sh
+```
+
+The recipe defaults to Oral and Luna medium, averaging two replicas per window and
+at most four automatic chains per task-level. Set `FANOUT`, `AVERAGE` and `MAX_CHAINS`
+to override those controls; fewer chains allow longer sequential calibration.
+For high reasoning, prepare with `REASONING_EFFORT=high` and
+`PROVIDER_CONFIG=predict/api_client/providers/gpt6_luna_openrouter_standard_high_64.json`.
+`publication refresh-weights` verifies complete
+bucket and indirect UID coverage before selecting the new generation. New releases
+declare `semantic_weight_resolution: reviewed_membership_mean.v1`: the shared reader
+joins the complete UID ledger with bucket weights in memory and preserves the mean
+over distinct reviewed memberships. No per-retrieval weight projection or extension
+is needed. L1 stays direct and receives no semantic weights. Old projection-backed
+releases remain readable; frozen maps, payloads and evidence CURRENT are preserved.
+
 ## Selected artifacts
 
 Evidence CURRENT chooses a named evidence release; its semantic manifest selects maps,
-weights and ledgers. All six previously selected release directories remain byte-identical.
+weights and ledgers. Previously published scientific payloads remain immutable.
 `assets/`, maintained retrieval policies, pending worklists and required older published
 selection inputs remain. `cleanup/` records the earlier intermediate cleanup and this
-refactor's verification. No historical migration, model launch or release selection
-was performed. Publish a reviewed successor explicitly using `publication build`,
+refactor's verification. Publish a reviewed successor explicitly using `publication build`,
 `verify` and `select`; never overwrite frozen payloads or evidence CURRENT.

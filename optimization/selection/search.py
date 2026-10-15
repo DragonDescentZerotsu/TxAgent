@@ -340,6 +340,8 @@ def build(
                     row_count=len(selected),
                 ),
             )
+            if task == "bbb_martins" and kind == "indirect":
+                document["bbb_evidence_policy"] = audit["evidence_eligibility"]["policy"]
             attach_uid_selection(
                 document, root, selected, queries=queries, cache_manifests=manifests
             )

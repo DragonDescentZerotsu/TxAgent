@@ -28,6 +28,12 @@ follow display order. Do not reward the number of sources, repeated measurements
 or unusually detailed examples. The examples only clarify each bucket's shared
 scientific meaning.
 
+{% if previous_weights is not none %}
+Each candidate includes its previous-pass weight as a revisable starting point.
+Reassess it against the rubric and current-pass anchors; explain any revision in
+the rationale. Only the current-pass anchor weights are locked.
+
+{% endif %}
 LOCKED ANCHORS
 
 {{ anchor_cards }}

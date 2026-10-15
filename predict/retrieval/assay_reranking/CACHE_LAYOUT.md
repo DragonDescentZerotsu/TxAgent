@@ -1,5 +1,52 @@
 # Assay-reranking cache layout
 
+## Molecular representation policy
+
+`predict/retrieval/policies.py` defines `query_parent_evidence_source.v1` through
+`source_smiles`, `evidence_smiles`, and the shared `decide_candidate` filter.
+Successor projections, level manifests and indexes pin this policy explicitly.
+
+| Operation | Direct L1 | Indirect L2+ |
+| --- | --- | --- |
+| Assay-transfer query | Normalized query parent | Normalized query parent |
+| Assay-transfer evidence | Original frozen context molecule | Complete source SMILES |
+| Card identity and display | Frozen context ID and structure; preserve conditions and ordered voters | Parent for one component; canonical complete source for multiple fragments |
+| Morgan comparison | Query parent versus frozen context structure | Query parent versus the displayed/grouping structure |
+
+RDKit determines connected components. Multi-fragment sources, including salts,
+remain one evidence entity; fragment order does not change their grouping identity.
+Their measurements are neither split nor assigned to a chosen constituent. Direct
+contexts are never merged by parent. Existing fingerprint settings remain explicit
+in each cache contract (including direct-card chirality).
+
+Disjointness always inspects the full original source, independently of the scorer
+or displayed representative. Parent identity and connectivity overlap exclude a
+candidate under both policies; scaffold-disjoint additionally excludes matching
+nonempty component scaffolds. Recognized coformers are removed only for auxiliary
+component comparisons, with primary parents retained, so shared counterions do not
+create an exclusion by themselves. Full-source parent/component checks remain in
+force. Source structures and normalized/effective representations stay separate.
+Missing source identities block new preparation rather than falling back to parents.
+
+`rebuild_policy` prepares immutable all-task successors using the shared builders.
+The recipe is `experiments/retrieval_cache/molecular_policy.sh`. Publication requires
+complete scoring, candidate/source audits and verified bundle receipts. The default
+remains the previously verified release until its replacement is fully published.
+Legacy payloads, catalogs and receipts are not rewritten or redirected; their weaker
+historical filtering is described in the new rebuild study rather than relabeled in place.
+
+Successor score reuse follows declared source priority: the same benchmark's frozen
+scaffold cache, its parent cache, then compatible caches from the other benchmark.
+Fallback sources fill missing exact prompt/model/contract keys only. Preserve the
+chosen frozen score when another run produced a different numerical value; never
+average scores or rescore merely to reconcile duplicate runs. Source priority and
+reused counts are recorded in the preparation. Changed prompts still require scoring.
+
+After reuse, `rebuild_policy worksets` unions pending exact keys across compatible
+Gold/TDC and parent/scaffold preparations for one task. Score these worksets in
+disjoint shards across workers, then reuse their closed journals in each candidate
+cache. Worksets contain scoring inputs only; they are not retrieval releases.
+
 ## Cache identities and active selection
 
 New or restored caches use the semantic identity layout:

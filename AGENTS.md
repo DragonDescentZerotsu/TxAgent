@@ -45,11 +45,14 @@ Before modifying or reviewing code, read [.agents/skills/simplicity-first/SKILL.
 - Simplification preserves performance controls, concurrency, resumability, provenance and diagnostics. Preserve distinct scientific contracts unless explicitly retired; Bradley–Terry ranking is retired. Fewer files do not justify tangled conditionals, weakened validation or changed scientific meaning.
 - Judge consolidation by removed executable duplication, understandable Bash recipes, explicit scientific methods and focused behavioral equivalence checks. Sometimes parameterize one function; sometimes keep two capabilities separate. Minimize experiment machinery rather than the concepts that genuinely exist in the science.
 - Semantic scoring has one canonical batched-first-pass, repeated sorted sliding-window implementation with locked anchors, manual/automatic chains, configurable overlap and replica averaging, and shared local/OpenRouter transport.
+- Semantic weight refreshes may seed from published weights. Pass 2 and later show each candidate's previous-pass weight as revisable context alongside locked current-pass anchors; pass 1 has no previous weights. Resolve all reviewed L2+ UID weights from canonical memberships and bucket weights; L1 needs no semantic weights. New refreshes do not require retrieval-specific weight projections.
 - Direct/L1 uses normalized parents only for filtering; rank and score full molecules, count distinct canonical context cards, and preserve authoritative binary card labels. Indirect selection remains joint across L2+ and uses ledger-bound semantic weights. Exact assay score identity is canonical.
 - Direct/L1 candidates are always scaffold-disjoint. Only indirect L2+ offers parent-disjoint or scaffold-disjoint cache sets; scaffold-disjoint is the default. Assay-transfer contrastive selection is retired; keep ordinary assay-transfer ranking and frozen optimizer selections.
 - Every context optimizer returns ordered physical `source_row_uid` selections, including L1 context members. Every evidence-consuming predictor accepts manual UIDs or the same selection file. Both optimizer and predictor reject candidate-universe, membership and disjointness violations before model calls.
 
 ## Runtime and scientific safeguards
+
+- Molecular representations and component-aware disjointness live in `predict/retrieval/policies.py`; see the policy table in `predict/retrieval/assay_reranking/CACHE_LAYOUT.md`. Assay-transfer queries use parents; evidence uses frozen direct contexts or full indirect sources. New cache releases pin this policy; legacy caches stay frozen.
 
 - Resolve Gold/evidence through `CURRENT` and release manifests; TDC uses its single canonical manifest. `data/artifacts/` is audit-only.
 - Use `predict/api_client/pool.py` and provider JSONs; never create another OpenRouter client or copy secrets into code or artifacts.

@@ -219,6 +219,11 @@ def test_completed_scores_reuse_across_splits_and_reject_conflicts(tmp_path: Pat
     conflicts = {}
     assert builder._reuse_scores("ames", "test", "L2", {"key"}, conflicts=conflicts) == {}
     assert conflicts == {"key": {0.7, 0.8}}
+    monkeypatch.setattr(builder, "PREFER_FIRST_SCORE_SOURCE", True)
+    sources = {}
+    assert builder._reuse_scores("ames", "test", "L2", {"key"}, sources=sources) == {"key": 0.7}
+    assert sources == {str(tmp_path / "ames/scaffold/test/L2/rankings.sqlite3"): 1}
+    assert builder._reuse_scores("ames", "valid", "L2", {"key"}) == {"key": 0.8}
 
 
 @pytest.mark.parametrize("shared", (False, True))
@@ -868,10 +873,12 @@ def test_composite_levels_hydrate_overlap_from_their_own_projection(tmp_path: Pa
         connection.execute("UPDATE rankings SET item_id='u1' WHERE item_id='u4'")
     later_evidence = tmp_path / "later_evidence"
     later_evidence.mkdir()
+    remaining = [row for row in pq.read_table(tmp_path / "evidence/records.parquet").to_pylist()
+                 if row["source_row_uid"] in {"u3", "u5", "u6", "u7"}]
     pq.write_table(pa.Table.from_pylist([{
         "source_row_uid": "u1", "external_record_id": "r-later",
         "payload": json.dumps({"canonical_smiles": "later-projection"}),
-    }]), later_evidence / "records.parquet")
+    }, *remaining]), later_evidence / "records.parquet")
     evidence_manifest = later_evidence / "VERSION.json"
     evidence_manifest.write_text(json.dumps({
         "schema_version": "ranked_evidence_projection.v1", "status": "complete",
@@ -1183,6 +1190,57 @@ def test_request_over_available_expanded_rows_fails(tmp_path: Path) -> None:
             {"q1": "CCC"}, task="bbb_martins", subset="valid", policy=policy,
             molecule_limit=1, l1_limit=1, later_limit={"L2": 6}, cache_pool="all",
         )
+
+
+def _set_prediction_only(tmp_path, uids):
+    path = tmp_path / "evidence/records.parquet"
+    rows = pq.read_table(path).to_pylist()
+    fields = {"assay_model": "SwissADME", "support_text": "Predicted BBB permeability"}
+    for row in rows:
+        if row["source_row_uid"] in uids:
+            payload = json.loads(row["payload"])
+            payload.update(source_fields=fields, source_contract={
+                "source_or_simply_cleaned": {key: True for key in fields}})
+            row["payload"] = json.dumps(payload)
+    pq.write_table(pa.Table.from_pylist(rows), path)
+
+
+@pytest.mark.parametrize("method,expected", [("morgan", ["r3", "r5"]),
+                                            ("assay_transfer", ["r6", "r5"]),
+                                            (QUERY_PURE_METHOD, ["r6", "r5"])])
+def test_bbb_default_excludes_predictions_before_ranking_limits(tmp_path, method, expected):
+    from predict.tasks.bbb_martins import EVIDENCE_POLICY
+    policy, _ = _release(tmp_path)
+    policy["stages"]["L2"] = method
+    _set_prediction_only(tmp_path, {"u4"})
+    molecules, later, audit = load_candidates({"q1": "CCC"}, task="bbb_martins", subset="valid",
+        policy=policy, molecule_limit=1, l1_limit=1, later_limit={"L2": 2}, cache_pool="all")
+    assert [row["record_id"] for row in later["q1"]["L2"]["records"]] == expected
+    assert molecules["q1"][0]["l1_records"][0]["record_id"] == "r1"
+    assert audit["contract"]["bbb_evidence_policy"] == EVIDENCE_POLICY
+    assert audit["query_audits"]["q1"]["L2"]["prediction_only_excluded"] == 1
+    assert later["q1"]["L2"]["available_record_count"] == 4
+    assert later["q1"]["L2"]["prediction_only_excluded"] == 1
+
+
+@pytest.mark.parametrize("physical", (True, False))
+def test_bbb_manual_or_frozen_predictions_are_rejected(tmp_path, physical):
+    policy, _ = _release(tmp_path)
+    _set_prediction_only(tmp_path, {"u4"})
+    selection = {"physical_selection": [dict(benchmark_row_id="q1", level=level, source_row_uid=uid)
+        for level, uid in (("L1", "u1"), ("L2", "u4"))]} if physical else {
+        "preselected_uids": {"q1": {"L2": ["u4"]}}}
+    with pytest.raises(ValueError, match="Prediction-only BBB UIDs are ineligible"):
+        load_candidates({"q1": "CCC"}, task="bbb_martins", subset="valid", policy=policy,
+            molecule_limit=1, l1_limit=1, later_limit={"L2": 1}, cache_pool="all", **selection)
+
+
+def test_bbb_eligible_pool_shortage_fails_instead_of_restoring_predictions(tmp_path):
+    policy, _ = _release(tmp_path)
+    _set_prediction_only(tmp_path, {"u3", "u4", "u5", "u6", "u7"})
+    with pytest.raises(ValueError, match="has 0 eligible records"):
+        load_candidates({"q1": "CCC"}, task="bbb_martins", subset="valid", policy=policy,
+            molecule_limit=1, l1_limit=1, later_limit={"L2": 1}, cache_pool="all")
 
 
 def test_release_index_rejects_changed_level_manifest(tmp_path: Path) -> None:

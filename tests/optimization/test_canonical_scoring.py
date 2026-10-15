@@ -213,6 +213,19 @@ def test_two_pass_scoring_is_offline_at_prepare_complete_resumable_and_pinned(
         count = db.execute(
             "SELECT count(*) FROM speculative_replica_receipts WHERE status='valid'"
         ).fetchone()[0]
+        previous = {number: pd.read_parquet(root / f"pass{number - 1}_weights.parquet")
+                    .set_index(["task", "level", "semantic_bucket_id"]).weight.to_dict()
+                    for number in range(2, passes + 1)}
+        for phase, prompt, validation in db.execute("SELECT phase,prompt,validation_json FROM requests"):
+            number = int(phase.split("/")[0].removeprefix("pass"))
+            if number == 1:
+                assert "Previous-pass weight" not in prompt
+                assert "revisable starting point" not in prompt
+                continue
+            ids = json.loads(validation)
+            for index, bucket in enumerate(ids["candidate_bucket_ids"], 1):
+                weight = previous[number][ids["task"], ids["level"], bucket]
+                assert f"Candidate {index}\n  Previous-pass weight (revisable): {weight:.2f}" in prompt
     assert count == 3 + (passes - 1) * 3 * 5
     assert passes == 1 or manifest["chain_counts"] == {"dili:L2": 1}
     assert manifest["completed_passes"] == passes

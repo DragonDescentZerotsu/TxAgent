@@ -9,9 +9,14 @@ export OUTPUT_ROOT=outputs/predictions
 study=outputs/analysis/context_selection/bioavailability_ma/scaffold/luna/$STUDY_ID
 mkdir -p "$study"
 extension=$study/semantic_extension/projection/manifest.json
-if [[ ! -f $extension ]]; then
-  "$PYTHON_BIN" -m optimization.selection.search extend-semantics --task "$TASK" \
-    --cache-bundle "$CACHE_BUNDLE" --output-root "$study/semantic_extension"
+semantic_args=()
+resolution=$("$PYTHON_BIN" -c 'import json; from optimization.semantic_buckets.inputs import resolve_semantic_bucket_artifacts; print(json.load(open(resolve_semantic_bucket_artifacts("bioavailability_ma").manifest)).get("semantic_weight_resolution", ""))')
+if [[ $resolution != reviewed_membership_mean.v1 ]]; then
+  if [[ ! -f $extension ]]; then
+    "$PYTHON_BIN" -m optimization.selection.search extend-semantics --task "$TASK" \
+      --cache-bundle "$CACHE_BUNDLE" --output-root "$study/semantic_extension"
+  fi
+  semantic_args=(--semantic-extension "$extension")
 fi
 historical=outputs/analysis/record_selection/luna_bbb_oral_20260924_v1
 provider=predict/api_client/providers/gpt6_luna_openrouter_standard_high_64.json
@@ -70,7 +75,7 @@ for phase in valid test; do
   if [[ ! -f $root/$cohort/indirect/grid_manifest.json ]]; then
     "$PYTHON_BIN" -m optimization.selection.search indirect --tasks "$TASK" --benchmark "$benchmark" \
       --subset "$cohort" --grid "$grid" --budget 50 --workers 8 --cache-bundle "$CACHE_BUNDLE" \
-      --semantic-extension "$extension" --output-root "$root/$cohort/indirect" "${candidate_args[@]}"
+      "${semantic_args[@]}" --output-root "$root/$cohort/indirect" "${candidate_args[@]}"
   fi
   mapfile -t profiles < <("$PYTHON_BIN" -c 'import json,sys; print("\n".join(p["name"] for p in json.load(open(sys.argv[1]))["profiles"]))' "$grid")
     split=$phase
@@ -86,7 +91,7 @@ for phase in valid test; do
       if [[ ! -f $root/test/indirect/grid_manifest.json ]]; then
        "$PYTHON_BIN" -m optimization.selection.search indirect --tasks "$TASK" --benchmark "$benchmark" \
         --subset test --grid "$grid" --profiles "${selected_profiles[@]}" --budget 50 --workers 8 \
-        --cache-bundle "$CACHE_BUNDLE" --semantic-extension "$extension" --output-root "$root/test/indirect" "${candidate_args[@]}"
+        --cache-bundle "$CACHE_BUNDLE" "${semantic_args[@]}" --output-root "$root/test/indirect" "${candidate_args[@]}"
       fi
     fi
     if [[ $benchmark == gold_v1 ]]; then

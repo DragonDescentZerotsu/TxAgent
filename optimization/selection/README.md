@@ -11,7 +11,7 @@ the hyperparameter winner.
 | `objectives.py` | Objective mathematics, Morgan features and lazy greedy optimization. |
 | `policies.py` | Explicit JSON profiles and direct/indirect scientific requirements. |
 | `search.py` | Grid execution, multiprocessing, diagnostics, export, composition and validation. |
-| `record_scores.py` | Source-bound deterministic DILI score caches. |
+| `record_scores.py` | Source-bound deterministic DILI, Bioavailability, BBB, Ames and Carcinogens score caches. |
 | `grids/` | Explicit named profile configurations, without Python experiment factories. |
 
 Direct search retrieves 100 canonical context–molecule cards and selects 10 distinct
@@ -28,6 +28,12 @@ Both policies preserve ordered physical UID exports and fail membership/disjoint
 checks before prediction. All indirect weights come from a selected ledger-bound
 projection: reviewed membership means or explicitly provisional task-level means.
 A provisional weight does not invent a semantic family.
+
+BBB indirect pools automatically exclude prediction-only evidence before objective
+optimization. Experimental and mixed experimental/predicted records remain eligible.
+No `--prediction-filter` argument is required; a supplied source-bound filter remains
+supported. New selections record `bbb_prediction_only_excluded_l2plus.v2` and the
+excluded UID count. Frozen direct L1 membership is unchanged.
 
 Assay scores match the exact query, card/UID, level and parent under their frozen
 model/prompt contract. Missing scores remain missing and candidates remain eligible.

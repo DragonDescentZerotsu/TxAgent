@@ -14,6 +14,10 @@ from typing import Any, Mapping, Sequence
 import pyarrow.parquet as pq
 
 from predict.utils.json import sha256_file
+from predict.retrieval.policies import (
+    MOLECULAR_REPRESENTATION_POLICY, source_smiles,
+)
+from predict.retrieval.selection import assert_disjoint
 
 
 SCHEMA_VERSION = "ranked_uid_retrieval.v1"
@@ -517,7 +521,7 @@ def load_candidates(
             limit=(
                 None if physical_selection is not None and level == "L1" else
                 molecule_limit if level == "L1"
-                else None if all_later_records or preselected_uids is not None else limits[level]
+                else None if task == "bbb_martins" or all_later_records or preselected_uids is not None else limits[level]
             ),
             parent_morgan_width=(
                 morgan_primary_parent_width
@@ -705,6 +709,37 @@ def load_candidates(
             raise ValueError(f"Selected evidence UIDs are absent from {index_path}: {sorted(missing_uids)[:5]}")
         evidence_by_index[index_path] = evidence
 
+    eligibility_audits = {}
+    bbb_policy = {}
+    if task == "bbb_martins":
+        from predict.tasks.bbb_martins import EVIDENCE_POLICY, prediction_only_uids
+        bbb_policy = {"bbb_evidence_policy": EVIDENCE_POLICY}
+        excluded = set()
+        for index_path, evidence in evidence_by_index.items():
+            later_uids = {str(row["item_id"]) for level in stages if level != "L1"
+                          and index_paths[level] == index_path
+                          for rows in ranked[level].values() for row in rows}
+            excluded.update(prediction_only_uids({uid: evidence[uid] for uid in later_uids}))
+        for level in stages:
+            if level == "L1":
+                continue
+            for query_id, rows in ranked[level].items():
+                eligible = [row for row in rows if str(row["item_id"]) not in excluded]
+                removed = len(rows) - len(eligible)
+                if removed and preselected_uids is not None:
+                    invalid = [str(row["item_id"]) for row in rows if str(row["item_id"]) in excluded]
+                    raise ValueError(f"Prediction-only BBB UIDs are ineligible: {query_id}/{level}: {invalid[:5]}")
+                eligibility_audits[(level, query_id)] = {
+                    "prediction_only_excluded": removed, "eligible_records": len(eligible),
+                }
+                if not all_later_records and preselected_uids is None:
+                    if (len(eligible) < limits[level] and not (
+                            documents[level].get("score_coverage") == "partial_snapshot"
+                            and stages[level] == "assay_transfer")):
+                        raise ValueError(f"Requested {limits[level]} rows but {query_id}/{level} has {len(eligible)} eligible records after BBB prediction-only exclusion")
+                    eligible = eligible[:limits[level]]
+                ranked[level][query_id] = eligible
+
     molecules_by_query: dict[str, list[dict[str, Any]]] = {}
     later_by_query: dict[str, dict[str, Any]] = {}
     query_audits: dict[str, Any] = {}
@@ -723,6 +758,10 @@ def load_candidates(
                 for uid in (physical_context_uids[(str(query_id), context_id)]
                             if physical_selection is not None else context_uids[context_id])
             ]
+            if documents["L1"].get("molecular_representation_policy") == MOLECULAR_REPRESENTATION_POLICY:
+                assert_disjoint(queries[query_id], row["canonical_smiles"], "scaffold_disjoint")
+                for record in records:
+                    assert_disjoint(queries[query_id], source_smiles(record["payload"]), "scaffold_disjoint")
             molecule = {
                 "reference_molecule_id": str(row.get("canonical_smiles") or row["parent_id"]),
                 "canonical_smiles": str(row.get("canonical_smiles") or row["parent_smiles"]),
@@ -789,6 +828,9 @@ def load_candidates(
                     evidence_by_index[index_paths[level]][str(row["item_id"])],
                     row, row.get("_selection_method", selected_method),
                 )
+                if documents[level].get("molecular_representation_policy") == MOLECULAR_REPRESENTATION_POLICY:
+                    assert_disjoint(queries[query_id], source_smiles(record["payload"]),
+                                    documents[level]["neighbor_identity_policy"])
                 records.append(record)
             counts = documents[level]["query_counts"][str(query_id)]
             partial_level = documents[level].get("score_coverage") == "partial_snapshot"
@@ -800,6 +842,7 @@ def load_candidates(
             score_complete = hybrid_scored == int(counts["candidate_records"])
             later[level] = {
                 "records": records,
+                **eligibility_audits.get((level, str(query_id)), {}),
                 "ranking_method": selected_method,
                 "available_record_count": int(
                     counts["scored_records"] if partial_level and level_method == "assay_transfer"
@@ -808,8 +851,11 @@ def load_candidates(
                 ),
                 "allow_shortfall": partial_level and level_method == "assay_transfer",
             }
+            if (level, str(query_id)) in eligibility_audits and preselected_uids is None:
+                later[level]["available_record_count"] = eligibility_audits[(level, str(query_id))]["eligible_records"]
             level_audits[level] = {
                 "candidate_records": int(counts["candidate_records"]),
+                **eligibility_audits.get((level, str(query_id)), {}),
                 **({"scored_records": int(counts["scored_records"]),
                     "missing_scores": int(counts["missing_scores"])} if partial_level else {}),
                 "candidate_molecules": int(counts["candidate_parents"]),
@@ -855,6 +901,7 @@ def load_candidates(
         "inputs": dict(policy.get("inputs") or {}),
         "contract": {
             "policy": dict(policy),
+            **bbb_policy,
             "molecule_limit": molecule_limit,
             "l1_limit": l1_limit,
             "later_limits": limits,

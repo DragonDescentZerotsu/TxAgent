@@ -15,6 +15,9 @@ import pandas as pd
 
 from optimization.semantic_buckets.inputs import (
     resolve_semantic_bucket_artifacts,
+    load_reviewed_record_weights,
+    load_record_bucket_map,
+    MEMBERSHIP_WEIGHT_RESOLUTION,
 )
 from predict.retrieval.policies import normalize_molecule_identity, seeded_rank_tie_key
 from predict.utils.json import sha256_file
@@ -48,20 +51,22 @@ def _semantic_index(task: str) -> tuple[dict[str, tuple[str, int]], dict[str, ob
     manifest = json.loads(release_manifest.read_text())
     if manifest.get("status") != "complete_reviewed":
         raise ValueError(f"reviewed semantic rankings required: {task}")
-    mapping = pd.read_parquet(
-        record_path,
-        columns=["source_row_uid", "level", "semantic_bucket_id", "level_rank"],
-    )
+    if manifest.get("semantic_weight_resolution") == MEMBERSHIP_WEIGHT_RESOLUTION:
+        _, audit = load_reviewed_record_weights(task)
+        ranking = pd.read_parquet(artifacts.semantic_bucket_weights,
+            columns=["level", "semantic_bucket_id", "weight_rank"]).rename(columns={"weight_rank": "level_rank"})
+        mapping = load_record_bucket_map(task).merge(ranking, on=["level", "semantic_bucket_id"], validate="many_to_one")
+        inputs = audit["inputs"]
+    else:
+        mapping = pd.read_parquet(record_path,
+            columns=["source_row_uid", "level", "semantic_bucket_id", "level_rank"])
+        inputs = {str(path.resolve()): sha256_file(path) for path in (record_path, map_manifest, release_manifest)}
     mapping = mapping[mapping.level.eq("L2")]
     if mapping.source_row_uid.duplicated().any():
         raise ValueError(f"duplicate semantic identity: {task}/L2")
     index = {
         str(row.source_row_uid): (str(row.semantic_bucket_id), int(row.level_rank))
         for row in mapping.itertuples(index=False)
-    }
-    inputs = {
-        str(path.resolve()): sha256_file(path)
-        for path in (record_path, map_manifest, release_manifest)
     }
     return index, {"inputs": inputs, "mapped_l2_records": len(index)}
 

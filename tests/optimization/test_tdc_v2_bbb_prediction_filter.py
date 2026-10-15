@@ -110,6 +110,12 @@ def test_filter_preparation_search_and_source_bindings(tmp_path, monkeypatch, ca
     assert [row["item_id"] for row in rows["q"]] == ["u1"]
     assert rows["q"][0]["assay_transfer_score"] == 0.8
     assert set(audit["prediction_filter"]) == {str(filter_path), str(filter_path.with_name("eligibility.tsv"))}
+    default_rows, default_audit = pool.load_indirect(
+        index, task="bbb_martins", subset="valid", queries={"q": "CCO"})
+    assert [row["item_id"] for row in default_rows["q"]] == ["u1"]
+    from predict.tasks.bbb_martins import EVIDENCE_POLICY
+    assert default_audit["evidence_eligibility"] == {
+        "policy": EVIDENCE_POLICY, "excluded_uid_count": 1}
     query = tmp_path / "query.jsonl"
     query.write_text(json.dumps(dict(benchmark_row_id="q", drug="CCO")))
     monkeypatch.setattr(search, "query_cohort", lambda *args: ({"q": "CCO"}, query))
@@ -127,12 +133,19 @@ def test_filter_preparation_search_and_source_bindings(tmp_path, monkeypatch, ca
     selected_filter = search.validate_selection_manifest(selected)["inputs"]["pool"]["prediction_filter"]
     assert selected_filter == {str(path): sha256_file(path) for path in (
         named_filter, named_filter.with_name("eligibility.tsv"))}
+    result = search.build(tmp_path / "default_search", ["bbb_martins"], kind="indirect", subset="valid",
+                          cache_bundle=named, grid=grid, budget=1)
+    default_path = result.parent / json.loads(result.read_text())["profiles"][0]["task_manifests"]["bbb_martins"]["path"]
+    default_selection = search.validate_selection_manifest(default_path)
+    assert default_selection["bbb_evidence_policy"] == EVIDENCE_POLICY
+    assert pd.read_csv(default_path.parent / "selected_uids.tsv", sep="\t")["source_row_uid"].tolist() == ["u1"]
 
     original_bundle = bundle.read_text()
     bundle.write_text(original_bundle + "\n")
     with pytest.raises(ValueError, match="candidate input differs"):
         pool.load_indirect(index, task="bbb_martins", subset="valid", queries={"q": "CCO"},
             prediction_filter=filter_path, cache_bundle=bundle)
+
     bundle.write_text(original_bundle)
     original = filter_path.read_text()
     document = json.loads(original)
@@ -157,3 +170,35 @@ def test_filter_preparation_search_and_source_bindings(tmp_path, monkeypatch, ca
     with pytest.raises(ValueError, match="omits candidate UIDs"):
         pool.load_indirect(index, task="bbb_martins", subset="valid", queries={"q": "CCO"},
             prediction_filter=filter_path, cache_bundle=bundle)
+
+
+@pytest.mark.parametrize("contract", (True, False))
+@pytest.mark.parametrize("fields,excluded", [
+    ({"assay_model": "QSAR", "support_text": "Predicted BBB permeability"}, True),
+    ({"assay_type": "PAMPA prediction model", "support_text": "No assay was performed"}, True),
+    ({"assay_model": "PAMPA-BBB", "support_text": "PAMPA-BBB showed low Pe"}, False),
+    ({"assay_model": "QSAR", "support_text": "Predicted BBB; measured brain uptake also reported"}, False),
+    ({"source_id": "QikProp", "molecule_name": "Predicted BBB"}, False),
+])
+def test_source_eligibility_uses_the_existing_card_predicate(contract, fields, excluded):
+    from predict.tasks.bbb_martins import prediction_only_uids
+    payload = fields
+    if contract:
+        payload = {"source_fields": fields, "source_contract": {
+            "source_or_simply_cleaned": {key: True for key in fields}}}
+    assert prediction_only_uids({"physical": {"payload": json.dumps(payload)}}) == ({"physical"} if excluded else set())
+
+
+def test_flat_hydration_rejects_predictions_even_when_external_ids_repeat():
+    from predict.harnesses.branches.flat import cache_matched_flat_retrieval
+    rows = []
+    for uid, text in (("predicted", "QikProp predicted BBB permeability"),
+                      ("measured", "Measured brain uptake")):
+        fields = {"support_text": text}
+        rows.append({"record_id": "shared-external-id", "payload": {
+            "progressive_level": "L2", "source_row_uid": uid, "source_fields": fields,
+            "source_contract": {"source_or_simply_cleaned": {"support_text": True}}}})
+    with pytest.raises(ValueError, match="Prediction-only BBB evidence is ineligible.*predicted"):
+        cache_matched_flat_retrieval("q", "CCO", [], {"L2": {"records": rows}},
+            task="bbb_martins", reranking="morgan", query_audit={},
+            query_identity={"parent_smiles": "CCO", "parent_id": "q"})

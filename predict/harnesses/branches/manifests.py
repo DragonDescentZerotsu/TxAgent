@@ -181,6 +181,7 @@ def selection_parameters(record: dict) -> dict:
             "direct_budget", "indirect_budget", "joint_uid_budget", "budget", "budgets",
             "l1_molecules", "l1_records_per_molecule", "records_per_level", "record_limits_by_level",
             "max_level", "l1_min_contrast", "ranking_tie_seed", "manual_uids", "manual_uid_level"}
+    keys.add("bbb_evidence_policy")
     result = scientific_settings({key: value for key, value in record.items() if key in keys})
     audit = record.get("selection_audit") or {}
     if audit:

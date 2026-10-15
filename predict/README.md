@@ -132,6 +132,13 @@ Historical assets and relocation metadata live in [../archive/](../archive/).
 
 Manual evidence uses `--uids` with one query/level or `--uids-file` with a UID TSV
 or optimizer manifest. See [the selection contract and recipes](../docs/experiment_code.md#physical-uid-selections).
+BBB L2+ evidence excludes prediction-only records by default. The shared task
+predicate retains measured experimental assays and mixed experimental/predicted
+records. Automatic ranked panels skip excluded records before applying limits;
+manual/frozen panels containing them fail before inference. New prepared BBB
+batches record `bbb_prediction_only_excluded_l2plus.v2`; older unmarked prepared
+batches require a fresh run identity. Explicit saved-request replay retains its
+original request contract. Frozen L1 cards and other tasks retain their policies.
 SDK construction is centralized in `api_client/transport.py`; `api_client/pool.py`
 owns provider routing and capacity.
 
