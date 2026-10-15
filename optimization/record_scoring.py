@@ -120,8 +120,8 @@ _DNA_DAMAGE = _pattern(r"dna (?:damage|adduct\w*|crosslink\w*|repair|strand\w*)|
                        r"kinetochore|chromosome segregation|(?:ap|abasic) site|host cell reactivation|"
                        r"tubulin|microtubule|polyploidy|spindle|centrosome|gadd45a|cytogenetic\w*|"
                        r"multiflow|toxtracker")
-_PHYSICAL_DNA_DAMAGE = _pattern(r"dna (?:damage|adduct\w*|crosslink\w*|strand\w*)|"
-                                r"targeted dna adduct measurement|oxidized base|oxidative dna damage|"
+_PHYSICAL_DNA_DAMAGE = _pattern(r"dna (?:adduct\w*|crosslink\w*|strand\w*)|"
+                                r"targeted dna adduct measurement|oxidized base|"
                                 r"32p postlab\w*|comet|strand break\w*|alkaline (?:elution|unwinding)|"
                                 r"topoisomerase cleavage complex")
 _CHROMOSOMAL = _pattern(r"micronucle\w*|chromosom\w* (?:aberration|damage|loss|malsegregation)|"

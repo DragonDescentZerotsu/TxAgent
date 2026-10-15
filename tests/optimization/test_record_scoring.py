@@ -271,6 +271,8 @@ def test_reviewed_null_target_overrides_stale_canonical_target():
     ("ames", "DNA strand breaks", "human cells", .6),
     ("ames", "micronucleus", "human cells", .5),
     ("ames", "gamma H2AX assay", "human cells", .35),
+    ("ames", "DNA damage H2AX reporter", "human cells", .35),
+    ("ames", "DNA damage", "assay unspecified", .5),
     ("ames", "DNA repair kinetics", "human cells", .35),
     ("ames", "topoisomerase catalytic assay", "purified enzyme", .35),
     ("ames", "topoisomerase cleavage complex assay", "human cells", .6),
