@@ -6,7 +6,7 @@ A deterministic information score for an evidence record:
 
 It measures neither the molecule's probability of good bioavailability nor
 experimental reliability or transferability to another molecule. Rules are
-`bioavailability_relevance_completeness.v2`. Python 3.10+ and the TxAgent checkout
+`bioavailability_relevance_completeness.v3`. Python 3.10+ and the TxAgent checkout
 are sufficient; the API loads no datasets and makes no model or service calls.
 The existing standalone DILI wheel is unchanged.
 
@@ -19,18 +19,14 @@ result = score_bioavailability_record({
     "reported_result": "Papp = 12 × 10^-6 cm/s",
     "support_text": "The source reports this permeability measurement.",
 })
-assert result["components"] == {"relevance": 0.75, "completeness": 1.0}
+assert result["components"] == {"relevance": 0.8, "completeness": 1.0}
 ```
 
 ## Relevance rules
 
-| Tier | Meaning | Examples |
-| --- | --- | --- |
-| 1 | Explicit direct oral bioavailability | Oral F; absolute/relative/corrected bioavailability with oral context |
-| 0.75 | Identified mechanistic or oral-exposure proxy | Intestinal absorption/transport, hepatic clearance, GI dissolution, oral AUC |
-| 0.5 | Incomplete context or ambiguous evidence | Generic PAMPA, solubility in water, unspecified metabolic site/PK route, unfamiliar endpoints |
-| 0.25 | Explicit weak or distant proxy | logP/logD/pKa, protein binding, IV-only exposure, off-site transporter activity |
-| 0 | Explicitly unrelated readout | Nephrotoxicity, tumor response, tissue-specific delivery without an oral ADME readout |
+The nine task-specific relevance levels and their scientific interpretation are
+listed in the canonical [Oral rubric](../README.md#oral). `RELEVANCE_TIERS` in
+`scoring.py` gives the exact levels and output names.
 
 Endpoint and system/route patterns are separate. A transporter identity does not
 establish its anatomical site. Caco-2/MDCK/PAMPA umbrella labels do not establish
@@ -45,12 +41,12 @@ and source IDs cannot independently supply relevance. Every result includes
 `matched_rules` with rule IDs, endpoint fields, context fields and pattern families,
 plus `ambiguity_flags` and `reasons`.
 
-V2 distinguishes optical absorption, dissolved oxygen and environmental/radiation
+The scorer distinguishes optical absorption, dissolved oxygen and environmental/radiation
 exposure from ADME endpoints. It distinguishes a negative bioavailability outcome
 from an absent measurement, and a negated prediction from a predicted observation.
 Unqualified endpoint aliases cannot erase explicit predicted/unmeasured status;
 unknown aliases cannot promote an identified weak proxy. Intestinal and hepatic
-disposition have separate rule IDs within the same 0.75 tier. Supporting passages
+disposition have separate rule IDs within the proximal 0.8 tier. Supporting passages
 still supply presence credit only; these rules do not verify passage entailment.
 
 The patterns cover the five source schemas (oral exposure, Fa, Fg, Fh and direct
@@ -94,7 +90,7 @@ PYTHON=python bash experiments/record_scoring/bioavailability.sh
 
 The recipe resolves Oral CURRENT once, uses the named
 `scaffold_disjoint_parent100_v2` catalog, and writes separate Gold/TDC caches under
-`data/caches/record_scores/bioavailability_ma/v2/`. Override `PYTHON`, `CACHE_SET`
+`data/caches/record_scores/bioavailability_ma/v3/`. Override `PYTHON`, `CACHE_SET`
 and `OUTPUT_ROOT` explicitly when needed. Existing populated outputs are refused.
 
 The shared `python -m optimization.selection.record_scores` command also accepts
@@ -108,8 +104,8 @@ the score rules and their dependency files, retrieval index, canonical records
 and payload. Rows include components, result status, rule IDs, ambiguity flags,
 source identity and missing information. Unknown source commits stay empty;
 source-file digests identify the exact rules. Existing DILI caches still load.
-Published v1 caches are unchanged and are rejected by the current reader because
-their scientific rules differ. New rules require a fresh v2 output directory.
+Published v1/v2 caches are unchanged and are rejected by the current reader because
+their scientific rules differ. New rules require a fresh v3 output directory.
 
 These are offline derived artifacts. The recipe does not activate them in context
 optimization or change retrieval, evidence, selections, priors or predictions.

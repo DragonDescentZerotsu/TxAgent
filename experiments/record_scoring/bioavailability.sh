@@ -3,7 +3,7 @@ set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/../.."
 PYTHON="${PYTHON:-python}"
 CACHE_SET="${CACHE_SET:-predict/retrieval/assay_reranking/flat_v5_manifests/scaffold_disjoint_parent100_v2/catalog.json}"
-OUTPUT_ROOT="${OUTPUT_ROOT:-data/caches/record_scores/bioavailability_ma/v2}"
+OUTPUT_ROOT="${OUTPUT_ROOT:-data/caches/record_scores/bioavailability_ma/v3}"
 release="$(cat data/evidence_libraries/bioavailability_ma/CURRENT)"
 for benchmark in gold tdc; do
     bindings="$("$PYTHON" - "$CACHE_SET" "$benchmark" "$release" <<'PY'

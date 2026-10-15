@@ -5,7 +5,7 @@ PYTHON="${PYTHON:-python}"
 CACHE_SET="${CACHE_SET:-predict/retrieval/assay_reranking/flat_v5_manifests/scaffold_disjoint_parent100_v2/catalog.json}"
 task="${1:?Usage: tasks.sh bbb_martins|ames|carcinogens}"
 case "$task" in bbb_martins|ames|carcinogens) ;; *) echo "Unsupported task: $task" >&2; exit 2 ;; esac
-OUTPUT_ROOT="${OUTPUT_ROOT:-data/caches/record_scores/$task/v2}"
+OUTPUT_ROOT="${OUTPUT_ROOT:-data/caches/record_scores/$task/v3}"
 release="$(cat "data/evidence_libraries/$task/CURRENT")"
 for benchmark in gold tdc; do
     bindings="$("$PYTHON" - "$CACHE_SET" "$benchmark" "$release" "$task" <<'PY'
