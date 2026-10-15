@@ -58,6 +58,35 @@ are JSON files with `kind`, `diversity` (`log` or `sqrt`) and a `profiles` list 
 the existing objective coefficient fields. `--profiles` selects named entries for
 frozen held-out evaluation; `--workers` controls CPU parallelism.
 
+The Oral scaffold Luna recipe is `experiments/selection/oral_scaffold_luna.sh`:
+
+```bash
+STUDY_ID=oral_scaffold_luna_YYYYMMDD PYTHON_BIN=/path/to/python \
+  bash experiments/selection/oral_scaffold_luna.sh
+```
+
+It compares the three pinned historical Luna profiles per benchmark, retaining
+the frozen direct panels. Gold selects on its existing 100-query `valid_small`;
+TDC selects on its full 64-query `valid`. Both winners are frozen before either
+test run. Ranking uses macro F1, then accuracy, then profile name, and rejects
+incomplete batches or incompatible query/model identities. Model responses are
+checked against the declared served model and optional provider.
+
+Generated studies live under the gitignored
+`outputs/analysis/context_selection/bioavailability_ma/scaffold/luna/<study-id>/`;
+raw batches remain under `outputs/predictions/`. Two explicit three-profile JSON
+grids live beside the existing grids. Missing scaffold semantic projections are
+materialized by `search extend-semantics` from existing reviewed memberships and
+weights, without provisional assignments. `compose --cache-bundle` binds a frozen
+Gold direct panel to that explicit cache and preserves its cache-provided scores;
+canonical direct panels continue to use ordinary `compose`.
+The recipe explicitly enables `--exclude-disjoint-violations` for TDC and Gold
+test selection: candidates
+that fail the current identity policy are removed before optimization and listed
+by query, level, physical UID and reason in the selection audit. Frozen caches
+and scores remain intact; the filter does not backfill the original parent pool.
+Without this flag, an incompatible candidate still aborts the search.
+
 Prepared caches are indexed by
 `data/caches/assay_reranking/active/flat_v5/canonical_l1_cards_v1/manifest.json`.
 Each task has valid/test L1 databases and an evidence projection. They contain no

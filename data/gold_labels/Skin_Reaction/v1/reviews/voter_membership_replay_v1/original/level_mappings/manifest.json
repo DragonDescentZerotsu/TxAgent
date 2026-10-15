@@ -1,0 +1,73 @@
+{
+  "version": "gold_original_level_mapping.v1",
+  "status": "complete",
+  "task": "skin_reaction",
+  "gold_release": "v1",
+  "uid_ledger_manifest_sha256": "6b265fef59b7fc5b676b30def5b00f1ff1f1f73fa5b66bfce9dd843f83025a27",
+  "builder": {
+    "path": "data/processing/evidence_library/publish_gold_level_mappings.py",
+    "sha256": "81a9e45031ba9aff303c2309e50876ec5284afa245c2f1667bf449860161bbab"
+  },
+  "upstream": {
+    "path": "data/legacy/artifacts/evidence_libraries/v10_before_v24_1_v25_compatibility_restore_20260916/source_uid_levels/skin_reaction",
+    "manifest": "data/legacy/artifacts/evidence_libraries/v10_before_v24_1_v25_compatibility_restore_20260916/source_uid_levels/manifest.json",
+    "manifest_sha256": "2e0160acfc8a08487131b6a738addf0c18e1418853b58b131c8d1813ceb95446",
+    "upstream_commit": "26d44f121141f3738764c0b00dc09e185445341b",
+    "parts": [
+      {
+        "path": "part-00000.parquet",
+        "size_bytes": 3497669,
+        "sha256": "1bd3a033fcd60364691edb18b8f68d8da31cddcbea610b05b338b6282db026ca"
+      }
+    ]
+  },
+  "inputs": {
+    "voter_validation": {
+      "basis": "pinned_tianang_l1_contract",
+      "physical_voters": 42435,
+      "status": "pass"
+    }
+  },
+  "outputs": {
+    "original_level_mapping": {
+      "kind": "parquet_dataset",
+      "path": "original_level_mapping",
+      "rows": 66964,
+      "parts": [
+        {
+          "path": "part-00000.parquet",
+          "size_bytes": 3497669,
+          "sha256": "1bd3a033fcd60364691edb18b8f68d8da31cddcbea610b05b338b6282db026ca"
+        }
+      ]
+    },
+    "level_mapping": {
+      "kind": "parquet_dataset",
+      "path": "level_mapping",
+      "rows": 66964,
+      "parts": [
+        {
+          "path": "part-00000.parquet",
+          "size_bytes": 3497669,
+          "sha256": "1bd3a033fcd60364691edb18b8f68d8da31cddcbea610b05b338b6282db026ca"
+        }
+      ],
+      "rows_by_level": {
+        "1": 42435,
+        "2": 12524,
+        "3": 12005
+      }
+    },
+    "stage1_voter_protection": {
+      "kind": "parquet_file",
+      "path": "stage1_voter_protection.parquet",
+      "sha256": "f48ed34fc14dd7892116ebfd6606a4abc00e8d6d10e692923eb7b38a0e023648",
+      "rows": 42435,
+      "source": "level_mapping/level=1"
+    },
+    "alignment_report": {
+      "path": "alignment_report.json",
+      "sha256": "cd48eec303634cdd3c8dfbf0fbb1616a38a5aef8d1be05a1ed8307c96e2304fa"
+    }
+  }
+}

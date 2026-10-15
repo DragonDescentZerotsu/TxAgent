@@ -14,3 +14,8 @@ completed experiments. It never selects the current dataset.
 recorded path is absent. Relative paths inside archived headers retain their
 original base. There are no filesystem aliases. Scientific payloads and completed
 prediction results are not rewritten or relabeled.
+
+The scaffold-disjoint cache migration also preserves its original versioned
+headers here. Active bindings use the single `tdc` namespace; database bytes,
+payload content IDs and frozen query cohorts are unchanged. The migration audit
+is `outputs/analysis/retrieval_cache/tdc_versionless_20261015/`.

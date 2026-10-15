@@ -5,7 +5,7 @@ import sqlite3
 import pytest
 import yaml
 
-from predict.retrieval.assay_reranking.cache_matched import load_cache_policy
+from predict.retrieval.assay_reranking.cache_matched import load_legacy_cache_policy as load_cache_policy
 from predict.retrieval.assay_reranking.ranked_level_retrieval import load_candidates
 
 

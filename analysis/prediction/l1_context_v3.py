@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 
 from predict.utils.json import sha256_file
+from predict.harnesses.branches.manifests import canonical_location
 
 
 WIDTHS = (10, 15, 25)
@@ -65,7 +66,7 @@ def build(results: Path = DEFAULT_RESULTS, output: Path = DEFAULT_OUTPUT, *,
                     raise ValueError(f"Completed run lacks required artifacts: {root}")
                 inputs.update({run_path, *paths.values()})
                 cache_bundle = Path(run["retrieval_cache_bundle"])
-                batch_manifest = Path(run["batch_root"]) / "matrix.json"
+                batch_manifest = canonical_location(Path(run["batch_root"]) / "matrix.json")
                 if not cache_bundle.is_file() or not batch_manifest.is_file():
                     raise ValueError(f"Run provenance inputs are missing: {root}")
                 inputs.update({cache_bundle, batch_manifest})

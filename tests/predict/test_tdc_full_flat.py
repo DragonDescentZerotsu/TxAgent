@@ -42,7 +42,7 @@ def test_tdc_v2_mixed_prompt_hides_scores_below_high_band_and_shows_l5() -> None
     selected = {("L1", "P1"): 0.8, ("L5", "uid:5"): 0.7}
     for band in ("high", "middle", "low"):
         retrieval = deepcopy(base)
-        flat._apply_tdc_v2_scores(retrieval, selected, band)
+        flat._apply_tdc_scores(retrieval, selected, band)
         messages, _ = flat.build_flat_context_request(
             retrieval, task_id="ames", task_prompt_profile="ames_bacterial_reverse_mutation.v1",
             layout="level-grouped", reranking="assay-transfer", query_prior=None,
@@ -74,7 +74,7 @@ def test_final_full_flat_shows_exact_l1_and_l5_scores_without_a_band() -> None:
              "evidence_rows": [evidence("L5", "uid:5")]},
         ],
     }]}
-    flat._apply_tdc_v2_scores(retrieval, {("L1", "P1"): .8, ("L5", "uid:5"): .7}, "available")
+    flat._apply_tdc_scores(retrieval, {("L1", "P1"): .8, ("L5", "uid:5"): .7}, "available")
     messages, metadata = flat.build_flat_context_request(
         retrieval, task_id="ames", task_prompt_profile="ames_bacterial_reverse_mutation.v1",
         layout="level-grouped", reranking="assay-transfer", query_prior=None,
@@ -88,11 +88,14 @@ def test_final_full_flat_shows_exact_l1_and_l5_scores_without_a_band() -> None:
 
 def test_canonical_tdc_cache_and_retired_version_switch() -> None:
     from data.processing.gold_labels.conditioned_benchmark import TDC_MANIFEST
-    from predict.retrieval.assay_reranking.cache_matched import load_cache_policy
-    flat.require_current_cache_bundle(TDC_MANIFEST)
+    from predict.retrieval.assay_reranking.cache_matched import load_legacy_cache_policy as load_cache_policy
+    from predict.retrieval.assay_reranking.artifact_bundle import DEFAULT_CACHE_SET
+    flat.require_current_cache_bundle(DEFAULT_CACHE_SET)
+    with pytest.raises(ValueError, match="named retrieval"):
+        flat.require_current_cache_bundle(TDC_MANIFEST)
     for task in ('bioavailability_ma', 'skin_reaction'):
-        policy = load_cache_policy(TDC_MANIFEST, task, 'valid', 'assay-transfer-contrastive', 1)
-        assert policy['stages']['L1'] == 'assay_transfer_contrastive'
+        with pytest.raises(ValueError, match='Unsupported task or reranking'):
+            load_cache_policy(TDC_MANIFEST, task, 'valid', 'assay-transfer-contrastive', 1)
     with pytest.raises(SystemExit):
         flat.run(["--harness-version", "final-full-flat", "--task", "skin_reaction",
                   "--benchmark", "tdc", "--tdc-label-version", "v1"])
@@ -114,7 +117,7 @@ def test_upstream_v2_safety_final_writes_shared_trace(tmp_path: Path, monkeypatc
         run_dir=tmp_path, retrieval={},
     )
     (tmp_path / "single_molecule_reasoning_output.json").write_text(
-        json.dumps({"status": "ok", "llm": {"content": {}}})
+        json.dumps({"status": "ok", "llm": {"content": {}, "structured_output_validation": {"valid": True}}})
     )
     monkeypatch.setattr(runtime, "attach_external_condition", lambda value, row: value)
     monkeypatch.setattr(runtime, "validated_branch_content", lambda value: {})
@@ -149,16 +152,30 @@ def test_upstream_v2_saved_safety_labels_remain_scorable() -> None:
         assert prediction_to_label(config, "fail") == 0
 
 
-def test_tdc_prior_reuse_requires_exact_query_smiles(tmp_path: Path) -> None:
+@pytest.mark.parametrize("receipt", (False, True))
+def test_tdc_prior_reuse_requires_exact_query_smiles_and_valid_prior(tmp_path: Path, receipt) -> None:
     old = tmp_path / "old"
     old.mkdir()
     (old / "retrieval.json").write_text(json.dumps({
         "query": {"input_smiles": "N=CNC"}
     }))
+    prior = dict(status="ok", llm=dict(
+        content=dict(endpoint_prior="pass", confidence="high", reasoning_summary="Prior"),
+        messages=[dict(role="user", content=json.dumps(dict(required_json_schema=dict(
+            endpoint_prior="pass | fail", confidence="high | low", reasoning_summary="string"))))]))
+    if receipt:
+        prior["llm"]["structured_output_validation"] = {"valid": True}
+    single = old / "single_molecule_reasoning_output.json"
+    single.write_text(json.dumps(prior))
+    before = single.read_bytes()
     row = {"drug": "NC=NC", "molecule_identity_key": "K", "condition_group": ""}
     assert _matching_source(row, {}, {("K", ""): old}) is None
     row["drug"] = "N=CNC"
-    assert _matching_source(row, {}, {("K", ""): old}) == ("tdc_existing", old)
+    assert _matching_source(row, {}, {("K", ""): old}) == (("tdc_existing", old) if receipt else None)
+    assert single.read_bytes() == before
+    prior["llm"]["structured_output_validation"] = {"valid": False}
+    single.write_text(json.dumps(prior))
+    assert _matching_source(row, {}, {("K", ""): old}) is None
 
 
 def test_tdc_prepared_priors_reject_changed_benchmark_or_request_inputs(
@@ -208,7 +225,8 @@ def test_tdc_v2_matrix_uses_original_split_and_query_pure_bundle() -> None:
     assert args.input_jsonl == Path(
         "data/gold_labels/TDC/BBB_Martins/valid_molecule_condition_labels.jsonl"
     ).resolve()
-    assert args.assay_transfer_cache == flat.TDC_MANIFEST
+    from predict.retrieval.assay_reranking.artifact_bundle import DEFAULT_CACHE_SET
+    assert args.assay_transfer_cache == DEFAULT_CACHE_SET.resolve()
 
 
 def test_six_task_query_priors_accept_tdc_valid_splits() -> None:

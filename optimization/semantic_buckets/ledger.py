@@ -112,7 +112,7 @@ def build(
         SELECT canonical_record_id,source_row_uid,source_id,pair_bucket_key
         FROM read_parquet(?)
     ), levels AS (
-        SELECT canonical_record_id,source_row_uid,'L' || CAST(level AS VARCHAR) AS level
+        SELECT canonical_record_id,source_row_uid,'L' || CAST(NULLIF(level,0) AS VARCHAR) AS level
         FROM read_parquet(?)
     ), mapping AS (
         SELECT canonical_record_id,source_row_uid,level,semantic_bucket_id
@@ -200,33 +200,38 @@ def collect_retrieval_world(task: str, bundles: tuple[Path, ...], output: Path) 
     inputs: dict[str, str] = {}
     for bundle in bundles:
         config = yaml.safe_load(bundle.read_text(encoding="utf-8"))
-        index = (bundle.parent / config["caches"][task]["later"]).resolve()
-        document = json.loads(index.read_text(encoding="utf-8"))
-        if document.get("status") != "complete" or document.get("task_id") != task:
-            raise ValueError(f"Incomplete or foreign retrieval index: {index}")
-        inputs[str(bundle.resolve())] = sha256_file(bundle)
-        inputs[str(index)] = sha256_file(index)
-        for split in ("valid", "test"):
-            for level, entry in document["splits"][split]["levels"].items():
-                if level == "L1":
-                    continue
-                version = index.parent / entry["manifest"]
-                if sha256_file(version) != entry["manifest_sha256"]:
-                    raise ValueError(f"Retrieval manifest changed: {version}")
-                metadata = json.loads(version.read_text(encoding="utf-8"))
-                database = version.with_name(metadata["database"])
-                with sqlite3.connect(
-                    f"file:{database.resolve()}?mode=ro&immutable=1", uri=True
-                ) as connection:
-                    uids.update(
-                        (
-                            (str(uid), level)
-                            for (uid,) in connection.execute(
-                                "SELECT DISTINCT item_id FROM rankings"
+        if config.get("schema_version") == "retrieval_cache_set.v1":
+            indexes = {ROOT / tasks[task]["retrieval"]["later"]
+                       for tasks in config["benchmarks"].values() if task in tasks}
+        else:
+            indexes = {(bundle.parent / config["caches"][task]["later"]).resolve()}
+        for index in sorted(indexes):
+            document = json.loads(index.read_text(encoding="utf-8"))
+            if document.get("status") != "complete" or document.get("task_id") != task:
+                raise ValueError(f"Incomplete or foreign retrieval index: {index}")
+            inputs[str(bundle.resolve())] = sha256_file(bundle)
+            inputs[str(index)] = sha256_file(index)
+            for split in ("valid", "test"):
+                for level, entry in document["splits"][split]["levels"].items():
+                    if level == "L1":
+                        continue
+                    version = index.parent / entry["manifest"]
+                    if sha256_file(version) != entry["manifest_sha256"]:
+                        raise ValueError(f"Retrieval manifest changed: {version}")
+                    metadata = json.loads(version.read_text(encoding="utf-8"))
+                    database = version.with_name(metadata["database"])
+                    with sqlite3.connect(
+                        f"file:{database.resolve()}?mode=ro&immutable=1", uri=True
+                    ) as connection:
+                        uids.update(
+                            (
+                                (str(uid), level)
+                                for (uid,) in connection.execute(
+                                    "SELECT DISTINCT item_id FROM rankings"
+                                )
                             )
                         )
-                    )
-                inputs[str(version)] = entry["manifest_sha256"]
+                    inputs[str(version)] = entry["manifest_sha256"]
     if not uids:
         raise ValueError("Selected retrieval bundles contain no indirect UIDs")
     output.mkdir(parents=True)

@@ -11,7 +11,10 @@ the outputs; this module owns only matrix coordination and its root receipts.
 
 from __future__ import annotations
 
-from predict.harnesses.branches.manifests import run_directory, read_record, require_query_ids, require_artifact_versions
+from predict.harnesses.branches.manifests import (
+    run_directory, read_record, require_query_ids, require_artifact_versions, selection_parameters,
+    canonical_location, PREDICTION_ROOT, prediction_run_root, prediction_batch_directory, query_prior_batch,
+)
 
 import argparse
 import csv
@@ -33,6 +36,7 @@ from predict.api_client.transport import (
     provider_from_base_url,
 )
 from predict.harnesses.branches import flat
+from predict.retrieval.selection import ordered_evidence
 from predict.harnesses.branches.runner import BatchItem, PreparedBatch, collect_completed_item
 from predict.harnesses.branches.scheduler import (
     BatchCommand,
@@ -41,6 +45,7 @@ from predict.harnesses.branches.scheduler import (
 )
 from predict.harnesses.branches.runtime import (
     _source_run_dir,
+    require_matching_query_prior,
     collect_stage_result,
     execute_stage,
     load_stage_state,
@@ -49,7 +54,7 @@ from predict.harnesses.branches.runtime import (
 )
 from predict.harnesses.branches.inference import load_frozen_single_analysis
 from predict.harnesses.branches.prompt import attach_external_condition
-from predict.llm_io.response import validated_branch_content
+from predict.utils.response import validated_branch_content, validate_query_prior_output
 from predict.api_client.pool import (
     DEFAULT_PROVIDER_POOL_CONFIG,
     DEEPSEEK_V4_ALIASES,
@@ -63,9 +68,9 @@ from predict.api_client.pool import (
     select_healthy_providers,
 )
 from predict.retrieval.assay_reranking.cache_matched import (
-    DEFAULT_CACHE_BUNDLE,
     DEFAULT_GOLD_CONTEXT_MAPPING,
 )
+from predict.retrieval.assay_reranking.artifact_bundle import DEFAULT_CACHE_SET, resolve_cache_set, cache_level_limit
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
 
 
@@ -95,16 +100,13 @@ DIRECT_GRID_SCHEMAS = {
 }
 DEFAULT_CONDITIONS = ("morgan:all",)
 CONDITION_CHOICES = tuple(
-    f"{mode}:{pool}" for mode in flat.VARIANTS for pool in flat.RECORD_POOLS
+    f"{mode}:all" for mode in (flat.MORGAN_VARIANT, flat.ASSAY_TRANSFER_VARIANT)
 )
 SINGLE_ROOT = Path(
     "outputs/paper/starling_conditioned_gold_l1_deepseek_v4_flash_nvfp4_query_prior/"
     "runs_deployment_visible_parent_disjoint"
 )
-DEFAULT_OUTPUT_ROOT = Path(
-    "outputs/paper/assay_transfer_harness/joseph/"
-    "final_full_flat_morgan_valid_records10"
-)
+DEFAULT_OUTPUT_ROOT = PREDICTION_ROOT
 
 
 def endpoint_allocations(
@@ -363,12 +365,11 @@ def assign_provider_routes(prepared: Mapping[str, Any]) -> dict[tuple[str, int],
 def _missing_from_previous_batch(
     previous: Mapping[str, Any], selection_args: argparse.Namespace,
     candidate_indices: list[int] | None = None,
-    *, matrix_path: Path | None = None,
+    *, matrix_path: Path | None = None, requested_source: Path | None = None,
 ) -> tuple[list[int], int]:
     """Reuse complete results when the frozen selection and prompt bundle match."""
-    path = Path(str(previous["path"])).resolve()
+    path = canonical_location(previous["path"])
     source = read_record(path)
-    prompt_assets_changed = source.get("prompt_version") != selection_args.prompt_version
     selected_manifest = selection_args.flat_mixed_selection or selection_args.flat_preselected_contexts
     if any(source.get(key) != getattr(selection_args, key) for key in
            ("task", "evaluation_subset", "prompt_version")):
@@ -396,11 +397,18 @@ def _missing_from_previous_batch(
     ):
         raise ValueError(f"Previous batch has a different query cohort: {path}")
     require_query_ids(source, read_jsonl(selection_args.input_jsonl), cohort_indices)
+    if requested_source is None:
+        requested_source, _ = flat._materialize_cache_matched_retrievals(selection_args)
+    requested = read_record(requested_source / "manifest.json")
+    if selection_parameters(source) != selection_parameters(requested) or any(
+        source.get(key) != requested.get(key) for key in ("layout", "reranking", "query_prior")
+    ):
+        raise ValueError(f"Previous batch has different selection parameters: {path}")
     config = importlib.import_module(
         f"predict.harnesses.branches.tasks.{selection_args.task}.contract"
     ).CONFIG
     batch_dir = path.parent.parent
-    if matrix_path is not None and not batch_dir.is_relative_to(matrix_path.parent):
+    if matrix_path is not None and not (batch_dir / "manifest.json").is_file():
         candidates = list(matrix_path.parent.glob(
             f"*/**/{selection_args.task}/{selection_args.batch_id}/manifest.json"
         ))
@@ -425,21 +433,40 @@ def _missing_from_previous_batch(
         except (OSError, ValueError, TypeError, KeyError):
             complete = None
         run_dir = run_directory(batch_dir, index)
-        if complete is not None and (prompt_assets_changed or (run_dir / "request.json").exists()):
-            retrieval_path = path.parent / "runs" / f"{path.parent.name}_idx{index:05d}" / "retrieval.json"
+        prior = None
+        saved_prior = run_dir / "single_molecule_reasoning_output.json"
+        reusable_prior = (selection_args.query_prior != "none" and saved_prior.is_file() and validated_branch_content(
+            validate_query_prior_output(json.loads(saved_prior.read_text()))
+        ) is not None)
+        if selection_args.query_prior != "none" and (complete is not None or reusable_prior):
+            prior_batch = query_prior_batch(selection_args.prior_root, selection_args.task,
+                                            selection_args.evaluation_subset, selection_args.benchmark)
+            prior = require_matching_query_prior(
+                saved_prior, _source_run_dir(prior_batch, index) / saved_prior.name,
+                records[index].get("benchmark_row_id", index),
+            )
+        if complete is not None:
             try:
-                batch_manifest = read_record(batch_dir / "manifest.json")
-                retrieval = attach_external_condition(
-                    json.loads(retrieval_path.read_text(encoding="utf-8")), records[index]
+                previous_retrieval = json.loads(
+                    (run_directory(path.parent, index) / "retrieval.json").read_text(encoding="utf-8")
                 )
-                prior = validated_branch_content(json.loads(
-                    (run_dir / "single_molecule_reasoning_output.json").read_text(encoding="utf-8")
-                ))
+                retrieval = json.loads(
+                    (run_directory(requested_source, index) / "retrieval.json").read_text(encoding="utf-8")
+                )
+            except (OSError, ValueError, TypeError, KeyError):
+                missing.append(index)
+                continue
+            if ordered_evidence(previous_retrieval) != ordered_evidence(retrieval):
+                raise ValueError(f"Previous batch has different ordered evidence: {path}/{index}")
+            try:
+                retrieval = attach_external_condition(
+                    retrieval, records[index]
+                )
                 messages, metadata = flat.build_flat_context_request(
                     retrieval, task_id=selection_args.task,
-                    task_prompt_profile=batch_manifest["task_prompt_profile"],
-                    layout=batch_manifest["flat_layout"],
-                    reranking=batch_manifest["flat_reranking"], query_prior=prior,
+                    task_prompt_profile=flat.prompt_assets(selection_args.prompt_version)["tasks"][selection_args.task]["prompt_profile"],
+                    layout=selection_args.layout,
+                    reranking=selection_args.reranking, query_prior=prior,
                     prompt_version=selection_args.prompt_version,
                 )
                 expected_request = {
@@ -604,7 +631,7 @@ def _selection_args(
     batch_id: str | None = None,
     evaluation_subset: str = "valid",
     prior_root: Path = flat.DEFAULT_QUERY_PRIOR_ROOT,
-    assay_transfer_cache: Path = DEFAULT_CACHE_BUNDLE,
+    assay_transfer_cache: Path | None = None,
     benchmark: str = "gold",
     input_jsonl: Path | None = None,
 ) -> argparse.Namespace:
@@ -626,19 +653,17 @@ def _selection_args(
         else flat.CONTEXT_V4_PROMPT_VERSION if context_v4
         else flat.FINAL_FULL_FLAT_PROMPT_VERSION
     )
-    cache_bundle = flat.resolve_default_cache_bundle(
+    cache_bundle = resolve_cache_set(
         task, benchmark, assay_transfer_cache,
     )
-    task_max_level = flat.prompt_task_max_level(task, prompt_version, cache_bundle)
+    task_max_level = cache_level_limit(cache_bundle, task, benchmark)
+    spec = flat.cache_task(cache_bundle, task, benchmark)
+    from data.processing.paths import REPO_ROOT
+    index_path = REPO_ROOT / spec["retrieval"]["later"]
+    index = json.loads(index_path.read_text())
+    evidence = (index_path.parent / index["evidence"]["manifest"]).resolve()
+    library = next(parent for parent in evidence.parents if parent.parent.name == task)
     return argparse.Namespace(
-        harness_version=(
-            flat.JOSEPH_PROMPT_HARNESSES[six_task_prompt_version]
-            if context_v5_six_tasks
-            else flat.CONTEXT_V6_HARNESS_VERSION if context_v6
-            else flat.CONTEXT_V5_HARNESS_VERSION if context_v5
-            else flat.CONTEXT_V4_HARNESS_VERSION if context_v4
-            else flat.PUBLIC_HARNESS_VERSION
-        ),
         prompt_version=prompt_version,
         task=task,
         benchmark=benchmark,
@@ -648,7 +673,7 @@ def _selection_args(
         record_pool=record_pool,
         evaluation_subset=evaluation_subset,
         input_jsonl=input_jsonl,
-        evidence_library=(Path("data/evidence_libraries") / task / "v10").resolve(),
+        evidence_library=library,
         level_mapper=Path("data/evidence_libraries/level_mappings.v1.json").resolve(),
         gold_context_mapping=DEFAULT_GOLD_CONTEXT_MAPPING.resolve(),
         allow_frozen_l1_vote_scores=task == "bbb_martins",
@@ -776,12 +801,16 @@ def _batch_command(
         command.extend([
             "--flat-layout", args.layout,
             "--flat-query-prior", args.query_prior,
-            "--single-analysis-source-batch",
-            str(args.prior_root / task / f"{task}__none"),
         ])
+        if args.query_prior == "cached":
+            command.extend(["--single-analysis-source-batch",
+                            str(query_prior_batch(args.prior_root, task, args.evaluation_subset, args.benchmark))])
     else:
         command.extend(["--single-analysis-source-batch", str(_single_batch(task))])
-    return BatchCommand(batch_id, command)
+    if getattr(args, "run_name", None):
+        command.extend(["--run-name", args.run_name])
+    name = f"{task}__{args.evaluation_subset}__{batch_id}" if getattr(args, "run_name", None) else batch_id
+    return BatchCommand(name, command)
 
 
 def _provider_execution(
@@ -864,21 +893,22 @@ def _materialize_direct_request_review(
         }:
             raise ValueError(f"Unexpected direct-grid prompt version for {batch_id}")
         retrieval_batch = Path(prepared.args.retrieval_replay_source_batch)
-        prior_batch = Path(prepared.args.single_analysis_source_batch)
+        prior_batch = (Path(prepared.args.single_analysis_source_batch)
+                       if prepared.args.flat_query_prior == "cached" else None)
         for item in prepared.items:
             retrieval_path = (
                 retrieval_batch / "runs"
                 / f"{retrieval_batch.name}_idx{item.index:05d}" / "retrieval.json"
             )
-            prior_path = _source_run_dir(
+            prior_path = (_source_run_dir(
                 prior_batch, item.index
-            ) / "single_molecule_reasoning_output.json"
+            ) / "single_molecule_reasoning_output.json" if prior_batch else None)
             retrieval = attach_external_condition(
                 json.loads(retrieval_path.read_text(encoding="utf-8")), item.record
             )
             prior = validated_branch_content(
-                json.loads(prior_path.read_text(encoding="utf-8"))
-            )
+                validate_query_prior_output(json.loads(prior_path.read_text(encoding="utf-8")))
+            ) if prior_path else None
             messages, metadata = flat.build_flat_context_request(
                 retrieval,
                 task_id=prepared.config.pipeline_module.split(".")[-2],
@@ -905,7 +935,7 @@ def _materialize_direct_request_review(
                 "request_path": str(request_path),
                 "request_sha256": sha256_file(request_path),
                 "retrieval_sha256": sha256_file(retrieval_path),
-                "query_prior_sha256": sha256_file(prior_path),
+                "query_prior_sha256": sha256_file(prior_path) if prior_path else "",
                 "message_char_count": request["message_char_count"],
             })
     index_path = root / "request_review.tsv"
@@ -938,12 +968,13 @@ def _materialize_direct_request_review(
 def main(argv: list[str] | None = None) -> int:
     raw_argv = list(sys.argv[1:] if argv is None else argv)
     parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
-    parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
+    parser.add_argument("--output-root", type=Path, default=PREDICTION_ROOT)
+    parser.add_argument("--run-name")
     parser.add_argument("--study", default="")
     parser.add_argument("--method", default="")
     parser.add_argument(
         "--results-root", type=Path,
-        default=Path("outputs/paper/assay_transfer_harness/joseph"),
+        default=PREDICTION_ROOT,
     )
     parser.add_argument(
         "--parallelism", type=int, default=None,
@@ -962,46 +993,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--uid-level")
     parser.add_argument("--indices", nargs="*")
     parser.add_argument("--records-per-level", type=int, default=RECORDS_PER_LEVEL)
-    parser.set_defaults(context_v4_grid=False, context_v5_grid=False,
-                        context_v5_l1=False, context_v5_all_level=False)
     parser.add_argument("--preselected-grid-manifest", type=Path)
     parser.add_argument("--preselected-direct-grid-manifest", type=Path)
     parser.add_argument("--prompt-only-retrieval-source-matrix", type=Path)
     parser.add_argument("--mixed-selection-grid-manifest", action="append", type=Path, default=[])
-    parser.add_argument(
-        "--mixed-harness-version",
-        choices=(
-            flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_HARNESS_VERSION,
-            flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_HARNESS_VERSION,
-            flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_HARNESS_VERSION,
-            flat.TDC_V2_MIXED_HARNESS_VERSION,
-            flat.DILI_TDC_V2_MIXED_V3_HARNESS_VERSION,
-            flat.DILI_TDC_V2_POLARIZED_HARNESS_VERSION,
-            flat.FINAL_FULL_FLAT_HARNESS_VERSION,
-            flat.FINAL_FULL_FLAT_TDC_CARC_STRONG_HARNESS_VERSION, flat.FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_HARNESS_VERSION,
-        ),
-        default=flat.FINAL_FULL_FLAT_HARNESS_VERSION,
-    )
+    parser.add_argument("--prompt", choices=sorted(flat.FINAL_FULL_FLAT_PROMPT_VERSIONS), default=flat.FINAL_FULL_FLAT_PROMPT_VERSION)
+    parser.add_argument("--layout", choices=flat.CONTEXT_V4_LAYOUTS, default="global")
+    parser.add_argument("--query-prior", choices=("cached", "none"), default="cached")
     parser.add_argument(
         "--resume-missing-from", action="append", type=Path, default=[],
         help="Run only queries without validated results in earlier matrices, oldest first.",
-    )
-    parser.add_argument(
-        "--preselected-direct-harness-version",
-        choices=(
-            flat.CONTEXT_V5_SIX_TASKS_HARNESS_VERSION,
-            flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_HARNESS_VERSION,
-            flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_HARNESS_VERSION,
-            flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_HARNESS_VERSION,
-            flat.TDC_SKIN_LLNA_HARNESS_VERSION,
-            flat.TDC_SKIN_LLNA_SCORES_HARNESS_VERSION,
-            flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_HARNESS_VERSION,
-            flat.TDC_V2_MIXED_HARNESS_VERSION,
-            flat.DILI_TDC_V2_MIXED_V3_HARNESS_VERSION,
-            flat.DILI_TDC_V2_POLARIZED_HARNESS_VERSION,
-            flat.FINAL_FULL_FLAT_HARNESS_VERSION,
-        ),
-        default=flat.FINAL_FULL_FLAT_HARNESS_VERSION,
     )
     parser.add_argument("--tasks", nargs="+", choices=TASKS)
     parser.add_argument(
@@ -1019,28 +1020,16 @@ def main(argv: list[str] | None = None) -> int:
         "--prior-root-by-subset", action="append", default=[], metavar="SUBSET=PATH"
     )
     parser.add_argument(
-        "--assay-transfer-cache", type=Path, default=DEFAULT_CACHE_BUNDLE
+        "--retrieval-cache", dest="assay_transfer_cache", type=Path, default=DEFAULT_CACHE_SET
     )
     parser.add_argument("--flat-artifact-bundle-root", type=Path)
     parser.add_argument("--flat-artifact-manifest", type=Path)
     parser.add_argument("--flat-artifact-receipt", type=Path)
-    parser.add_argument(
-        "--preselected-harness-version",
-        choices=(flat.FINAL_FULL_FLAT_HARNESS_VERSION,),
-        default=flat.FINAL_FULL_FLAT_HARNESS_VERSION,
-    )
     parser.add_argument("--grid-run-id", default="")
-    parser.add_argument(
-        "--morgan-primary-parent-widths", nargs="+", type=int,
-        choices=(15, 25, 50, 100), default=(15, 25, 50),
-    )
-    parser.add_argument(
-        "--l1-min-contrasts", nargs="+", type=int, default=(0, 1, 2),
-    )
     parser.add_argument("--provider-pool-config", type=Path, default=DEFAULT_PROVIDER_CONFIG)
     parser.add_argument("--per-task-provider-split", action="store_true")
     parser.add_argument("--max-stage-requeues", type=int)
-    parser.add_argument("--trace-root", type=Path, default=Path("outputs/paper/live"))
+    parser.add_argument("--trace-root", type=Path)
     parser.add_argument(
         "--execution-mode", choices=("live", "throughput"), default="throughput"
     )
@@ -1055,17 +1044,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--skip-pilots", action="store_true")
     args = parser.parse_args(raw_argv)
-    if args.preselected_direct_harness_version not in flat.ACTIVE_HARNESS_PROMPTS and not args.prompt_only_retrieval_source_matrix:
-        parser.error("Retired direct prompt requires pinned prompt-only retrieval replay")
-    legacy_skin_replay = (
-        args.benchmark == 'tdc' and bool(args.prompt_only_retrieval_source_matrix)
-    )
-    legacy_direct_replay = (
-        args.benchmark == 'tdc' and bool(args.preselected_direct_grid_manifest) and (args.preselected_direct_harness_version == flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_HARNESS_VERSION) and (set(args.tasks or ()) in ({'bioavailability_ma'}, {'skin_reaction'}))
-    )
     if sum((
-        args.context_v4_grid, args.context_v5_grid, args.context_v5_l1,
-        args.context_v5_all_level,
         args.preselected_grid_manifest is not None,
         args.preselected_direct_grid_manifest is not None,
         bool(args.mixed_selection_grid_manifest),
@@ -1074,22 +1053,12 @@ def main(argv: list[str] | None = None) -> int:
     if args.evaluation_subset and args.evaluation_subsets:
         parser.error("use either --evaluation-subset or --evaluation-subsets")
     evaluation_subsets = tuple(args.evaluation_subsets or (args.evaluation_subset or "valid",))
-    if (args.benchmark == 'tdc' and args.prior_root is None and (not args.prior_root_by_subset)):
+    if (args.query_prior == 'cached' and args.benchmark == 'tdc' and args.prior_root is None and (not args.prior_root_by_subset)):
         parser.error("TDC cached priors require an explicit reviewed prior overlay")
-    if args.preselected_grid_manifest and (
-        args.records_per_level != 10
-        or args.morgan_primary_parent_widths != (15, 25, 50)
-        or args.l1_min_contrasts != (0, 1, 2)
-    ):
-        parser.error("the preselected grid has fixed K10/W25/M0 settings")
     if args.preselected_direct_grid_manifest and len(evaluation_subsets) != 1:
         parser.error("a direct selection grid must target exactly one evaluation subset")
     if args.prompt_only_retrieval_source_matrix and not args.preselected_direct_grid_manifest:
         parser.error("prompt-only retrieval replay requires a direct selection grid")
-    if legacy_skin_replay and json.loads(
-        args.preselected_direct_grid_manifest.read_text(encoding="utf-8")
-    ).get("tasks") != ["skin_reaction"]:
-        parser.error("TDC-v1 prompt-only replay requires a Skin-only direct grid")
     if args.input_jsonl and not (args.uids or args.uids_file) and not (
         (args.preselected_direct_grid_manifest or args.mixed_selection_grid_manifest)
         and args.benchmark == "gold"
@@ -1098,15 +1067,6 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--input-jsonl requires a Gold direct or mixed grid on valid")
     if args.mixed_selection_grid_manifest and len(evaluation_subsets) != 1:
         parser.error("mixed selection grids must target exactly one evaluation subset")
-    if "--preselected-harness-version" in raw_argv and not args.preselected_grid_manifest:
-        parser.error("--preselected-harness-version requires --preselected-grid-manifest")
-    if (
-        "--preselected-direct-harness-version" in raw_argv
-        and not args.preselected_direct_grid_manifest
-    ):
-        parser.error(
-            "--preselected-direct-harness-version requires --preselected-direct-grid-manifest"
-        )
     if args.uid_level and not args.uids:
         parser.error("--uid-level applies only to --uids")
     if args.uids or args.uids_file:
@@ -1141,39 +1101,19 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--conditions cannot contain duplicates")
     if len(evaluation_subsets) != len(set(evaluation_subsets)):
         parser.error("evaluation subsets cannot contain duplicates")
-    if len(args.morgan_primary_parent_widths) != len(set(args.morgan_primary_parent_widths)):
-        parser.error("--morgan-primary-parent-widths cannot contain duplicates")
-    if (len(args.l1_min_contrasts) != len(set(args.l1_min_contrasts))
-            or min(args.l1_min_contrasts) < 0):
-        parser.error("--l1-min-contrasts must be unique and non-negative")
-    if (args.context_v5_l1 or args.context_v5_all_level) and len(args.l1_min_contrasts) != 1:
-        parser.error("a single full-flat-v5 run requires exactly one --l1-min-contrasts value")
     conditions = [tuple(value.split(":", 1)) for value in args.conditions]
     args.provider_pool_config = args.provider_pool_config.resolve()
-    args.trace_root = args.trace_root.resolve()
     args.assay_transfer_cache = args.assay_transfer_cache.resolve()
-    if not (legacy_skin_replay or legacy_direct_replay):
-        try:
-            flat.require_current_cache_bundle(args.assay_transfer_cache)
-        except (OSError, ValueError) as exc:
-            parser.error(str(exc))
-    if (
-        args.benchmark == 'tdc' and args.preselected_direct_grid_manifest and ('--preselected-direct-harness-version' not in raw_argv) and (json.loads(args.preselected_direct_grid_manifest.read_text()).get('tasks') == ['skin_reaction'])
-    ):
-        args.preselected_direct_harness_version = flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_HARNESS_VERSION
-    if args.mixed_selection_grid_manifest:
-        direct_prompt_version = flat.JOSEPH_HARNESS_PROMPTS[args.mixed_harness_version]
-    elif args.preselected_direct_grid_manifest:
-        direct_prompt_version = flat.JOSEPH_HARNESS_PROMPTS[
-            args.preselected_direct_harness_version
-        ]
-    else:
-        direct_prompt_version = ""
+    try:
+        flat.require_current_cache_bundle(args.assay_transfer_cache)
+    except (OSError, ValueError) as exc:
+        parser.error(str(exc))
+    direct_prompt_version = args.prompt
     prior_roots = {
         subset: (
-            args.prior_root or flat.default_query_prior_root(
+            args.prior_root or (flat.default_query_prior_root(
                 direct_prompt_version, args.benchmark, subset
-            )
+            ) if args.query_prior == "cached" else flat.DEFAULT_QUERY_PRIOR_ROOT)
         ).resolve()
         for subset in evaluation_subsets
     }
@@ -1188,7 +1128,7 @@ def main(argv: list[str] | None = None) -> int:
         args.preselected_direct_grid_manifest = args.preselected_direct_grid_manifest.resolve()
     prompt_only_sources = {}
     if args.prompt_only_retrieval_source_matrix:
-        path = args.prompt_only_retrieval_source_matrix.resolve()
+        path = canonical_location(args.prompt_only_retrieval_source_matrix)
         source_matrix = json.loads(path.read_text(encoding="utf-8"))
         if (
             direct_prompt_version not in {flat.TDC_SKIN_LLNA_PROMPT_VERSION, flat.TDC_SKIN_LLNA_SCORES_PROMPT_VERSION} or args.benchmark != 'tdc' or evaluation_subsets[0] not in {'valid', 'test'} or (source_matrix.get('prompt_version') != flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION) or (source_matrix.get('benchmark') != 'tdc') or (source_matrix.get('evaluation_subsets') != list(evaluation_subsets)) or (source_matrix.get('prior_roots', {}).get(evaluation_subsets[0]) != str(prior_roots[evaluation_subsets[0]]))
@@ -1207,7 +1147,7 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--resume-missing-from requires a mixed or direct selection grid")
     previous_matrices = []
     for previous_path in args.resume_missing_from:
-        path = previous_path.resolve()
+        path = canonical_location(previous_path)
         matrix = json.loads(path.read_text(encoding="utf-8"))
         if (
             matrix.get("benchmark") != args.benchmark
@@ -1226,7 +1166,19 @@ def main(argv: list[str] | None = None) -> int:
         json.loads(args.preselected_direct_grid_manifest.read_text()).get("tasks") or []
         if args.preselected_direct_grid_manifest else []
     )
+    if not args.run_name:
+        parser.error("New matrix runs require --run-name")
+    root = prediction_run_root(args.output_root, "flat", args.prompt, args.run_name)
+    args.trace_root = (args.trace_root or root / "traces").resolve()
     candidate_config = load_provider_pool_config(args.provider_pool_config)
+    if (root / "matrix.json").is_file():
+        previous = json.loads((root / "matrix.json").read_text())
+        expected = {"model": canonical_provider_model(candidate_config), "benchmark": args.benchmark,
+                    "prompt_version": args.prompt, "layout": args.layout, "query_prior": args.query_prior,
+                    "max_tokens": args.max_tokens, "evaluation_subsets": list(evaluation_subsets)}
+        changed = [key for key, value in expected.items() if previous.get(key) != value]
+        if changed:
+            raise ValueError(f"Named run has incompatible settings {changed}; use a new --run-name")
     if args.per_task_provider_split:
         specs = candidate_config.providers
         if (
@@ -1262,7 +1214,6 @@ def main(argv: list[str] | None = None) -> int:
             ):
                 parser.error("both pinned providers must pass preflight at full capacity")
 
-    root = args.output_root.resolve()
     args.results_root = args.results_root.resolve()
     if bool(args.study) != bool(args.method):
         parser.error("--study and --method must be supplied together")
@@ -1271,7 +1222,7 @@ def main(argv: list[str] | None = None) -> int:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         if args.prepare_only:
             execution = {
-                "model": MODEL,
+                "model": canonical_provider_model(provider_config),
                 "base_url": "",
                 "api_key_env": "",
                 "timeout_s": args.request_timeout_s,
@@ -1288,43 +1239,9 @@ def main(argv: list[str] | None = None) -> int:
         selected_tasks = tuple(dict.fromkeys(args.tasks or (
             declared_direct_tasks or TASKS[:2]
         )))
-        context_matrix = (
-            args.context_v4_grid or args.context_v5_grid
-            or args.context_v5_l1 or args.context_v5_all_level
-            or args.preselected_grid_manifest
-            or args.preselected_direct_grid_manifest
-            or args.mixed_selection_grid_manifest
-        )
-        single_receipts = [] if context_matrix else [
-            verify_single_reuse(
-                task,
-                split_path(task, "valid").with_name(
-                    "valid_molecule_condition_labels.jsonl"
-                ).resolve(),
-            )
-            for task in selected_tasks
-        ]
         selection_receipts = []
         resume_receipts = []
-        variants = (
-            [
-                ("assay-transfer-contrastive", "all", width, contrast, False)
-                for width in args.morgan_primary_parent_widths
-                for contrast in args.l1_min_contrasts
-            ] + [("assay-transfer-contrastive", "all", 25, 0, True)]
-            if args.context_v5_grid else
-            [
-                ("assay-transfer-contrastive", "all", width, contrast, False)
-                for width in args.morgan_primary_parent_widths
-                for contrast in args.l1_min_contrasts
-            ]
-            if args.context_v4_grid else
-            [("assay-transfer-contrastive", "all", 25, args.l1_min_contrasts[0], False)]
-            if args.context_v5_l1 else
-            [("assay-transfer-contrastive", "all", 25, args.l1_min_contrasts[0], True)]
-            if args.context_v5_all_level else
-            [(reranking, record_pool, None, 0, False) for reranking, record_pool in conditions]
-        )
+        variants = conditions
         grid_profiles = (
             load_preselected_grid(args.preselected_grid_manifest)
             if args.preselected_grid_manifest else []
@@ -1361,15 +1278,7 @@ def main(argv: list[str] | None = None) -> int:
                 "direct selection grid subset does not match --evaluation-subset: "
                 f"{direct_grid_profiles[0]['subset']} != {evaluation_subsets[0]}"
             )
-        preselected_v5 = bool(
-            grid_profiles
-            and args.preselected_harness_version == flat.CONTEXT_V5_HARNESS_VERSION
-        )
-        preselected_v6 = bool(
-            grid_profiles
-            and args.preselected_harness_version == flat.CONTEXT_V6_HARNESS_VERSION
-        )
-        grid_run_id = args.grid_run_id or time.strftime("k10_m0_%Y%m%d_%H%M%S")
+        grid_run_id = args.grid_run_id or args.run_name
         work = (
             [
                 {
@@ -1377,7 +1286,6 @@ def main(argv: list[str] | None = None) -> int:
                     "subset": evaluation_subsets[0],
                     "manifest": Path(entry["path"]).resolve(),
                     "direct": False, "mixed": True,
-                    "root": root / profile["name"] / "with_query_prior" / grid_run_id,
                 }
                 for profile in mixed_grid_profiles
                 for task, entry in profile["task_manifests"].items()
@@ -1389,7 +1297,6 @@ def main(argv: list[str] | None = None) -> int:
                     "subset": evaluation_subsets[0],
                     "manifest": Path(profile["task_manifests"][task]["path"]).resolve(),
                     "direct": True,
-                    "root": root / profile["name"] / "with_query_prior" / grid_run_id,
                 }
                 for profile in direct_grid_profiles
                 for task in profile["tasks"]
@@ -1402,11 +1309,6 @@ def main(argv: list[str] | None = None) -> int:
                     "task": task,
                     "subset": subset,
                     "manifest": Path(profile["task_manifests"][task]["path"]).resolve(),
-                    "root": (
-                        root / profile["name"] / "with_query_prior" / grid_run_id
-                        / subset if len(evaluation_subsets) > 1
-                        else root / profile["name"] / "with_query_prior" / grid_run_id
-                    ),
                     "direct": False,
                 }
                 for profile in grid_profiles
@@ -1418,10 +1320,9 @@ def main(argv: list[str] | None = None) -> int:
                 {
                     "profile": "", "task": task, "subset": subset, "manifest": None,
                     "direct": False,
-                    "root": root / subset if len(evaluation_subsets) > 1 else root,
-                    "variant": (reranking, record_pool, width, contrast, all_levels),
+                    "variant": (reranking, record_pool),
                 }
-                for reranking, record_pool, width, contrast, all_levels in variants
+                for reranking, record_pool in variants
                 for subset in evaluation_subsets
                 for task in selected_tasks
             ]
@@ -1430,34 +1331,25 @@ def main(argv: list[str] | None = None) -> int:
             task = item["task"]
             subset = item["subset"]
             if item["profile"]:
-                reranking, record_pool, width, contrast, all_levels = (
-                    "assay-transfer" if args.benchmark == 'tdc' else "assay-transfer-contrastive",
-                    "all", 25, 0, True
+                reranking, record_pool, width, contrast = (
+                    "assay-transfer",
+                    "all", 25, 0
                 )
             else:
-                reranking, record_pool, width, contrast, all_levels = item["variant"]
+                reranking, record_pool = item["variant"]
+                width, contrast = None, 0
             selection_args = _selection_args(
                 task,
-                item["root"],
+                root,
                 limit=args.limit,
                 reranking=reranking,
                 record_pool=record_pool,
                 records_per_level=args.records_per_level,
                 context_width=width,
                 min_contrast=contrast,
-                context_v5=(
-                    args.context_v5_grid or args.context_v5_l1
-                    or args.context_v5_all_level or preselected_v5
-                ),
-                context_v6=preselected_v6,
-                context_v5_six_tasks=item["direct"] or item.get("mixed", False),
-                six_task_prompt_version=(
-                    flat.JOSEPH_HARNESS_PROMPTS[args.mixed_harness_version]
-                    if item.get("mixed") else flat.JOSEPH_HARNESS_PROMPTS[
-                        args.preselected_direct_harness_version
-                    ]
-                ),
-                all_levels=all_levels and not item["direct"],
+                context_v5_six_tasks=True,
+                six_task_prompt_version=args.prompt,
+                all_levels=not item["direct"],
                 flat_preselected_uids=(
                     None if item["direct"] or item.get("mixed") else item["manifest"]
                 ),
@@ -1474,55 +1366,16 @@ def main(argv: list[str] | None = None) -> int:
                 ),
             )
             selection_args.uids = args.uids
+            profile = item["profile"] or ("default" if len(variants) == 1 else selection_args.batch_id)
+            batch = prediction_batch_directory(root, args.benchmark, task, subset, profile)
+            selection_args.batch_root, selection_args.batch_id = batch.parent, batch.name
+            selection_args.run_name = args.run_name
+            selection_args.layout = args.layout
+            selection_args.query_prior = args.query_prior
             selection_args.uids_file = args.uids_file
             selection_args.uid_level = args.uid_level
             if args.indices:
                 selection_args.indices = list(args.indices)
-            if args.assay_transfer_cache.name in {
-                "ranked_level_retrieval_gold_v1_v27_carcinogens_hybrid_v1.yaml",
-                "ranked_level_retrieval_tdc_v1_v27_ames_hybrid_v1.yaml",
-            }:
-                selection_args.flat_artifact_manifest = (
-                    Path("predict/retrieval/assay_reranking/flat_v5_manifests/v27_hybrid_successors")
-                    / f"{args.benchmark}_v1" / f"{task}.json"
-                ).resolve()
-                selection_args.flat_artifact_receipt = (
-                    Path("data/caches/assay_reranking/active/flat_v5/receipts/v27_hybrid_successors")
-                    / f"{args.benchmark}_v1" / f"{task}.json"
-                ).resolve()
-            elif args.assay_transfer_cache.name == "ranked_level_retrieval_tdc_v2_dili_parent_disjoint_v2.yaml":
-                selection_args.flat_artifact_manifest = Path(
-                    "predict/retrieval/assay_reranking/flat_v5_manifests/tdc_v2_dili_parent_disjoint_v2/dili.json"
-                ).resolve()
-                selection_args.flat_artifact_receipt = Path(
-                    "data/caches/assay_reranking/active/flat_v5/receipts/tdc_v2_dili_parent_disjoint_v2/dili.json"
-                ).resolve()
-            elif (args.assay_transfer_cache.name.endswith("_v27_successors_v1.yaml")
-                    and task in {"ames", "dili", "carcinogens"}):
-                scope = (
-                    "direct_only/"
-                    if item["direct"] and (args.benchmark, task) in {
-                        ("gold", "carcinogens"), ("tdc", "ames")
-                    } else ""
-                )
-                selection_args.flat_artifact_manifest = (
-                    Path("predict/retrieval/assay_reranking/flat_v5_manifests/v27_successors")
-                    / scope / f"{args.benchmark}_v1" / f"{task}.json"
-                ).resolve()
-                selection_args.flat_artifact_receipt = (
-                    Path("data/caches/assay_reranking/active/flat_v5/receipts/v27_successors")
-                    / scope / f"{args.benchmark}_v1" / f"{task}.json"
-                ).resolve()
-            elif (args.assay_transfer_cache.name.endswith("_v27_partial_snapshot_v1.yaml")
-                  and (args.benchmark, task) in {("gold", "carcinogens"), ("tdc", "ames")}):
-                selection_args.flat_artifact_manifest = (
-                    Path("predict/retrieval/assay_reranking/flat_v5_manifests/v27_partial_snapshots")
-                    / f"{args.benchmark}_v1" / f"{task}.json"
-                ).resolve()
-                selection_args.flat_artifact_receipt = (
-                    Path("data/caches/assay_reranking/active/flat_v5/receipts/v27_partial_snapshots")
-                    / f"{args.benchmark}_v1" / f"{task}.json"
-                ).resolve()
             if args.flat_artifact_bundle_root is not None:
                 bundle_root = args.flat_artifact_bundle_root.resolve()
                 selection_args.flat_artifact_manifest = bundle_root / "manifests" / f"{task}.json"
@@ -1530,21 +1383,17 @@ def main(argv: list[str] | None = None) -> int:
             if args.flat_artifact_manifest is not None:
                 selection_args.flat_artifact_manifest = args.flat_artifact_manifest.resolve()
                 selection_args.flat_artifact_receipt = args.flat_artifact_receipt.resolve()
-            if len(evaluation_subsets) > 1:
-                prefix = f"{task}__"
-                selection_args.batch_id = (
-                    f"{prefix}{subset}__{selection_args.batch_id.removeprefix(prefix)}"
-                )
-            previous_source = None
+            requested_source = None
             if previous_matrices:
+                requested_source, requested_selection = flat._materialize_cache_matched_retrievals(selection_args)
                 key = (task, subset, item["profile"])
                 missing = None
                 for previous_path, previous_matrix, previous_selections in previous_matrices:
                     if key not in previous_selections:
                         raise ValueError(f"Previous matrix lacks selection {key}: {previous_path}")
                     if (
-                        previous_matrix.get("prior_roots", {}).get(subset)
-                        != str(selection_args.prior_root)
+                        canonical_location(previous_matrix.get("prior_roots", {}).get(subset) or "/dev/null")
+                        != canonical_location(selection_args.prior_root)
                         or previous_matrix.get("assay_transfer_cache", {}).get("sha256")
                         != sha256_file(selection_args.assay_transfer_cache)
                         or (
@@ -1560,6 +1409,7 @@ def main(argv: list[str] | None = None) -> int:
                     missing, reused = _missing_from_previous_batch(
                         previous_selections[key], selection_args, missing,
                         matrix_path=previous_path,
+                        requested_source=requested_source,
                     )
                     resume_receipts.append({
                         "source": str(previous_path),
@@ -1567,22 +1417,17 @@ def main(argv: list[str] | None = None) -> int:
                         "profile": item["profile"], "reused": reused,
                         "missing": len(missing), "missing_indices": missing,
                     })
-                    previous_source = Path(previous_selections[key]["path"]).resolve().parent
                     if not missing:
                         break
                 if not missing:
                     continue
                 selection_args.indices = [str(index) for index in missing]
                 selection_args.flat_mixed_selection_subset = bool(selection_args.flat_mixed_selection)
-            current_source = (
-                selection_args.batch_root / selection_args.batch_id
-                / "cache_matched_retrieval"
-            )
             replay_entry = prompt_only_sources.get((task, subset, item["profile"]))
             if prompt_only_sources and replay_entry is None:
                 raise ValueError(f"Prompt-only source lacks {task}/{subset}/{item['profile']}")
             if replay_entry is not None:
-                manifest_path = Path(replay_entry["path"]).resolve()
+                manifest_path = canonical_location(replay_entry["path"])
                 if sha256_file(manifest_path) != replay_entry["sha256"]:
                     raise ValueError(f"Prompt-only source manifest changed: {manifest_path}")
                 selection = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -1609,12 +1454,8 @@ def main(argv: list[str] | None = None) -> int:
                 source = manifest_path.parent
                 selection_args.flat_replay_subset = True
                 selection_args.flat_prompt_successor_replay = True
-            elif (previous_source is not None
-                    and read_record(previous_source / "manifest.json").get("prompt_version")
-                    == selection_args.prompt_version
-                    and not (current_source / "manifest.json").exists()):
-                source = previous_source
-                selection = read_record(source / "manifest.json")
+            elif requested_source is not None:
+                source, selection = requested_source, requested_selection
                 selection_args.flat_replay_subset = True
             else:
                 source, selection = flat._materialize_cache_matched_retrievals(
@@ -1667,14 +1508,14 @@ def main(argv: list[str] | None = None) -> int:
         )
         provider_assignment = assign_provider_routes(prepared) if args.per_task_provider_split else {}
         assignment_counts = {
-            batch.batch_id: {
+            name: {
                 name: sum(
                     provider_assignment[(str(batch.batch_dir.resolve()), item.index)] == name
                     for item in batch.items
                 )
                 for name in ("together", "cohere")
             }
-            for batch in prepared.values()
+            for name, batch in prepared.items()
         } if args.per_task_provider_split else {}
         request_review = None
         if args.prepare_only and args.preselected_direct_grid_manifest:
@@ -1771,20 +1612,10 @@ def main(argv: list[str] | None = None) -> int:
             execution, endpoint_receipts = _provider_execution(
                 provider_config, args.request_timeout_s,
             )
-        selected_prompt_version = (
-            flat.JOSEPH_HARNESS_PROMPTS[args.mixed_harness_version]
-            if args.mixed_selection_grid_manifest else
-            flat.JOSEPH_HARNESS_PROMPTS[args.preselected_direct_harness_version]
-            if args.preselected_direct_grid_manifest else
-            flat.JOSEPH_HARNESS_PROMPTS[args.preselected_harness_version]
-            if args.preselected_grid_manifest else
-            flat.CONTEXT_V5_PROMPT_VERSION
-            if args.context_v5_grid or args.context_v5_l1 or args.context_v5_all_level else
-            flat.CONTEXT_V4_PROMPT_VERSION
-            if args.context_v4_grid else flat.JOSEPH_PROMPT_VERSION
-        )
+        selected_prompt_version = args.prompt
         manifest = {
             "version": MATRIX_VERSION,
+            "run_name": args.run_name,
             "status": (
                 "prepared_awaiting_prompt_review"
                 if args.prepare_only and args.preselected_direct_grid_manifest
@@ -1793,27 +1624,15 @@ def main(argv: list[str] | None = None) -> int:
             "tasks": list(selected_tasks),
             "benchmark": args.benchmark,
             "evaluation_subsets": list(evaluation_subsets),
-            "harness_version": (
-                args.mixed_harness_version
-                if args.mixed_selection_grid_manifest else
-                args.preselected_direct_harness_version
-                if args.preselected_direct_grid_manifest
-                else args.preselected_harness_version if args.preselected_grid_manifest
-                else flat.CONTEXT_V5_HARNESS_VERSION
-                if args.context_v5_grid or args.context_v5_l1 or args.context_v5_all_level
-                else flat.CONTEXT_V4_HARNESS_VERSION
-                if args.context_v4_grid else flat.PUBLIC_HARNESS_VERSION
-            ),
+            "organization": "flat",
             "prompt_version": selected_prompt_version,
+            "layout": args.layout,
+            "query_prior": args.query_prior,
             "conditions": [
                 {"reranking": reranking, "record_pool": record_pool}
                 for reranking, record_pool in conditions
             ],
             "records_per_level": args.records_per_level,
-            "context_v4_grid": args.context_v4_grid,
-            "context_v5_grid": args.context_v5_grid,
-            "context_v5_l1": args.context_v5_l1,
-            "context_v5_all_level": args.context_v5_all_level,
             "preselected_grid_manifest": (
                 {
                     "path": str(args.preselected_grid_manifest),
@@ -1836,25 +1655,11 @@ def main(argv: list[str] | None = None) -> int:
                 {"path": str(path), "sha256": sha256_file(path)}
                 for path in args.mixed_selection_grid_manifest
             ],
-            "morgan_primary_parent_widths": (
-                [25] if args.context_v5_l1 else args.morgan_primary_parent_widths
-                if args.context_v4_grid or args.context_v5_grid
-                else [25] if args.context_v5_all_level or args.preselected_grid_manifest else []
-            ),
-            "l1_min_contrasts": (
-                list(args.l1_min_contrasts) if args.context_v5_l1 else args.l1_min_contrasts
-                if args.context_v4_grid or args.context_v5_grid
-                else list(args.l1_min_contrasts) if args.context_v5_all_level
-                else [0] if args.preselected_grid_manifest else []
-            ),
             "l1_molecules": 10,
             "l1_records_per_molecule": 10,
             "max_level_by_task": (
-                {task: 1 for task in selected_tasks}
-                if args.context_v4_grid or args.context_v5_l1 else
                 {task: (1 if args.preselected_direct_grid_manifest else
-                        flat.prompt_task_max_level(
-                            task, selected_prompt_version, args.assay_transfer_cache))
+                        cache_level_limit(args.assay_transfer_cache, task, args.benchmark))
                  for task in selected_tasks}
             ),
             "ranking_tie_seed": 0,
@@ -1895,7 +1700,7 @@ def main(argv: list[str] | None = None) -> int:
             "per_task_provider_split": args.per_task_provider_split,
             "provider_assignment_counts": assignment_counts,
             "endpoint_preflight": endpoint_receipts,
-            "single_reuse": single_receipts,
+            "single_reuse": [],
             "selections": selection_receipts,
             "resume_missing_from": [
                 {"path": str(path), "sha256": sha256_file(path),
@@ -1922,20 +1727,20 @@ def main(argv: list[str] | None = None) -> int:
             executed_profiles = {row["profile"] for row in selection_receipts}
             for item in work:
                 if item["profile"] in executed_profiles:
-                    organized_runs[item["profile"]] = item["root"]
+                    organized_runs[item["profile"]] = root / "profiles" / item["profile"]
             for profile, run_root in organized_runs.items():
                 write_json_atomic(run_root / "run.json", {
                     "schema_version": "organized_study_run.v1",
                     "study": args.study, "method": profile,
+                    "metric_source_dir": str(root), "selection_profile": profile,
                     "run_id": run_root.name, "batch_id": root.name,
                     "status": manifest["status"], "metric_status": "pending",
                     "prompt_version": manifest["prompt_version"],
-                    "harness_version": manifest["harness_version"],
-                    "reranking": ("assay-transfer" if args.benchmark == 'tdc' else
-                                  "assay-transfer-contrastive"),
+                    "organization": manifest["organization"],
+                    "reranking": "assay-transfer",
                     "query_prior": "with_query_prior", "l1_molecules": 10,
                     "l1_min_contrast": 0, "morgan_primary_parent_width": 25,
-                    "tasks": [item["task"] for item in work if item["profile"] == profile],
+                    "tasks": sorted({item["task"] for item in work if item["profile"] == profile}),
                     "evaluation_subset": list(evaluation_subsets),
                     "matrix_json": str(root / "matrix.json"),
                     "matrix_json_sha256": sha256_file(root / "matrix.json"),
@@ -1944,14 +1749,14 @@ def main(argv: list[str] | None = None) -> int:
             write_json_atomic(root / "run.json", {
                 "schema_version": "organized_study_run.v1",
                 "study": args.study, "method": args.method,
+                "metric_source_dir": str(root),
                 "run_id": root.name, "batch_id": root.name,
                 "status": manifest["status"], "metric_status": "pending",
                 "prompt_version": manifest["prompt_version"],
-                "harness_version": manifest["harness_version"],
-                "reranking": ("assay-transfer" if args.benchmark == 'tdc' else
-                              "assay-transfer-contrastive"),
+                "organization": manifest["organization"],
+                "reranking": "assay-transfer",
                 "query_prior": "with_query_prior", "l1_molecules": 10,
-                "l1_min_contrast": args.l1_min_contrasts[0],
+                "l1_min_contrast": 0,
                 "morgan_primary_parent_width": 25,
                 "tasks": list(selected_tasks), "evaluation_subset": list(evaluation_subsets),
                 "matrix_json": str(root / "matrix.json"),

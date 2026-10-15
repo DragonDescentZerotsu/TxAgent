@@ -9,7 +9,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from predict.llm_io.response import response_validation_errors
+from predict.utils.response import response_validation_errors
 from predict.harnesses.branches.runner import (
     _parse_args,
     _validate_assay_transfer_scores,
@@ -849,7 +849,7 @@ def test_flat_shared_parent_policy_does_not_apply_level_record_limit() -> None:
         for i in range(3)
     ]
     args = SimpleNamespace(
-        assay_transfer_cache=Path("cache.yaml"), task="bbb_martins",
+        assay_transfer_cache=Path("cache.yaml"), task="bbb_martins", benchmark="gold",
         evaluation_subset="valid", reranking="assay-transfer", max_level=2,
         prompt_version=CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
         l1_molecules=1, l1_records_per_molecule=1,
@@ -860,17 +860,18 @@ def test_flat_shared_parent_policy_does_not_apply_level_record_limit() -> None:
     audit = {
         "query_audits": {"q": {"L1": {"selected_records": 0}}},
         "query_identities": {}, "neighbor_identity_policy": "parent_disjoint",
-        "neighbor_identity_policy_by_level": {"L2": "parent_disjoint"},
+        "neighbor_identity_policy_by_level": {"L1": "scaffold_disjoint", "L2": "parent_disjoint"},
         "selection_policy": "ranked_uid_retrieval.v1", "cache_content_ids": {},
     }
 
     _, later, receipt = flat._load_flat_context_candidates(
-        args, {"q": "CCO"}, load_cache_policy=lambda *args: policy,
+        args, {"q": "CCO"}, load_cache_policy=lambda *args, **kwargs: policy,
         load_candidates=lambda *args, **kwargs: ({"q": []}, {"q": {"L2": {"records": rows}}}, audit),
     )
 
     assert len(later["q"]["L2"]["records"]) == 3
     assert receipt["contract"]["all_later_records"] is True
+    assert receipt["neighbor_identity_policy_by_level"]["L1"] == "scaffold_disjoint"
 
 
 @pytest.mark.parametrize("prompt_version", [
@@ -879,7 +880,7 @@ def test_flat_shared_parent_policy_does_not_apply_level_record_limit() -> None:
 ])
 def test_flat_partial_snapshot_accepts_empty_assay_level(prompt_version: str) -> None:
     args = SimpleNamespace(
-        assay_transfer_cache=Path("cache.yaml"), task="ames",
+        assay_transfer_cache=Path("cache.yaml"), task="ames", benchmark="gold",
         evaluation_subset="valid", reranking="assay-transfer", max_level=2,
         prompt_version=prompt_version,
         l1_molecules=1, l1_records_per_molecule=1,
@@ -894,7 +895,7 @@ def test_flat_partial_snapshot_accepts_empty_assay_level(prompt_version: str) ->
         "selection_policy": "ranked_uid_retrieval.v1", "cache_content_ids": {},
     }
     _, later, _ = flat._load_flat_context_candidates(
-        args, {"q": "CCO"}, load_cache_policy=lambda *args: policy,
+        args, {"q": "CCO"}, load_cache_policy=lambda *args, **kwargs: policy,
         load_candidates=lambda *args, **kwargs: (
             {"q": []}, {"q": {"L2": {"records": [], "allow_shortfall": True}}}, audit
         ),
@@ -903,17 +904,9 @@ def test_flat_partial_snapshot_accepts_empty_assay_level(prompt_version: str) ->
     assert later["q"]["L2"]["shortfall"] == 3
 
 
-@pytest.mark.parametrize("prompt_version", [
-    CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
-    CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
-])
-def test_partial_snapshot_bundle_keeps_safety_l7_visible(prompt_version: str) -> None:
-    assert flat.prompt_task_max_level(
-        "carcinogens", prompt_version,
-        Path("ranked_level_retrieval_gold_v1_v27_partial_snapshot_v1.yaml"),
-    ) == 7
-
-
+def test_cache_metadata_keeps_safety_l7_visible() -> None:
+    from predict.retrieval.assay_reranking.artifact_bundle import DEFAULT_CACHE_SET, cache_level_limit
+    assert cache_level_limit(DEFAULT_CACHE_SET, "carcinogens", "gold") == 7
 
 
 def test_l1_context_cards_with_one_parent_remain_separate() -> None:
@@ -1052,20 +1045,18 @@ def test_flat_v2_claims_allow_empty_and_reject_unknown_cards() -> None:
     assert validation["forbidden_field_names"] == ("key_evidence", "tool_summary")
 
 
-def test_public_flat_defaults_to_final_and_rejects_retired_harnesses(monkeypatch) -> None:
-    calls = []
-    monkeypatch.setattr(flat, "_joseph_main", lambda argv: calls.append(argv) or 0)
-    monkeypatch.setattr(flat, "mode_main", lambda mode, argv: calls.append((mode, argv)) or 0)
-    assert flat.run(["--task", "bbb_martins", "--prepare-only"]) == 0
-    assert calls[0][:2] == ["--harness-version", PUBLIC_HARNESS_VERSION]
-    assert PUBLIC_HARNESS_VERSION == "final-full-flat"
+def test_public_flat_defaults_to_final_and_rejects_retired_harnesses(monkeypatch, tmp_path) -> None:
+    observed = {}
+    def prepare(args):
+        observed.update(prompt=args.prompt_version, cache=args.assay_transfer_cache)
+        return tmp_path, {"indices": [0]}
+    monkeypatch.setattr(flat, "_materialize_cache_matched_retrievals", prepare)
+    assert flat.run(["--task", "bbb_martins", "--query-prior", "none", "--prepare-only",
+                     "--run-name", "default-prompt", "--output-root", str(tmp_path)]) == 0
+    assert observed["prompt"] == flat.FINAL_FULL_FLAT_PROMPT_VERSION
+    assert observed["cache"].name == "catalog.json"
     with pytest.raises(SystemExit):
         flat.run(["--harness-version", "tianang-flat-v1", "--task", "bbb_martins"])
-
-
-
-
-
 
 
 def test_joseph_flat_prompt_rejects_skin() -> None:
@@ -1117,9 +1108,10 @@ def test_joseph_cli_maps_public_pool_names_only(
         return tmp_path, {"status": "prepared"}
 
     monkeypatch.setattr(flat, "_materialize_cache_matched_retrievals", materialize)
-    assert flat._joseph_main([
-            "--harness-version", flat.PUBLIC_HARNESS_VERSION,
-            "--task", "bioavailability_ma", flag, public, "--query-prior", "none", "--prepare-only"
+    assert flat.run([
+            "--prompt", flat.FINAL_FULL_FLAT_PROMPT_VERSION,
+            "--task", "bioavailability_ma", "--query-prior", "none", "--prepare-only",
+            "--run-name", "pool-check", "--output-root", str(tmp_path)
     ]) == 0
     assert observed == {"public": public, "stored": stored}
 
@@ -1129,11 +1121,13 @@ def test_flat_launcher_forwards_the_selected_provider_config(monkeypatch, tmp_pa
     selected = flat.DEFAULT_PROVIDER_CONFIG.with_name("current_endpoints.json") if explicit else flat.DEFAULT_PROVIDER_CONFIG
     observed = {}
     monkeypatch.setattr(flat, "_materialize_cache_matched_retrievals", lambda args: (tmp_path, {}))
-    monkeypatch.setattr(flat, "mode_main", lambda mode, argv: observed.update(argv=argv) or 0)
-    argv = ["--task", "bbb_martins", "--query-prior", "none", "--max-tokens", "262144"]
+    monkeypatch.setattr(flat, "mode_main", lambda mode, argv, **kwargs: observed.update(argv=argv, **kwargs) or 0)
+    argv = ["--task", "bbb_martins", "--query-prior", "none", "--max-tokens", "262144",
+            "--run-name", "provider-check", "--output-root", str(tmp_path)]
     if explicit:
         argv.extend(["--provider-pool-config", str(selected)])
-    assert flat._joseph_main(argv) == 0
+    assert flat.run(argv) == 0
+    assert observed["launch_command"][3:] == argv
     forwarded = observed["argv"]
     assert forwarded[forwarded.index("--provider-pool-config") + 1] == str(selected)
 
@@ -1141,7 +1135,7 @@ def test_flat_launcher_forwards_the_selected_provider_config(monkeypatch, tmp_pa
 @pytest.mark.parametrize("pool", ["assay-transfer-trained", "all_transfer_eligible"])
 def test_active_joseph_cli_rejects_legacy_pools(pool: str) -> None:
     with pytest.raises(SystemExit):
-        flat._joseph_main([
+        flat.run([
             "--task", "bioavailability_ma", "--record_pool", pool,
             "--prepare-only",
         ])
@@ -1149,7 +1143,7 @@ def test_active_joseph_cli_rejects_legacy_pools(pool: str) -> None:
 
 def test_joseph_cli_rejects_legacy_retrieval_flags() -> None:
     with pytest.raises(SystemExit):
-        flat._joseph_main([
+        flat.run([
             "--task", "bbb_martins", "--retrieval-strategy", "morgan_fingerprint"
         ])
 
@@ -1261,3 +1255,30 @@ def test_score_only_successor_exposes_cached_morgan_similarity(prompt_version: s
             group, layout="level-grouped",
             prompt_version=prompt_version,
         )
+
+
+def test_l1_member_shared_by_two_contexts_keeps_both_memberships():
+    payload = _selected_payload("external-123", "L1", "direct")
+    payload["source_row_uid"] = "physical-one"
+    molecules = [dict(context_card_id=context, _diagnostic_context_id=context,
+                      reference_molecule_id="REF", morgan_similarity=0.7,
+                      ranking_method="morgan", l1_records=[dict(
+                          record_id="external-123", reference_molecule_id="REF",
+                          morgan_similarity=0.7, ranking_method="morgan", payload=payload)] * 2)
+                 for context in ("null-card", "conditioned-card")]
+    result = cache_matched_flat_retrieval(
+        "q", "CCO", molecules, {}, task="bbb_martins", reranking="morgan",
+        query_audit={}, preserve_physical_records=True)
+    neighbors = result["groups"][0]["neighbors"]
+    assert [len(n["evidence_rows"]) for n in neighbors] == [1, 1]
+    assert [n["evidence_rows"][0]["minimal_evidence"]["provenance"]["retrieval"]["diagnostic_context_id"]
+            for n in neighbors] == ["null-card", "conditioned-card"]
+
+
+def test_retired_assay_contrastive_execution_requires_frozen_request_replay(capsys):
+    with pytest.raises(SystemExit):
+        _parse_args(SKIN_CONFIG, [
+            '--experiment-mode', 'full_flat', '--flat-prompt-version', 'final_full_flat',
+            '--flat-reranking', 'assay-transfer-contrastive',
+        ])
+    assert 'contrastive selection is retired' in capsys.readouterr().err

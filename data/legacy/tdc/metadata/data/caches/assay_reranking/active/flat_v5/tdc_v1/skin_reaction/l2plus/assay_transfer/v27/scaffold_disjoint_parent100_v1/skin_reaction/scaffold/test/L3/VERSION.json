@@ -1,0 +1,434 @@
+{
+  "capacity": 100,
+  "content_id": "0053eb0f1b24373bc9195b969e938a156715e235a0173cda12d81cd73d315da1",
+  "database": "rankings.sqlite3",
+  "database_sha256": "58fc3ef57c99bed3f33e4ec8b6bad1934ef7b330cca49ee0920e3dfac21e9447",
+  "excluded_relations": {
+    "exact_record": 26,
+    "same_connectivity_variant": 9,
+    "same_scaffold": 287
+  },
+  "identity_normalizer_version": "rdkit_fragment_parent.v2",
+  "inputs": {
+    "evidence_manifest_sha256": "7c0f173e92bbc4d380424e6ec4d10a199a531008ee456d27f5aba8655f53e368",
+    "query_identity_manifest_sha256": "a3a12b36feb44dc1cbbb902428c5a35c23a97cefeab0959b3dee6b969747a726",
+    "query_sha256": "cb1edfb3118bbe56828a3492fe19142c623bcd3f83640a737baab528b836b719",
+    "shared_parent_universe_sha256": "b5d7e47757549c839adf5a2b38c4ad5d88464e5b2bc759fb7f2d85cde8e48bb2"
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v1"
+  },
+  "level": "L3",
+  "model": {
+    "checkpoint_step": 380,
+    "dataset": "jiosephlee/assay-transfer-record-level-v27-skin-reaction-combined-intern",
+    "dataset_revision": "1fa33cf3a7df7b6bd07a3b959f37502f951fc8ed",
+    "measurement_display": "canonical_first_atomic_source_fallback.v27_skin",
+    "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v27-skin-reaction-combined-best",
+    "projection_sha256": "dfb6201486777e8f655ff7fa68d6127f2ff0e1553c7068b8d4da2ea563ebb9cd",
+    "prompt_profile": "v27_skin_training_prompt_candidate_copy_v1",
+    "prompt_sha256": "435d70f963d9b55ac9b13da6f8c32af5414ee402d2af3af08fc5be01c4c7203d",
+    "revision": "398a41ccb38cadd120ee26b989bdbce5cab6c021",
+    "source_snapshot": {
+      "level_mapping": "5414abdbc607b9a3de25158f5aca075cf47b4e4d9d1c1987692df5c177598a65",
+      "records": "819cce097a2459f8509e136f70f600b5ef50ad8cc48e14ebf283d44ce636484a",
+      "source_contract": "b283445be0b1ef5012fa07e135ee65cdce9597c02749eea5a66c12a9f34b3ff9"
+    },
+    "training_prompt_sha256": "435d70f963d9b55ac9b13da6f8c32af5414ee402d2af3af08fc5be01c4c7203d"
+  },
+  "neighbor_identity_policy": "scaffold_disjoint",
+  "parent_capacity": 100,
+  "parent_universe_source": "shared_l2plus_morgan_100",
+  "pool": "all",
+  "query_count": 82,
+  "query_counts": {
+    "TDC_SKIN_REACTION_00CE69155DD970D88D2C": {
+      "candidate_parents": 66,
+      "candidate_records": 1046
+    },
+    "TDC_SKIN_REACTION_03E424B01860631E0E10": {
+      "candidate_parents": 25,
+      "candidate_records": 129
+    },
+    "TDC_SKIN_REACTION_10B92BEB32682FFC6851": {
+      "candidate_parents": 45,
+      "candidate_records": 458
+    },
+    "TDC_SKIN_REACTION_125359F03F94E64FD3D2": {
+      "candidate_parents": 50,
+      "candidate_records": 253
+    },
+    "TDC_SKIN_REACTION_125E5B0D96303EE04BF1": {
+      "candidate_parents": 47,
+      "candidate_records": 672
+    },
+    "TDC_SKIN_REACTION_1780C0F6FC2130F32BB4": {
+      "candidate_parents": 40,
+      "candidate_records": 293
+    },
+    "TDC_SKIN_REACTION_18DE6C1FA98953C27DCA": {
+      "candidate_parents": 52,
+      "candidate_records": 403
+    },
+    "TDC_SKIN_REACTION_1AAFF183FF6C34DDD5F0": {
+      "candidate_parents": 29,
+      "candidate_records": 140
+    },
+    "TDC_SKIN_REACTION_267AEE937F3885697A84": {
+      "candidate_parents": 61,
+      "candidate_records": 284
+    },
+    "TDC_SKIN_REACTION_27E79AFC82CED3399AFD": {
+      "candidate_parents": 39,
+      "candidate_records": 472
+    },
+    "TDC_SKIN_REACTION_2C72A0081006E1D4AD14": {
+      "candidate_parents": 49,
+      "candidate_records": 264
+    },
+    "TDC_SKIN_REACTION_2CB1311F4D10D85A3BE4": {
+      "candidate_parents": 40,
+      "candidate_records": 178
+    },
+    "TDC_SKIN_REACTION_31AEBDDB351691E2A881": {
+      "candidate_parents": 60,
+      "candidate_records": 1114
+    },
+    "TDC_SKIN_REACTION_3520E0297A23A0578BBE": {
+      "candidate_parents": 39,
+      "candidate_records": 111
+    },
+    "TDC_SKIN_REACTION_364AC39475839C0A9045": {
+      "candidate_parents": 51,
+      "candidate_records": 564
+    },
+    "TDC_SKIN_REACTION_38E8F74A47BC763E4484": {
+      "candidate_parents": 56,
+      "candidate_records": 1300
+    },
+    "TDC_SKIN_REACTION_3EAA1C519F41DB278544": {
+      "candidate_parents": 59,
+      "candidate_records": 2007
+    },
+    "TDC_SKIN_REACTION_423BEFC426C8357F2FF1": {
+      "candidate_parents": 48,
+      "candidate_records": 400
+    },
+    "TDC_SKIN_REACTION_49F7F18936E2AA825879": {
+      "candidate_parents": 40,
+      "candidate_records": 442
+    },
+    "TDC_SKIN_REACTION_4FDD4BB2479D93FFA0D1": {
+      "candidate_parents": 41,
+      "candidate_records": 305
+    },
+    "TDC_SKIN_REACTION_5066A1DF05618F5399B4": {
+      "candidate_parents": 58,
+      "candidate_records": 1892
+    },
+    "TDC_SKIN_REACTION_50A99FFCB2E9BE2685B5": {
+      "candidate_parents": 44,
+      "candidate_records": 347
+    },
+    "TDC_SKIN_REACTION_51AE3957BD9A4BC972CB": {
+      "candidate_parents": 28,
+      "candidate_records": 96
+    },
+    "TDC_SKIN_REACTION_56E1348F1B675D546665": {
+      "candidate_parents": 56,
+      "candidate_records": 579
+    },
+    "TDC_SKIN_REACTION_58C499866BBB18FB95DF": {
+      "candidate_parents": 47,
+      "candidate_records": 289
+    },
+    "TDC_SKIN_REACTION_5EBDCF647C5315B56989": {
+      "candidate_parents": 44,
+      "candidate_records": 358
+    },
+    "TDC_SKIN_REACTION_654E470830E2D051BE9B": {
+      "candidate_parents": 58,
+      "candidate_records": 467
+    },
+    "TDC_SKIN_REACTION_670364E0C680B0A2B338": {
+      "candidate_parents": 39,
+      "candidate_records": 303
+    },
+    "TDC_SKIN_REACTION_6915FCEA418694ED3D4F": {
+      "candidate_parents": 56,
+      "candidate_records": 1891
+    },
+    "TDC_SKIN_REACTION_6B369F67D32F11AD59A4": {
+      "candidate_parents": 39,
+      "candidate_records": 303
+    },
+    "TDC_SKIN_REACTION_6DD0E6D6079BD18A5B21": {
+      "candidate_parents": 31,
+      "candidate_records": 107
+    },
+    "TDC_SKIN_REACTION_7427112E5AC8168336D7": {
+      "candidate_parents": 54,
+      "candidate_records": 295
+    },
+    "TDC_SKIN_REACTION_75AE0E1C5CC25E8D01A1": {
+      "candidate_parents": 36,
+      "candidate_records": 234
+    },
+    "TDC_SKIN_REACTION_783A28C867EB1A6D2389": {
+      "candidate_parents": 55,
+      "candidate_records": 291
+    },
+    "TDC_SKIN_REACTION_7977C1095897E3139E9E": {
+      "candidate_parents": 35,
+      "candidate_records": 98
+    },
+    "TDC_SKIN_REACTION_7AA0C12DE6AC3AF63C6E": {
+      "candidate_parents": 47,
+      "candidate_records": 261
+    },
+    "TDC_SKIN_REACTION_7B194E2B5DF759393963": {
+      "candidate_parents": 43,
+      "candidate_records": 404
+    },
+    "TDC_SKIN_REACTION_7B2E1EC1FDFDB42C9AD0": {
+      "candidate_parents": 33,
+      "candidate_records": 115
+    },
+    "TDC_SKIN_REACTION_7BC5CE723701A3AAE842": {
+      "candidate_parents": 69,
+      "candidate_records": 650
+    },
+    "TDC_SKIN_REACTION_8197DF2B48EE4089DCC9": {
+      "candidate_parents": 49,
+      "candidate_records": 203
+    },
+    "TDC_SKIN_REACTION_8708DFDEF3BF478724AF": {
+      "candidate_parents": 27,
+      "candidate_records": 95
+    },
+    "TDC_SKIN_REACTION_877E80A9239F481B3274": {
+      "candidate_parents": 48,
+      "candidate_records": 165
+    },
+    "TDC_SKIN_REACTION_87C291CDA98E72CCCFA7": {
+      "candidate_parents": 41,
+      "candidate_records": 355
+    },
+    "TDC_SKIN_REACTION_883E153E13D5C68AF085": {
+      "candidate_parents": 28,
+      "candidate_records": 86
+    },
+    "TDC_SKIN_REACTION_8906C34717785742FAA8": {
+      "candidate_parents": 55,
+      "candidate_records": 287
+    },
+    "TDC_SKIN_REACTION_8B3E8DF07AE1907664AA": {
+      "candidate_parents": 63,
+      "candidate_records": 791
+    },
+    "TDC_SKIN_REACTION_90EC86F05D7DFF25E7B5": {
+      "candidate_parents": 38,
+      "candidate_records": 225
+    },
+    "TDC_SKIN_REACTION_9304EA804E42A69D37BC": {
+      "candidate_parents": 38,
+      "candidate_records": 228
+    },
+    "TDC_SKIN_REACTION_97B0006ACDE181A7787B": {
+      "candidate_parents": 50,
+      "candidate_records": 251
+    },
+    "TDC_SKIN_REACTION_9A7B0307161690D76DF7": {
+      "candidate_parents": 42,
+      "candidate_records": 222
+    },
+    "TDC_SKIN_REACTION_AACA5AD2375DBE65DC7D": {
+      "candidate_parents": 37,
+      "candidate_records": 189
+    },
+    "TDC_SKIN_REACTION_ACD50C0C40B4E2F02D56": {
+      "candidate_parents": 36,
+      "candidate_records": 172
+    },
+    "TDC_SKIN_REACTION_AD5F23BC9161AB757726": {
+      "candidate_parents": 59,
+      "candidate_records": 771
+    },
+    "TDC_SKIN_REACTION_B04F7C58CA83D57E77BE": {
+      "candidate_parents": 42,
+      "candidate_records": 280
+    },
+    "TDC_SKIN_REACTION_B058D8511AE44B84152F": {
+      "candidate_parents": 68,
+      "candidate_records": 911
+    },
+    "TDC_SKIN_REACTION_B112DD245059C99F089F": {
+      "candidate_parents": 43,
+      "candidate_records": 178
+    },
+    "TDC_SKIN_REACTION_B30FD37566F92BEDC6A3": {
+      "candidate_parents": 39,
+      "candidate_records": 461
+    },
+    "TDC_SKIN_REACTION_B44E7C93D9F31C03E198": {
+      "candidate_parents": 34,
+      "candidate_records": 258
+    },
+    "TDC_SKIN_REACTION_C11E7C2666F620C496DD": {
+      "candidate_parents": 34,
+      "candidate_records": 121
+    },
+    "TDC_SKIN_REACTION_C25A37AEBBAF0034AF67": {
+      "candidate_parents": 37,
+      "candidate_records": 144
+    },
+    "TDC_SKIN_REACTION_C59835AE7F02FC209A1D": {
+      "candidate_parents": 62,
+      "candidate_records": 631
+    },
+    "TDC_SKIN_REACTION_CBB9882278C9AB020C18": {
+      "candidate_parents": 29,
+      "candidate_records": 65
+    },
+    "TDC_SKIN_REACTION_CBC78E76195A68B68C92": {
+      "candidate_parents": 42,
+      "candidate_records": 245
+    },
+    "TDC_SKIN_REACTION_CC9D541FDF196423746E": {
+      "candidate_parents": 49,
+      "candidate_records": 226
+    },
+    "TDC_SKIN_REACTION_CD9ABF5EB90667EC795B": {
+      "candidate_parents": 35,
+      "candidate_records": 330
+    },
+    "TDC_SKIN_REACTION_CDEDBA005905322F78A3": {
+      "candidate_parents": 33,
+      "candidate_records": 171
+    },
+    "TDC_SKIN_REACTION_CF07DDB720EF61AF9F99": {
+      "candidate_parents": 64,
+      "candidate_records": 1154
+    },
+    "TDC_SKIN_REACTION_D2AC20DF8514184FB590": {
+      "candidate_parents": 52,
+      "candidate_records": 673
+    },
+    "TDC_SKIN_REACTION_D33BC70C507009A61B9E": {
+      "candidate_parents": 64,
+      "candidate_records": 1062
+    },
+    "TDC_SKIN_REACTION_D451AFBD3FE76118389B": {
+      "candidate_parents": 35,
+      "candidate_records": 168
+    },
+    "TDC_SKIN_REACTION_D88428F66FCC035BBF63": {
+      "candidate_parents": 59,
+      "candidate_records": 630
+    },
+    "TDC_SKIN_REACTION_DF8602C159662162A9CC": {
+      "candidate_parents": 41,
+      "candidate_records": 221
+    },
+    "TDC_SKIN_REACTION_E2C8DEAF57D72D5FD6DE": {
+      "candidate_parents": 31,
+      "candidate_records": 267
+    },
+    "TDC_SKIN_REACTION_E6D77F822E3A0ED65700": {
+      "candidate_parents": 47,
+      "candidate_records": 413
+    },
+    "TDC_SKIN_REACTION_E9AFA5C3A5128434D965": {
+      "candidate_parents": 35,
+      "candidate_records": 163
+    },
+    "TDC_SKIN_REACTION_EAD650D2857A421ED4E2": {
+      "candidate_parents": 41,
+      "candidate_records": 241
+    },
+    "TDC_SKIN_REACTION_EBCD2B53BE9AA9F0433F": {
+      "candidate_parents": 59,
+      "candidate_records": 382
+    },
+    "TDC_SKIN_REACTION_F8528E666B2ED856F440": {
+      "candidate_parents": 60,
+      "candidate_records": 703
+    },
+    "TDC_SKIN_REACTION_F8FE8BC70200F3AF991C": {
+      "candidate_parents": 66,
+      "candidate_records": 1684
+    },
+    "TDC_SKIN_REACTION_FB0631A7396CDE28E64A": {
+      "candidate_parents": 46,
+      "candidate_records": 246
+    },
+    "TDC_SKIN_REACTION_FBAA7BB1333482067084": {
+      "candidate_parents": 57,
+      "candidate_records": 710
+    },
+    "TDC_SKIN_REACTION_FEA0D491B9750AF9B37D": {
+      "candidate_parents": 38,
+      "candidate_records": 142
+    }
+  },
+  "query_smiles_policy": "frozen_parent_else_source_smiles",
+  "ranking_rows_sha256": "5f4729ba2994e1636ffa9ca25dfec31a2c7912cf3d7335772308f12abc09fe48",
+  "schema_version": "ranked_uid_retrieval.v1",
+  "score_counts": {
+    "conflicting_reuse_keys": 4120,
+    "exact_reuse": 31646,
+    "fresh": 5085
+  },
+  "score_reuse_conflicts": {
+    "count": 4120,
+    "file": "score_reuse_conflicts.json",
+    "sha256": "d1744a43715172707af24ccffc1a1a661066b7874e81a928a5bdd17dade8275d"
+  },
+  "score_reuse_sources": [
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2",
+      "prompts_sha256": null,
+      "score_files": {},
+      "stage_manifest_sha256": "33836716acd8092ae3ad0f96ae61b16d74eaa60bfa0218a1a42485aacfad99d4"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2",
+      "prompts_sha256": null,
+      "score_files": {},
+      "stage_manifest_sha256": "442395ccad6901813cea396bc8b454d53e9930ea7eff96f3a6f1bd335c4256f3"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2",
+      "prompts_sha256": null,
+      "score_files": {},
+      "stage_manifest_sha256": "9e69910f0c0a3831b92fda9593f2cb5730e31707fbe3cefaaa7621d62dea2765"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v1/skin_reaction/l2plus/assay_transfer/v27/training_candidate_copy_shared_parent100_v2",
+      "prompts_sha256": null,
+      "score_files": {},
+      "stage_manifest_sha256": "a3a12b36feb44dc1cbbb902428c5a35c23a97cefeab0959b3dee6b969747a726"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l2plus/query_pure/reused_v1/original",
+      "prompts_sha256": null,
+      "score_files": {},
+      "stage_manifest_sha256": "192eeba528161ef96620be8456895a083ef2c345ecd0ca4ea5ef4ddf4d025954"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v2/skin_reaction/l2plus/query_pure/reused_v1/original",
+      "prompts_sha256": null,
+      "score_files": {},
+      "stage_manifest_sha256": "5fa5d08ae1d4a3041a16d27a36c2410739bfdd38399f5d6f2ce03551dc5773d3"
+    }
+  ],
+  "scoring_contract_version": "assay_transfer_chat_first_divergent_token_bf16_backbone_fp32_head.v2",
+  "shared_candidate_universe": true,
+  "source_smiles_fallback_queries": 0,
+  "status": "complete",
+  "stored_rows": 36735,
+  "subset": "test",
+  "task_id": "skin_reaction",
+  "trusted_predecessor_row_reuse": false
+}

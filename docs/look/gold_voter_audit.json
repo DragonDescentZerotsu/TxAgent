@@ -1,0 +1,74 @@
+{
+  "ames": {
+    "distinct_physical_uids": 3131,
+    "evidence_release": "v10_main_universe_v3",
+    "gold_label_cards": 2474,
+    "physical_members": 3131,
+    "status": "verified",
+    "vote_units": 3131
+  },
+  "bbb_martins": {
+    "distinct_physical_uids": 7634,
+    "evidence_release": "v10_main_universe_v3",
+    "gold_label_cards": 3843,
+    "physical_members": 7634,
+    "status": "verified",
+    "vote_units": 7634
+  },
+  "bioavailability_ma": {
+    "distinct_physical_uids": 19479,
+    "evidence_release": "v10_main_universe_v3",
+    "gold_label_cards": 2489,
+    "physical_members": 19479,
+    "status": "verified",
+    "vote_units": 18853
+  },
+  "carcinogens": {
+    "distinct_physical_uids": 87563,
+    "evidence_release": "v10_main_universe_v3",
+    "gold_label_cards": 4692,
+    "physical_members": 87563,
+    "status": "verified",
+    "vote_units": 87563
+  },
+  "dili": {
+    "distinct_physical_uids": 100522,
+    "evidence_release": "v10_main_universe_v3",
+    "gold_label_cards": 4024,
+    "physical_members": 100522,
+    "status": "verified",
+    "vote_units": 100522
+  },
+  "skin_reaction": {
+    "distinct_physical_uids": 34950,
+    "evidence_release": "v10_main_universe_v7",
+    "gold_label_cards": 2421,
+    "physical_members": 35004,
+    "reconstruction": {
+      "canonical_missing_uids": [],
+      "card_differences": [],
+      "condition_free_cards": 2386,
+      "frozen_votes": 34947,
+      "inputs": {
+        "classifier": {
+          "git_path": "tools/chembl_tool/tasks/skin_reaction/canonical_starling_source.py",
+          "sha256": "8f1d82719f4831ba3eddfadaf3a1643012bc2e2434b3c48b281c55df9e1100cb"
+        },
+        "identity": {
+          "git_path": "tools/chembl_tool/common/molecule_identity.py",
+          "sha256": "d9f5e9e005ee2e17ca33c7aadf298ef9d59c0831b36b1fa1f0227e0776617050"
+        },
+        "raw": {
+          "git_path": "data/starling_data/skin_reaction/direct_skin_reaction/extractions.parquet",
+          "sha256": "e7c4819c98af47eae4dc0563f40dc39f8b09eb8e03c9626daee603147125f9c1"
+        }
+      },
+      "replayed_votes": 34947,
+      "scope": "condition-free Skin cards only; external reviewed votes must be audited separately",
+      "status": "verified",
+      "upstream_commit": "26d44f121141f3738764c0b00dc09e185445341b"
+    },
+    "status": "verified",
+    "vote_units": 35004
+  }
+}

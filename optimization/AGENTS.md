@@ -4,6 +4,7 @@ This owner turns pinned retrieval candidates into ordered context/UID selection 
 
 - `selection/pool.py` assembles canonical cards/records and exact scores; `objectives.py` owns math, `policies.py` owns direct/indirect contracts and `search.py` executes JSON grids.
 - Direct/L1 parent normalization is filtering-only. Rank and score full molecules; count distinct canonical context cards and preserve their authoritative binary labels and physical members.
+- Direct/L1 construction and selection require scaffold-disjoint candidates. Only indirect L2+ supports both parent-disjoint and scaffold-disjoint cache sets; never weaken L1 when switching the indirect policy.
 - Indirect selection is joint across L2+, using physical UIDs and ledger-bound semantic projections. Exact assay scores remain query/card-specific; missing scores remain missing.
 - `selection/record_scores.py` owns source-bound DILI caches; keep geometric relevance, frozen direct controls and declared diversity requirements.
 - `semantic_buckets/inputs.py` resolves selected maps, weights and ledgers. `dili_score/` remains the offline scorer.
@@ -19,3 +20,5 @@ This owner turns pinned retrieval candidates into ordered context/UID selection 
 - Explicitly approved metadata migrations may convert historical prediction headers and operational indexes. Preserve frozen scientific payloads and leave compressed FINAL bundles untouched unless a push is requested.
 
 Use `--benchmark tdc` and its canonical manifest. Direct search uses `selection.direct_cache`; indirect search uses `retrieval.later`. Never attach parent-aggregated L1 scores to full-molecule cards. Missing card scores stay missing until separately scored.
+
+Indirect selection resolves the same named retrieval cache set as prediction. TDC direct search retains the separate canonical `selection.direct_cache` binding.

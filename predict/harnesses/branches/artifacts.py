@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from predict.llm_io.evidence import evidence_for_group_llm
+from predict.utils.evidence import evidence_for_group_llm
 from predict.retrieval.policies import (
     NEIGHBOR_SELECTORS,
     SIMILARITY_SELECTOR,

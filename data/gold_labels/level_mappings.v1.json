@@ -213,23 +213,23 @@
       "manifest_sha256": "fa7726e72819141cdbd2d00d934f2ef9fa14ef7121cc40816250a6afe1ae678b"
     },
     "skin_reaction": {
-      "kind": "parquet_dataset",
-      "path": "Skin_Reaction/level_mappings/v1/level_mapping",
-      "rows": 66964,
       "parts": [
         {
           "path": "part-00000.parquet",
-          "size_bytes": 3497669,
-          "sha256": "1bd3a033fcd60364691edb18b8f68d8da31cddcbea610b05b338b6282db026ca"
+          "sha256": "e77e90e0dde529887f302cd2aef17e3312cb661a71871f7c1b90841ea70a809b",
+          "size_bytes": 3498776
         }
       ],
+      "path": "Skin_Reaction/level_mappings/v1/level_mapping",
+      "rows": 66986,
       "rows_by_level": {
-        "1": 42435,
+        "1": 42457,
         "2": 12524,
         "3": 12005
       },
       "manifest": "Skin_Reaction/level_mappings/v1/manifest.json",
-      "manifest_sha256": "bd86f7dc25b9670ef281f64d2c7bfee3be3260c77c982d0a020d451d66d1a297"
+      "manifest_sha256": "d5146ded03e683eb0d3c48e332687d79a37d75382bb234a7ccb1778cb6b7a3e4",
+      "kind": "parquet_dataset"
     }
   }
 }

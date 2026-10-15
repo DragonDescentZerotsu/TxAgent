@@ -46,10 +46,14 @@ fi
 : > "$SERVE_ROOT/.trace_viewer_catalog.tsv"
 
 CENTRAL_DATASET="$SERVE_ROOT/central_traces"
+central_roots=(--trace-root "${PREDICT_TRACE_ROOT:-outputs/paper/live}")
+if [[ -d "$REPO_ROOT/outputs/predictions" ]]; then
+  central_roots+=(--trace-root "$REPO_ROOT/outputs/predictions")
+fi
 central_count="$(
   cd "$REPO_ROOT"
   python3 -m predict.traces.viewer.build_dataset \
-    --trace-root "${PREDICT_TRACE_ROOT:-outputs/paper/live}" \
+    "${central_roots[@]}" \
     --output-root "$CENTRAL_DATASET"
 )"
 if (( central_count > 0 )); then

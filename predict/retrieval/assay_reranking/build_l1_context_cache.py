@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter, defaultdict
-import csv
 import hashlib
 import json
 import os
@@ -68,11 +67,6 @@ def _profile_root(primary_width: int, lineage: str) -> Path:
     return cache_profile_root(profile)
 
 
-def _analysis_root(primary_width: int, lineage: str) -> Path:
-    suffix = "contrastive_v2" if lineage == "v9" else "v10_4_gold_v2_v1"
-    return Path(
-        f"outputs/analysis/prediction/l1_context_morgan{primary_width}_{suffix}"
-    )
 
 
 def _json(value: Any) -> str:
@@ -770,95 +764,6 @@ def build(
     return destination / "VERSION.json"
 
 
-def write_reports(
-    manifests: dict[str, Path], *, primary_width: int = 25, output: Path | None = None,
-    lineage: str = "v9", subset: str = "valid",
-) -> None:
-    output = output or _analysis_root(primary_width, lineage)
-    if output.exists():
-        raise FileExistsError(f"Refusing to overwrite analysis artifact: {output}")
-    output.mkdir(parents=True)
-    details = []
-    summaries = []
-    modes = {"assay-transfer-contrastive": "assay_transfer_contrastive"}
-    minimum_contrasts = (0, 1, 2) if lineage == "v9" else (1, 2, 3)
-    for task, manifest_path in manifests.items():
-        manifest = json.loads(manifest_path.read_text())
-        database = manifest_path.with_name(manifest["database"])
-        with sqlite3.connect(database) as connection:
-            queries = {
-                str(benchmark_row_id): str(drug)
-                for benchmark_row_id, drug in connection.execute(
-                    "SELECT benchmark_row_id,drug FROM benchmark_queries"
-                )
-            }
-        for mode, method in modes.items():
-            for minimum in minimum_contrasts:
-                policy = {
-                    "selection_contract": SCHEMA_VERSION, "reranking": mode,
-                    "stages": {"L1": method}, "cache_manifest": str(manifest_path),
-                    "inputs": {},
-                }
-                molecules, _, audit = load_candidates(
-                    queries, task=task, subset=subset, policy=policy,
-                    molecule_limit=int(manifest["capacities"]["l1_contexts"]),
-                    l1_limit=10, min_contrast=minimum,
-                )
-                for query_id, selected in molecules.items():
-                    item = audit["query_audits"][query_id]["L1"]
-                    labels = item["selected_label_counts"]
-                    details.append({
-                        "task": task, "query_record_id": query_id, "mode": mode,
-                        "minimum_contrast": minimum,
-                        "label_0_count": labels["0"], "label_1_count": labels["1"],
-                        "minority_fraction": min(labels.values()) / len(selected),
-                        "unique_parent_count": item["selected_unique_parents"],
-                        "repeated_parent_cards": item["selected_repeated_parent_cards"],
-                        "replacement_count": item["replacement_count"],
-                        "fallback_beyond_primary": item["fallback_beyond_primary"],
-                    })
-                group = [row for row in details if row["task"] == task
-                         and row["mode"] == mode
-                         and row["minimum_contrast"] == minimum]
-                summaries.append({
-                    "task": task, "mode": mode, "minimum_contrast": minimum,
-                    "n_queries": len(group),
-                    "mean_label_0_fraction": sum(
-                        row["label_0_count"] / manifest["capacities"]["l1_contexts"]
-                        for row in group
-                    ) / len(group),
-                    "mean_label_1_fraction": sum(
-                        row["label_1_count"] / manifest["capacities"]["l1_contexts"]
-                        for row in group
-                    ) / len(group),
-                    "mean_minority_fraction": sum(
-                        row["minority_fraction"] for row in group
-                    ) / len(group),
-                    "queries_rebalanced": sum(row["replacement_count"] > 0 for row in group),
-                    "queries_using_fallback": sum(row["fallback_beyond_primary"] for row in group),
-                    "mean_unique_parent_count": sum(
-                        row["unique_parent_count"] for row in group
-                    ) / len(group),
-                })
-    for filename, rows in (("summary.tsv", summaries), ("per_query.tsv", details)):
-        with (output / filename).open("w", encoding="utf-8", newline="") as handle:
-            writer = csv.DictWriter(handle, fieldnames=list(rows[0]), delimiter="\t")
-            writer.writeheader()
-            writer.writerows(rows)
-    receipt = {
-        "schema_version": f"l1_context_morgan{primary_width}_contrastive_analysis.v2",
-        "status": "complete", "query_target_read": False,
-        "cache_manifests": {
-            task: {"path": str(path.resolve()), "sha256": sha256_file(path)}
-            for task, path in manifests.items()
-        },
-        "outputs": {
-            name: sha256_file(output / name) for name in ("summary.tsv", "per_query.tsv")
-        },
-    }
-    (output / "manifest.json").write_text(
-        json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -872,11 +777,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--lineage", choices=LINEAGES, default="v9")
     parser.add_argument("--subset", choices=("valid", "test"), default="valid")
     parser.add_argument("--root", type=Path)
-    parser.add_argument("--analysis-output", type=Path)
     parser.add_argument("--frozen-context-root", type=Path)
     args = parser.parse_args(argv)
-    manifests = {
-        task: build(
+    for task in dict.fromkeys(args.tasks):
+        build(
             task, primary_width=args.morgan_primary_parent_width,
             context_capacity=args.context_capacity, root=args.root,
             lineage=args.lineage, subset=args.subset,
@@ -885,13 +789,6 @@ def main(argv: list[str] | None = None) -> int:
                 if args.frozen_context_root else None
             ),
         )
-        for task in dict.fromkeys(args.tasks)
-    }
-    write_reports(
-        manifests,
-        primary_width=args.morgan_primary_parent_width, subset=args.subset,
-        output=args.analysis_output, lineage=args.lineage,
-    )
     return 0
 
 

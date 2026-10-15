@@ -36,16 +36,21 @@ from predict.harnesses.branches.retrieval import (
 from predict.retrieval.policies import NeighborIdentityPolicy, SIMILARITY_SELECTOR
 
 from predict.retrieval.policies import normalize_molecule_identity, selector_metadata
-from predict.llm_io.evidence import minimal_evidence_from_row
+from predict.utils.evidence import minimal_evidence_from_row
+from predict.utils.response import validate_query_prior_output
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
 from predict.harnesses.branches.manifests import (run_directory, read_record, write_batch, scientific_settings,
-    require_query_ids, require_artifact_versions, canonical_location)
+    require_query_ids, require_artifact_versions, canonical_location, PREDICTION_ROOT,
+    prediction_run_root, prediction_batch_directory, query_prior_batch)
 from data.processing.gold_labels.conditioned_benchmark import split_path, tdc_split_path, tdc_config, TDC_MANIFEST
 from predict.retrieval.assay_reranking.artifact_bundle import (
     ArtifactBundleError,
     bundle_manifest_path,
     bundle_receipt_path,
     require_receipt,
+    cache_task,
+    cache_level_limit,
+    resolve_cache_set,
 )
 
 
@@ -151,26 +156,11 @@ JOSEPH_V1_HARNESS_VERSION = "joseph-flat-v1"
 LEGACY_HARNESS_VERSION = "tianang-flat-v1"
 
 
-def resolve_default_cache_bundle(task: str, benchmark: str, configured: Path) -> Path:
-    from predict.retrieval.assay_reranking.cache_matched import DEFAULT_CACHE_BUNDLE
-    configured = Path(configured)
-    if configured.resolve() != DEFAULT_CACHE_BUNDLE.resolve():
-        return configured
-    if benchmark == "tdc":
-        return TDC_MANIFEST
-    if task not in {"bbb_martins", "bioavailability_ma"}:
-        return Path(__file__).resolve().parents[2] / "retrieval/assay_reranking/ranked_level_retrieval_gold_v1_all_tasks_v1.yaml"
-    return configured
-
-
 def require_current_cache_bundle(path: Path) -> None:
-    """Validate the canonical TDC bundle without selecting a historical edition."""
-    bundle = yaml.safe_load(path.read_text(encoding="utf-8"))
-    if bundle.get("benchmark") == "tdc":
-        if bundle.get("status") != "complete" or set(bundle.get("tasks", {})) != set(TASKS):
-            raise ValueError("Canonical TDC bundle must cover all six tasks")
-    elif "tdc" in str(path) or "tdc" in str(path):
-        raise ValueError("Historical TDC bundles require explicit legacy replay")
+    """Keep numeric recipes and historical formats out of active prediction."""
+    from predict.retrieval.assay_reranking.artifact_bundle import CACHE_SET_SCHEMA
+    if yaml.safe_load(path.read_text()).get("schema_version") != CACHE_SET_SCHEMA:
+        raise ValueError("Use a named retrieval cache set with --retrieval-cache; numbered configurations require historical replay")
 
 
 JOSEPH_HARNESS_PROMPTS = {
@@ -223,7 +213,7 @@ CONTEXT_V4_VARIANTS = (
     MORGAN_VARIANT,
     "morgan-contrastive",
     ASSAY_TRANSFER_VARIANT,
-    "assay-transfer-contrastive",
+    "assay-transfer-contrastive",  # Frozen prompt metadata; selection is retired.
     "assay-transfer-within-morgan",
 )
 CONTEXT_V4_LAYOUTS = ("global", "level-grouped")
@@ -270,7 +260,7 @@ def default_query_prior_root(prompt_version: str, benchmark: str, subset: str) -
             raise ValueError(f"Invalid query-prior CURRENT: {QUERY_PRIOR_CURRENT}")
         entry = current["gold_v1"][subset]
         root = Path(entry["batch_root"])
-        execution = root / "execution.json"
+        execution = canonical_location(root / "execution.json")
         if sha256_file(execution) != entry["execution_sha256"]:
             raise ValueError(f"Query-prior CURRENT hash mismatch: {execution}")
         details = json.loads(execution.read_text(encoding="utf-8"))
@@ -331,37 +321,6 @@ TASKS = {
 }
 
 
-def prompt_task_max_level(
-    task: str, prompt_version: str, cache_bundle: Path | None = None,
-) -> int:
-    if cache_bundle is not None and Path(cache_bundle).resolve() == TDC_MANIFEST.resolve():
-        return int(tdc_config(task)["max_level"])
-    if (prompt_version in {
-            CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
-            CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
-            CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
-            TDC_V2_MIXED_PROMPT_VERSION,
-            DILI_TDC_V2_MIXED_V3_PROMPT_VERSION,
-            DILI_TDC_V2_POLARIZED_PROMPT_VERSION,
-            CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
-            FINAL_FULL_FLAT_PROMPT_VERSION,
-            FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
-            FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
-        }
-            and task in {"dili", "carcinogens"}
-            and cache_bundle is not None
-            and Path(cache_bundle).name in {
-                "ranked_level_retrieval_gold_v1_v27_successors_v1.yaml",
-                "ranked_level_retrieval_tdc_v1_v27_successors_v1.yaml",
-                "ranked_level_retrieval_tdc_v2_dili_parent_disjoint_v2.yaml",
-                "ranked_level_retrieval_gold_v1_v27_partial_snapshot_v1.yaml",
-                "ranked_level_retrieval_gold_v1_v27_carcinogens_parent100_partial_snapshot_v1.yaml",
-                "ranked_level_retrieval_tdc_v1_v27_partial_snapshot_v1.yaml",
-                "ranked_level_retrieval_gold_v1_v27_carcinogens_hybrid_v1.yaml",
-                "ranked_level_retrieval_tdc_v2_query_pure_v1.yaml",
-            }):
-        return 7
-    return TASKS[task]
 RECORD_POOLS = {
     "assay-transfer-trained": "tool-accepted",
     "all_transfer_eligible": "tool-compatible",
@@ -1302,6 +1261,7 @@ def cache_matched_flat_retrieval(
     prompt_version: str = JOSEPH_V1_PROMPT_VERSION,
     selection_contract: str = "cache_matched_retrieval.v2",
     preserve_physical_records: bool = False,
+    neighbor_identity_policy_by_level: Mapping[str, str] | None = None,
 ) -> dict[str, Any]:
     """Flatten one cache-matched progressive selection without re-selecting it."""
     if query_identity:
@@ -1325,11 +1285,11 @@ def cache_matched_flat_retrieval(
             selected.append((row, {}))
 
     neighbors: dict[str, dict[str, Any]] = {}
-    seen_records: set[str] = set()
-    level_identity_policy = {
+    seen_records: set[tuple[str, str]] = set()
+    level_identity_policy = dict(neighbor_identity_policy_by_level or {
         "L1": "scaffold_disjoint",
         **{level: "parent_disjoint" for level in later_levels},
-    }
+    })
     for row, molecule in selected:
         record_id = str(row["record_id"])
         payload = dict(row["payload"])
@@ -1338,9 +1298,13 @@ def cache_matched_flat_retrieval(
         if preserve_physical_records and not physical_uid:
             raise ValueError(f"Selected record lacks a physical source UID: {record_id}")
         dedup_id = physical_uid if preserve_physical_records else record_id
-        if dedup_id in seen_records:
+        context_id = ""
+        if preserve_physical_records and payload["progressive_level"] == "L1":
+            context_id = str(molecule.get("context_card_id") or molecule.get("_diagnostic_context_id") or "")
+        member_key = (context_id, dedup_id)
+        if member_key in seen_records:
             continue
-        seen_records.add(dedup_id)
+        seen_records.add(member_key)
         parent_id = str(row["reference_molecule_id"])
         method = str(
             row.get("ranking_method") or molecule.get("ranking_method") or ""
@@ -1964,7 +1928,7 @@ def _load_mixed_selection(
     path = path.resolve()
     mixed = json.loads(path.read_text(encoding="utf-8"))
     if mixed.get("schema_version") in {TDC_V2_MIXED_SCHEMA, DILI_TDC_V2_MIXED_SCHEMA, TDC_V2_BBB_FILTERED_SCHEMA}:
-        return _load_tdc_v2_mixed_selection(
+        return _load_tdc_mixed_selection(
             path, mixed=mixed, task=task, benchmark=benchmark, subset=subset,
             queries=queries, levels=levels, cache_index=cache_index,
             cache_config=cache_config, allow_subset=allow_subset,
@@ -2077,7 +2041,7 @@ def _load_mixed_selection(
     }
 
 
-def _load_tdc_v2_mixed_selection(
+def _load_tdc_mixed_selection(
     path: Path, *, mixed: dict[str, Any], task: str, benchmark: str, subset: str,
     queries: Mapping[str, str], levels: set[str], cache_index: Path,
     cache_config: Path, allow_subset: bool,
@@ -2345,9 +2309,11 @@ def _load_flat_context_candidates(
         args.evaluation_subset,
         args.reranking,
         args.max_level,
+        benchmark=args.benchmark,
     )
     active_levels = {level for level in policy["stages"] if level != "L1"}
     all_later_records = policy.get("all_later_records") is True
+    physical_records = policy.get("cache_set") is not None
     physical_selection = None
     manual_uids = getattr(args, "uids", None)
     manual_file = getattr(args, "uids_file", None)
@@ -2513,12 +2479,12 @@ def _load_flat_context_candidates(
             limit = args.record_limits_by_level[level]
             records = (
                 list(group["records"])
-                if all_later_records or physical_selection is not None or getattr(args, "flat_mixed_selection", None) else [
+                if all_later_records or physical_records or physical_selection is not None or getattr(args, "flat_mixed_selection", None) else [
                     row for row in group["records"]
                     if str(row["record_id"]) not in l1_record_ids
                 ][:limit]
             )
-            if (not all_later_records and physical_selection is None and not getattr(args, "flat_mixed_selection", None)
+            if (not all_later_records and not physical_records and physical_selection is None and not getattr(args, "flat_mixed_selection", None)
                     and args.prompt_version in CONTEXT_NUMBERED_PROMPT_VERSIONS
                     and len(records) != limit and not group.get("allow_shortfall")):
                 raise ValueError(
@@ -2589,7 +2555,7 @@ def _load_flat_context_candidates(
         "neighbor_identity_policy_by_level": {
             level: value
             for level, value in audit["neighbor_identity_policy_by_level"].items()
-            if level in active_levels
+            if level in policy["stages"]
         },
         "similarity_floor": None,
         "scaffold_overlap": 0,
@@ -2663,7 +2629,7 @@ def _attach_molecule_descriptions(
     return sorted(set(missing))
 
 
-def _apply_tdc_v2_scores(
+def _apply_tdc_scores(
     retrieval: dict[str, Any], selected: Mapping[tuple[str, str], float | None], band: str,
 ) -> None:
     if band not in {"low", "middle", "high", "available"}:
@@ -2720,8 +2686,6 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
     if args.prompt_version in FINAL_FULL_FLAT_PROMPT_VERSIONS:
         require_current_cache_bundle(args.assay_transfer_cache)
         selection_path = args.flat_mixed_selection or args.flat_preselected_contexts
-        if selection_path is None and not (getattr(args, "uids", None) or getattr(args, "uids_file", None)):
-            raise ValueError("final_full_flat requires a new direct/mixed selection or manual UIDs")
         if selection_path is not None:
             selection = json.loads(Path(selection_path).read_text(encoding="utf-8"))
             policy = (selection.get("score_policy") or {}).get("version") if args.benchmark == "tdc" else (
@@ -2736,17 +2700,14 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
 
     artifact_receipt = None
     if args.prompt_version in CONTEXT_NUMBERED_PROMPT_VERSIONS:
-        artifact_benchmark = (
-            "tdc" if args.benchmark == "tdc"
-            else args.benchmark
-        )
+        artifact_benchmark = cache_task(args.assay_transfer_cache, args.task, args.benchmark)["benchmark"]
         artifact_manifest = Path(
             getattr(args, "flat_artifact_manifest", None)
-            or bundle_manifest_path(args.task, artifact_benchmark)
+            or bundle_manifest_path(args.task, artifact_benchmark, cache_set=args.assay_transfer_cache)
         ).resolve()
         artifact_receipt_path = Path(
             getattr(args, "flat_artifact_receipt", None)
-            or bundle_receipt_path(args.task, artifact_benchmark)
+            or bundle_receipt_path(args.task, artifact_benchmark, cache_set=args.assay_transfer_cache)
         ).resolve()
         try:
             artifact_receipt = require_receipt(
@@ -2808,14 +2769,15 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
         args.evaluation_subset,
         args.reranking,
         args.max_level,
+        benchmark=args.benchmark,
     )
-    batch_dir = args.batch_root / args.batch_id
+    batch_dir = canonical_location(args.batch_root / args.batch_id)
     source_batch = batch_dir / "cache_matched_retrieval"
     existing_path = source_batch / "manifest.json"
     if existing_path.exists():
         existing = read_record(existing_path)
         expected = {
-            "harness_version": args.harness_version,
+            "organization": "flat",
             "prompt_version": args.prompt_version,
             "task": args.task,
             "evaluation_subset": args.evaluation_subset,
@@ -2877,31 +2839,32 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
             ("input_jsonl", "evidence_library", "level_mapper", "assay_transfer_cache", "gold_context_mapping")})
         if existing.get("indices") != indices:
             mismatches["indices"] = "different query membership"
-        requested_uids = None
-        if args.uids_file:
-            from predict.retrieval.selection import read_selection
-            requested_uids, _ = read_selection(args.uids_file, task=args.task,
-                                              subset=args.evaluation_subset, queries=queries)
+        automatic = None
+        if args.uids_file or (preselected_manifest and args.prompt_version in CONTEXT_PROMPT_VERSIONS):
+            automatic = _load_flat_context_candidates(
+                args, queries, load_cache_policy=load_cache_policy, load_candidates=load_candidates,
+            )
+            if scientific_settings(automatic[2]["contract"]) != (existing.get("selection_audit") or {}).get("contract"):
+                mismatches["selection_parameters"] = "different effective selection contract"
         for index in indices:
             retrieval_path = run_directory(source_batch, index) / "retrieval.json"
             if not retrieval_path.is_file():
                 mismatches[f"retrieval[{index}]"] = "missing"
-            elif requested_uids is not None:
-                expected_uids, frozen_uids = {}, {}
+            elif automatic is not None:
+                from predict.retrieval.selection import ordered_evidence
+                molecules, later, audit = automatic
                 query_id = str(records[index]["benchmark_row_id"])
-                for row in requested_uids:
-                    if str(row["benchmark_row_id"]) == query_id:
-                        expected_uids.setdefault(row["level"], []).append(row["source_row_uid"])
-                retrieval = json.loads(retrieval_path.read_text())
-                for group in retrieval.get("groups") or []:
-                    for neighbor in group.get("neighbors") or []:
-                        for row in neighbor.get("evidence_rows") or []:
-                            level = row.get("selection_provenance", {}).get("level")
-                            uid = row.get("source_provenance", {}).get("source_row_uid")
-                            if uid:
-                                frozen_uids.setdefault(level, []).append(uid)
-                if expected_uids != frozen_uids:
-                    mismatches[f"manual_uids[{index}]"] = "different ordered physical selection"
+                wanted_retrieval = cache_matched_flat_retrieval(
+                    query_id, str(records[index]["drug"]), molecules[query_id], later[query_id],
+                    task=args.task, reranking=args.reranking,
+                    query_audit=audit["query_audits"][query_id],
+                    query_identity=(audit.get("query_identities") or {}).get(query_id),
+                    prompt_version=args.prompt_version, selection_contract=audit["selection_policy"],
+                    neighbor_identity_policy_by_level=audit.get("neighbor_identity_policy_by_level"),
+                    preserve_physical_records=bool(audit["contract"]["policy"].get("uid_retrieval", {}).get("cache_set")) or audit["contract"].get("all_later_records") is True or bool(args.flat_mixed_selection) or args.uids is not None or args.uids_file is not None,
+                )
+                if ordered_evidence(wanted_retrieval) != ordered_evidence(json.loads(retrieval_path.read_text())):
+                    mismatches[f"selected_uids[{index}]"] = "different ordered physical selection"
 
         if mismatches:
             raise ValueError(
@@ -2970,8 +2933,10 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
             query_identity=(audit.get("query_identities") or {}).get(query_id),
             prompt_version=args.prompt_version,
             selection_contract=audit["selection_policy"],
+            neighbor_identity_policy_by_level=audit.get("neighbor_identity_policy_by_level"),
             preserve_physical_records=(
-                audit["contract"].get("all_later_records") is True
+                bool(audit["contract"]["policy"].get("uid_retrieval", {}).get("cache_set"))
+                or audit["contract"].get("all_later_records") is True
                 or bool(args.flat_mixed_selection)
                 or args.uids is not None or args.uids_file is not None
             ),
@@ -2979,7 +2944,7 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
         if args.prompt_version in FINAL_FULL_FLAT_PROMPT_VERSIONS:
             retrieval["benchmark"] = "tdc" if args.benchmark == "tdc" else "gold_v1"
         if audit.get("_tdc_selected_scores") is not None:
-            _apply_tdc_v2_scores(
+            _apply_tdc_scores(
                 retrieval, audit["_tdc_selected_scores"][query_id],
                 audit["_tdc_score_visibility"][query_id],
             )
@@ -3058,7 +3023,9 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
             ).hexdigest(),
         )
     manifest = {
-        "harness_version": args.harness_version,
+        "organization": "flat",
+        "run_name": getattr(args, "run_name", ""),
+        "benchmark": args.benchmark,
         "prompt_version": args.prompt_version,
         "task": args.task,
         "evaluation_subset": args.evaluation_subset,
@@ -3090,6 +3057,10 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
         ),
         "flat_mixed_selection": str(args.flat_mixed_selection) if args.flat_mixed_selection else "",
         "selection_audit": compact_audit,
+        "cache_set": cache_task(args.assay_transfer_cache, args.task, args.benchmark)["cache_set"],
+        "benchmark_release": cache_task(args.assay_transfer_cache, args.task, args.benchmark)["benchmark"],
+        "filtering_policy": compact_audit["neighbor_identity_policy_by_level"],
+        "selection_method": "physical_uids" if args.uids is not None or args.uids_file is not None else "cached_ranking",
     }
     if artifact_receipt:
         manifest.update(
@@ -3227,385 +3198,176 @@ def _validate_query_prior_batch(
                 f"Cached query prior identity differs at index {index}: "
                 f"{cached_smiles!r} != {current_smiles!r}"
             )
-        if json.loads(single_path.read_text(encoding="utf-8")).get("status") != "ok":
-            raise ValueError(f"Cached query prior is not successful: {single_path}")
+        validate_query_prior_output(json.loads(single_path.read_text(encoding="utf-8")))
 
 
-def mode_main(mode: str, argv: list[str] | None = None) -> int:
+def mode_main(mode: str, argv: list[str] | None = None, *, launch_command: list[str] | None = None) -> int:
     """Load the shared launcher lazily so batch code can import flat contracts."""
     from predict.harnesses.branches.runner import mode_main as run_mode
 
-    return run_mode(mode, argv)
+    return run_mode(mode, argv, launch_command=launch_command)
 
 
 def run(argv: list[str] | None = None) -> int:
-    argv = list(sys.argv[1:] if argv is None else argv)
-    selector = argparse.ArgumentParser(add_help=False, allow_abbrev=False)
-    selector.add_argument(
-        "--harness-version",
-        choices=tuple(ACTIVE_HARNESS_PROMPTS),
-        default=PUBLIC_HARNESS_VERSION,
-    )
-    selected, remaining = selector.parse_known_args(argv)
-    return _joseph_main(["--harness-version", selected.harness_version, *remaining])
+    from predict.retrieval.assay_reranking.cache_matched import DEFAULT_GOLD_CONTEXT_MAPPING
 
-
-def _joseph_main(argv: list[str]) -> int:
-    from predict.retrieval.assay_reranking.cache_matched import (
-        DEFAULT_CACHE_BUNDLE,
-        DEFAULT_GOLD_CONTEXT_MAPPING,
-    )
-
-    parser = argparse.ArgumentParser(
-        description="Run a cache-matched Joseph flat harness.", allow_abbrev=False
-    )
-    parser.add_argument(
-        "--harness-version", choices=tuple(ACTIVE_HARNESS_PROMPTS),
-        default=PUBLIC_HARNESS_VERSION,
-    )
+    parser = argparse.ArgumentParser(description="Predict from frozen caches, explicit selections and prompt artifacts.", allow_abbrev=False)
+    parser.add_argument("--prompt", dest="prompt_version", choices=sorted(FINAL_FULL_FLAT_PROMPT_VERSIONS), default=FINAL_FULL_FLAT_PROMPT_VERSION)
     parser.add_argument("--task", required=True, choices=tuple(TASKS))
-    parser.add_argument("--provider-pool-config", type=Path, default=DEFAULT_PROVIDER_CONFIG)
-    parser.add_argument(
-        "--reranking", choices=(*CONTEXT_V4_VARIANTS, JOINT_VARIANT),
-        default=ASSAY_TRANSFER_VARIANT,
-    )
-    parser.add_argument("--layout", choices=CONTEXT_V4_LAYOUTS, default="global")
-    parser.add_argument(
-        "--query-prior", choices=("cached", "none"), default="cached"
-    )
-    parser.add_argument("--prior-root", type=Path)
-    parser.add_argument("--l1-min-contrast", type=int, default=3)
-    parser.add_argument(
-        "--morgan-primary-parent-width", type=int, choices=(15, 25, 50, 100), default=25
-    )
-    parser.add_argument(
-        "--molecule-description-mode",
-        choices=("none", *MOLECULE_DESCRIPTION_COLUMNS),
-        default="none",
-    )
-    parser.add_argument(
-        "--molecule-description-cache-version",
-        choices=tuple(MOLECULE_DESCRIPTION_ARTIFACTS),
-        default="v1",
-    )
-    parser.add_argument("--assay-transfer-cache", type=Path, default=DEFAULT_CACHE_BUNDLE)
-    parser.add_argument(
-        "--flat-artifact-manifest", type=Path,
-        help="Hash-pinned full-flat artifact manifest; defaults to the task/benchmark registry.",
-    )
-    parser.add_argument(
-        "--flat-artifact-receipt", type=Path,
-        help="One-time full-flat artifact verification receipt.",
-    )
-    parser.add_argument(
-        "--verify-flat-artifacts", action="store_true",
-        help="Refresh the full artifact hash verification before preparation.",
-    )
-    parser.add_argument(
-        "--record_pool", "-record_pool", choices=tuple(RECORD_POOLS),
-        default="all",
-    )
-    parser.add_argument("--evaluation-subset", choices=("valid", "test"), default="valid")
     parser.add_argument("--benchmark", choices=("gold", "tdc"), default="gold")
-
+    parser.add_argument("--evaluation-subset", choices=("valid", "test"), default="valid")
+    parser.add_argument("--retrieval-cache", dest="assay_transfer_cache", type=Path, metavar="CACHE_SET")
+    parser.add_argument("--reranking", choices=(MORGAN_VARIANT, ASSAY_TRANSFER_VARIANT), default=ASSAY_TRANSFER_VARIANT)
+    parser.add_argument("--layout", choices=CONTEXT_V4_LAYOUTS, default="global")
+    parser.add_argument("--query-prior", choices=("cached", "none"), default="cached")
+    parser.add_argument("--prior-root", type=Path)
+    parser.add_argument("--provider-pool-config", type=Path, default=DEFAULT_PROVIDER_CONFIG)
+    parser.add_argument("--flat-artifact-manifest", type=Path)
+    parser.add_argument("--flat-artifact-receipt", type=Path)
+    parser.add_argument("--verify-flat-artifacts", action="store_true")
     parser.add_argument("--input-jsonl", type=Path)
     parser.add_argument("--evidence-library", type=Path)
-    parser.add_argument(
-        "--level-mapper", type=Path,
-        default=Path("data/evidence_libraries/level_mappings.v1.json"),
-    )
+    parser.add_argument("--level-mapper", type=Path, default=Path("data/evidence_libraries/level_mappings.v1.json"))
     parser.add_argument("--gold-context-mapping", type=Path, default=DEFAULT_GOLD_CONTEXT_MAPPING)
     parser.add_argument("--allow-frozen-l1-vote-scores", action="store_true")
     parser.add_argument("--l1-molecules", type=int, default=10)
     parser.add_argument("--l1-records-per-molecule", type=int, default=10)
     parser.add_argument("--records-per-level", type=int, default=50)
-    parser.add_argument(
-        "--level-record-limit", action="append", default=[], metavar="LEVEL=K",
-        help="Override --records-per-level for one later level; repeat as needed.",
-    )
+    parser.add_argument("--level-record-limit", action="append", default=[], metavar="LEVEL=K")
     parser.add_argument("--ranking-tie-seed", type=int, default=0)
     parser.add_argument("--max-level", type=int, default=0)
     manual = parser.add_mutually_exclusive_group()
-    manual.add_argument("--uids", nargs="+", help="Ordered physical UIDs for one query and level.")
-    manual.add_argument("--uids-file", type=Path, help="Manual UID TSV or optimizer UID manifest.")
-    parser.add_argument("--uid-level", help="Evidence level for an inline --uids selection.")
-    parser.add_argument("--indices", nargs="*")
+    manual.add_argument("--uids", nargs="+")
+    manual.add_argument("--uids-file", type=Path)
+    parser.add_argument("--uid-level")
+    parser.add_argument("--batch-root", type=Path)
+    parser.add_argument("--output-root", type=Path, default=PREDICTION_ROOT)
+    parser.add_argument("--run-name")
+    parser.add_argument("--batch-id")
     parser.add_argument("--start", type=int, default=0)
     parser.add_argument("--limit", type=int, default=0)
-    parser.add_argument("--batch-root", "--output-root", type=Path)
-    parser.add_argument("--batch-id", default="")
-    parser.add_argument(
-        "--flat-preselected-uids", type=Path,
-        help="Immutable ordered L2+ source_row_uid manifest for full-flat V5/V6.",
-    )
-    parser.add_argument(
-        "--flat-preselected-contexts", type=Path,
-        help="Completed gold_direct_context_selection.v1 manifest for ordered L1 cards.",
-    )
-    parser.add_argument(
-        "--flat-mixed-selection", type=Path,
-        help="Completed gold_mixed_selection.v1 manifest for joint L1 and L2+ selection.",
-    )
-    parser.add_argument(
-        "--prepare-only", action="store_true",
-        help="Materialize and verify flat retrieval without issuing model or tool calls.",
-    )
-    args, remaining = parser.parse_known_args(argv)
-    if (args.uids or args.uids_file) and (args.flat_preselected_contexts or
-            args.flat_preselected_uids or args.flat_mixed_selection):
-        parser.error("manual UIDs replace automatic or legacy preselection; do not combine them")
+    parser.add_argument("--indices", nargs="*")
+    parser.add_argument("--prepare-only", action="store_true")
+    parser.add_argument("--molecule-description-mode", choices=("none", *MOLECULE_DESCRIPTION_COLUMNS), default="none")
+    parser.add_argument("--molecule-description-cache-version", choices=tuple(MOLECULE_DESCRIPTION_ARTIFACTS), default="v1")
+    raw = list(sys.argv[1:] if argv is None else argv)
+    args, remaining = parser.parse_known_args(raw)
+    if args.batch_root is not None:
+        args.batch_root = canonical_location(args.batch_root)
+        if args.run_name:
+            parser.error("--batch-root is an exact legacy override; use --output-root with --run-name")
+    elif not args.run_name:
+        parser.error("New prediction runs require --run-name")
+    if args.run_name:
+        campaign = prediction_run_root(args.output_root, "flat", args.prompt_version, args.run_name)
+        batch = prediction_batch_directory(campaign, args.benchmark, args.task, args.evaluation_subset)
+        args.batch_root, args.batch_id = batch.parent, batch.name
+    supplied = {value.split("=", 1)[0] for value in raw}
+    saved = None
+    if args.batch_root is not None and args.batch_id:
+        previous = canonical_location(args.batch_root / args.batch_id / "cache_matched_retrieval/manifest.json")
+        if previous.exists():
+            from predict.harnesses.branches.manifests import resolve_artifact
+            saved = read_record(previous)
+            if "--retrieval-cache" not in supplied:
+                pinned = resolve_artifact(saved, "assay_transfer_cache", previous.parent)
+                if pinned is None or not pinned.is_file():
+                    parser.error("Saved cache identity is unavailable; use a new run identity")
+                args.assay_transfer_cache = pinned
+            for key, flag in (("prompt_version", "--prompt"), ("benchmark", "--benchmark"),
+                              ("evaluation_subset", "--evaluation-subset"), ("reranking", "--reranking"),
+                              ("layout", "--layout"), ("query_prior", "--query-prior"),
+                              ("max_level", "--max-level"), ("l1_molecules", "--l1-molecules"),
+                              ("l1_records_per_molecule", "--l1-records-per-molecule"),
+                              ("records_per_level", "--records-per-level"), ("ranking_tie_seed", "--ranking-tie-seed")):
+                if flag not in supplied and key in saved:
+                    setattr(args, key, saved[key])
+            if not supplied.intersection({"--indices", "--start", "--limit"}):
+                args.indices = list(map(str, saved["indices"]))
+            if not supplied.intersection({"--uids", "--uids-file"}) and saved.get("manual_uids"):
+                args.uids, args.uid_level = saved["manual_uids"], saved["manual_uid_level"]
+    forbidden = {"--harness-version", "--organization", "--assay-transfer-cache", "--flat-prompt-version",
+                 "--experiment-mode", "--retrieval-strategy", "--retrieval-source", "--index",
+                 "--neighbor-identity-policy", "--neighbor-selector", "--morgan-neighbor-selector",
+                 "--flat-preselected-uids", "--flat-preselected-contexts", "--flat-mixed-selection", "--record_pool", "-record_pool"}
+    rejected = sorted({token.split("=", 1)[0] for token in remaining} & forbidden)
+    if rejected:
+        parser.error("Use --prompt, --retrieval-cache and --uids-file; retired selectors: " + ", ".join(rejected))
     if args.uid_level and not args.uids:
         parser.error("--uid-level applies only to --uids")
-    args.prompt_version = JOSEPH_HARNESS_PROMPTS[args.harness_version]
-    args.assay_transfer_cache = resolve_default_cache_bundle(
-        args.task, args.benchmark, args.assay_transfer_cache,
-
-    )
+    if bool(args.flat_artifact_manifest) != bool(args.flat_artifact_receipt):
+        parser.error("pass both --flat-artifact-manifest and --flat-artifact-receipt")
+    if min(args.l1_molecules, args.l1_records_per_molecule, args.records_per_level) < 1 or min(args.start, args.limit, args.max_level) < 0:
+        parser.error("selection budgets must be positive; start, limit and max-level must be non-negative")
     try:
-        require_current_cache_bundle(args.assay_transfer_cache)
-    except (OSError, ValueError) as exc:
-        parser.error(str(exc))
-    task_max_level = prompt_task_max_level(
-        args.task, args.prompt_version, args.assay_transfer_cache,
-    )
-    if (args.max_level == 0
-            and task_max_level > TASKS[args.task]):
-        args.max_level = task_max_level
-    overrides = {}
+        args.assay_transfer_cache = resolve_cache_set(args.task, args.benchmark, args.assay_transfer_cache)
+        task_max_level = cache_level_limit(args.assay_transfer_cache, args.task, args.benchmark)
+    except (OSError, ValueError) as error:
+        parser.error(str(error))
+    if args.max_level > task_max_level:
+        parser.error(f"{args.task} cache ends at L{task_max_level}")
+    args.max_level = args.max_level or task_max_level
+    overrides = dict(saved.get("record_limits_by_level", {})) if saved and "--level-record-limit" not in supplied else {}
     for value in args.level_record_limit:
-        level, separator, raw_limit = value.partition("=")
-        if (not separator or level not in {
-                f"L{i}" for i in range(2, task_max_level + 1)}
-                or level in overrides):
-            parser.error('level-record-limit requires a unique supported LEVEL=K')
+        level, separator, raw = value.partition("=")
         try:
-            overrides[level] = int(raw_limit)
+            limit = int(raw)
         except ValueError:
-            parser.error('--level-record-limit values must be integers')
-    if any(value < 1 for value in overrides.values()):
-        parser.error('--level-record-limit values must be positive')
-    args.record_limits_by_level = {
-        f"L{level}": overrides.get(f"L{level}", args.records_per_level)
-        for level in range(2, task_max_level + 1)
-    }
-    forbidden = {
-        "--experiment-mode", "--retrieval-strategy", "--retrieval-source",
-        "--index", "--neighbor-identity-policy", "--morgan-neighbor-selector",
-        "--neighbor-selector", "--flat-prompt-version", "--rerank-catalog",
-        "--rerank-cache", "--rerank-candidate-manifest", "--rerank-cache-mode",
-        "--assay-transfer-profile", "--assay-transfer-min-score",
-        "--assay-transfer-diversity-mode", "--assay-transfer-selection-unit",
-        "--enable-assay-transfer-scores", "--min-similarity", "--top-k-per-group",
-    }
-    used = sorted({token.split("=", 1)[0] for token in remaining} & forbidden)
-    if used:
-        parser.error(
-            f"{args.harness_version} fixes cache-matched retrieval and cannot combine with: "
-            + ", ".join(used)
-        )
-    if min(args.l1_molecules, args.l1_records_per_molecule, args.records_per_level) < 1:
-        parser.error("selection limits must be positive")
-    if min(args.start, args.limit, args.max_level) < 0:
-        parser.error("start, limit, and max-level must be non-negative")
-    if args.reranking == JOINT_VARIANT and args.l1_molecules != 10:
-        parser.error("joint L1 requires ten molecule slots: five per panel, no refill")
-    if args.prompt_version in CONTEXT_PROMPT_VERSIONS:
-        remaining_flags = {token.split("=", 1)[0] for token in remaining}
-        if "--single-analysis-source-batch" in remaining_flags:
-            parser.error("query-prior reuse is owned by --query-prior and --prior-root")
-        if args.reranking not in CONTEXT_V4_VARIANTS:
-            parser.error(f"{args.harness_version} does not support joint reranking")
-        if args.l1_min_contrast < 0:
-            parser.error("--l1-min-contrast must be non-negative")
-    elif args.reranking not in VARIANTS:
-        parser.error(f"{args.harness_version} does not support {args.reranking}")
-    if args.flat_preselected_uids and (
-        args.prompt_version not in CONTEXT_NUMBERED_PROMPT_VERSIONS
-        or args.reranking != "assay-transfer-contrastive"
-        or args.morgan_primary_parent_width != 25
-        or args.l1_min_contrast != 0
-        or args.l1_molecules != 10
-    ):
-        parser.error(
-            "--flat-preselected-uids requires full-flat-context-v5/V6 with "
-            "assay-transfer-contrastive L1, W25, M=0, and K=10"
-        )
-    if args.flat_preselected_contexts and args.flat_preselected_uids:
-        parser.error("direct contexts and later-level preselected UIDs are mutually exclusive")
-    if args.flat_mixed_selection and (args.flat_preselected_contexts or args.flat_preselected_uids):
-        parser.error("mixed selection cannot be combined with other preselection flags")
-    mixed_schema = json.loads(
-        args.flat_mixed_selection.read_text(encoding="utf-8")
-    ).get("schema_version") if args.flat_mixed_selection else None
-    mixed_tdc_v2 = mixed_schema in {TDC_V2_MIXED_SCHEMA, DILI_TDC_V2_MIXED_SCHEMA}
-    filtered_tdc_v2 = mixed_schema == TDC_V2_BBB_FILTERED_SCHEMA
-    args.flat_mixed_selection_subset = bool(filtered_tdc_v2 and args.indices)
-    mixed_prompts = (
-        {DILI_TDC_V2_MIXED_V3_PROMPT_VERSION, DILI_TDC_V2_POLARIZED_PROMPT_VERSION,
-         *FINAL_FULL_FLAT_PROMPT_VERSIONS}
-        if mixed_schema == DILI_TDC_V2_MIXED_SCHEMA
-        else {TDC_V2_MIXED_PROMPT_VERSION, CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
-              *FINAL_FULL_FLAT_PROMPT_VERSIONS}
-        if args.task in {"ames", "carcinogens"} else {TDC_V2_MIXED_PROMPT_VERSION,
-                                      *FINAL_FULL_FLAT_PROMPT_VERSIONS}
-    )
-    if mixed_tdc_v2 and (args.prompt_version not in mixed_prompts or args.benchmark != 'tdc' or args.reranking != 'assay-transfer' or (args.l1_molecules != 10) or ((args.max_level or task_max_level) != task_max_level)):
-        parser.error("TDC mixed selection requires its successor prompt, assay-transfer reader, K10, and all levels")
-    if filtered_tdc_v2 and (args.task != 'bbb_martins' or args.benchmark != 'tdc' or args.prompt_version not in {CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION, *FINAL_FULL_FLAT_PROMPT_VERSIONS} or (args.reranking != 'assay-transfer') or (args.l1_molecules != 10) or ((args.max_level or task_max_level) != task_max_level)):
-        parser.error("Filtered TDC BBB selection requires upstream-v3 and all levels")
-    if args.flat_mixed_selection and not (mixed_tdc_v2 or filtered_tdc_v2) and (
-        args.prompt_version not in {
-            CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
-            CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
-            CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
-            FINAL_FULL_FLAT_PROMPT_VERSION,
-            FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
-            FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
-        }
-        or args.reranking != "assay-transfer-contrastive"
-        or args.morgan_primary_parent_width != 25
-        or args.l1_min_contrast != 0
-        or args.l1_molecules != 10
-        or args.max_level != task_max_level
-    ):
-        parser.error("mixed selection requires upstream V5, W25/M0/K10, and all task levels")
-    direct_tdc_v2 = bool(args.flat_preselected_contexts) and bool(json.loads(
-        args.flat_preselected_contexts.read_text(encoding="utf-8")
-    ).get("score_policy"))
-    if direct_tdc_v2 and (args.prompt_version not in {TDC_V2_MIXED_PROMPT_VERSION, DILI_TDC_V2_MIXED_V3_PROMPT_VERSION, DILI_TDC_V2_POLARIZED_PROMPT_VERSION, CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION, FINAL_FULL_FLAT_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION} or args.benchmark != 'tdc' or args.reranking != 'assay-transfer' or (args.l1_molecules != 10) or ((args.max_level or task_max_level) != 1)):
-        parser.error("TDC exact-score direct selection requires upstream-v3 or its successor prompt and L1-only assay reader")
-    if args.prompt_version in {TDC_V2_MIXED_PROMPT_VERSION, DILI_TDC_V2_MIXED_V3_PROMPT_VERSION,
-                                  DILI_TDC_V2_POLARIZED_PROMPT_VERSION,
-                                  FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
-                                  FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION} and not (mixed_tdc_v2 or direct_tdc_v2):
-        parser.error("TDC successor prompt requires an exact-score selection manifest")
-    if args.prompt_version in {FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION} and (args.task != 'carcinogens' or args.benchmark != 'tdc' or (not args.flat_mixed_selection)):
-        parser.error("Direct-priority Final Full Flat requires a TDC Carcinogens mixed selection")
-    if args.prompt_version == DILI_TDC_V2_POLARIZED_PROMPT_VERSION and (args.task != 'dili' or args.benchmark != 'tdc'):
-        parser.error("Polarized DILI prompt requires TDC DILI")
-    if args.prompt_version in {TDC_SKIN_LLNA_PROMPT_VERSION, TDC_SKIN_LLNA_SCORES_PROMPT_VERSION} and (args.benchmark != 'tdc' or args.task != 'skin_reaction' or (not args.flat_preselected_contexts)):
-        parser.error("TDC Skin LLNA prompt requires TDC-v1 Skin direct selection")
-    if args.flat_preselected_contexts and args.prompt_version not in {
-        CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
-        CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
-        CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_PROMPT_VERSION,
-        CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION,
-        TDC_SKIN_LLNA_PROMPT_VERSION,
-        TDC_SKIN_LLNA_SCORES_PROMPT_VERSION,
-        CONTEXT_V5_SIX_TASKS_UPSTREAM_SCORES_PROMPT_VERSION,
-        TDC_V2_MIXED_PROMPT_VERSION,
-        DILI_TDC_V2_MIXED_V3_PROMPT_VERSION,
-        DILI_TDC_V2_POLARIZED_PROMPT_VERSION,
-        FINAL_FULL_FLAT_PROMPT_VERSION,
-        FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
-        FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
-    }:
-        parser.error("--flat-preselected-contexts requires full-flat-context-v5-six-tasks-v1")
-    if args.assay_transfer_cache == DEFAULT_CACHE_BUNDLE:
-        if args.record_pool != "all":
-            parser.error("ranked_level_retrieval.v2 requires --record_pool all")
-        if args.reranking == JOINT_VARIANT:
-            parser.error("ranked_level_retrieval.v2 supports Morgan or assay-transfer only")
-    canonical = (
-        tdc_split_path(args.task, args.evaluation_subset)
-        if args.benchmark == "tdc"
-        else split_path(args.task, args.evaluation_subset)
-    ).with_name(f"{args.evaluation_subset}_molecule_condition_labels.jsonl").resolve()
+            parser.error("--level-record-limit requires LEVEL=K")
+        if not separator or level not in {f"L{i}" for i in range(2, args.max_level + 1)} or level in overrides or limit < 1:
+            parser.error("--level-record-limit requires unique supported levels and positive budgets")
+        overrides[level] = limit
+    args.record_limits_by_level = {f"L{i}": overrides.get(f"L{i}", args.records_per_level) for i in range(2, args.max_level + 1)}
+    canonical = (tdc_split_path(args.task, args.evaluation_subset) if args.benchmark == "tdc" else split_path(args.task, args.evaluation_subset)).with_name(f"{args.evaluation_subset}_molecule_condition_labels.jsonl").resolve()
     if args.input_jsonl is not None and args.input_jsonl.resolve() != canonical:
-        parser.error(
-            f"{args.harness_version} accepts only the official conditioned benchmark split"
-        )
+        parser.error("Prediction accepts only the declared benchmark split")
     args.input_jsonl = canonical
-    args.evidence_library = (
-        args.evidence_library
-        or Path("data/evidence_libraries") / args.task / "v10"
-    ).resolve()
+    spec = cache_task(args.assay_transfer_cache, args.task, args.benchmark)
+    from data.processing.paths import REPO_ROOT
+    index_path = REPO_ROOT / spec["retrieval"]["later"]
+    index = json.loads(index_path.read_text())
+    evidence = (index_path.parent / index["evidence"]["manifest"]).resolve()
+    library = next(parent for parent in evidence.parents if parent.parent.name == args.task)
+    args.evidence_library = (args.evidence_library or library).resolve()
     args.level_mapper = args.level_mapper.resolve()
-    args.assay_transfer_cache = args.assay_transfer_cache.resolve()
     args.gold_context_mapping = args.gold_context_mapping.resolve()
-    if (args.benchmark == 'tdc' and args.query_prior == 'cached' and (args.prior_root is None)):
-        parser.error("TDC cached priors require an explicit reviewed --prior-root overlay")
-    args.prior_root = (
-        args.prior_root or default_query_prior_root(
-            args.prompt_version, args.benchmark, args.evaluation_subset
-        )
-    ).resolve()
-    if args.flat_preselected_uids:
-        args.flat_preselected_uids = args.flat_preselected_uids.resolve()
-    if args.flat_preselected_contexts:
-        args.flat_preselected_contexts = args.flat_preselected_contexts.resolve()
-    if args.flat_mixed_selection:
-        args.flat_mixed_selection = args.flat_mixed_selection.resolve()
-    if args.batch_root is None and args.prompt_version in CONTEXT_PROMPT_VERSIONS:
-        args.batch_root = (
-            Path("outputs/paper/assay_transfer_harness/joseph")
-            / "flat_context_v4"
-            / args.reranking
-            / ("with_query_prior" if args.query_prior == "cached" else "no_query_prior")
-        )
-    elif args.batch_root is None:
-        args.batch_root = (
-            Path("outputs/paper/assay_transfer_harness/joseph")
-            / args.harness_version.replace("-", "_")
-            / args.task / args.evaluation_subset / args.reranking / args.record_pool
-        )
-    args.batch_root = args.batch_root.resolve()
-    args.batch_id = args.batch_id or time.strftime(
-        f"k{args.l1_molecules}_m{args.l1_min_contrast}_%Y%m%d_%H%M%S"
-        if args.prompt_version in CONTEXT_PROMPT_VERSIONS
-        else f"{args.harness_version.replace('-', '_')}_%Y%m%d_%H%M%S"
-    )
-
+    args.prior_root = (args.prior_root or (
+        default_query_prior_root(args.prompt_version, args.benchmark, args.evaluation_subset)
+        if args.query_prior == "cached" else DEFAULT_QUERY_PRIOR_ROOT
+    )).resolve()
+    if args.run_name:
+        if "--trace-root" not in supplied:
+            remaining += ["--trace-root", str(campaign / "traces")]
+    else:
+        args.batch_root = args.batch_root.resolve()
+        args.batch_id = args.batch_id or "default"
+    args.record_pool, args.l1_min_contrast, args.morgan_primary_parent_width = "all", 0, 100
+    args.flat_preselected_uids = args.flat_preselected_contexts = args.flat_mixed_selection = None
     source_batch, manifest = _materialize_cache_matched_retrievals(args)
     prior_batch = None
-    if args.prompt_version in CONTEXT_PROMPT_VERSIONS and args.query_prior == "cached":
-        prior_batch = args.prior_root / args.task / f"{args.task}__none"
-        if not prior_batch.is_dir():
-            parser.error(f"cached query-prior batch does not exist: {prior_batch}")
-        _validate_query_prior_batch(
-            prior_batch,
-            read_jsonl(args.input_jsonl),
-            manifest["indices"],
-        )
+    if args.query_prior == "cached":
+        prior_batch = query_prior_batch(args.prior_root, args.task, args.evaluation_subset, args.benchmark)
+        _validate_query_prior_batch(prior_batch, read_jsonl(args.input_jsonl), manifest["indices"])
     if args.prepare_only:
         print(json.dumps({"retrieval_source": str(source_batch), "manifest": manifest}, indent=2))
         return 0
-    if (
-        args.prompt_version in CONTEXT_PROMPT_VERSIONS
-        and "--max-tokens" not in {token.split("=", 1)[0] for token in remaining}
-    ):
-        parser.error(
-            f"{args.harness_version} requires an explicit reviewed --max-tokens"
-        )
-    forwarded = [
-        *remaining,
-        "--provider-pool-config", str(args.provider_pool_config),
-        "--task", args.task,
-        "--input-jsonl", str(args.input_jsonl),
-        "--batch-root", str(args.batch_root),
-        "--batch-id", args.batch_id,
-        "--retrieval-replay-source-batch", str(source_batch),
-        "--flat-selection-manifest", str(source_batch / "manifest.json"),
-        "--flat-prompt-version", args.prompt_version,
-        "--flat-reranking", args.reranking,
-        "--flat-layout", args.layout,
-        "--flat-query-prior", args.query_prior,
-        "--retrieval-strategy", "morgan_fingerprint",
-        "--neighbor-identity-policy", "scaffold_disjoint",
-        "--min-similarity", "0",
-    ]
-    if args.prompt_version in {JOSEPH_PROMPT_VERSION, *CONTEXT_PROMPT_VERSIONS} and "--disable-flat-tools" not in remaining:
-        forwarded.append("--disable-flat-tools")
+    if "--max-tokens" not in {token.split("=", 1)[0] for token in remaining}:
+        parser.error("Prediction requires an explicit reviewed --max-tokens")
+    forwarded = [*remaining, "--provider-pool-config", str(args.provider_pool_config),
+                 "--task", args.task, "--input-jsonl", str(args.input_jsonl),
+                 "--batch-root", str(args.batch_root), "--batch-id", args.batch_id,
+                 "--retrieval-replay-source-batch", str(source_batch),
+                 "--flat-selection-manifest", str(source_batch / "manifest.json"),
+                 "--flat-prompt-version", args.prompt_version, "--flat-reranking", args.reranking,
+                 "--flat-layout", args.layout, "--flat-query-prior", args.query_prior,
+                 "--retrieval-strategy", "morgan_fingerprint", "--neighbor-identity-policy", "scaffold_disjoint",
+                 "--min-similarity", "0", "--disable-flat-tools"]
+    if args.run_name:
+        forwarded += ["--run-name", args.run_name]
     if prior_batch is not None:
-        forwarded.extend(["--single-analysis-source-batch", str(prior_batch)])
-    if args.indices:
-        forwarded.extend(["--indices", *args.indices])
-    else:
-        forwarded.extend(["--start", str(args.start), "--limit", str(args.limit)])
-    return mode_main("full_flat", forwarded)
-
-
-if __name__ == "__main__":
-    raise SystemExit(
-        "Use: python -m predict.harnesses.branches --organization flat ..."
-    )
+        forwarded += ["--single-analysis-source-batch", str(prior_batch)]
+    forwarded += ["--indices", *args.indices] if args.indices else ["--start", str(args.start), "--limit", str(args.limit)]
+    return mode_main("full_flat", forwarded, launch_command=[
+        sys.executable, "-m", "predict.harnesses.branches",
+        *(sys.argv[1:] if argv is None else argv),
+    ])

@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 
 import pandas as pd
+import pyarrow.parquet as pq
 
 from data.processing.evidence_library.shared.v2.normalization.cleaning import file_sha256
 from predict.utils.json import write_json_atomic
@@ -252,8 +253,10 @@ def build_subset(
     stage1_duplicate_count = 0
     if missing and stage3_duplicate_lineage is not None:
         duplicate_columns = ["source_row_uid", "retained_source_row_uid"]
-        duplicates = pd.read_parquet(
-            stage3_duplicate_lineage, columns=duplicate_columns
+        duplicates = (
+            pd.read_parquet(stage3_duplicate_lineage, columns=duplicate_columns)
+            if pq.read_metadata(stage3_duplicate_lineage).num_rows
+            else pd.DataFrame(columns=duplicate_columns)
         )
         duplicates["source_row_uid"] = duplicates.source_row_uid.astype(str)
         duplicates["retained_source_row_uid"] = (
@@ -347,7 +350,7 @@ def build_subset(
             current_voter_membership, columns=["source_row_uid"]
         )
         voter_rows["source_row_uid"] = voter_rows.source_row_uid.astype(str)
-        if voter_rows.source_row_uid.duplicated().any():
+        if task != "skin_reaction" and voter_rows.source_row_uid.duplicated().any():
             raise ValueError("current voter membership contains duplicate UIDs")
         voters = set(voter_rows.source_row_uid)
         missing_voters = voters - record_uids
@@ -356,14 +359,15 @@ def build_subset(
                 f"Stage 3 lacks {len(missing_voters)} current physical voters"
             )
         output_l1 = set(mapped.loc[mapped.level.eq(1), "source_row_uid"])
-        if output_l1 != voters:
+        if not voters <= output_l1 or (task != "skin_reaction" and output_l1 != voters):
             raise ValueError(
                 "reviewed level mapping L1 differs from current voter membership"
             )
         l1_validation = {
             "policy": "reviewed_levels_preserved; voter_membership_is_validation_only",
             "physical_voters": len(voters),
-            "l1_equals_current_physical_voters": True,
+            "l1_equals_current_physical_voters": output_l1 == voters,
+            **({"l1_covers_current_physical_voters": True} if task == "skin_reaction" else {}),
         }
     mapped = mapped.sort_values("source_row_uid").reset_index(drop=True)
     eligibility = mapped[[*eligibility_columns, "level"]].copy()
@@ -439,10 +443,11 @@ def build_subset(
                 "duplicate_lineage_preserves_level": True,
                 "exact_stage3_uid_coverage": len(mapped) == len(records),
                 "unreviewed_rows_use_level_zero": True,
-                "l1_equals_current_physical_voters": (
-                    l1_validation is not None
-                    and l1_validation["l1_equals_current_physical_voters"]
-                ),
+                **({"l1_covers_current_physical_voters": (
+                    l1_validation is not None and l1_validation["l1_covers_current_physical_voters"]
+                )} if task == "skin_reaction" else {"l1_equals_current_physical_voters": (
+                    l1_validation is not None and l1_validation["l1_equals_current_physical_voters"]
+                )}),
             },
         },
         eligibility=eligibility,

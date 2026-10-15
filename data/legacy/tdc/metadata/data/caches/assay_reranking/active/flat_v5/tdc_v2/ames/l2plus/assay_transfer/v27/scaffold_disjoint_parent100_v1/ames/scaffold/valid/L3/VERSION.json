@@ -1,0 +1,3015 @@
+{
+  "capacity": 100,
+  "content_id": "b4cb1a4da6a1a84eae82afb929a6760be01ad7a256e494dbdd7e93a5ecf67e22",
+  "database": "rankings.sqlite3",
+  "database_sha256": "566b1efe068c13313db75618f2fc53027fc2a20773393a65fd8a93df47b48ecf",
+  "excluded_relations": {
+    "exact_record": 322,
+    "same_connectivity_variant": 135,
+    "same_scaffold": 7912
+  },
+  "identity_normalizer_version": "rdkit_fragment_parent.v2",
+  "inputs": {
+    "evidence_manifest_sha256": "deef928e70b5b70bf9efb90d4609e1e949e3c8e52f472a05206098b9eeea73da",
+    "query_identity_manifest_sha256": "f078a7c71bfb3d82b71f81c424ddc3c7fae5104aa84db81ed968e88111391385",
+    "query_sha256": "b10dd08a69f09dec8e7f99b786dd534ec84faf9c91dac653b74d32192e7a5f52",
+    "shared_parent_universe_sha256": "1f2de5278c1436ef72da1b9ed126382bb2a08bc7faa79feb7bb8d57b1855fca6"
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v2"
+  },
+  "level": "L3",
+  "model": {
+    "dataset": "jiosephlee/assay-transfer-record-level-v27-ames-general-intern",
+    "dataset_manifest_sha256": "6f2d2a3d80869e4c604d193568e3b9373a75200e9e5a9f9736f0f593e3be2c75",
+    "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v27-ames-general-best",
+    "revision": "e731fd48ebebe95aa621b3500e59f28d4c27b036"
+  },
+  "neighbor_identity_policy": "scaffold_disjoint",
+  "parent_capacity": 100,
+  "parent_universe_source": "shared_l2plus_morgan_100",
+  "pool": "all",
+  "query_count": 727,
+  "query_counts": {
+    "TDC_AMES_0053D7F61585EF91E857": {
+      "candidate_parents": 25,
+      "candidate_records": 995
+    },
+    "TDC_AMES_0090E63A127EEEB410B9": {
+      "candidate_parents": 36,
+      "candidate_records": 629
+    },
+    "TDC_AMES_012DB3B390797E0B0206": {
+      "candidate_parents": 28,
+      "candidate_records": 634
+    },
+    "TDC_AMES_01A6445FDE9CD6B691C5": {
+      "candidate_parents": 38,
+      "candidate_records": 739
+    },
+    "TDC_AMES_01B5F1C4F8C5702C7CD2": {
+      "candidate_parents": 49,
+      "candidate_records": 2045
+    },
+    "TDC_AMES_01DAB278437077BD4B08": {
+      "candidate_parents": 33,
+      "candidate_records": 6567
+    },
+    "TDC_AMES_0240E2411A160E25E550": {
+      "candidate_parents": 16,
+      "candidate_records": 262
+    },
+    "TDC_AMES_026E1BC30848B50822E9": {
+      "candidate_parents": 26,
+      "candidate_records": 1353
+    },
+    "TDC_AMES_02BA99B7A5A0A18613E2": {
+      "candidate_parents": 39,
+      "candidate_records": 694
+    },
+    "TDC_AMES_03818F3108B940020E6F": {
+      "candidate_parents": 28,
+      "candidate_records": 803
+    },
+    "TDC_AMES_03AD45FBDF9D3F13AC8C": {
+      "candidate_parents": 35,
+      "candidate_records": 712
+    },
+    "TDC_AMES_03B9E7C56AB85FD98823": {
+      "candidate_parents": 26,
+      "candidate_records": 151
+    },
+    "TDC_AMES_03F3B76F7FC4D24E6033": {
+      "candidate_parents": 38,
+      "candidate_records": 5610
+    },
+    "TDC_AMES_040502EF223647E2A36C": {
+      "candidate_parents": 26,
+      "candidate_records": 806
+    },
+    "TDC_AMES_05B854D13500362CDE65": {
+      "candidate_parents": 38,
+      "candidate_records": 666
+    },
+    "TDC_AMES_05CED913B4E3CCE27D38": {
+      "candidate_parents": 17,
+      "candidate_records": 201
+    },
+    "TDC_AMES_0601347289BA397C4C55": {
+      "candidate_parents": 32,
+      "candidate_records": 326
+    },
+    "TDC_AMES_062C383BFFCB73BA27ED": {
+      "candidate_parents": 17,
+      "candidate_records": 96
+    },
+    "TDC_AMES_075D2E92A8178DD604E6": {
+      "candidate_parents": 35,
+      "candidate_records": 311
+    },
+    "TDC_AMES_078F4932CA6E993D69EC": {
+      "candidate_parents": 46,
+      "candidate_records": 648
+    },
+    "TDC_AMES_07DF961D5D3FCFD74728": {
+      "candidate_parents": 30,
+      "candidate_records": 1535
+    },
+    "TDC_AMES_082D4409D117E126DBDD": {
+      "candidate_parents": 33,
+      "candidate_records": 570
+    },
+    "TDC_AMES_08540B92348E8428F3A9": {
+      "candidate_parents": 27,
+      "candidate_records": 598
+    },
+    "TDC_AMES_088769697D60B163F683": {
+      "candidate_parents": 35,
+      "candidate_records": 564
+    },
+    "TDC_AMES_08EAEFC145B16EF7F958": {
+      "candidate_parents": 54,
+      "candidate_records": 1432
+    },
+    "TDC_AMES_08F2A16456C44B578E37": {
+      "candidate_parents": 38,
+      "candidate_records": 1568
+    },
+    "TDC_AMES_08F529F369B75AC8426C": {
+      "candidate_parents": 29,
+      "candidate_records": 606
+    },
+    "TDC_AMES_091718F457DCDF0B3EFB": {
+      "candidate_parents": 29,
+      "candidate_records": 584
+    },
+    "TDC_AMES_092DBCFEE2917927F657": {
+      "candidate_parents": 19,
+      "candidate_records": 310
+    },
+    "TDC_AMES_0A307AC29D09155B8FD2": {
+      "candidate_parents": 34,
+      "candidate_records": 1388
+    },
+    "TDC_AMES_0A6320881C5E87EA0DA0": {
+      "candidate_parents": 32,
+      "candidate_records": 609
+    },
+    "TDC_AMES_0B17B6FC53520F20E5B0": {
+      "candidate_parents": 16,
+      "candidate_records": 2191
+    },
+    "TDC_AMES_0B771EEB6A0922D74AC6": {
+      "candidate_parents": 46,
+      "candidate_records": 1344
+    },
+    "TDC_AMES_0BB140223FF70180ED82": {
+      "candidate_parents": 46,
+      "candidate_records": 2306
+    },
+    "TDC_AMES_0C00576D590065B118AA": {
+      "candidate_parents": 15,
+      "candidate_records": 108
+    },
+    "TDC_AMES_0C51C996700AEB81F2FF": {
+      "candidate_parents": 25,
+      "candidate_records": 762
+    },
+    "TDC_AMES_0C6BF153B1DA8E1D7870": {
+      "candidate_parents": 25,
+      "candidate_records": 294
+    },
+    "TDC_AMES_0C7E0BAA3F1A531DE1F2": {
+      "candidate_parents": 34,
+      "candidate_records": 348
+    },
+    "TDC_AMES_0C87275CDAFB97895D3A": {
+      "candidate_parents": 14,
+      "candidate_records": 113
+    },
+    "TDC_AMES_0CCD2824D20A0D055943": {
+      "candidate_parents": 14,
+      "candidate_records": 147
+    },
+    "TDC_AMES_0CD6F5C858B89CD5952A": {
+      "candidate_parents": 29,
+      "candidate_records": 254
+    },
+    "TDC_AMES_0D303A1DE2E7B9E4DC50": {
+      "candidate_parents": 19,
+      "candidate_records": 139
+    },
+    "TDC_AMES_0DBA4C5F637BD5B8446D": {
+      "candidate_parents": 23,
+      "candidate_records": 741
+    },
+    "TDC_AMES_0E2C719FED0186BBD133": {
+      "candidate_parents": 27,
+      "candidate_records": 373
+    },
+    "TDC_AMES_0F47727F8A794056A3C3": {
+      "candidate_parents": 11,
+      "candidate_records": 3138
+    },
+    "TDC_AMES_0FD6122C3E2170AF4D8D": {
+      "candidate_parents": 32,
+      "candidate_records": 620
+    },
+    "TDC_AMES_10510A9DBC1EAADF0A0C": {
+      "candidate_parents": 22,
+      "candidate_records": 330
+    },
+    "TDC_AMES_10C3C27786038311C6A8": {
+      "candidate_parents": 25,
+      "candidate_records": 1166
+    },
+    "TDC_AMES_111C9E1294BB8479BD5B": {
+      "candidate_parents": 18,
+      "candidate_records": 387
+    },
+    "TDC_AMES_11C938AB157BE12BCE40": {
+      "candidate_parents": 31,
+      "candidate_records": 1876
+    },
+    "TDC_AMES_1225E53231DEBB6E513D": {
+      "candidate_parents": 23,
+      "candidate_records": 313
+    },
+    "TDC_AMES_12524607BF164E784FE9": {
+      "candidate_parents": 31,
+      "candidate_records": 736
+    },
+    "TDC_AMES_128AA713F29BD0B368F2": {
+      "candidate_parents": 29,
+      "candidate_records": 1340
+    },
+    "TDC_AMES_1298169396690F06D74D": {
+      "candidate_parents": 39,
+      "candidate_records": 522
+    },
+    "TDC_AMES_130A49DDBC08F413180B": {
+      "candidate_parents": 26,
+      "candidate_records": 422
+    },
+    "TDC_AMES_1380511CA72BADE2EF3C": {
+      "candidate_parents": 38,
+      "candidate_records": 5694
+    },
+    "TDC_AMES_138D9F3FA1B60E988B0F": {
+      "candidate_parents": 11,
+      "candidate_records": 711
+    },
+    "TDC_AMES_13DDE201058168BFDE75": {
+      "candidate_parents": 9,
+      "candidate_records": 515
+    },
+    "TDC_AMES_144C967AAC3729B4FCA3": {
+      "candidate_parents": 23,
+      "candidate_records": 817
+    },
+    "TDC_AMES_1479E4FDF8EE8CC37A23": {
+      "candidate_parents": 17,
+      "candidate_records": 196
+    },
+    "TDC_AMES_1491F1A83F020ED34440": {
+      "candidate_parents": 29,
+      "candidate_records": 160
+    },
+    "TDC_AMES_14AA81A4C37F9DB9A67A": {
+      "candidate_parents": 41,
+      "candidate_records": 849
+    },
+    "TDC_AMES_16447C5F2528085EC807": {
+      "candidate_parents": 10,
+      "candidate_records": 186
+    },
+    "TDC_AMES_1691FA6CD9212464A525": {
+      "candidate_parents": 20,
+      "candidate_records": 196
+    },
+    "TDC_AMES_16FFD514581EDED2B451": {
+      "candidate_parents": 27,
+      "candidate_records": 252
+    },
+    "TDC_AMES_1716D70E0A4AE8E8B2B2": {
+      "candidate_parents": 30,
+      "candidate_records": 386
+    },
+    "TDC_AMES_17C2DC1C2DFAEC810711": {
+      "candidate_parents": 27,
+      "candidate_records": 181
+    },
+    "TDC_AMES_181245AC5D1E8749C125": {
+      "candidate_parents": 33,
+      "candidate_records": 964
+    },
+    "TDC_AMES_18B84450C3B159BEC969": {
+      "candidate_parents": 48,
+      "candidate_records": 1486
+    },
+    "TDC_AMES_18F1BCF5C0899ADCF180": {
+      "candidate_parents": 25,
+      "candidate_records": 449
+    },
+    "TDC_AMES_193DFF6DDF1F912DFEBF": {
+      "candidate_parents": 19,
+      "candidate_records": 210
+    },
+    "TDC_AMES_196042A528C2226D3636": {
+      "candidate_parents": 20,
+      "candidate_records": 76
+    },
+    "TDC_AMES_19749758EC6A7E29F60B": {
+      "candidate_parents": 14,
+      "candidate_records": 207
+    },
+    "TDC_AMES_199F8B7CC1E146E760B6": {
+      "candidate_parents": 26,
+      "candidate_records": 467
+    },
+    "TDC_AMES_1AF2020F5856CE63D902": {
+      "candidate_parents": 24,
+      "candidate_records": 139
+    },
+    "TDC_AMES_1B823DC54504347664A1": {
+      "candidate_parents": 34,
+      "candidate_records": 848
+    },
+    "TDC_AMES_1BA07A850F5E78FD112E": {
+      "candidate_parents": 13,
+      "candidate_records": 127
+    },
+    "TDC_AMES_1C1B72C3028ABD9895B2": {
+      "candidate_parents": 25,
+      "candidate_records": 502
+    },
+    "TDC_AMES_1CA076134ECCF7A9B3C2": {
+      "candidate_parents": 39,
+      "candidate_records": 631
+    },
+    "TDC_AMES_1D1C698913B3D9A40803": {
+      "candidate_parents": 32,
+      "candidate_records": 202
+    },
+    "TDC_AMES_1D47820D1D7FA934B1A0": {
+      "candidate_parents": 25,
+      "candidate_records": 679
+    },
+    "TDC_AMES_1D4FB9E0373DFE8AE5F5": {
+      "candidate_parents": 27,
+      "candidate_records": 641
+    },
+    "TDC_AMES_1D7CEDE066ABFDA305AE": {
+      "candidate_parents": 24,
+      "candidate_records": 254
+    },
+    "TDC_AMES_1E2C20F0911D5A719A62": {
+      "candidate_parents": 15,
+      "candidate_records": 40
+    },
+    "TDC_AMES_1E3206552A300C184194": {
+      "candidate_parents": 25,
+      "candidate_records": 191
+    },
+    "TDC_AMES_1E863A433D341DE6B36C": {
+      "candidate_parents": 44,
+      "candidate_records": 562
+    },
+    "TDC_AMES_1E8E3988E77F1B83FB9A": {
+      "candidate_parents": 51,
+      "candidate_records": 9693
+    },
+    "TDC_AMES_1FAAD0A6F27AF25D044E": {
+      "candidate_parents": 29,
+      "candidate_records": 1555
+    },
+    "TDC_AMES_207E3F3ACBB09225C9AE": {
+      "candidate_parents": 26,
+      "candidate_records": 2532
+    },
+    "TDC_AMES_225919E9E661565EC0EF": {
+      "candidate_parents": 39,
+      "candidate_records": 1795
+    },
+    "TDC_AMES_226D41A682F041B52ADA": {
+      "candidate_parents": 32,
+      "candidate_records": 293
+    },
+    "TDC_AMES_22886BF3517A99234DDD": {
+      "candidate_parents": 24,
+      "candidate_records": 110
+    },
+    "TDC_AMES_22D178209C8F36A2F693": {
+      "candidate_parents": 18,
+      "candidate_records": 292
+    },
+    "TDC_AMES_232E8BFAC722E343800B": {
+      "candidate_parents": 30,
+      "candidate_records": 2213
+    },
+    "TDC_AMES_235D5DF8CCBCE919A089": {
+      "candidate_parents": 21,
+      "candidate_records": 839
+    },
+    "TDC_AMES_23BD73E06C286BF4A633": {
+      "candidate_parents": 33,
+      "candidate_records": 556
+    },
+    "TDC_AMES_2471A3EB571A6E23CCBA": {
+      "candidate_parents": 40,
+      "candidate_records": 2662
+    },
+    "TDC_AMES_24C7E867DF1DB0D0D703": {
+      "candidate_parents": 33,
+      "candidate_records": 233
+    },
+    "TDC_AMES_252DD28FB8023D72C72A": {
+      "candidate_parents": 17,
+      "candidate_records": 155
+    },
+    "TDC_AMES_2641DB186556FC54BD14": {
+      "candidate_parents": 34,
+      "candidate_records": 359
+    },
+    "TDC_AMES_266FCFD0D59A9AAC7FA3": {
+      "candidate_parents": 30,
+      "candidate_records": 636
+    },
+    "TDC_AMES_2672D8F32E7973FDC9D4": {
+      "candidate_parents": 5,
+      "candidate_records": 87
+    },
+    "TDC_AMES_2751C6E9402E56F61178": {
+      "candidate_parents": 25,
+      "candidate_records": 555
+    },
+    "TDC_AMES_27688C930513F4A2C40D": {
+      "candidate_parents": 31,
+      "candidate_records": 162
+    },
+    "TDC_AMES_278BE4E07B1046117877": {
+      "candidate_parents": 34,
+      "candidate_records": 2303
+    },
+    "TDC_AMES_28032EDE7DBD52962EAC": {
+      "candidate_parents": 37,
+      "candidate_records": 392
+    },
+    "TDC_AMES_284129F1DFBDD1D0B39D": {
+      "candidate_parents": 25,
+      "candidate_records": 629
+    },
+    "TDC_AMES_28455F7E1E6560C5BFE0": {
+      "candidate_parents": 32,
+      "candidate_records": 1271
+    },
+    "TDC_AMES_285D22A3038BB0F47BA7": {
+      "candidate_parents": 30,
+      "candidate_records": 678
+    },
+    "TDC_AMES_2900FC1EC63226C3FA54": {
+      "candidate_parents": 19,
+      "candidate_records": 273
+    },
+    "TDC_AMES_2A150B9E07C6CA912D8A": {
+      "candidate_parents": 35,
+      "candidate_records": 871
+    },
+    "TDC_AMES_2A2D2827610FE9F92A25": {
+      "candidate_parents": 47,
+      "candidate_records": 2268
+    },
+    "TDC_AMES_2A756ED03981A6005D13": {
+      "candidate_parents": 41,
+      "candidate_records": 1141
+    },
+    "TDC_AMES_2B20A63EA26F92C8D898": {
+      "candidate_parents": 18,
+      "candidate_records": 463
+    },
+    "TDC_AMES_2C3427F878748FC29F9B": {
+      "candidate_parents": 16,
+      "candidate_records": 68
+    },
+    "TDC_AMES_2C4D7F35FAF3F20CFA33": {
+      "candidate_parents": 22,
+      "candidate_records": 303
+    },
+    "TDC_AMES_2C6AD8BF225C990E0761": {
+      "candidate_parents": 16,
+      "candidate_records": 195
+    },
+    "TDC_AMES_2CAB91A31D21DD51673C": {
+      "candidate_parents": 14,
+      "candidate_records": 180
+    },
+    "TDC_AMES_2D0482B609563D9058DC": {
+      "candidate_parents": 30,
+      "candidate_records": 519
+    },
+    "TDC_AMES_2D04E656613757D7B928": {
+      "candidate_parents": 28,
+      "candidate_records": 644
+    },
+    "TDC_AMES_2D1316A9788C09E53C65": {
+      "candidate_parents": 10,
+      "candidate_records": 114
+    },
+    "TDC_AMES_2E08A63599515EA30717": {
+      "candidate_parents": 23,
+      "candidate_records": 1617
+    },
+    "TDC_AMES_2E11791DD2661151FFA9": {
+      "candidate_parents": 26,
+      "candidate_records": 468
+    },
+    "TDC_AMES_2F34E873E1C3ABD25F6B": {
+      "candidate_parents": 40,
+      "candidate_records": 1365
+    },
+    "TDC_AMES_30008278D5806A769A1D": {
+      "candidate_parents": 25,
+      "candidate_records": 1480
+    },
+    "TDC_AMES_3019EDD12EB975A3F45E": {
+      "candidate_parents": 34,
+      "candidate_records": 467
+    },
+    "TDC_AMES_30582C649A2E3CC1DEA7": {
+      "candidate_parents": 31,
+      "candidate_records": 559
+    },
+    "TDC_AMES_3093ED4658738F1C2CFC": {
+      "candidate_parents": 39,
+      "candidate_records": 5868
+    },
+    "TDC_AMES_30B3C124D413025206F4": {
+      "candidate_parents": 33,
+      "candidate_records": 963
+    },
+    "TDC_AMES_310CFCB00AA172C92381": {
+      "candidate_parents": 15,
+      "candidate_records": 71
+    },
+    "TDC_AMES_31DE68DA322B9424CB4F": {
+      "candidate_parents": 50,
+      "candidate_records": 13194
+    },
+    "TDC_AMES_31E57523D4B2AA6D5FA1": {
+      "candidate_parents": 18,
+      "candidate_records": 217
+    },
+    "TDC_AMES_31ED9BC7A537A7BC5773": {
+      "candidate_parents": 30,
+      "candidate_records": 182
+    },
+    "TDC_AMES_33916F174FF1FF955CD6": {
+      "candidate_parents": 18,
+      "candidate_records": 216
+    },
+    "TDC_AMES_33A7AF8540D6A675C048": {
+      "candidate_parents": 24,
+      "candidate_records": 568
+    },
+    "TDC_AMES_33BC423B966990790752": {
+      "candidate_parents": 26,
+      "candidate_records": 251
+    },
+    "TDC_AMES_3451FC5050DF4EFB8A52": {
+      "candidate_parents": 17,
+      "candidate_records": 803
+    },
+    "TDC_AMES_34D80758F4800A0E982A": {
+      "candidate_parents": 34,
+      "candidate_records": 1541
+    },
+    "TDC_AMES_34E0626126BCE7837CE1": {
+      "candidate_parents": 35,
+      "candidate_records": 468
+    },
+    "TDC_AMES_34F4B69BDF7CAF87F53A": {
+      "candidate_parents": 35,
+      "candidate_records": 877
+    },
+    "TDC_AMES_352E422156AD7A0C9B7F": {
+      "candidate_parents": 19,
+      "candidate_records": 139
+    },
+    "TDC_AMES_3572F767E6C33C88A979": {
+      "candidate_parents": 21,
+      "candidate_records": 156
+    },
+    "TDC_AMES_35CCFC0CA173CB3078A5": {
+      "candidate_parents": 32,
+      "candidate_records": 333
+    },
+    "TDC_AMES_35E18508861959165DBA": {
+      "candidate_parents": 39,
+      "candidate_records": 279
+    },
+    "TDC_AMES_3613BF249C7C7E61C08B": {
+      "candidate_parents": 34,
+      "candidate_records": 1233
+    },
+    "TDC_AMES_362FE11B97CE6EF17864": {
+      "candidate_parents": 35,
+      "candidate_records": 965
+    },
+    "TDC_AMES_3630C6DC4ABEE8456FE1": {
+      "candidate_parents": 36,
+      "candidate_records": 962
+    },
+    "TDC_AMES_36ACCAE0282EE590A8B1": {
+      "candidate_parents": 27,
+      "candidate_records": 1288
+    },
+    "TDC_AMES_36D7C219D5AE90580C06": {
+      "candidate_parents": 39,
+      "candidate_records": 1459
+    },
+    "TDC_AMES_3756164171DBDF03A6FD": {
+      "candidate_parents": 30,
+      "candidate_records": 432
+    },
+    "TDC_AMES_3791E36C8EFD8087C5D9": {
+      "candidate_parents": 13,
+      "candidate_records": 116
+    },
+    "TDC_AMES_37DF6DE54826106FD25F": {
+      "candidate_parents": 20,
+      "candidate_records": 562
+    },
+    "TDC_AMES_37E33FAEB95BDAC60CF0": {
+      "candidate_parents": 27,
+      "candidate_records": 901
+    },
+    "TDC_AMES_3844D8F51F03CC23CF5E": {
+      "candidate_parents": 29,
+      "candidate_records": 699
+    },
+    "TDC_AMES_38558D5FB80D770E078E": {
+      "candidate_parents": 44,
+      "candidate_records": 655
+    },
+    "TDC_AMES_38600CBD2460A8F556F8": {
+      "candidate_parents": 24,
+      "candidate_records": 930
+    },
+    "TDC_AMES_389F4863BFF1D26AB464": {
+      "candidate_parents": 27,
+      "candidate_records": 829
+    },
+    "TDC_AMES_38FC8AFE9228F5A9E2D1": {
+      "candidate_parents": 27,
+      "candidate_records": 345
+    },
+    "TDC_AMES_3A222376482FFE253DCB": {
+      "candidate_parents": 33,
+      "candidate_records": 590
+    },
+    "TDC_AMES_3A3B54C647201E85F046": {
+      "candidate_parents": 26,
+      "candidate_records": 467
+    },
+    "TDC_AMES_3AD6B287E16C2E57B637": {
+      "candidate_parents": 24,
+      "candidate_records": 337
+    },
+    "TDC_AMES_3C41A73D2FBA7485A5F6": {
+      "candidate_parents": 9,
+      "candidate_records": 125
+    },
+    "TDC_AMES_3C6B5246F19B50109A2E": {
+      "candidate_parents": 34,
+      "candidate_records": 1535
+    },
+    "TDC_AMES_3C732BBB11333C2C67E5": {
+      "candidate_parents": 36,
+      "candidate_records": 510
+    },
+    "TDC_AMES_3CD895479E954F0A134A": {
+      "candidate_parents": 17,
+      "candidate_records": 2304
+    },
+    "TDC_AMES_3D163D761213651B5DC3": {
+      "candidate_parents": 33,
+      "candidate_records": 5735
+    },
+    "TDC_AMES_3E43883EE2F3433162D2": {
+      "candidate_parents": 31,
+      "candidate_records": 2095
+    },
+    "TDC_AMES_3E72B4433EF6EED9B4E4": {
+      "candidate_parents": 30,
+      "candidate_records": 1549
+    },
+    "TDC_AMES_3E7C2164BCB05760BADE": {
+      "candidate_parents": 46,
+      "candidate_records": 832
+    },
+    "TDC_AMES_3F093707FC92C3B4FA38": {
+      "candidate_parents": 39,
+      "candidate_records": 447
+    },
+    "TDC_AMES_3F10909979D3CADF9D51": {
+      "candidate_parents": 45,
+      "candidate_records": 1017
+    },
+    "TDC_AMES_3F29A29B17447D1603B1": {
+      "candidate_parents": 41,
+      "candidate_records": 538
+    },
+    "TDC_AMES_40133F8552DF92E12E5B": {
+      "candidate_parents": 42,
+      "candidate_records": 3871
+    },
+    "TDC_AMES_40916786B4DC2196ECE2": {
+      "candidate_parents": 11,
+      "candidate_records": 222
+    },
+    "TDC_AMES_41231A811C8C0311D0F1": {
+      "candidate_parents": 31,
+      "candidate_records": 510
+    },
+    "TDC_AMES_425129B6B1C2BAB052B1": {
+      "candidate_parents": 28,
+      "candidate_records": 398
+    },
+    "TDC_AMES_430EB72952F484B51F7F": {
+      "candidate_parents": 20,
+      "candidate_records": 205
+    },
+    "TDC_AMES_4390745B87F8B61BF687": {
+      "candidate_parents": 39,
+      "candidate_records": 297
+    },
+    "TDC_AMES_43E8E1906EE20FFD4307": {
+      "candidate_parents": 42,
+      "candidate_records": 3075
+    },
+    "TDC_AMES_43F082BA9A5EEBBD0FB6": {
+      "candidate_parents": 30,
+      "candidate_records": 280
+    },
+    "TDC_AMES_43FAA2906F16BB269295": {
+      "candidate_parents": 21,
+      "candidate_records": 262
+    },
+    "TDC_AMES_443691D908D153B696FE": {
+      "candidate_parents": 32,
+      "candidate_records": 1128
+    },
+    "TDC_AMES_44CFCE08B126D469ADC0": {
+      "candidate_parents": 30,
+      "candidate_records": 560
+    },
+    "TDC_AMES_453069BFFBABD6385DEC": {
+      "candidate_parents": 52,
+      "candidate_records": 1579
+    },
+    "TDC_AMES_45B109DF1ADA2685BACF": {
+      "candidate_parents": 16,
+      "candidate_records": 40
+    },
+    "TDC_AMES_45EA40550C051B658804": {
+      "candidate_parents": 25,
+      "candidate_records": 393
+    },
+    "TDC_AMES_4607A652B2B69D5D38A6": {
+      "candidate_parents": 33,
+      "candidate_records": 245
+    },
+    "TDC_AMES_463A429DA7BF768F0D9D": {
+      "candidate_parents": 33,
+      "candidate_records": 1125
+    },
+    "TDC_AMES_4791F0A71D1C8074C846": {
+      "candidate_parents": 19,
+      "candidate_records": 863
+    },
+    "TDC_AMES_47D4A9A15823C1B7952B": {
+      "candidate_parents": 6,
+      "candidate_records": 39
+    },
+    "TDC_AMES_47DE2798281E8BB1500D": {
+      "candidate_parents": 15,
+      "candidate_records": 125
+    },
+    "TDC_AMES_47E792B294885F4CEFF9": {
+      "candidate_parents": 26,
+      "candidate_records": 515
+    },
+    "TDC_AMES_48B0437C9E7F9D8E6DB0": {
+      "candidate_parents": 29,
+      "candidate_records": 358
+    },
+    "TDC_AMES_48EF52EF10CEDF8CCA14": {
+      "candidate_parents": 33,
+      "candidate_records": 1321
+    },
+    "TDC_AMES_4950A226E4E7B8E305E3": {
+      "candidate_parents": 12,
+      "candidate_records": 620
+    },
+    "TDC_AMES_495F02F2CBC41837AD09": {
+      "candidate_parents": 37,
+      "candidate_records": 368
+    },
+    "TDC_AMES_49BD639AF6A149B1970A": {
+      "candidate_parents": 24,
+      "candidate_records": 119
+    },
+    "TDC_AMES_49DAACE6B7DE10C2BBC8": {
+      "candidate_parents": 41,
+      "candidate_records": 649
+    },
+    "TDC_AMES_4A740B836601FE44EF2E": {
+      "candidate_parents": 38,
+      "candidate_records": 430
+    },
+    "TDC_AMES_4AA7B7EB57DD3708FC34": {
+      "candidate_parents": 37,
+      "candidate_records": 368
+    },
+    "TDC_AMES_4ABFFDFCC36B684C5B82": {
+      "candidate_parents": 33,
+      "candidate_records": 801
+    },
+    "TDC_AMES_4AD15BC6EB051A7F1AAF": {
+      "candidate_parents": 26,
+      "candidate_records": 410
+    },
+    "TDC_AMES_4B31E844860B73019B8E": {
+      "candidate_parents": 44,
+      "candidate_records": 1518
+    },
+    "TDC_AMES_4B74A9A24A9C16644D0E": {
+      "candidate_parents": 25,
+      "candidate_records": 1006
+    },
+    "TDC_AMES_4C395429400EB3F93F7B": {
+      "candidate_parents": 12,
+      "candidate_records": 539
+    },
+    "TDC_AMES_4CBC1693DAAF45029A08": {
+      "candidate_parents": 24,
+      "candidate_records": 553
+    },
+    "TDC_AMES_4D692BCE7C9151E1F2C3": {
+      "candidate_parents": 34,
+      "candidate_records": 488
+    },
+    "TDC_AMES_4DB3AE2D1C9266457913": {
+      "candidate_parents": 34,
+      "candidate_records": 550
+    },
+    "TDC_AMES_4E429080683DB3841030": {
+      "candidate_parents": 34,
+      "candidate_records": 722
+    },
+    "TDC_AMES_4FA38634D38830282147": {
+      "candidate_parents": 41,
+      "candidate_records": 304
+    },
+    "TDC_AMES_4FDD118BBEA2FC77DCCC": {
+      "candidate_parents": 15,
+      "candidate_records": 2301
+    },
+    "TDC_AMES_50994AD746A41E524B1D": {
+      "candidate_parents": 27,
+      "candidate_records": 395
+    },
+    "TDC_AMES_50FE07DA35E0F6910642": {
+      "candidate_parents": 46,
+      "candidate_records": 832
+    },
+    "TDC_AMES_51ED5DE095AA9C0D1C14": {
+      "candidate_parents": 19,
+      "candidate_records": 194
+    },
+    "TDC_AMES_51FDD30A067EB07B9EFF": {
+      "candidate_parents": 20,
+      "candidate_records": 2424
+    },
+    "TDC_AMES_52431548DA3707437356": {
+      "candidate_parents": 30,
+      "candidate_records": 300
+    },
+    "TDC_AMES_5254827912B8E66076F4": {
+      "candidate_parents": 12,
+      "candidate_records": 38
+    },
+    "TDC_AMES_5296F877ECD7C9069D7F": {
+      "candidate_parents": 32,
+      "candidate_records": 429
+    },
+    "TDC_AMES_52AB50F91FC9535CEF2D": {
+      "candidate_parents": 37,
+      "candidate_records": 5772
+    },
+    "TDC_AMES_52FA0D12866F915FB347": {
+      "candidate_parents": 30,
+      "candidate_records": 221
+    },
+    "TDC_AMES_5313A2C880141E8B709A": {
+      "candidate_parents": 21,
+      "candidate_records": 542
+    },
+    "TDC_AMES_537D614E1FF14D49B12C": {
+      "candidate_parents": 29,
+      "candidate_records": 347
+    },
+    "TDC_AMES_53B1513082D68092FBB9": {
+      "candidate_parents": 35,
+      "candidate_records": 870
+    },
+    "TDC_AMES_53F9022F0D87B1D4D111": {
+      "candidate_parents": 36,
+      "candidate_records": 167
+    },
+    "TDC_AMES_5464C9A5132E50F2C924": {
+      "candidate_parents": 29,
+      "candidate_records": 2360
+    },
+    "TDC_AMES_548DB295425B7444A4E3": {
+      "candidate_parents": 27,
+      "candidate_records": 1222
+    },
+    "TDC_AMES_54E66E83DD9DD4D7DD79": {
+      "candidate_parents": 33,
+      "candidate_records": 169
+    },
+    "TDC_AMES_5504F9EC5AC22D101A3C": {
+      "candidate_parents": 40,
+      "candidate_records": 401
+    },
+    "TDC_AMES_5565F4F2657EEC466795": {
+      "candidate_parents": 18,
+      "candidate_records": 83
+    },
+    "TDC_AMES_55C009C49FE621ECA9AA": {
+      "candidate_parents": 19,
+      "candidate_records": 237
+    },
+    "TDC_AMES_5602B05B96EEAE5933DD": {
+      "candidate_parents": 15,
+      "candidate_records": 138
+    },
+    "TDC_AMES_56BB464AA4D5352981A1": {
+      "candidate_parents": 32,
+      "candidate_records": 195
+    },
+    "TDC_AMES_5739DD41B7929BE1E63B": {
+      "candidate_parents": 32,
+      "candidate_records": 2542
+    },
+    "TDC_AMES_58378436BD5ABAEDC634": {
+      "candidate_parents": 28,
+      "candidate_records": 247
+    },
+    "TDC_AMES_58AA234655395A1C305B": {
+      "candidate_parents": 52,
+      "candidate_records": 524
+    },
+    "TDC_AMES_58EF5B2BF886204679EC": {
+      "candidate_parents": 38,
+      "candidate_records": 1256
+    },
+    "TDC_AMES_59358B31DE8F78D94024": {
+      "candidate_parents": 32,
+      "candidate_records": 776
+    },
+    "TDC_AMES_59E822442D9C26C4A499": {
+      "candidate_parents": 30,
+      "candidate_records": 384
+    },
+    "TDC_AMES_59F6CADD1D8A2D94CE51": {
+      "candidate_parents": 37,
+      "candidate_records": 760
+    },
+    "TDC_AMES_5A00BCEB0BBCF271DAC8": {
+      "candidate_parents": 18,
+      "candidate_records": 172
+    },
+    "TDC_AMES_5A43228A59721125E684": {
+      "candidate_parents": 20,
+      "candidate_records": 581
+    },
+    "TDC_AMES_5B1CBAD49DD57CCC9E00": {
+      "candidate_parents": 35,
+      "candidate_records": 310
+    },
+    "TDC_AMES_5B3E59F83579E8244617": {
+      "candidate_parents": 19,
+      "candidate_records": 459
+    },
+    "TDC_AMES_5B3F42852713A0E3032A": {
+      "candidate_parents": 29,
+      "candidate_records": 436
+    },
+    "TDC_AMES_5B5685CE64FABEEBD59D": {
+      "candidate_parents": 48,
+      "candidate_records": 1486
+    },
+    "TDC_AMES_5BBC7E0977C0D86065D9": {
+      "candidate_parents": 18,
+      "candidate_records": 430
+    },
+    "TDC_AMES_5C3BA6A6D967A40AFBA7": {
+      "candidate_parents": 34,
+      "candidate_records": 1495
+    },
+    "TDC_AMES_5CAB6E4CF07FABE4F46A": {
+      "candidate_parents": 21,
+      "candidate_records": 188
+    },
+    "TDC_AMES_5CCFE43F0FA2F9627599": {
+      "candidate_parents": 21,
+      "candidate_records": 320
+    },
+    "TDC_AMES_5CE73E1AEA4299525D8E": {
+      "candidate_parents": 36,
+      "candidate_records": 314
+    },
+    "TDC_AMES_5CFFB89E9E5CFE28F351": {
+      "candidate_parents": 21,
+      "candidate_records": 2224
+    },
+    "TDC_AMES_5D3E01B852F8DA04E541": {
+      "candidate_parents": 45,
+      "candidate_records": 599
+    },
+    "TDC_AMES_5E2D17E4DBFC798E9AB3": {
+      "candidate_parents": 9,
+      "candidate_records": 212
+    },
+    "TDC_AMES_5E4CDF9B95B477A463B0": {
+      "candidate_parents": 28,
+      "candidate_records": 804
+    },
+    "TDC_AMES_5E5D88B524A17E24E0EA": {
+      "candidate_parents": 30,
+      "candidate_records": 239
+    },
+    "TDC_AMES_5E78A62E5D48E974CA35": {
+      "candidate_parents": 31,
+      "candidate_records": 699
+    },
+    "TDC_AMES_5ECC74995C1461AB2FC1": {
+      "candidate_parents": 34,
+      "candidate_records": 598
+    },
+    "TDC_AMES_5EDB067B25F6557F1219": {
+      "candidate_parents": 18,
+      "candidate_records": 1381
+    },
+    "TDC_AMES_5EE552F5517A5610E7EF": {
+      "candidate_parents": 35,
+      "candidate_records": 877
+    },
+    "TDC_AMES_5F23BCA511EAAE6C6278": {
+      "candidate_parents": 35,
+      "candidate_records": 326
+    },
+    "TDC_AMES_603DEE3A7214A7B633A3": {
+      "candidate_parents": 33,
+      "candidate_records": 1116
+    },
+    "TDC_AMES_6067D30A3DAA9A4249ED": {
+      "candidate_parents": 28,
+      "candidate_records": 558
+    },
+    "TDC_AMES_6173CB814102742CEE5C": {
+      "candidate_parents": 15,
+      "candidate_records": 725
+    },
+    "TDC_AMES_624E0C653793D888DC76": {
+      "candidate_parents": 13,
+      "candidate_records": 116
+    },
+    "TDC_AMES_62FFDFA82ECACCC97006": {
+      "candidate_parents": 20,
+      "candidate_records": 169
+    },
+    "TDC_AMES_631E331E3D6632E2AD49": {
+      "candidate_parents": 23,
+      "candidate_records": 1024
+    },
+    "TDC_AMES_638B8D4EE5E43636FFC4": {
+      "candidate_parents": 44,
+      "candidate_records": 1518
+    },
+    "TDC_AMES_6399203513377604625A": {
+      "candidate_parents": 30,
+      "candidate_records": 363
+    },
+    "TDC_AMES_6420F6F802B668EA8786": {
+      "candidate_parents": 18,
+      "candidate_records": 272
+    },
+    "TDC_AMES_644231771C8E02AF6C9B": {
+      "candidate_parents": 26,
+      "candidate_records": 493
+    },
+    "TDC_AMES_64550A61589E3C723611": {
+      "candidate_parents": 35,
+      "candidate_records": 600
+    },
+    "TDC_AMES_64843445B2DEB019F345": {
+      "candidate_parents": 39,
+      "candidate_records": 321
+    },
+    "TDC_AMES_648CE8E0185922DFE577": {
+      "candidate_parents": 31,
+      "candidate_records": 374
+    },
+    "TDC_AMES_6668466FBFFD7C8EF354": {
+      "candidate_parents": 28,
+      "candidate_records": 472
+    },
+    "TDC_AMES_667F71F5C1056908C26E": {
+      "candidate_parents": 19,
+      "candidate_records": 256
+    },
+    "TDC_AMES_66BA04B1EC13713C6492": {
+      "candidate_parents": 30,
+      "candidate_records": 157
+    },
+    "TDC_AMES_66E2DCA16DAA035BAB7A": {
+      "candidate_parents": 25,
+      "candidate_records": 1201
+    },
+    "TDC_AMES_670B62B693BB9511C0C9": {
+      "candidate_parents": 21,
+      "candidate_records": 1015
+    },
+    "TDC_AMES_676632F87E1926991B47": {
+      "candidate_parents": 35,
+      "candidate_records": 5628
+    },
+    "TDC_AMES_676BBC3AD02B780D218B": {
+      "candidate_parents": 13,
+      "candidate_records": 160
+    },
+    "TDC_AMES_67EA67FF21B9B437712E": {
+      "candidate_parents": 23,
+      "candidate_records": 400
+    },
+    "TDC_AMES_68B2C243C4CED171FD3A": {
+      "candidate_parents": 30,
+      "candidate_records": 1220
+    },
+    "TDC_AMES_68B74B8A1AF69C3D8A28": {
+      "candidate_parents": 37,
+      "candidate_records": 376
+    },
+    "TDC_AMES_68C788DAB135B979D29E": {
+      "candidate_parents": 16,
+      "candidate_records": 729
+    },
+    "TDC_AMES_69F40989884ACC059453": {
+      "candidate_parents": 43,
+      "candidate_records": 839
+    },
+    "TDC_AMES_6AB1E31EFBACE0EFDD4F": {
+      "candidate_parents": 28,
+      "candidate_records": 482
+    },
+    "TDC_AMES_6B153617D7FEA11C5201": {
+      "candidate_parents": 32,
+      "candidate_records": 617
+    },
+    "TDC_AMES_6B8D5327F9FAAE97F4A6": {
+      "candidate_parents": 39,
+      "candidate_records": 535
+    },
+    "TDC_AMES_6C7AC11F78AA82AB05E8": {
+      "candidate_parents": 14,
+      "candidate_records": 180
+    },
+    "TDC_AMES_6CA397C6A9A64BDC1D59": {
+      "candidate_parents": 20,
+      "candidate_records": 377
+    },
+    "TDC_AMES_6CF2FEA93ACB99A9E610": {
+      "candidate_parents": 12,
+      "candidate_records": 203
+    },
+    "TDC_AMES_6D22CF8C7C23E313E360": {
+      "candidate_parents": 19,
+      "candidate_records": 273
+    },
+    "TDC_AMES_6D4B6F2E62A8FAB045B4": {
+      "candidate_parents": 39,
+      "candidate_records": 447
+    },
+    "TDC_AMES_6DCB1840FD9E2BC742BC": {
+      "candidate_parents": 16,
+      "candidate_records": 332
+    },
+    "TDC_AMES_6DF54581DE067B583D57": {
+      "candidate_parents": 33,
+      "candidate_records": 950
+    },
+    "TDC_AMES_6E08E0A8FD0B06BE4680": {
+      "candidate_parents": 29,
+      "candidate_records": 203
+    },
+    "TDC_AMES_6E2E56CC5C2E585B3427": {
+      "candidate_parents": 36,
+      "candidate_records": 297
+    },
+    "TDC_AMES_6EB8C434CC503890E4A1": {
+      "candidate_parents": 33,
+      "candidate_records": 590
+    },
+    "TDC_AMES_6EC43F6A4A0BAF654C10": {
+      "candidate_parents": 19,
+      "candidate_records": 1024
+    },
+    "TDC_AMES_6FA1C19049466A414E00": {
+      "candidate_parents": 14,
+      "candidate_records": 136
+    },
+    "TDC_AMES_702BA345FE9BEA2C33AE": {
+      "candidate_parents": 29,
+      "candidate_records": 1091
+    },
+    "TDC_AMES_7046794A1B04E2218546": {
+      "candidate_parents": 26,
+      "candidate_records": 1189
+    },
+    "TDC_AMES_70EDB9775AD1DB53A86F": {
+      "candidate_parents": 43,
+      "candidate_records": 8945
+    },
+    "TDC_AMES_70F4A6FE6B097714DD0C": {
+      "candidate_parents": 23,
+      "candidate_records": 927
+    },
+    "TDC_AMES_710B99FD560E3ADBE0BC": {
+      "candidate_parents": 21,
+      "candidate_records": 142
+    },
+    "TDC_AMES_715BB5BD225631764721": {
+      "candidate_parents": 23,
+      "candidate_records": 137
+    },
+    "TDC_AMES_71A1103EB1A2094B8A5C": {
+      "candidate_parents": 23,
+      "candidate_records": 637
+    },
+    "TDC_AMES_71BFBC5AFD73F0FFF3E5": {
+      "candidate_parents": 41,
+      "candidate_records": 2062
+    },
+    "TDC_AMES_72281003558F0C41ED38": {
+      "candidate_parents": 28,
+      "candidate_records": 1112
+    },
+    "TDC_AMES_72F1933FAFA4D32566DD": {
+      "candidate_parents": 28,
+      "candidate_records": 496
+    },
+    "TDC_AMES_7326DB8C80971569C32E": {
+      "candidate_parents": 19,
+      "candidate_records": 664
+    },
+    "TDC_AMES_738BA3032DFC60F51841": {
+      "candidate_parents": 41,
+      "candidate_records": 444
+    },
+    "TDC_AMES_741D7DB3AC58CFB4D3F7": {
+      "candidate_parents": 26,
+      "candidate_records": 757
+    },
+    "TDC_AMES_74830D499C408D325336": {
+      "candidate_parents": 20,
+      "candidate_records": 212
+    },
+    "TDC_AMES_74AF9CE948EC020079A9": {
+      "candidate_parents": 32,
+      "candidate_records": 609
+    },
+    "TDC_AMES_74B0C2C209B901794EAD": {
+      "candidate_parents": 20,
+      "candidate_records": 1187
+    },
+    "TDC_AMES_750FDC71BB13D79C1BEE": {
+      "candidate_parents": 42,
+      "candidate_records": 580
+    },
+    "TDC_AMES_759F8F6969647AE4E969": {
+      "candidate_parents": 27,
+      "candidate_records": 982
+    },
+    "TDC_AMES_760A0F1E68F1B318AD1C": {
+      "candidate_parents": 25,
+      "candidate_records": 364
+    },
+    "TDC_AMES_77D7DEB3B1A99B8F11CA": {
+      "candidate_parents": 14,
+      "candidate_records": 194
+    },
+    "TDC_AMES_77DE14B783FC670381CF": {
+      "candidate_parents": 23,
+      "candidate_records": 182
+    },
+    "TDC_AMES_7938B257CC103A2626D0": {
+      "candidate_parents": 43,
+      "candidate_records": 599
+    },
+    "TDC_AMES_79DC5E8EDD0C16D39F6A": {
+      "candidate_parents": 32,
+      "candidate_records": 638
+    },
+    "TDC_AMES_79E84C3AB524CE41E2D8": {
+      "candidate_parents": 32,
+      "candidate_records": 476
+    },
+    "TDC_AMES_7AAA2CF93199852FB4F6": {
+      "candidate_parents": 22,
+      "candidate_records": 218
+    },
+    "TDC_AMES_7B13F7DF6BD6F0DC3FEA": {
+      "candidate_parents": 25,
+      "candidate_records": 650
+    },
+    "TDC_AMES_7BABEBA0B403823C5BBA": {
+      "candidate_parents": 34,
+      "candidate_records": 372
+    },
+    "TDC_AMES_7C32BFE0FAD0A6321844": {
+      "candidate_parents": 42,
+      "candidate_records": 262
+    },
+    "TDC_AMES_7C5CADFE07CE76CB7C02": {
+      "candidate_parents": 36,
+      "candidate_records": 583
+    },
+    "TDC_AMES_7C5E1BE6FA922AA8A3F9": {
+      "candidate_parents": 11,
+      "candidate_records": 3138
+    },
+    "TDC_AMES_7D60277BC742FF70655A": {
+      "candidate_parents": 14,
+      "candidate_records": 306
+    },
+    "TDC_AMES_7E063C32A334F04A2CB2": {
+      "candidate_parents": 32,
+      "candidate_records": 417
+    },
+    "TDC_AMES_7E3E5EBCD0540FF75419": {
+      "candidate_parents": 31,
+      "candidate_records": 830
+    },
+    "TDC_AMES_7E95EE4C38807E2AD86D": {
+      "candidate_parents": 30,
+      "candidate_records": 1453
+    },
+    "TDC_AMES_7F19459853A29B526400": {
+      "candidate_parents": 21,
+      "candidate_records": 415
+    },
+    "TDC_AMES_7F9D93B6B19C36256FA4": {
+      "candidate_parents": 33,
+      "candidate_records": 203
+    },
+    "TDC_AMES_7F9FA18112ED0FD9B51E": {
+      "candidate_parents": 21,
+      "candidate_records": 301
+    },
+    "TDC_AMES_80062DFC07B6ABBB5533": {
+      "candidate_parents": 14,
+      "candidate_records": 758
+    },
+    "TDC_AMES_8061DE7C04464BF76BFF": {
+      "candidate_parents": 25,
+      "candidate_records": 364
+    },
+    "TDC_AMES_8066BCDA0A8ACDB87434": {
+      "candidate_parents": 17,
+      "candidate_records": 499
+    },
+    "TDC_AMES_8099A78A8E0A6528CA68": {
+      "candidate_parents": 26,
+      "candidate_records": 409
+    },
+    "TDC_AMES_80E85FCF8C4D11037E43": {
+      "candidate_parents": 30,
+      "candidate_records": 386
+    },
+    "TDC_AMES_80EE81F67519AAE9719D": {
+      "candidate_parents": 28,
+      "candidate_records": 564
+    },
+    "TDC_AMES_80FBB88DE85CE0B705AD": {
+      "candidate_parents": 19,
+      "candidate_records": 1881
+    },
+    "TDC_AMES_8140A7A4652C827D2451": {
+      "candidate_parents": 33,
+      "candidate_records": 719
+    },
+    "TDC_AMES_81C659B308EF3F840E6A": {
+      "candidate_parents": 17,
+      "candidate_records": 2349
+    },
+    "TDC_AMES_82F7FE23E5A180B5CFA2": {
+      "candidate_parents": 25,
+      "candidate_records": 502
+    },
+    "TDC_AMES_831434A479E7895B45E0": {
+      "candidate_parents": 27,
+      "candidate_records": 619
+    },
+    "TDC_AMES_831470C3EB6DAEDBA383": {
+      "candidate_parents": 15,
+      "candidate_records": 671
+    },
+    "TDC_AMES_83A5AB8E974E63780EFE": {
+      "candidate_parents": 26,
+      "candidate_records": 5514
+    },
+    "TDC_AMES_8437327CABB47294352A": {
+      "candidate_parents": 23,
+      "candidate_records": 614
+    },
+    "TDC_AMES_84A1194C03854F98CCB9": {
+      "candidate_parents": 28,
+      "candidate_records": 296
+    },
+    "TDC_AMES_84E87C5B5A82DF73E073": {
+      "candidate_parents": 36,
+      "candidate_records": 436
+    },
+    "TDC_AMES_85BEE1496AA7D7EEBC5C": {
+      "candidate_parents": 28,
+      "candidate_records": 290
+    },
+    "TDC_AMES_866C2967BBDAC0C326C4": {
+      "candidate_parents": 30,
+      "candidate_records": 1731
+    },
+    "TDC_AMES_86A99D5F4F236A12B8EF": {
+      "candidate_parents": 44,
+      "candidate_records": 794
+    },
+    "TDC_AMES_86C67A62E684AFA6C630": {
+      "candidate_parents": 36,
+      "candidate_records": 583
+    },
+    "TDC_AMES_86CFA36F6818E10BFA5C": {
+      "candidate_parents": 23,
+      "candidate_records": 407
+    },
+    "TDC_AMES_875C103B9667D41BFDEE": {
+      "candidate_parents": 30,
+      "candidate_records": 214
+    },
+    "TDC_AMES_87BD1CB509389A204C98": {
+      "candidate_parents": 38,
+      "candidate_records": 510
+    },
+    "TDC_AMES_885B15D2A2A8AF2E03D8": {
+      "candidate_parents": 33,
+      "candidate_records": 1321
+    },
+    "TDC_AMES_887B83C7C2E6654E773D": {
+      "candidate_parents": 30,
+      "candidate_records": 452
+    },
+    "TDC_AMES_88D07FB6123663283659": {
+      "candidate_parents": 22,
+      "candidate_records": 279
+    },
+    "TDC_AMES_88D6F594549E37ACB7B1": {
+      "candidate_parents": 27,
+      "candidate_records": 1971
+    },
+    "TDC_AMES_88E65C7BE9C77E89A6CF": {
+      "candidate_parents": 32,
+      "candidate_records": 1086
+    },
+    "TDC_AMES_898F18855B3BA6B44BBA": {
+      "candidate_parents": 16,
+      "candidate_records": 123
+    },
+    "TDC_AMES_89BA8EB6C564148592A9": {
+      "candidate_parents": 15,
+      "candidate_records": 193
+    },
+    "TDC_AMES_89F36A36C8693362829A": {
+      "candidate_parents": 31,
+      "candidate_records": 200
+    },
+    "TDC_AMES_8A1E9C9F7B1E59A9A130": {
+      "candidate_parents": 13,
+      "candidate_records": 160
+    },
+    "TDC_AMES_8B164F91467C04B69599": {
+      "candidate_parents": 45,
+      "candidate_records": 1613
+    },
+    "TDC_AMES_8B6070907AD13B54FA21": {
+      "candidate_parents": 23,
+      "candidate_records": 231
+    },
+    "TDC_AMES_8C751F239ED53D9E8FA8": {
+      "candidate_parents": 26,
+      "candidate_records": 493
+    },
+    "TDC_AMES_8CC95414FB3CAB070F30": {
+      "candidate_parents": 30,
+      "candidate_records": 249
+    },
+    "TDC_AMES_8D0A5062CDB4D5FF8267": {
+      "candidate_parents": 38,
+      "candidate_records": 1064
+    },
+    "TDC_AMES_8DC527CC1422896241AE": {
+      "candidate_parents": 36,
+      "candidate_records": 1330
+    },
+    "TDC_AMES_8E904C029F8912D6B381": {
+      "candidate_parents": 20,
+      "candidate_records": 508
+    },
+    "TDC_AMES_8EA60C6B825312ED70FB": {
+      "candidate_parents": 26,
+      "candidate_records": 233
+    },
+    "TDC_AMES_8EC85CF79436B8C27F5D": {
+      "candidate_parents": 24,
+      "candidate_records": 565
+    },
+    "TDC_AMES_8F5D762A07B8016FB9C1": {
+      "candidate_parents": 32,
+      "candidate_records": 356
+    },
+    "TDC_AMES_8F8BE6737D9B1723ACE6": {
+      "candidate_parents": 44,
+      "candidate_records": 5339
+    },
+    "TDC_AMES_8FE0F58FF568B71E8BB8": {
+      "candidate_parents": 28,
+      "candidate_records": 682
+    },
+    "TDC_AMES_90324C5CDA1BC51211B5": {
+      "candidate_parents": 23,
+      "candidate_records": 105
+    },
+    "TDC_AMES_9157EF8EC269552CF1E3": {
+      "candidate_parents": 22,
+      "candidate_records": 154
+    },
+    "TDC_AMES_91591C9CE16928EEFB0E": {
+      "candidate_parents": 32,
+      "candidate_records": 739
+    },
+    "TDC_AMES_91A7232A3087C9A0E3BC": {
+      "candidate_parents": 17,
+      "candidate_records": 172
+    },
+    "TDC_AMES_91F9734CA8B30338A6BD": {
+      "candidate_parents": 29,
+      "candidate_records": 1009
+    },
+    "TDC_AMES_92811FE8AFDABC92F3F3": {
+      "candidate_parents": 18,
+      "candidate_records": 1032
+    },
+    "TDC_AMES_93758EED2B24EF8D265B": {
+      "candidate_parents": 7,
+      "candidate_records": 31
+    },
+    "TDC_AMES_9393AA05A51B828C0392": {
+      "candidate_parents": 19,
+      "candidate_records": 119
+    },
+    "TDC_AMES_93B3385214EAB3283B26": {
+      "candidate_parents": 34,
+      "candidate_records": 410
+    },
+    "TDC_AMES_9401D1AB16B23376C861": {
+      "candidate_parents": 18,
+      "candidate_records": 217
+    },
+    "TDC_AMES_94608285399AF95ECD55": {
+      "candidate_parents": 21,
+      "candidate_records": 243
+    },
+    "TDC_AMES_946D251999EAE49F168B": {
+      "candidate_parents": 36,
+      "candidate_records": 692
+    },
+    "TDC_AMES_948B58FFA12BBB7DB436": {
+      "candidate_parents": 39,
+      "candidate_records": 379
+    },
+    "TDC_AMES_952ECD1C794CA23314F8": {
+      "candidate_parents": 33,
+      "candidate_records": 648
+    },
+    "TDC_AMES_95314E77F6F883EC2A1B": {
+      "candidate_parents": 19,
+      "candidate_records": 147
+    },
+    "TDC_AMES_954EE5A617351C6091D3": {
+      "candidate_parents": 26,
+      "candidate_records": 375
+    },
+    "TDC_AMES_95513042BBE4F45A1E34": {
+      "candidate_parents": 26,
+      "candidate_records": 493
+    },
+    "TDC_AMES_9580CAE4027B5881A815": {
+      "candidate_parents": 30,
+      "candidate_records": 269
+    },
+    "TDC_AMES_958FA28A2B9C68F4CA6E": {
+      "candidate_parents": 22,
+      "candidate_records": 189
+    },
+    "TDC_AMES_959FEE2EC113B3A571E0": {
+      "candidate_parents": 22,
+      "candidate_records": 277
+    },
+    "TDC_AMES_95D631624666B8DC217E": {
+      "candidate_parents": 25,
+      "candidate_records": 154
+    },
+    "TDC_AMES_96229262B8D3F3415713": {
+      "candidate_parents": 32,
+      "candidate_records": 466
+    },
+    "TDC_AMES_96D82374639B7785DAE9": {
+      "candidate_parents": 14,
+      "candidate_records": 130
+    },
+    "TDC_AMES_96DE6269339333692983": {
+      "candidate_parents": 32,
+      "candidate_records": 1128
+    },
+    "TDC_AMES_9734CEDBE1B32F1A5336": {
+      "candidate_parents": 19,
+      "candidate_records": 120
+    },
+    "TDC_AMES_98DA078BF1BB8CB1F355": {
+      "candidate_parents": 36,
+      "candidate_records": 469
+    },
+    "TDC_AMES_990238820EA674E81323": {
+      "candidate_parents": 24,
+      "candidate_records": 353
+    },
+    "TDC_AMES_9925CDA92B80F601DA75": {
+      "candidate_parents": 30,
+      "candidate_records": 5901
+    },
+    "TDC_AMES_9975D3A73A2F3BF06A65": {
+      "candidate_parents": 41,
+      "candidate_records": 683
+    },
+    "TDC_AMES_997BB239280462F43D6A": {
+      "candidate_parents": 34,
+      "candidate_records": 699
+    },
+    "TDC_AMES_9AAF315187E4911E70F6": {
+      "candidate_parents": 22,
+      "candidate_records": 342
+    },
+    "TDC_AMES_9B5A516C0FF8975F7FCC": {
+      "candidate_parents": 21,
+      "candidate_records": 2414
+    },
+    "TDC_AMES_9B5AB59DE69505735245": {
+      "candidate_parents": 17,
+      "candidate_records": 96
+    },
+    "TDC_AMES_9BF62D62C84CB7EB484D": {
+      "candidate_parents": 22,
+      "candidate_records": 290
+    },
+    "TDC_AMES_9C2DF4A014F87DB8FD69": {
+      "candidate_parents": 17,
+      "candidate_records": 180
+    },
+    "TDC_AMES_9C5604A7D20030822171": {
+      "candidate_parents": 36,
+      "candidate_records": 1531
+    },
+    "TDC_AMES_9C702695D562CFD9BD7C": {
+      "candidate_parents": 26,
+      "candidate_records": 295
+    },
+    "TDC_AMES_9CA94AED85706B23C6F9": {
+      "candidate_parents": 21,
+      "candidate_records": 2339
+    },
+    "TDC_AMES_9CE0BFA76C85DA090F68": {
+      "candidate_parents": 24,
+      "candidate_records": 232
+    },
+    "TDC_AMES_9D01CA01BFDD2132366E": {
+      "candidate_parents": 28,
+      "candidate_records": 437
+    },
+    "TDC_AMES_9D9357CBBC25D14882BA": {
+      "candidate_parents": 25,
+      "candidate_records": 469
+    },
+    "TDC_AMES_9EF22E3D4B03138FA665": {
+      "candidate_parents": 39,
+      "candidate_records": 321
+    },
+    "TDC_AMES_9EF77BFDB939EA9D28B8": {
+      "candidate_parents": 11,
+      "candidate_records": 176
+    },
+    "TDC_AMES_9EF80E24BA45580D11DC": {
+      "candidate_parents": 27,
+      "candidate_records": 126
+    },
+    "TDC_AMES_9F12A3EDC90419A1A1D3": {
+      "candidate_parents": 34,
+      "candidate_records": 290
+    },
+    "TDC_AMES_9F26BC26FF20A4448D67": {
+      "candidate_parents": 15,
+      "candidate_records": 2301
+    },
+    "TDC_AMES_9F3BAA54CDC72AE4FD0E": {
+      "candidate_parents": 26,
+      "candidate_records": 376
+    },
+    "TDC_AMES_9F57E53F792B8A4AF7B6": {
+      "candidate_parents": 24,
+      "candidate_records": 1133
+    },
+    "TDC_AMES_9F9F8A2E158594D9106F": {
+      "candidate_parents": 18,
+      "candidate_records": 107
+    },
+    "TDC_AMES_A04D20B6CBF420A1E5FD": {
+      "candidate_parents": 11,
+      "candidate_records": 175
+    },
+    "TDC_AMES_A08E04EFBCE78CBE0688": {
+      "candidate_parents": 27,
+      "candidate_records": 181
+    },
+    "TDC_AMES_A0E160085E688C1D9BE3": {
+      "candidate_parents": 39,
+      "candidate_records": 417
+    },
+    "TDC_AMES_A122CA0FDB99BCBA4DBC": {
+      "candidate_parents": 25,
+      "candidate_records": 351
+    },
+    "TDC_AMES_A197D024F12C957AFB7E": {
+      "candidate_parents": 41,
+      "candidate_records": 1519
+    },
+    "TDC_AMES_A279A0E8D4527E4D64E4": {
+      "candidate_parents": 39,
+      "candidate_records": 668
+    },
+    "TDC_AMES_A2870C1EBCA83178EF1A": {
+      "candidate_parents": 26,
+      "candidate_records": 189
+    },
+    "TDC_AMES_A2BF4E7CF654F18FAD8C": {
+      "candidate_parents": 27,
+      "candidate_records": 685
+    },
+    "TDC_AMES_A2C23F3FE0BD6733FA46": {
+      "candidate_parents": 32,
+      "candidate_records": 1386
+    },
+    "TDC_AMES_A2C853EE1B82E28F5E49": {
+      "candidate_parents": 18,
+      "candidate_records": 79
+    },
+    "TDC_AMES_A3DF710AA1DBC57F3EB0": {
+      "candidate_parents": 16,
+      "candidate_records": 127
+    },
+    "TDC_AMES_A3DFD22552112640E9A7": {
+      "candidate_parents": 32,
+      "candidate_records": 917
+    },
+    "TDC_AMES_A45CBDBB2309AC965282": {
+      "candidate_parents": 39,
+      "candidate_records": 330
+    },
+    "TDC_AMES_A4AA7B6FA92AD50DC674": {
+      "candidate_parents": 36,
+      "candidate_records": 437
+    },
+    "TDC_AMES_A4ABFC641B1E75586F84": {
+      "candidate_parents": 25,
+      "candidate_records": 402
+    },
+    "TDC_AMES_A4C80DF12C270F28D7E6": {
+      "candidate_parents": 18,
+      "candidate_records": 81
+    },
+    "TDC_AMES_A4C91E0CFC371A0B5F6A": {
+      "candidate_parents": 24,
+      "candidate_records": 320
+    },
+    "TDC_AMES_A52F29C050A7C4D6AE45": {
+      "candidate_parents": 39,
+      "candidate_records": 5864
+    },
+    "TDC_AMES_A546576D4B52EE34325A": {
+      "candidate_parents": 30,
+      "candidate_records": 363
+    },
+    "TDC_AMES_A5A1E1A391D11D0D2CD3": {
+      "candidate_parents": 49,
+      "candidate_records": 479
+    },
+    "TDC_AMES_A5D3D2A83A78F562E694": {
+      "candidate_parents": 29,
+      "candidate_records": 283
+    },
+    "TDC_AMES_A5F5648DD533975F0915": {
+      "candidate_parents": 31,
+      "candidate_records": 418
+    },
+    "TDC_AMES_A626DFBAAF7A9C8ED011": {
+      "candidate_parents": 40,
+      "candidate_records": 5722
+    },
+    "TDC_AMES_A675892126DB502CD936": {
+      "candidate_parents": 15,
+      "candidate_records": 793
+    },
+    "TDC_AMES_A829341D3DBEB6F07C23": {
+      "candidate_parents": 9,
+      "candidate_records": 125
+    },
+    "TDC_AMES_A8ACD362551833319194": {
+      "candidate_parents": 35,
+      "candidate_records": 5615
+    },
+    "TDC_AMES_A8DA0FAB104CC2C9EA94": {
+      "candidate_parents": 21,
+      "candidate_records": 2406
+    },
+    "TDC_AMES_AACD2DDFA1FAD559E7EF": {
+      "candidate_parents": 23,
+      "candidate_records": 253
+    },
+    "TDC_AMES_AB2406331550BA4543D3": {
+      "candidate_parents": 42,
+      "candidate_records": 580
+    },
+    "TDC_AMES_AB386BF90CDC548C9589": {
+      "candidate_parents": 19,
+      "candidate_records": 247
+    },
+    "TDC_AMES_ABC30DBE98FFE5F4E332": {
+      "candidate_parents": 27,
+      "candidate_records": 547
+    },
+    "TDC_AMES_AC7E5D2C643519396773": {
+      "candidate_parents": 31,
+      "candidate_records": 1011
+    },
+    "TDC_AMES_AC835F7CCBCAB78CAF73": {
+      "candidate_parents": 30,
+      "candidate_records": 457
+    },
+    "TDC_AMES_ADD291532931B1EB7953": {
+      "candidate_parents": 39,
+      "candidate_records": 588
+    },
+    "TDC_AMES_ADDDAEF6E6D2BB8DB153": {
+      "candidate_parents": 17,
+      "candidate_records": 168
+    },
+    "TDC_AMES_AE3D606DC2DF8D98007C": {
+      "candidate_parents": 25,
+      "candidate_records": 299
+    },
+    "TDC_AMES_AE4CFC20F6F08BA392C6": {
+      "candidate_parents": 32,
+      "candidate_records": 202
+    },
+    "TDC_AMES_AECCF58C3BFA269AF969": {
+      "candidate_parents": 23,
+      "candidate_records": 702
+    },
+    "TDC_AMES_AF6924C85A2E4C571209": {
+      "candidate_parents": 25,
+      "candidate_records": 365
+    },
+    "TDC_AMES_AFD43534173AC331977C": {
+      "candidate_parents": 13,
+      "candidate_records": 118
+    },
+    "TDC_AMES_AFED0221BAF77DF7BFB2": {
+      "candidate_parents": 21,
+      "candidate_records": 140
+    },
+    "TDC_AMES_B01195D3332EC5E894D0": {
+      "candidate_parents": 50,
+      "candidate_records": 842
+    },
+    "TDC_AMES_B02EA09C9ABA88CFFD39": {
+      "candidate_parents": 17,
+      "candidate_records": 2304
+    },
+    "TDC_AMES_B047082049D890B6E7BC": {
+      "candidate_parents": 27,
+      "candidate_records": 1288
+    },
+    "TDC_AMES_B0D2EC53EA27FC0EE2FA": {
+      "candidate_parents": 29,
+      "candidate_records": 385
+    },
+    "TDC_AMES_B0E8A7E770A363AA2419": {
+      "candidate_parents": 30,
+      "candidate_records": 5359
+    },
+    "TDC_AMES_B232979A42348E45F94E": {
+      "candidate_parents": 31,
+      "candidate_records": 328
+    },
+    "TDC_AMES_B257F327ABE425C0BC08": {
+      "candidate_parents": 30,
+      "candidate_records": 613
+    },
+    "TDC_AMES_B25D2FD1D2E2036346E4": {
+      "candidate_parents": 30,
+      "candidate_records": 268
+    },
+    "TDC_AMES_B3130377C35E25EA5884": {
+      "candidate_parents": 25,
+      "candidate_records": 200
+    },
+    "TDC_AMES_B3549AF9812FEF12735B": {
+      "candidate_parents": 50,
+      "candidate_records": 9721
+    },
+    "TDC_AMES_B375438DA5CEBAABB827": {
+      "candidate_parents": 9,
+      "candidate_records": 30
+    },
+    "TDC_AMES_B38F31A8B75ED10F2E3E": {
+      "candidate_parents": 26,
+      "candidate_records": 332
+    },
+    "TDC_AMES_B39D482327366748BB99": {
+      "candidate_parents": 15,
+      "candidate_records": 701
+    },
+    "TDC_AMES_B3D7193771C89E21D5CE": {
+      "candidate_parents": 25,
+      "candidate_records": 1022
+    },
+    "TDC_AMES_B3E4C897684F44651666": {
+      "candidate_parents": 33,
+      "candidate_records": 589
+    },
+    "TDC_AMES_B3EB4CA36F80E5DA3FC0": {
+      "candidate_parents": 35,
+      "candidate_records": 326
+    },
+    "TDC_AMES_B46E1239A7B0215BC28B": {
+      "candidate_parents": 37,
+      "candidate_records": 644
+    },
+    "TDC_AMES_B4F6A3DEDF3EE82BBC8C": {
+      "candidate_parents": 33,
+      "candidate_records": 660
+    },
+    "TDC_AMES_B6532939ED7A0BEC6560": {
+      "candidate_parents": 20,
+      "candidate_records": 142
+    },
+    "TDC_AMES_B6852C2BCFFEC3FAAD92": {
+      "candidate_parents": 36,
+      "candidate_records": 647
+    },
+    "TDC_AMES_B6A3E50F3D947C9F42B6": {
+      "candidate_parents": 24,
+      "candidate_records": 307
+    },
+    "TDC_AMES_B76EEE834D1114DE26B9": {
+      "candidate_parents": 20,
+      "candidate_records": 100
+    },
+    "TDC_AMES_B79C8E2BAC895AFFD0C7": {
+      "candidate_parents": 17,
+      "candidate_records": 420
+    },
+    "TDC_AMES_B7C347D38AB7A77A9058": {
+      "candidate_parents": 24,
+      "candidate_records": 211
+    },
+    "TDC_AMES_B884387E3F6BF950693C": {
+      "candidate_parents": 26,
+      "candidate_records": 436
+    },
+    "TDC_AMES_B8E27408C3548B7AE838": {
+      "candidate_parents": 24,
+      "candidate_records": 721
+    },
+    "TDC_AMES_B99ACE57CA89FB2A3BFA": {
+      "candidate_parents": 29,
+      "candidate_records": 411
+    },
+    "TDC_AMES_B9C687BFBE17B232777E": {
+      "candidate_parents": 17,
+      "candidate_records": 2406
+    },
+    "TDC_AMES_BA2487D4A90573079869": {
+      "candidate_parents": 49,
+      "candidate_records": 7524
+    },
+    "TDC_AMES_BADC0ED5CF9C913FA87C": {
+      "candidate_parents": 37,
+      "candidate_records": 539
+    },
+    "TDC_AMES_BB2CEB7C66758DA3E276": {
+      "candidate_parents": 16,
+      "candidate_records": 151
+    },
+    "TDC_AMES_BBC228731B7F994FD910": {
+      "candidate_parents": 34,
+      "candidate_records": 1888
+    },
+    "TDC_AMES_BBCF875D3D3DCBCE358D": {
+      "candidate_parents": 27,
+      "candidate_records": 431
+    },
+    "TDC_AMES_BBE4B49FE626D0417973": {
+      "candidate_parents": 40,
+      "candidate_records": 356
+    },
+    "TDC_AMES_BCF4AA244899DC15D49E": {
+      "candidate_parents": 19,
+      "candidate_records": 952
+    },
+    "TDC_AMES_BD16CDA0EE642AE501B6": {
+      "candidate_parents": 31,
+      "candidate_records": 689
+    },
+    "TDC_AMES_BD4696E8476BAC33662E": {
+      "candidate_parents": 30,
+      "candidate_records": 688
+    },
+    "TDC_AMES_BD80C153D0083339CBBC": {
+      "candidate_parents": 18,
+      "candidate_records": 442
+    },
+    "TDC_AMES_BE579D11B729EC243F90": {
+      "candidate_parents": 18,
+      "candidate_records": 280
+    },
+    "TDC_AMES_BE8646329D6F785C37DC": {
+      "candidate_parents": 40,
+      "candidate_records": 495
+    },
+    "TDC_AMES_BEF8DA7C9AA5E782F44B": {
+      "candidate_parents": 51,
+      "candidate_records": 727
+    },
+    "TDC_AMES_BF6CC1CACD939100AA3B": {
+      "candidate_parents": 30,
+      "candidate_records": 560
+    },
+    "TDC_AMES_BFBCD3F92FCFF6815D1C": {
+      "candidate_parents": 29,
+      "candidate_records": 606
+    },
+    "TDC_AMES_C05E5C70FC6587FCC2AE": {
+      "candidate_parents": 35,
+      "candidate_records": 540
+    },
+    "TDC_AMES_C13FDBCB16A6E791CA1D": {
+      "candidate_parents": 34,
+      "candidate_records": 1922
+    },
+    "TDC_AMES_C14C1E5573D51AB18C3B": {
+      "candidate_parents": 33,
+      "candidate_records": 203
+    },
+    "TDC_AMES_C14F83E77BC3AF9DE3C6": {
+      "candidate_parents": 17,
+      "candidate_records": 62
+    },
+    "TDC_AMES_C15F964C8C5216AE129F": {
+      "candidate_parents": 22,
+      "candidate_records": 165
+    },
+    "TDC_AMES_C1913ED5BCD58B8CDDA1": {
+      "candidate_parents": 24,
+      "candidate_records": 422
+    },
+    "TDC_AMES_C1D739ABDE6A6C98E919": {
+      "candidate_parents": 21,
+      "candidate_records": 146
+    },
+    "TDC_AMES_C21908B78658504249C5": {
+      "candidate_parents": 29,
+      "candidate_records": 467
+    },
+    "TDC_AMES_C2644A3F03C5A38B9FB3": {
+      "candidate_parents": 27,
+      "candidate_records": 230
+    },
+    "TDC_AMES_C2A3768E624DED63E140": {
+      "candidate_parents": 22,
+      "candidate_records": 407
+    },
+    "TDC_AMES_C2A4AB4B4D98EB66CF8C": {
+      "candidate_parents": 35,
+      "candidate_records": 345
+    },
+    "TDC_AMES_C3E91C14B3FA6E54F1FD": {
+      "candidate_parents": 53,
+      "candidate_records": 797
+    },
+    "TDC_AMES_C4068D2549EB448E4F59": {
+      "candidate_parents": 22,
+      "candidate_records": 337
+    },
+    "TDC_AMES_C40F2558C4771BBCEE01": {
+      "candidate_parents": 13,
+      "candidate_records": 125
+    },
+    "TDC_AMES_C414B88505606A4B9433": {
+      "candidate_parents": 34,
+      "candidate_records": 557
+    },
+    "TDC_AMES_C437CCF07CAC47A5B922": {
+      "candidate_parents": 13,
+      "candidate_records": 340
+    },
+    "TDC_AMES_C499C25239DB327D0A97": {
+      "candidate_parents": 34,
+      "candidate_records": 1155
+    },
+    "TDC_AMES_C4ACA6126708871E17DF": {
+      "candidate_parents": 34,
+      "candidate_records": 316
+    },
+    "TDC_AMES_C4BC54791367058DC636": {
+      "candidate_parents": 30,
+      "candidate_records": 269
+    },
+    "TDC_AMES_C54915FD89E230E06CDF": {
+      "candidate_parents": 39,
+      "candidate_records": 680
+    },
+    "TDC_AMES_C5538FBD7F10EE0CB6F6": {
+      "candidate_parents": 22,
+      "candidate_records": 577
+    },
+    "TDC_AMES_C5680082BABA269414B4": {
+      "candidate_parents": 34,
+      "candidate_records": 455
+    },
+    "TDC_AMES_C586CE7F11A18DCEA5C2": {
+      "candidate_parents": 34,
+      "candidate_records": 168
+    },
+    "TDC_AMES_C5DD48218C878B70C75C": {
+      "candidate_parents": 40,
+      "candidate_records": 903
+    },
+    "TDC_AMES_C64B0C29ECBD0C8CDD46": {
+      "candidate_parents": 26,
+      "candidate_records": 1027
+    },
+    "TDC_AMES_C6E741732F615D2AD393": {
+      "candidate_parents": 37,
+      "candidate_records": 1826
+    },
+    "TDC_AMES_C771FCC0312D98E65791": {
+      "candidate_parents": 31,
+      "candidate_records": 2095
+    },
+    "TDC_AMES_C7B77785AA1D69F4CBA3": {
+      "candidate_parents": 29,
+      "candidate_records": 435
+    },
+    "TDC_AMES_C8464C015CBB6153E504": {
+      "candidate_parents": 35,
+      "candidate_records": 789
+    },
+    "TDC_AMES_C86EC5E7782ED0F1FF67": {
+      "candidate_parents": 34,
+      "candidate_records": 1495
+    },
+    "TDC_AMES_C8850105B0513B95F7E3": {
+      "candidate_parents": 24,
+      "candidate_records": 187
+    },
+    "TDC_AMES_C910357A6292D9F3CD45": {
+      "candidate_parents": 21,
+      "candidate_records": 2339
+    },
+    "TDC_AMES_C9B01A52FAB379B7269A": {
+      "candidate_parents": 42,
+      "candidate_records": 1014
+    },
+    "TDC_AMES_C9B44E2B7038DC183E16": {
+      "candidate_parents": 20,
+      "candidate_records": 446
+    },
+    "TDC_AMES_CAD3BE306838129A7CFC": {
+      "candidate_parents": 15,
+      "candidate_records": 2298
+    },
+    "TDC_AMES_CAE98B79182FA053B241": {
+      "candidate_parents": 43,
+      "candidate_records": 2340
+    },
+    "TDC_AMES_CAF68DDD62400D7EB104": {
+      "candidate_parents": 29,
+      "candidate_records": 296
+    },
+    "TDC_AMES_CB0FA8C9BCA200591486": {
+      "candidate_parents": 38,
+      "candidate_records": 354
+    },
+    "TDC_AMES_CB5C6C971A9BA7376238": {
+      "candidate_parents": 30,
+      "candidate_records": 221
+    },
+    "TDC_AMES_CB5CE00D4B79ABFEF514": {
+      "candidate_parents": 27,
+      "candidate_records": 552
+    },
+    "TDC_AMES_CB7BEE3C3A0C6B2CE5CA": {
+      "candidate_parents": 32,
+      "candidate_records": 849
+    },
+    "TDC_AMES_CB99B38B55E4DE50D1B1": {
+      "candidate_parents": 29,
+      "candidate_records": 1144
+    },
+    "TDC_AMES_CBD88ACFA545EA4F17FE": {
+      "candidate_parents": 30,
+      "candidate_records": 825
+    },
+    "TDC_AMES_CBF4790A0C0A6EA720E6": {
+      "candidate_parents": 30,
+      "candidate_records": 249
+    },
+    "TDC_AMES_CC088E2B90AB555ACD44": {
+      "candidate_parents": 24,
+      "candidate_records": 277
+    },
+    "TDC_AMES_CC5151ACC97C076527EB": {
+      "candidate_parents": 22,
+      "candidate_records": 1573
+    },
+    "TDC_AMES_CC7B2657CF3ED036F6BC": {
+      "candidate_parents": 38,
+      "candidate_records": 396
+    },
+    "TDC_AMES_CC8A4652F00AF6CA1949": {
+      "candidate_parents": 34,
+      "candidate_records": 529
+    },
+    "TDC_AMES_CCBA459A9757816B20CA": {
+      "candidate_parents": 20,
+      "candidate_records": 835
+    },
+    "TDC_AMES_CDBFCEF6129B90D4907E": {
+      "candidate_parents": 26,
+      "candidate_records": 806
+    },
+    "TDC_AMES_CE9159D36DC0B256AE6F": {
+      "candidate_parents": 25,
+      "candidate_records": 360
+    },
+    "TDC_AMES_CE9D1F2ABAE680085142": {
+      "candidate_parents": 30,
+      "candidate_records": 370
+    },
+    "TDC_AMES_CF5D31B43EEBD247D97F": {
+      "candidate_parents": 42,
+      "candidate_records": 667
+    },
+    "TDC_AMES_CFDA203F4D43C1EDAC77": {
+      "candidate_parents": 21,
+      "candidate_records": 1037
+    },
+    "TDC_AMES_D05A561FEE5E2509C038": {
+      "candidate_parents": 12,
+      "candidate_records": 96
+    },
+    "TDC_AMES_D07705AA9F29C5B41120": {
+      "candidate_parents": 32,
+      "candidate_records": 5712
+    },
+    "TDC_AMES_D0805B0649AF88E7A0B7": {
+      "candidate_parents": 29,
+      "candidate_records": 548
+    },
+    "TDC_AMES_D084E229D4E7482C63ED": {
+      "candidate_parents": 19,
+      "candidate_records": 112
+    },
+    "TDC_AMES_D08F1E5A346C774CB3B7": {
+      "candidate_parents": 32,
+      "candidate_records": 239
+    },
+    "TDC_AMES_D0C5AC6F216E9EE3B522": {
+      "candidate_parents": 18,
+      "candidate_records": 183
+    },
+    "TDC_AMES_D0D0ABA286D76C8F89A0": {
+      "candidate_parents": 16,
+      "candidate_records": 68
+    },
+    "TDC_AMES_D109866B2246F5617747": {
+      "candidate_parents": 21,
+      "candidate_records": 967
+    },
+    "TDC_AMES_D1ABC804273B4ED263C0": {
+      "candidate_parents": 27,
+      "candidate_records": 547
+    },
+    "TDC_AMES_D282EB323D88DC981703": {
+      "candidate_parents": 20,
+      "candidate_records": 325
+    },
+    "TDC_AMES_D296DECB64BDE7C1BDCB": {
+      "candidate_parents": 35,
+      "candidate_records": 522
+    },
+    "TDC_AMES_D2D558E1D54A98B68873": {
+      "candidate_parents": 23,
+      "candidate_records": 179
+    },
+    "TDC_AMES_D2DE085A3507F4B04534": {
+      "candidate_parents": 18,
+      "candidate_records": 2421
+    },
+    "TDC_AMES_D2EFEB9EE0A21ECF10FE": {
+      "candidate_parents": 32,
+      "candidate_records": 767
+    },
+    "TDC_AMES_D338E25AAE24F5E4817D": {
+      "candidate_parents": 28,
+      "candidate_records": 413
+    },
+    "TDC_AMES_D33A79F39688FB544D12": {
+      "candidate_parents": 30,
+      "candidate_records": 268
+    },
+    "TDC_AMES_D367159ED007758BDBED": {
+      "candidate_parents": 19,
+      "candidate_records": 1024
+    },
+    "TDC_AMES_D38CF2B0B6B733A15400": {
+      "candidate_parents": 29,
+      "candidate_records": 1050
+    },
+    "TDC_AMES_D3A3784D72AF592E5EBE": {
+      "candidate_parents": 28,
+      "candidate_records": 483
+    },
+    "TDC_AMES_D3C7EEF42090148155E8": {
+      "candidate_parents": 28,
+      "candidate_records": 163
+    },
+    "TDC_AMES_D3F5069281E64A39DA73": {
+      "candidate_parents": 21,
+      "candidate_records": 252
+    },
+    "TDC_AMES_D46D0A1EE32272269A06": {
+      "candidate_parents": 25,
+      "candidate_records": 294
+    },
+    "TDC_AMES_D51E869C24FD94DBF030": {
+      "candidate_parents": 34,
+      "candidate_records": 671
+    },
+    "TDC_AMES_D5675EC3ACD29CAB8A9E": {
+      "candidate_parents": 38,
+      "candidate_records": 905
+    },
+    "TDC_AMES_D5C390C483DD5756D2F0": {
+      "candidate_parents": 41,
+      "candidate_records": 444
+    },
+    "TDC_AMES_D5FFF0F250155CDB5F30": {
+      "candidate_parents": 34,
+      "candidate_records": 201
+    },
+    "TDC_AMES_D62CB680EF522DFB9DD1": {
+      "candidate_parents": 22,
+      "candidate_records": 330
+    },
+    "TDC_AMES_D63C68A29C8DE7B8F1F8": {
+      "candidate_parents": 40,
+      "candidate_records": 208
+    },
+    "TDC_AMES_D68F6E3A28779040FA2B": {
+      "candidate_parents": 27,
+      "candidate_records": 580
+    },
+    "TDC_AMES_D6A0D397A13D7635CD54": {
+      "candidate_parents": 39,
+      "candidate_records": 467
+    },
+    "TDC_AMES_D6C0F5F962D9383D040C": {
+      "candidate_parents": 32,
+      "candidate_records": 2299
+    },
+    "TDC_AMES_D73CFEC26C38DC87C85D": {
+      "candidate_parents": 34,
+      "candidate_records": 382
+    },
+    "TDC_AMES_D760F376F15A4B9C325A": {
+      "candidate_parents": 20,
+      "candidate_records": 263
+    },
+    "TDC_AMES_D7884DF1B13D94651AA0": {
+      "candidate_parents": 12,
+      "candidate_records": 478
+    },
+    "TDC_AMES_D860F889B8FBEAB1567F": {
+      "candidate_parents": 32,
+      "candidate_records": 601
+    },
+    "TDC_AMES_D86C5E234D7D2AD4E1EF": {
+      "candidate_parents": 19,
+      "candidate_records": 247
+    },
+    "TDC_AMES_D8F0477C970A1FDA4182": {
+      "candidate_parents": 19,
+      "candidate_records": 1334
+    },
+    "TDC_AMES_D9275A8B6B308744D274": {
+      "candidate_parents": 15,
+      "candidate_records": 78
+    },
+    "TDC_AMES_D9CA38BE52E1EE3F1F6D": {
+      "candidate_parents": 14,
+      "candidate_records": 1042
+    },
+    "TDC_AMES_D9D7A72F70A609FEE3F7": {
+      "candidate_parents": 39,
+      "candidate_records": 417
+    },
+    "TDC_AMES_D9F8AF622D3AAE94B08C": {
+      "candidate_parents": 46,
+      "candidate_records": 1009
+    },
+    "TDC_AMES_DA6964F11EB560139AED": {
+      "candidate_parents": 22,
+      "candidate_records": 156
+    },
+    "TDC_AMES_DA77BB6E616F1494DDE9": {
+      "candidate_parents": 26,
+      "candidate_records": 380
+    },
+    "TDC_AMES_DA79D4B68279D5D64F6E": {
+      "candidate_parents": 34,
+      "candidate_records": 315
+    },
+    "TDC_AMES_DADA20505EB42492D4FF": {
+      "candidate_parents": 21,
+      "candidate_records": 672
+    },
+    "TDC_AMES_DB15108621C4A91369B8": {
+      "candidate_parents": 23,
+      "candidate_records": 260
+    },
+    "TDC_AMES_DBB0AC0FF1EC8A0B3C01": {
+      "candidate_parents": 27,
+      "candidate_records": 409
+    },
+    "TDC_AMES_DCC32A72103643FCEF49": {
+      "candidate_parents": 31,
+      "candidate_records": 1056
+    },
+    "TDC_AMES_DCEADEC34F0F712FE486": {
+      "candidate_parents": 21,
+      "candidate_records": 910
+    },
+    "TDC_AMES_DD2915880D51F88F0298": {
+      "candidate_parents": 21,
+      "candidate_records": 2643
+    },
+    "TDC_AMES_DE896BAEF3F6E47FF8F3": {
+      "candidate_parents": 35,
+      "candidate_records": 352
+    },
+    "TDC_AMES_DEE9F39E4904E7363B3E": {
+      "candidate_parents": 31,
+      "candidate_records": 899
+    },
+    "TDC_AMES_DEFEB0E29B4E95D36D7E": {
+      "candidate_parents": 24,
+      "candidate_records": 110
+    },
+    "TDC_AMES_DF1C72F9ED689A1C5FE8": {
+      "candidate_parents": 31,
+      "candidate_records": 1915
+    },
+    "TDC_AMES_DF5D0B5C4A75227F10E3": {
+      "candidate_parents": 41,
+      "candidate_records": 693
+    },
+    "TDC_AMES_DF60E1AA231C85A8DF21": {
+      "candidate_parents": 28,
+      "candidate_records": 1304
+    },
+    "TDC_AMES_DF7BF4A4FFC7987CDB64": {
+      "candidate_parents": 41,
+      "candidate_records": 538
+    },
+    "TDC_AMES_E0685D2C6CBEF0133B13": {
+      "candidate_parents": 18,
+      "candidate_records": 176
+    },
+    "TDC_AMES_E0AF76076149DFB81EA1": {
+      "candidate_parents": 22,
+      "candidate_records": 237
+    },
+    "TDC_AMES_E1130E003532BB75D7A3": {
+      "candidate_parents": 26,
+      "candidate_records": 1618
+    },
+    "TDC_AMES_E165CCD258D6C80A0A56": {
+      "candidate_parents": 39,
+      "candidate_records": 1406
+    },
+    "TDC_AMES_E17DD1005D70D3725F73": {
+      "candidate_parents": 25,
+      "candidate_records": 521
+    },
+    "TDC_AMES_E1A324DD8A05D3E17BF9": {
+      "candidate_parents": 19,
+      "candidate_records": 86
+    },
+    "TDC_AMES_E1F5D3181DE54FAD0B0D": {
+      "candidate_parents": 20,
+      "candidate_records": 761
+    },
+    "TDC_AMES_E206EF4D375A696B4753": {
+      "candidate_parents": 18,
+      "candidate_records": 773
+    },
+    "TDC_AMES_E2200686E8A85A667DA9": {
+      "candidate_parents": 15,
+      "candidate_records": 2298
+    },
+    "TDC_AMES_E239C9F65BA17C6B3D9C": {
+      "candidate_parents": 25,
+      "candidate_records": 176
+    },
+    "TDC_AMES_E25F0F7AFEF15297B79C": {
+      "candidate_parents": 26,
+      "candidate_records": 5514
+    },
+    "TDC_AMES_E2CC0368A46A4FBB95C4": {
+      "candidate_parents": 34,
+      "candidate_records": 444
+    },
+    "TDC_AMES_E317309566A4A61949E6": {
+      "candidate_parents": 23,
+      "candidate_records": 115
+    },
+    "TDC_AMES_E35BF9F25C8B0D326C38": {
+      "candidate_parents": 18,
+      "candidate_records": 272
+    },
+    "TDC_AMES_E39AC1A2456A512C7FEE": {
+      "candidate_parents": 12,
+      "candidate_records": 504
+    },
+    "TDC_AMES_E3AE9E4EAC756F317510": {
+      "candidate_parents": 16,
+      "candidate_records": 64
+    },
+    "TDC_AMES_E3D3619ED8BA99846DB7": {
+      "candidate_parents": 45,
+      "candidate_records": 1017
+    },
+    "TDC_AMES_E3FD8D30B0117349EC97": {
+      "candidate_parents": 30,
+      "candidate_records": 329
+    },
+    "TDC_AMES_E40346914873F38459FF": {
+      "candidate_parents": 17,
+      "candidate_records": 399
+    },
+    "TDC_AMES_E43E04A17B85A446E5EF": {
+      "candidate_parents": 35,
+      "candidate_records": 893
+    },
+    "TDC_AMES_E4E08B7CDA79F496A916": {
+      "candidate_parents": 9,
+      "candidate_records": 97
+    },
+    "TDC_AMES_E4FD52A7B5D0A93A4CA0": {
+      "candidate_parents": 42,
+      "candidate_records": 6222
+    },
+    "TDC_AMES_E5C4895949F36A83CBD4": {
+      "candidate_parents": 29,
+      "candidate_records": 1045
+    },
+    "TDC_AMES_E5C9537C5D743C3B85CC": {
+      "candidate_parents": 32,
+      "candidate_records": 618
+    },
+    "TDC_AMES_E635C600F91C17B02CA4": {
+      "candidate_parents": 30,
+      "candidate_records": 671
+    },
+    "TDC_AMES_E6A7D2B69CC1A41A89AE": {
+      "candidate_parents": 25,
+      "candidate_records": 181
+    },
+    "TDC_AMES_E6B5428F317DA0269E83": {
+      "candidate_parents": 33,
+      "candidate_records": 1252
+    },
+    "TDC_AMES_E6D31F1A215EDB5B7B7E": {
+      "candidate_parents": 33,
+      "candidate_records": 1108
+    },
+    "TDC_AMES_E76D6C8ADC8C4B8AEE62": {
+      "candidate_parents": 38,
+      "candidate_records": 5922
+    },
+    "TDC_AMES_E7819242944F8B2BBF55": {
+      "candidate_parents": 36,
+      "candidate_records": 454
+    },
+    "TDC_AMES_E782BF47025DA25EB253": {
+      "candidate_parents": 14,
+      "candidate_records": 2408
+    },
+    "TDC_AMES_E7D1BFFFB93B84945B07": {
+      "candidate_parents": 20,
+      "candidate_records": 160
+    },
+    "TDC_AMES_E7E0C599B437F4754790": {
+      "candidate_parents": 18,
+      "candidate_records": 91
+    },
+    "TDC_AMES_E8498E332803A8FFB6F2": {
+      "candidate_parents": 30,
+      "candidate_records": 405
+    },
+    "TDC_AMES_E8AE448CF4A813B121B0": {
+      "candidate_parents": 18,
+      "candidate_records": 91
+    },
+    "TDC_AMES_E8DC7740861524EFE10C": {
+      "candidate_parents": 21,
+      "candidate_records": 5654
+    },
+    "TDC_AMES_E9160E78E9D86BCC6CA3": {
+      "candidate_parents": 34,
+      "candidate_records": 5624
+    },
+    "TDC_AMES_E98EF060E58EF951E9D3": {
+      "candidate_parents": 41,
+      "candidate_records": 660
+    },
+    "TDC_AMES_EA4137E4902170F6D8F3": {
+      "candidate_parents": 23,
+      "candidate_records": 245
+    },
+    "TDC_AMES_EA971D9F48D3567571F4": {
+      "candidate_parents": 23,
+      "candidate_records": 644
+    },
+    "TDC_AMES_EAACD82068B10892535B": {
+      "candidate_parents": 34,
+      "candidate_records": 596
+    },
+    "TDC_AMES_EABC281D3CDE891413E5": {
+      "candidate_parents": 37,
+      "candidate_records": 1785
+    },
+    "TDC_AMES_EB5E70C44CCB5BBF19C1": {
+      "candidate_parents": 33,
+      "candidate_records": 906
+    },
+    "TDC_AMES_EB76942C17A13CEAA5A0": {
+      "candidate_parents": 35,
+      "candidate_records": 5613
+    },
+    "TDC_AMES_EB9F03805AF46ED84D20": {
+      "candidate_parents": 29,
+      "candidate_records": 296
+    },
+    "TDC_AMES_EBF0EC3BCF4B74B511AA": {
+      "candidate_parents": 26,
+      "candidate_records": 327
+    },
+    "TDC_AMES_EC3B8E80C599DD296CA9": {
+      "candidate_parents": 22,
+      "candidate_records": 267
+    },
+    "TDC_AMES_EC8C08328415D0DCE2D3": {
+      "candidate_parents": 30,
+      "candidate_records": 5998
+    },
+    "TDC_AMES_ECB096E3E65D032FF6E0": {
+      "candidate_parents": 37,
+      "candidate_records": 6216
+    },
+    "TDC_AMES_ECDEEBC84B5F43BAAA2E": {
+      "candidate_parents": 38,
+      "candidate_records": 2285
+    },
+    "TDC_AMES_ECF67AF7C3BE6692C9F6": {
+      "candidate_parents": 17,
+      "candidate_records": 439
+    },
+    "TDC_AMES_ED6A1A2B0DB17F5DBA41": {
+      "candidate_parents": 20,
+      "candidate_records": 933
+    },
+    "TDC_AMES_EDC5B423D794343EE41A": {
+      "candidate_parents": 17,
+      "candidate_records": 70
+    },
+    "TDC_AMES_EE2674A7F61752A71EF6": {
+      "candidate_parents": 29,
+      "candidate_records": 1027
+    },
+    "TDC_AMES_EEB0F7A1B19E119693F0": {
+      "candidate_parents": 23,
+      "candidate_records": 120
+    },
+    "TDC_AMES_EEF3EFC1C6C513707D2F": {
+      "candidate_parents": 28,
+      "candidate_records": 493
+    },
+    "TDC_AMES_EEFA1F83A3DA5A1FC7CB": {
+      "candidate_parents": 33,
+      "candidate_records": 801
+    },
+    "TDC_AMES_EF7102CB29F4B7C06918": {
+      "candidate_parents": 27,
+      "candidate_records": 282
+    },
+    "TDC_AMES_EFAE306173DC9B6CC7A4": {
+      "candidate_parents": 38,
+      "candidate_records": 1256
+    },
+    "TDC_AMES_F07B056EC202EC9B9E0A": {
+      "candidate_parents": 24,
+      "candidate_records": 365
+    },
+    "TDC_AMES_F0CDF719A71824D5199A": {
+      "candidate_parents": 36,
+      "candidate_records": 450
+    },
+    "TDC_AMES_F0F703E88970A533E799": {
+      "candidate_parents": 29,
+      "candidate_records": 779
+    },
+    "TDC_AMES_F1176D047D4CFFF317F1": {
+      "candidate_parents": 11,
+      "candidate_records": 34
+    },
+    "TDC_AMES_F1AC3F431E22C3603C6B": {
+      "candidate_parents": 42,
+      "candidate_records": 469
+    },
+    "TDC_AMES_F1C7773D4FB7617EC4EE": {
+      "candidate_parents": 33,
+      "candidate_records": 1138
+    },
+    "TDC_AMES_F1CC7B107815D1FE8199": {
+      "candidate_parents": 31,
+      "candidate_records": 257
+    },
+    "TDC_AMES_F21862DD04552CA79D5E": {
+      "candidate_parents": 8,
+      "candidate_records": 18
+    },
+    "TDC_AMES_F21CBF14AD13077CB332": {
+      "candidate_parents": 29,
+      "candidate_records": 1880
+    },
+    "TDC_AMES_F23ED70D8018486E0760": {
+      "candidate_parents": 21,
+      "candidate_records": 320
+    },
+    "TDC_AMES_F32CDA90B8460CEAE1CF": {
+      "candidate_parents": 26,
+      "candidate_records": 189
+    },
+    "TDC_AMES_F3331961CA271EAD771A": {
+      "candidate_parents": 20,
+      "candidate_records": 2425
+    },
+    "TDC_AMES_F339A83BEF06D33B8C1C": {
+      "candidate_parents": 44,
+      "candidate_records": 2301
+    },
+    "TDC_AMES_F42984104458B44033FD": {
+      "candidate_parents": 25,
+      "candidate_records": 154
+    },
+    "TDC_AMES_F4575B4C856B9CBCA33C": {
+      "candidate_parents": 23,
+      "candidate_records": 348
+    },
+    "TDC_AMES_F46CF993000E671A85D8": {
+      "candidate_parents": 31,
+      "candidate_records": 731
+    },
+    "TDC_AMES_F470F067AE1EA1F08D90": {
+      "candidate_parents": 20,
+      "candidate_records": 182
+    },
+    "TDC_AMES_F53A4CAE27C93CF8BCD2": {
+      "candidate_parents": 43,
+      "candidate_records": 599
+    },
+    "TDC_AMES_F59120F7787D3164C891": {
+      "candidate_parents": 14,
+      "candidate_records": 205
+    },
+    "TDC_AMES_F59BF359BC11BFE61B5E": {
+      "candidate_parents": 26,
+      "candidate_records": 1075
+    },
+    "TDC_AMES_F6FBFC12D3A61F5493EC": {
+      "candidate_parents": 32,
+      "candidate_records": 589
+    },
+    "TDC_AMES_F71333CCA385D8726497": {
+      "candidate_parents": 25,
+      "candidate_records": 387
+    },
+    "TDC_AMES_F7C60E9AEBE0214E70F8": {
+      "candidate_parents": 40,
+      "candidate_records": 1308
+    },
+    "TDC_AMES_F7EEFB63F181C07E93AF": {
+      "candidate_parents": 26,
+      "candidate_records": 189
+    },
+    "TDC_AMES_F8D5F8078BED90769972": {
+      "candidate_parents": 32,
+      "candidate_records": 601
+    },
+    "TDC_AMES_F8F25CFF10D2C584A712": {
+      "candidate_parents": 41,
+      "candidate_records": 577
+    },
+    "TDC_AMES_FA912B4484D60528684E": {
+      "candidate_parents": 32,
+      "candidate_records": 5529
+    },
+    "TDC_AMES_FBA9808BD8B6F7E178A2": {
+      "candidate_parents": 26,
+      "candidate_records": 332
+    },
+    "TDC_AMES_FBAD53203E1F5EAA89CD": {
+      "candidate_parents": 24,
+      "candidate_records": 131
+    },
+    "TDC_AMES_FBB73C99393CED313C3C": {
+      "candidate_parents": 30,
+      "candidate_records": 415
+    },
+    "TDC_AMES_FC5241D522140C0420AB": {
+      "candidate_parents": 17,
+      "candidate_records": 2492
+    },
+    "TDC_AMES_FCAB9B40F43629BA95EC": {
+      "candidate_parents": 21,
+      "candidate_records": 417
+    },
+    "TDC_AMES_FCD344027C71EB87BF7E": {
+      "candidate_parents": 13,
+      "candidate_records": 99
+    },
+    "TDC_AMES_FCDA1C524586507BA350": {
+      "candidate_parents": 9,
+      "candidate_records": 76
+    },
+    "TDC_AMES_FD5E40C3186E6FA13C40": {
+      "candidate_parents": 42,
+      "candidate_records": 5862
+    },
+    "TDC_AMES_FD740E884F09BFE20374": {
+      "candidate_parents": 28,
+      "candidate_records": 872
+    },
+    "TDC_AMES_FD86F8F1A2C2B4E3342D": {
+      "candidate_parents": 26,
+      "candidate_records": 1353
+    },
+    "TDC_AMES_FDFD201110A2FFD82E70": {
+      "candidate_parents": 29,
+      "candidate_records": 389
+    },
+    "TDC_AMES_FE7449FC71FA9AABDA23": {
+      "candidate_parents": 9,
+      "candidate_records": 506
+    },
+    "TDC_AMES_FEF8AA229DAE770ED882": {
+      "candidate_parents": 19,
+      "candidate_records": 2424
+    },
+    "TDC_AMES_FF0EF949D5B9BEAC303D": {
+      "candidate_parents": 17,
+      "candidate_records": 328
+    },
+    "TDC_AMES_FF108CDA8A70BC2C9507": {
+      "candidate_parents": 13,
+      "candidate_records": 43
+    },
+    "TDC_AMES_FF1AB88DFF54A3C38E3A": {
+      "candidate_parents": 33,
+      "candidate_records": 294
+    }
+  },
+  "query_smiles_policy": "frozen_parent_else_source_smiles",
+  "ranking_rows_sha256": "aaf7797540e453fd437d2df95f879ab36dc332be4d33799f4938df3debd08437",
+  "schema_version": "ranked_uid_retrieval.v1",
+  "score_counts": {
+    "conflicting_reuse_keys": 4789,
+    "exact_reuse": 250733,
+    "fresh": 375153
+  },
+  "score_reuse_conflicts": {
+    "count": 4789,
+    "file": "score_reuse_conflicts.json",
+    "sha256": "fc3d7ec63a67bea6dd46030c8acf882bf70bcd460989aa2b0d08ea3c9135a7c9"
+  },
+  "score_reuse_sources": [
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/gold_v1/ames/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2",
+      "prompts_sha256": null,
+      "score_files": {},
+      "stage_manifest_sha256": "2d6ca1a4c9f01338c7d069420b491f3c4784d6630d740a940d93473c27a0f3db"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/gold_v1/ames/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2",
+      "prompts_sha256": null,
+      "score_files": {},
+      "stage_manifest_sha256": "c47345eca5161357b8da80b2387ef8bd074f80e503870994161c2f337361bd04"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v1/ames/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent40_partial_snapshot_v1",
+      "prompts_sha256": null,
+      "score_files": {},
+      "stage_manifest_sha256": "8d4b10cbc304115d6de8f0b42193b946b4b34ca8c82b451d2dc58a38db223606"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v1/ames/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent40_partial_snapshot_v1",
+      "prompts_sha256": null,
+      "score_files": {},
+      "stage_manifest_sha256": "10391fabbe33b9197e5d9c68a96855b3e1dad71271c2df6928bae97913856247"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/parent100_v2/original",
+      "prompts_sha256": null,
+      "score_files": {},
+      "stage_manifest_sha256": "bd525c883acbecccbdbdf8b7900ddf997651ffc133d901a2a96b7ed041237395"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/parent100_v2/original",
+      "prompts_sha256": null,
+      "score_files": {},
+      "stage_manifest_sha256": "e524cd9e7597f82f8335a8224283128da9c03c98a7b5bb554eac206e1cecc353"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original",
+      "prompts_sha256": null,
+      "score_files": {},
+      "stage_manifest_sha256": "f078a7c71bfb3d82b71f81c424ddc3c7fae5104aa84db81ed968e88111391385"
+    },
+    {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original",
+      "prompts_sha256": null,
+      "score_files": {},
+      "stage_manifest_sha256": "074b0f666b34f328c00e822b9a1c88a2584c8ebdbe9945522fda2a94178905d1"
+    }
+  ],
+  "scoring_contract_version": "assay_transfer_chat_first_divergent_token_bf16_backbone_fp32_head.v2",
+  "shared_candidate_universe": true,
+  "source_smiles_fallback_queries": 0,
+  "status": "complete",
+  "stored_rows": 654015,
+  "subset": "valid",
+  "task_id": "ames",
+  "trusted_predecessor_row_reuse": false
+}

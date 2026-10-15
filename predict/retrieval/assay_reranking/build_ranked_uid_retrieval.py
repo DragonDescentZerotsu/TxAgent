@@ -24,7 +24,7 @@ import pyarrow.parquet as pq
 from rdkit import DataStructs
 
 from data.processing.gold_labels.conditioned_benchmark import tdc_task_root, tdc_manifest
-from data.processing.paths import evidence_library_root
+from data.processing.paths import evidence_library_root, resolve_legacy_path
 from predict.retrieval.policies import (
     IDENTITY_NORMALIZER_VERSION, decide_candidate, normalize_molecule_identity,
     standardize_smiles_and_fp,
@@ -337,11 +337,11 @@ def _queries(
     rows = read_jsonl(path)
     identity_root = QUERY_IDENTITY_ROOT or BASE_RANKING_ROOT
     if frozen_level is not None and identity_root is not None:
-        manifest_path = identity_root / task / "scaffold" / subset / frozen_level / "VERSION.json"
+        manifest_path = resolve_legacy_path(identity_root / task / "scaffold" / subset / frozen_level / "VERSION.json")
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         if manifest["inputs"]["query_sha256"] != sha256_file(path):
             raise ValueError(f"Frozen Morgan query input changed: {task}/{subset}/{frozen_level}")
-        database = manifest_path.with_name(str(manifest["database"]))
+        database = resolve_legacy_path(manifest_path.with_name(str(manifest["database"])))
         with sqlite3.connect(f"file:{database.resolve()}?mode=ro", uri=True) as connection:
             if QUERY_IDENTITY_ROOT is not None:
                 metadata = dict(connection.execute("SELECT key,value FROM metadata"))
@@ -950,7 +950,11 @@ def prepare_shared_parent_universe(
 
 def prepare_level(
     task: str, subset: str, level: str, output_root: Path, evidence_manifest: Path,
+    *, attention_backend: str = "flash_attention_2",
 ) -> dict[str, Any]:
+    contract = runtime.SCORING_CONTRACTS[attention_backend]
+    if attention_backend == "sgl_fa3" and (level == "L1" or TRUST_PREDECESSOR_ROWS):
+        raise ValueError("FA3 preparation requires L2+ exact prompt keys, without trusted predecessor rows")
     if level == "L1":
         return build_l1(task, subset, output_root, evidence_manifest)
     if level not in TASK_LEVELS[task]:
@@ -1119,7 +1123,8 @@ def prepare_level(
                         trusted_score_keys.add(score_key)
                         trusted_row_count += 1
                     else:
-                        prompt = renderer.prompt_task(record, prompt_query_smiles)
+                        prompt = renderer.prompt_task(record, prompt_query_smiles,
+                                                      scoring_contract_version=contract)
                         score_key = prompt.cache_key
                         prompt_rows.setdefault(score_key, (prompt.prompt, prompt.projection_hash))
                 staged_rows.append([
@@ -1187,7 +1192,7 @@ def prepare_level(
                 for query_id, *_ in queries
             },
             "model": model_spec,
-            "scoring_contract_version": runtime.SCORING_CONTRACT_VERSION,
+            "scoring_contract_version": contract,
             "inputs": {
                 "query_sha256": sha256_file(query_path),
                 "evidence_manifest_sha256": sha256_file(evidence_manifest),
@@ -1273,13 +1278,24 @@ def score_level(
     task: str, subset: str, level: str, output_root: Path, device: int,
     num_shards: int, shard_index: int, batch_size: int,
     tokenized_root: Path | None = None,
+    *, attention_backend: str = "flash_attention_2",
 ) -> dict[str, Any]:
+    if attention_backend not in {"flash_attention_2", "sgl_fa3"}:
+        raise ValueError(f"Unsupported assay attention backend: {attention_backend}")
+    if attention_backend == "sgl_fa3" and tokenized_root is None:
+        raise ValueError("FA3 scoring requires --tokenized-root")
     if batch_size < 1 or num_shards < 1 or not 0 <= shard_index < num_shards:
         raise ValueError("Score batch and shard parameters must be positive and in range")
     target = output_root / task / "scaffold" / subset / level
     manifest = json.loads((target / "VERSION.json").read_text(encoding="utf-8"))
     if manifest.get("status") not in {"prepared", "ready_to_finalize"}:
         raise ValueError("Level cache is not prepared")
+    contract = runtime.SCORING_CONTRACTS[attention_backend]
+    if manifest.get("scoring_contract_version") != contract:
+        raise ValueError("Prepared scoring contract differs from the requested backend; prepare a new release")
+    spec = _model_spec(task, level)
+    if spec is None or manifest.get("model") != spec:
+        raise ValueError(f"Prepared model differs from the pinned model for {task}/{level}")
     database = target / manifest["database"]
     prompt_path = target / str(manifest.get("prompts") or "")
     rows = sorted(
@@ -1297,9 +1313,6 @@ def score_level(
         raise ValueError("Score journal is not the exact completed shard prefix")
     if len(done) == len(rows):
         return {"status": "complete", "scores": len(rows), "journal": str(journal)}
-    spec = _model_spec(task, level)
-    if spec is None:
-        raise ValueError(f"No assay-transfer model is configured for {task}/{level}")
     tokenized_rows = None
     if tokenized_root is not None:
         token_dir = tokenized_root / task / "scaffold" / subset / level
@@ -1318,7 +1331,7 @@ def score_level(
     snapshot = runtime.resolve_model_snapshot(spec["model"], spec["revision"], local_files_only=True)
     import torch
 
-    model, tokenizer = runtime.load_model(snapshot, device=device)
+    model, tokenizer = runtime.load_model(snapshot, device=device, attention_backend=attention_backend)
     with journal.open("a", encoding="utf-8") as handle:
         offset = len(done)
         while offset < len(rows):
@@ -1330,7 +1343,7 @@ def score_level(
                 prompt_hash=hashlib.sha256(prompt.encode()).hexdigest(),
                 task_id=task, query_smiles="", group_id=level, molecule_id="", record_id="",
                 model=spec["model"], model_revision=spec["revision"],
-                scoring_contract_version=runtime.SCORING_CONTRACT_VERSION,
+                scoring_contract_version=contract,
                 template_hash=renderer.template_hash, projection_hash=projection,
             ) for key, prompt, projection in rows[offset:offset + width]]
             tokenized = None
@@ -1696,12 +1709,13 @@ def validate_release(
         )
 
         task_adapter = Path(semantic_display.__file__)
-    # Shared-parent successors reuse a frozen, hash-pinned evidence projection;
+    # Cache successors reuse a frozen, hash-pinned evidence projection;
     # its historical adapter hash is provenance, not a dependency on live code.
-    if not SHARED_LATER_PARENT_UNIVERSE and evidence["inputs"].get("display_adapter") != {
+    if (not SHARED_LATER_PARENT_UNIVERSE and LATER_IDENTITY_POLICY != "scaffold_disjoint"
+            and evidence["inputs"].get("display_adapter") != {
         "projection": sha256_file(projection_adapter),
         "task": sha256_file(task_adapter),
-    }:
+    }):
         raise ValueError("Evidence display adapter code changed")
     records_path = evidence_manifest.with_name(str(evidence["records"]))
     if sha256_file(records_path) != evidence["records_sha256"]:
@@ -2101,6 +2115,8 @@ def main() -> None:
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--gpu-memory-fraction", type=float, default=1.0)
     parser.add_argument("--tokenized-root", type=Path)
+    parser.add_argument("--attention-backend", choices=("flash_attention_2", "sgl_fa3"),
+                        default="flash_attention_2")
     parser.add_argument("--tokenize-workers", type=int, default=1)
     args = parser.parse_args()
     if not 0 < args.gpu_memory_fraction <= 1:
@@ -2110,9 +2126,7 @@ def main() -> None:
     QUERY_BENCHMARK = args.benchmark
     QUERY_IDENTITY_ROOT = args.query_identity_root
     RESCORE_CONFLICTING_REUSE = args.rescore_conflicting_reuse
-    LABEL_RELEASE = "v1" if args.benchmark == "gold" else {
-        "benchmark": "tdc", "version": args.benchmark.removeprefix("tdc-"),
-    }
+    LABEL_RELEASE = "v1" if args.benchmark == "gold" else {"benchmark": "tdc"}
     LATER_IDENTITY_POLICY = args.neighbor_identity_policy
     if LATER_IDENTITY_POLICY == "scaffold_disjoint":
         if args.trust_existing_score_keys:
@@ -2157,7 +2171,8 @@ def main() -> None:
         if not args.subset or args.level not in TASK_LEVELS[args.task]:
             parser.error("--subset and a task-supported --level are required")
         if args.command == "prepare-level":
-            result = prepare_level(args.task, args.subset, args.level, args.output_root, args.evidence_manifest)
+            result = prepare_level(args.task, args.subset, args.level, args.output_root, args.evidence_manifest,
+                                   attention_backend=args.attention_backend)
         elif args.command == "score":
             if args.gpu_memory_fraction != 1.0:
                 import torch
@@ -2166,6 +2181,7 @@ def main() -> None:
             result = score_level(
                 args.task, args.subset, args.level, args.output_root, args.device,
                 args.num_shards, args.shard_index, args.batch_size, args.tokenized_root,
+                attention_backend=args.attention_backend,
             )
         elif args.command == "pretokenize":
             if args.tokenized_root is None:

@@ -6,6 +6,7 @@ import csv
 import json
 from collections import defaultdict
 from pathlib import Path
+from data.processing.paths import resolve_legacy_path
 from typing import Any, Mapping, Sequence
 
 from predict.retrieval.policies import decide_candidate, normalize_molecule_identity
@@ -14,6 +15,24 @@ from predict.utils.json import sha256_file, write_json_atomic
 SCHEMA = "evidence_uid_selection.v1"
 FIELDS = ("benchmark_row_id", "level", "selection_rank", "source_row_uid",
           "context_id", "context_rank", "within_context_rank")
+
+
+def ordered_evidence(retrieval: Mapping[str, Any]) -> list[tuple[str, str, str]]:
+    """Read physical UID order and L1 membership from a hydrated flat retrieval."""
+    output = []
+    for group in retrieval.get("groups") or []:
+        for neighbor in group.get("neighbors") or []:
+            for row in neighbor.get("evidence_rows") or []:
+                selection = row.get("selection_provenance") or {}
+                level = selection.get("level")
+                uid = (row.get("source_provenance") or {}).get("source_row_uid")
+                context = selection.get("diagnostic_context_id") or ""
+                if not level or not uid or (level == "L1" and not context):
+                    raise ValueError("Retrieval evidence identities or L1 membership are unknown")
+                output.append((str(level), str(uid), str(context)))
+    if not output:
+        raise ValueError("Retrieval evidence identities are unknown")
+    return output
 
 
 def selection_query_ids(path: Path) -> list[str]:
@@ -121,7 +140,7 @@ def resolve_selection(rows: Sequence[Mapping[str, Any]], *, task: str, subset: s
                 if level == "L1":
                     clause = "cr.source_row_uid=?" if uid else "cr.context_id=?"
                     candidates = connection.execute(
-                        "SELECT r.parent_smiles,cr.* FROM rankings r JOIN context_records cr "
+                        "SELECT DISTINCT r.parent_smiles,cr.* FROM rankings r JOIN context_records cr "
                         "ON cr.context_id=r.morgan_context_id OR cr.context_id=r.assay_context_id "
                         f"WHERE r.benchmark_row_id=? AND {clause} ORDER BY cr.within_context_rank",
                         (query_id, uid or context),
@@ -147,7 +166,7 @@ def resolve_selection(rows: Sequence[Mapping[str, Any]], *, task: str, subset: s
                         raise ValueError(f"UID outside frozen candidates: {query_id}/{level}/{uid}")
                 for candidate in candidates:
                     physical = str(candidate["source_row_uid"])
-                    key = (query_id, physical)
+                    key = (query_id, level, context if level == "L1" else "", physical)
                     if key in seen:
                         raise ValueError(f"Repeated evidence UID: {key}")
                     assert_disjoint(queries[query_id], candidate["parent_smiles"], policy)
@@ -202,6 +221,7 @@ def export_selection(output: Path, rows: Sequence[Mapping[str, Any]], *, task: s
 
 
 def indexed_manifests(index: Path, subset: str, levels: Sequence[str]) -> dict[str, Path]:
+    index = resolve_legacy_path(index)
     document = json.loads(index.read_text())
     output = {}
     for level in levels:
@@ -212,6 +232,8 @@ def indexed_manifests(index: Path, subset: str, levels: Sequence[str]) -> dict[s
         manifest = json.loads(path.read_text())
         if manifest.get("neighbor_identity_policy", "parent_disjoint") != document["neighbor_identity_policy_by_level"][level]:
             raise ValueError("Candidate disjointness policy differs from its release index")
+        if level == "L1" and manifest.get("neighbor_identity_policy") != "scaffold_disjoint":
+            raise ValueError("Direct L1 selection requires scaffold-disjoint candidates")
         output[level] = path
     return output
 

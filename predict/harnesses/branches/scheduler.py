@@ -106,6 +106,8 @@ def prepare_batch_commands(
     max_stage_requeues: int = 0,
 ) -> dict[str, PreparedBatch]:
     """Parse batch commands without starting retrieval preparation or LLM stages."""
+    if len({spec.experiment_name for spec in commands}) != len(commands):
+        raise ValueError("Matrix batch names must be unique across tasks and subsets")
     return {
         spec.experiment_name: _prepare_command(
             spec,

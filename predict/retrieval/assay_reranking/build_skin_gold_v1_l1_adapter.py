@@ -1,9 +1,8 @@
-"""Adapt the frozen Skin V9 Gold-v1 direct ranking to ranked_uid_retrieval.v1."""
+"""Publish Skin's scaffold-disjoint ranking with canonical physical voters."""
 
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -17,70 +16,90 @@ from predict.retrieval.assay_reranking.build_ranked_retrieval import _clean, _di
 from predict.retrieval.assay_reranking.build_ranked_uid_retrieval import _schema, _write_complete
 from predict.retrieval.assay_reranking.ranked_uid_retrieval import CAPACITY, SCHEMA_VERSION
 from predict.utils.json import read_jsonl, sha256_file
+from predict.retrieval.policies import normalize_molecule_identity
+from data.processing.gold_labels.voter_membership import SOURCE_ROW_UID_PATTERN
+from data.processing.gold_labels.publish_gold_v1_context_membership import verify_membership
+from .runtime import cache_profile_root
 
 
-PROFILE = "ranked_level_retrieval_skin_gold_v1_l1_adapter_v2"
+PROFILE = "flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1"
 REPO = Path(__file__).resolve().parents[3]
 GOLD = REPO / "data/gold_labels/Skin_Reaction/v1/scaffold"
-V9 = REPO / (
-    "predict/retrieval/cache/assay_reranking/active/"
-    "v9_skin_gold_v1_scaffold_morgan100_v1/skin_reaction/scaffold"
-)
-DEFAULT_OUTPUT = REPO / "data/caches/assay_reranking/active" / PROFILE / "skin_reaction"
+DEFAULT_OUTPUT = REPO / "data/caches/assay_reranking/active" / PROFILE
+V9 = DEFAULT_OUTPUT / "scoring"
 
 
-def _member_uid(context_id: str, rank: int, record_id: str) -> str:
-    digest = hashlib.sha256(f"{context_id}\0{rank}\0{record_id}".encode()).hexdigest()[:24]
-    return f"skin_gold_v1_member_{digest}"
+def _cards(gold: Path = GOLD, library: Path | None = None) -> dict[str, dict]:
+    library_root = REPO / "data/evidence_libraries/skin_reaction"
+    library = library or library_root / (library_root / "CURRENT").read_text().strip()
+    verify_membership(gold, library)
+    rows = read_jsonl(gold / "train_molecule_condition_labels.jsonl")
+    cards = {str(row["benchmark_row_id"]): row for row in rows}
+    membership = pq.read_table(gold / "voter_membership.parquet",
+                               filters=[("split", "=", "train")]).to_pylist()
+    for card in cards.values():
+        card["source_row_uids"] = []
+    for row in membership:
+        cards[str(row["benchmark_row_id"])]["source_row_uids"].append(str(row["source_row_uid"]))
+    for context_id, card in cards.items():
+        if len(card["source_row_uids"]) != int(card["source_record_count"]):
+            raise ValueError(f"Skin membership differs from frozen Gold vote count: {context_id}")
+    return cards
 
 
-def _cards() -> dict[str, dict]:
-    rows = read_jsonl(GOLD / "train_molecule_condition_labels.jsonl")
-    return {str(row["benchmark_row_id"]): row for row in rows}
-
-
-def _projection(root: Path, cards: dict[str, dict], context_ids: set[str]) -> Path:
-    rows = []
+def _projection(root: Path, cards: dict[str, dict], context_ids: set[str], *,
+                gold: Path = GOLD, library: Path | None = None) -> Path:
+    library_root = REPO / "data/evidence_libraries/skin_reaction"
+    library = library or library_root / (library_root / "CURRENT").read_text().strip()
+    stage3 = library / "03_pair_buckets/records.parquet"
+    source_contract = library / "02_canonicalized/source_contract.json"
+    contract = json.loads(source_contract.read_text())
+    parents = {}
     for context_id in sorted(context_ids):
         card = cards[context_id]
-        record_ids = [str(value) for value in card.get("source_record_ids") or []]
-        if not record_ids:
-            raise ValueError(f"Skin Gold card has no physical source members: {context_id}")
-        values = list(card.get("raw_value_examples") or [])
-        contexts = list(card.get("context_examples") or card.get("condition_text_examples") or [])
-        for rank, record_id in enumerate(record_ids, 1):
-            source_row_uid = _member_uid(context_id, rank, record_id)
-            fields = {
-                "source_record_id": record_id,
-                "reported_value": values[min(rank - 1, len(values) - 1)] if values else "",
-                "assay_context": contexts[min(rank - 1, len(contexts) - 1)] if contexts else "",
-                "gold_vote_label": int(card["Y"]),
-            }
-            fields = {key: value for key, value in fields.items() if value not in (None, "")}
-            payload = {
-                "task_id": "skin_reaction", "progressive_level": "L1",
-                "family_key": "direct_skin_reaction",
-                "source_id": "skin_gold_v1",
-                "record_id": record_id,
-                "source_row_uid": source_row_uid,
-                "measurement_kind": "categorical_label",
-                "label_source": "gold_v1", "benchmark_row_id": context_id,
-                "canonical_smiles": str(card["drug"]),
-                "condition_group": str(card["condition_group"]), "Y": int(card["Y"]),
-                "source_record_id": record_id,
-                "source_fields": fields,
-                "source_contract": {
-                    "contract_version": "skin_gold_v1_aggregate_member_adapter.v1",
-                    "source_or_simply_cleaned": {key: True for key in fields},
-                },
-            }
-            rows.append({
-                "source_row_uid": source_row_uid,
-                "external_record_id": record_id,
-                "parent_id": str(card["molecule_identity_key"]),
-                "parent_smiles": str(card["drug"]), "level": "L1",
-                "payload": json.dumps(_clean(payload), sort_keys=True, separators=(",", ":")),
-            })
+        for uid in card["source_row_uids"]:
+            parent = (str(card["molecule_identity_key"]), str(card["drug"]))
+            if uid in parents and parents[uid] != parent:
+                raise ValueError(f"Skin physical voter belongs to different Gold parents: {uid}")
+            parents[uid] = parent
+    uids = set(parents)
+    if not uids or any(not SOURCE_ROW_UID_PATTERN.fullmatch(uid) for uid in uids):
+        raise ValueError("Skin Gold membership requires canonical physical source_row_uid values")
+    physical = pq.read_table(stage3, filters=[("source_row_uid", "in", sorted(uids))]).to_pylist()
+    if len(physical) != len(uids) or {str(row["source_row_uid"]) for row in physical} != uids:
+        raise ValueError("Skin Gold members are absent or nonunique in the canonical evidence library")
+    rows = []
+    for raw in sorted(physical, key=lambda row: row["source_row_uid"]):
+        parent_id, parent_smiles = parents[str(raw["source_row_uid"])]
+        identity = normalize_molecule_identity(str(raw["canonical_smiles"]))
+        if identity.status != "ok" or (identity.parent_inchi_key or identity.parent_smiles) != parent_id:
+            raise ValueError(f"Skin canonical voter structure differs from frozen Gold parent: {raw['source_row_uid']}")
+        source = str(raw["source_id"])
+        spec = contract["sources"][source]
+        fields = spec.get("source_visible_fields")
+        if fields is None:
+            fields = [name for name, policy in spec["normalized_artifact_columns"].items()
+                      if policy.get("source_or_simply_cleaned") is True]
+        source_fields = {name: raw.get(name) for name in fields}
+        payload = {
+            "task_id": "skin_reaction", "progressive_level": "L1",
+            "family_key": "direct_skin_reaction", "source_id": source,
+            "source_row_uid": str(raw["source_row_uid"]),
+            "record_id": str(raw["source_record_id"]),
+            "measurement_kind": str(raw.get("measurement_kind") or ""),
+            "canonical_smiles": str(raw["canonical_smiles"]),
+            "source_fields": source_fields,
+            "source_contract": {
+                "contract_version": "skin_gold_canonical_voters.v1",
+                "source_or_simply_cleaned": {name: True for name in source_fields},
+            },
+        }
+        rows.append({
+            "source_row_uid": str(raw["source_row_uid"]),
+            "external_record_id": str(raw["source_record_id"]),
+            "parent_id": parent_id, "parent_smiles": parent_smiles, "level": "L1",
+            "payload": json.dumps(_clean(payload), sort_keys=True, separators=(",", ":")),
+        })
     target = root / "evidence"
     target.mkdir(parents=True)
     records = target / "records.parquet"
@@ -93,8 +112,10 @@ def _projection(root: Path, cards: dict[str, dict], context_ids: set[str]) -> Pa
     identity = {
         "schema_version": "ranked_evidence_projection.v1", "status": "complete",
         "task_id": "skin_reaction", "record_count": len(rows),
-        "source_identity": "skin_gold_v1_ordered_physical_member_adapter",
-        "inputs": {"gold_train_sha256": sha256_file(GOLD / "train_molecule_condition_labels.jsonl")},
+        "source_identity": "skin_gold_canonical_voters.v1", "evidence_library_release": library.name,
+        "inputs": {"records_sha256": sha256_file(stage3),
+                   "source_contract_sha256": sha256_file(source_contract),
+                   "membership_sha256": sha256_file(gold / "voter_membership.parquet")},
     }
     identity["content_id"] = _digest(identity)
     manifest = {**identity, "records": records.name, "records_sha256": sha256_file(records)}
@@ -103,15 +124,18 @@ def _projection(root: Path, cards: dict[str, dict], context_ids: set[str]) -> Pa
     return path
 
 
-def _split(root: Path, subset: str, cards: dict[str, dict], evidence: Path) -> dict:
-    source_manifest = V9 / subset / "VERSION.json"
+def _split(root: Path, subset: str, cards: dict[str, dict], evidence: Path, *,
+           gold: Path = GOLD, ranking_root: Path = V9) -> dict:
+    source_manifest = ranking_root / subset / "VERSION.json"
     source = json.loads(source_manifest.read_text())
+    if source.get("inputs", {}).get("neighbor_identity_policy") != "scaffold_disjoint":
+        raise ValueError("Direct Skin L1 requires scaffold-disjoint source rankings")
     rankings_path = source_manifest.with_name(source["rankings"])
     rows = pq.read_table(rankings_path).to_pylist()
     by_query: dict[str, list[dict]] = {}
     for row in rows:
         by_query.setdefault(str(row["query_record_id"]), []).append(row)
-    queries = {str(row["benchmark_row_id"]): row for row in read_jsonl(GOLD / f"{subset}.jsonl")}
+    queries = {str(row["benchmark_row_id"]): row for row in read_jsonl(gold / f"{subset}.jsonl")}
     target = root / "scaffold" / subset / "L1"
     target.mkdir(parents=True)
     database = target / "rankings.sqlite3"
@@ -149,7 +173,7 @@ def _split(root: Path, subset: str, cards: dict[str, dict], evidence: Path) -> d
         for row in candidates:
             context_id = str(row["retrieval_record_id"])
             card = cards[context_id]
-            count = len(card.get("source_record_ids") or [])
+            count = len(card["source_row_uids"])
             context_ids.add(context_id)
             parents.add(str(row["retrieval_molecule_identity_key"]))
             member_total += count
@@ -175,9 +199,9 @@ def _split(root: Path, subset: str, cards: dict[str, dict], evidence: Path) -> d
         for context_id in sorted(context_ids)
     ])
     connection.executemany("INSERT INTO context_records VALUES (?,?,?)", [
-        (context_id, _member_uid(context_id, rank, str(record_id)), rank)
+        (context_id, uid, rank)
         for context_id in sorted(context_ids)
-        for rank, record_id in enumerate(cards[context_id]["source_record_ids"], 1)
+        for rank, uid in enumerate(cards[context_id]["source_row_uids"], 1)
     ])
     identity = {
         "task_id": "skin_reaction", "subset": subset, "level": "L1", "pool": "fixed",
@@ -199,20 +223,21 @@ def _split(root: Path, subset: str, cards: dict[str, dict], evidence: Path) -> d
     return manifest
 
 
-def build(output: Path) -> None:
+def build(output: Path, *, gold: Path = GOLD, library: Path | None = None,
+          ranking_root: Path = V9) -> None:
     if output.exists():
         raise FileExistsError(f"Refusing to replace immutable adapter: {output}")
-    cards = _cards()
+    cards = _cards(gold, library)
     context_ids = {
         str(row["retrieval_record_id"])
         for subset in ("valid", "test")
-        for row in pq.read_table(V9 / subset / "rankings.parquet", columns=["retrieval_record_id"]).to_pylist()
+        for row in pq.read_table(ranking_root / subset / "rankings.parquet", columns=["retrieval_record_id"]).to_pylist()
     }
     output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=".skin-l1-adapter.", dir=output.parent) as temporary:
         root = Path(temporary)
-        evidence = _projection(root, cards, context_ids)
-        split_manifests = {subset: _split(root, subset, cards, evidence) for subset in ("valid", "test")}
+        evidence = _projection(root, cards, context_ids, gold=gold, library=library)
+        split_manifests = {subset: _split(root, subset, cards, evidence, gold=gold, ranking_root=ranking_root) for subset in ("valid", "test")}
         evidence_doc = json.loads(evidence.read_text())
         index = {
             "schema_version": "ranked_uid_task_release_index.v1",
@@ -239,8 +264,11 @@ def build(output: Path) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--gold-root", type=Path, default=GOLD)
+    parser.add_argument("--evidence-library", type=Path)
+    parser.add_argument("--ranking-root", type=Path, default=V9)
     args = parser.parse_args()
-    build(args.output.resolve())
+    build(args.output.resolve(), gold=args.gold_root, library=args.evidence_library, ranking_root=args.ranking_root)
     print(args.output.resolve())
     return 0
 

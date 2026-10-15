@@ -126,7 +126,9 @@ def test_published_direct_gold_release_is_complete_and_valid():
     assert receipt["status"] == "pass"
     assert receipt["entries"] == 6
     assert receipt["files"] == 12
-    assert receipt["bytes"] == 12_495_428
+    manifest = json.loads(Path("predict/retrieval/assay_reranking/direct_gold_v1_release.json").read_text())
+    assert receipt["bytes"] == sum(entry[kind]["bytes"] for entry in manifest["entries"]
+                                    for kind in ("version", "rankings"))
 
 
 def test_cache_validation_rebinds_missing_historical_gold_path(
@@ -250,7 +252,7 @@ def test_cache_profiles_resolve_to_explicit_active_or_archive_roots():
     assert ranking_cache_dir("skin_reaction").is_relative_to(ACTIVE_CACHE_ROOT)
     assert ranking_cache_dir(
         "skin_reaction", lineage="v9_scaffold"
-    ).is_relative_to(ACTIVE_CACHE_ROOT)
+    ).is_relative_to(DATA_ACTIVE_CACHE_ROOT / "flat_v5/gold_v1/skin_reaction/l1/assay_transfer")
 
 
 def test_v10_4_candidates_use_stable_parent_order_and_scaffold_exclusion(

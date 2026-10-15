@@ -1,10 +1,16 @@
-"""Publish Gold-v1 context-card membership for Ames, DILI, and Carcinogens."""
+"""Publish supported Gold-v1 memberships or audit all six frozen voter contracts."""
 
 from __future__ import annotations
 
 import argparse
+import hashlib
+import shutil
+from collections import Counter, defaultdict
 import json
+import importlib.util
+import math
 from pathlib import Path
+import sys
 from typing import Any
 
 import pyarrow as pa
@@ -125,12 +131,20 @@ def _load_cards(task: str, replay_root: Path | None) -> tuple[list[tuple[str, di
         }
         inputs["detail_files"][split] = {
             "path": (
-                f"git:{REPLAY_COMMIT}:{spec['replay']}/train_molecule_condition_labels.jsonl"
+                f"generated:{spec['replay']}/train_molecule_condition_labels.jsonl"
                 if split == "train" and spec["replay"]
                 else str(detail_path.relative_to(REPO_ROOT))
             ),
             "sha256": sha256_file(detail_path),
         }
+        if split == "train" and spec["replay"]:
+            inputs["detail_files"][split]["reconstructed_from"] = {
+                "commit": REPLAY_COMMIT,
+                "root": f"data/starling_data/{task}/gold_v4",
+                "files": ["record_dispositions.parquet", "identity_ledger.parquet",
+                          "tautomer_identities.jsonl", "gold_labels.jsonl"],
+                "builder": f"tools/chembl_tool/tasks/{task}/build_reviewed_starling.py",
+            }
         cards.extend((split, row) for row in details)
     return cards, inputs
 
@@ -479,14 +493,307 @@ def publish_task(
     return {"task": task, "status": "complete", **manifest["counts"]}
 
 
+def verify_membership(gold: Path, library: Path) -> dict[str, Any]:
+    """Audit card votes and physical members against the published library."""
+    membership = pq.read_table(gold / "voter_membership.parquet").to_pylist()
+    units = pq.read_table(gold / "vote_units.parquet").to_pylist()
+    index = pq.read_table(gold / "gold_label_record_index.parquet").to_pylist()
+    cards = {(str(row["benchmark_row_id"]), split): row
+             for split in SPLITS for row in read_jsonl(gold / f"{split}.jsonl")}
+    indexed = {(str(row["benchmark_row_id"]), str(row["split"])): row for row in index}
+    if len(indexed) != len(index) or set(indexed) != set(cards):
+        raise ValueError("Membership index does not cover the frozen Gold cards exactly")
+    edges = defaultdict(list)
+    seen = set()
+    for row in membership:
+        key = (str(row["benchmark_row_id"]), str(row["split"]), str(row["vote_id"]))
+        edge = (*key, str(row["source_row_uid"]))
+        if edge in seen:
+            raise ValueError(f"Repeated physical vote member: {edge}")
+        seen.add(edge)
+        edges[key].append(row)
+    by_card = defaultdict(list)
+    for unit in units:
+        key = (str(unit["benchmark_row_id"]), str(unit["split"]), str(unit["vote_id"]))
+        members = edges.pop(key, [])
+        if (not members or {str(row["source_row_uid"]) for row in members}
+                != set(unit["physical_source_row_uids"])
+                or len(members) != int(unit["physical_member_count"])):
+            raise ValueError(f"Vote unit and physical membership differ: {key}")
+        if any(int(row["vote_label"]) != int(unit["vote_label"])
+               or row["molecule_identity_key"] != unit["molecule_identity_key"]
+               or row["condition_group"] != unit["condition_group"]
+               or int(row["physical_member_count"]) != len(members)
+               or not math.isfinite(float(row["physical_vote_weight"]))
+               or abs(float(row["physical_vote_weight"]) - 1 / len(members)) > 1e-12
+               for row in members):
+            raise ValueError(f"Invalid physical vote label or weight: {key}")
+        by_card[key[:2]].append(unit)
+    if edges or set(by_card) != set(cards):
+        raise ValueError("Vote units and membership cards differ")
+    for key, card in cards.items():
+        votes = by_card[key]
+        labels = [int(unit["vote_label"]) for unit in votes]
+        mean = sum(labels) / len(labels)
+        physical_count = sum(int(unit["physical_member_count"]) for unit in votes)
+        row = indexed[key]
+        indexed_votes = {(str(vote["vote_id"]), int(vote["vote_label"]),
+                          tuple(vote["physical_source_row_uids"]))
+                         for vote in row.get("vote_units", [])}
+        actual_votes = {(str(vote["vote_id"]), int(vote["vote_label"]),
+                         tuple(vote["physical_source_row_uids"])) for vote in votes}
+        if (any(label not in (0, 1) for label in labels)
+                or int(mean >= 0.5) != int(card["Y"]) or int(row["Y"]) != int(card["Y"])
+                or row["vote_unit_count"] != len(votes)
+                or row["physical_member_count"] != physical_count
+                or ("molecule_identity_key" in row and row["molecule_identity_key"] != card["molecule_identity_key"])
+                or ("condition_group" in row and row["condition_group"] != card["condition_group"])
+                or ("vote_units" in row and indexed_votes != actual_votes)
+                or not math.isfinite(row["voter_mean"])
+                or abs(row["voter_mean"] - mean) > 1e-12):
+            raise ValueError(f"Gold label or membership index differs: {key}")
+        for unit in votes:
+            if (unit["molecule_identity_key"] != card["molecule_identity_key"]
+                    or unit["condition_group"] != card["condition_group"]):
+                raise ValueError(f"Vote belongs to a different parent or condition: {key}")
+    physical = Counter(pq.read_table(library / "03_pair_buckets/records.parquet",
+                                    columns=["source_row_uid"])["source_row_uid"].to_pylist())
+    selected = {str(row["source_row_uid"]) for row in membership}
+    invalid = sorted(uid for uid in selected if physical[uid] != 1)
+    if invalid:
+        raise ValueError(f"Members absent or nonunique in canonical evidence: {invalid[:25]}")
+    return {"status": "verified", "gold_label_cards": len(cards), "vote_units": len(units),
+            "physical_members": len(membership), "distinct_physical_uids": len(selected),
+            "evidence_release": library.name}
+
+
+def replay_skin_votes(replay_root: Path):
+    """Bind original measured votes to the permanent acquisition-row UIDs."""
+    paths = {
+        "classifier": ("tools/chembl_tool/tasks/skin_reaction/canonical_starling_source.py",
+                       "8f1d82719f4831ba3eddfadaf3a1643012bc2e2434b3c48b281c55df9e1100cb"),
+        "identity": ("tools/chembl_tool/common/molecule_identity.py",
+                     "d9f5e9e005ee2e17ca33c7aadf298ef9d59c0831b36b1fa1f0227e0776617050"),
+        "raw": ("data/starling_data/skin_reaction/direct_skin_reaction/extractions.parquet",
+                "e7c4819c98af47eae4dc0563f40dc39f8b09eb8e03c9626daee603147125f9c1"),
+    }
+    for relative, expected in paths.values():
+        if sha256_file(replay_root / relative) != expected:
+            raise ValueError(f"Skin replay input differs from pinned Git source: {relative}")
+    modules = {}
+    for kind in ("classifier", "identity"):
+        name = f"_gold_voter_replay_skin_{kind}"
+        spec = importlib.util.spec_from_file_location(name, replay_root / paths[kind][0])
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[name] = module
+        try:
+            spec.loader.exec_module(module)
+        finally:
+            del sys.modules[name]
+        modules[kind] = module
+    raw = pq.read_table(replay_root / paths["raw"][0])
+    current = pq.read_table(REPO_ROOT / "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet")
+    if not current.select(raw.column_names).equals(raw, check_metadata=False):
+        raise ValueError("Skin acquisition rows differ from the pinned source; cannot bind UIDs by row")
+    uids = current["source_row_uid"].to_pylist()
+    groups = defaultdict(list)
+    for position, row in enumerate(raw.to_pandas().to_dict("records")):
+        decision = modules["classifier"].classify_direct_source_record(row)
+        outcome = str(row.get("outcome_label") or "").strip().lower()
+        if decision.partition != "direct" or outcome not in {"positive", "negative"}:
+            continue
+        identity = modules["identity"].normalize_molecule_identity(str(row.get("SMILES") or row.get("smiles") or "").strip())
+        if identity.status == "ok" and identity.parent_smiles:
+            groups[identity.parent_inchi_key or identity.parent_smiles].append(
+                (uids[position], int(outcome == "positive")))
+    inputs = {kind: {"git_path": relative, "sha256": expected}
+              for kind, (relative, expected) in paths.items()}
+    return groups, current, inputs
+
+
+def audit_skin_replay(replay_root: Path, gold: Path, library: Path) -> dict[str, Any]:
+    """Report conflicts between the frozen cards and the pinned source replay."""
+    groups, _, inputs = replay_skin_votes(replay_root)
+    differences, members = [], set()
+    frozen_count = replay_count = cards_count = 0
+    for split in SPLITS:
+        for card in read_jsonl(gold / f"{split}_molecule_condition_labels.jsonl"):
+            if card["condition_group"] != "no_reported_external_condition":
+                continue
+            votes = groups[card["molecule_identity_key"]]
+            expected = +Counter({str(key): int(value) for key, value in card["label_counts"].items()})
+            actual = Counter(str(label) for _, label in votes)
+            if expected != actual:
+                differences.append({"benchmark_row_id": card["benchmark_row_id"], "split": split,
+                                    "molecule_identity_key": card["molecule_identity_key"],
+                                    "frozen_label_counts": dict(expected), "replayed_label_counts": dict(actual)})
+            cards_count += 1
+            frozen_count += sum(expected.values())
+            replay_count += len(votes)
+            members.update(uid for uid, _ in votes)
+    canonical = set(pq.read_table(library / "03_pair_buckets/records.parquet",
+                                  columns=["source_row_uid"])["source_row_uid"].to_pylist())
+    missing = sorted(members - canonical)
+    return {"status": "blocked" if differences or missing else "verified",
+            "upstream_commit": AMES_MEMBERSHIP_COMMIT,
+            "inputs": inputs,
+            "scope": "condition-free Skin cards only; external reviewed votes must be audited separately",
+            "condition_free_cards": cards_count, "frozen_votes": frozen_count,
+            "replayed_votes": replay_count, "card_differences": differences,
+            "canonical_missing_uids": missing}
+
+
+def publish_skin_replay(replay_root: Path, output_root: Path) -> dict[str, Any]:
+    """Stage the approved count correction and uncapped physical membership."""
+    gold = REPO_ROOT / "data/gold_labels/Skin_Reaction/v1/scaffold"
+    target = output_root / "Skin_Reaction/v1/scaffold"
+    if target.exists() or target.resolve() == gold.resolve():
+        raise FileExistsError(f"Skin replay requires a new staging directory: {target}")
+    groups, direct, inputs = replay_skin_votes(replay_root)
+    original_path = replay_root / "data/processed_starling/Skin_Reaction/molecule_labels.jsonl"
+    if sha256_file(original_path) != "ff8a04abaaff104ae2d61943bcd5ab8d19abba2920b150639a6e18bef96d8263":
+        raise ValueError("Original Skin molecule table differs from the pinned migration")
+    originals = {str(row["molecule_identity_key"]): row for row in read_jsonl(original_path)}
+    physical = {str(row["source_row_uid"]): (position, row, "direct_skin_reaction")
+                for position, row in enumerate(direct.to_pylist())}
+    aop_path = REPO_ROOT / "data/raw/starling/skin_reaction/sensitization_aop/extractions.parquet"
+    aop = pq.read_table(aop_path).to_pylist()
+    external = defaultdict(list)
+    for review in read_jsonl(gold / "source_condition_review.jsonl"):
+        if review["review_status"] != "accepted":
+            continue
+        source, position = review["source_record_id"].rsplit(":", 1)
+        position = int(position)
+        row = direct.slice(position, 1).to_pylist()[0] if source == "direct_skin_reaction" else aop[position]
+        if str(row.get("support_text") or "").strip() != str(review["support_text"]).strip():
+            raise ValueError(f"Reviewed Skin source payload changed: {review['source_record_id']}")
+        uid = str(row["source_row_uid"])
+        physical[uid] = (position, row, source)
+        external[(review["molecule_identity_key"], review["condition_group"])].append((uid, int(review["Y"])))
+    membership, units, index, corrected, differences = [], [], [], {}, []
+    vote_fields = ("label_counts", "source_record_count", "source_ids", "label_methods", "source_pmids",
+                   "raw_value_examples", "context_examples", "majority_label", "majority_record_count",
+                   "minority_record_count", "agreement_fraction", "agreement_threshold", "vote_unit")
+    for split in SPLITS:
+        for original in read_jsonl(gold / f"{split}_molecule_condition_labels.jsonl"):
+            card = dict(original)
+            parent, condition = card["molecule_identity_key"], card["condition_group"]
+            null = condition == "no_reported_external_condition"
+            votes = groups[parent] if null else external[(parent, condition)]
+            counts = Counter(str(label) for _, label in votes)
+            truth = originals[parent] if null else card
+            if not votes or counts != +Counter(truth["label_counts"]):
+                raise ValueError(f"Skin votes do not reproduce source truth: {card['benchmark_row_id']}")
+            if len(votes) != len({uid for uid, _ in votes}):
+                raise ValueError(f"Repeated Skin voter within card: {card['benchmark_row_id']}")
+            mean = sum(label for _, label in votes) / len(votes)
+            if int(mean >= 0.5) != int(card["Y"]):
+                raise ValueError(f"Skin replay changes the frozen label: {card['benchmark_row_id']}")
+            if counts != +Counter(card["label_counts"]):
+                differences.append({"benchmark_row_id": card["benchmark_row_id"], "split": split,
+                                    "old_label_counts": card["label_counts"], "new_label_counts": dict(counts)})
+            if null:
+                card.update({field: truth[field] for field in vote_fields if field in truth})
+            card["source_record_ids"] = [uid for uid, _ in votes]
+            card_units = []
+            for uid, label in votes:
+                position, raw, source = physical[uid]
+                unit = dict(vote_id=uid, vote_label=label, physical_source_row_uids=[uid],
+                            physical_source_record_ids=[str(raw["extraction_id"])])
+                common = dict(contract_version="gold_v1_voter_contract.v1", task="skin_reaction",
+                              benchmark_row_id=card["benchmark_row_id"], molecule_identity_key=parent,
+                              condition_group=condition, split=split)
+                units.append({**common, **unit, "physical_member_count": 1})
+                card_units.append(unit)
+                membership.append({**common, "source_row_uid": uid,
+                    "physical_source_record_id": str(raw["extraction_id"]), "source_id": source,
+                    "source_sha256": hashlib.sha256(json.dumps(raw, sort_keys=True, default=str).encode()).hexdigest(),
+                    "canonical_smiles": str(raw["SMILES"]), "vote_id": uid, "vote_label": label,
+                    "physical_member_index": 1, "physical_member_count": 1, "physical_vote_weight": 1.0})
+            index.append({**common, "Y": int(card["Y"]), "voter_mean": mean,
+                          "vote_unit_count": len(votes), "physical_member_count": len(votes), "vote_units": card_units})
+            corrected[card["benchmark_row_id"]] = card
+    counts = dict(gold_label_cards=len(index), vote_units=len(units), physical_members=len(membership),
+                  distinct_physical_uids=len({row["source_row_uid"] for row in membership}))
+    if counts != dict(gold_label_cards=2421, vote_units=35004, physical_members=35004, distinct_physical_uids=34950):
+        raise ValueError(f"Unexpected Skin reconstruction counts: {counts}")
+    shutil.copytree(gold, target)
+    outputs = {}
+    for name, rows, schema in (("voter_membership", membership, MEMBERSHIP_SCHEMA),
+                               ("vote_units", units, VOTE_UNITS_SCHEMA),
+                               ("gold_label_record_index", index, INDEX_SCHEMA)):
+        path = target / f"{name}.parquet"
+        pq.write_table(pa.Table.from_pylist(rows, schema=schema), path, compression="zstd")
+        outputs[name] = dict(path=f"data/gold_labels/Skin_Reaction/v1/scaffold/{path.name}", sha256=sha256_file(path))
+    changed_files = {}
+    for path in target.glob("*.jsonl"):
+        rows = read_jsonl(path)
+        if "molecule_condition_labels" not in path.name:
+            continue
+        replacements = [corrected.get(row.get("benchmark_row_id"), row) for row in rows]
+        path.write_text("".join(json.dumps(row, ensure_ascii=False) + "\n" for row in replacements))
+        changed_files[path.name] = {"before_sha256": sha256_file(gold / path.name), "after_sha256": sha256_file(path)}
+    small = json.loads((target / "valid_small_manifest.json").read_text())
+    small["source"]["valid_molecule_condition_labels_sha256"] = sha256_file(target / "valid_molecule_condition_labels.jsonl")
+    small["valid_small"]["molecule_condition_labels_sha256"] = sha256_file(target / "valid_small_molecule_condition_labels.jsonl")
+    (target / "valid_small_manifest.json").write_text(json.dumps(small, indent=2) + "\n")
+    summary = json.loads((target / "summary.json").read_text())
+    summary["voter_counts"] = counts
+    (target / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+    manifest = dict(version="gold_v1_voter_contract.v1", status="staged", task="skin_reaction", counts=counts,
+                    policy={"gold_release": "v1", "vote_unit": "one accepted physical source row per context",
+                            "aggregation": "one vote per (benchmark_row_id, vote_id)", "physical_member_weight": "1"},
+                    inputs={"upstream_commit": AMES_MEMBERSHIP_COMMIT, **inputs,
+                            "molecule_labels_sha256": sha256_file(original_path),
+                            "source_condition_review_sha256": sha256_file(gold / "source_condition_review.jsonl")},
+                    outputs=outputs, corrections=differences, corrected_files=changed_files)
+    (target / "voter_contract_manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+    return manifest
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--tasks", nargs="+", choices=("all", *TASKS), default=["all"])
-    parser.add_argument("--output-root", type=Path, required=True)
+    parser.add_argument("--tasks", nargs="+", choices=("all", "bbb_martins", "bioavailability_ma", "skin_reaction", *TASKS), default=["all"])
+    parser.add_argument("--output-root", type=Path, default=REPO_ROOT / "data/gold_labels")
+    parser.add_argument("--verify-only", action="store_true")
+    parser.add_argument("--report", type=Path)
+    parser.add_argument("--skin-replay-root", type=Path,
+                        help="Export of the pinned original Git inputs for the Skin audit")
     parser.add_argument("--replay-root", type=Path)
     parser.add_argument("--ames-membership-root", type=Path)
     args = parser.parse_args()
+    if "all" in args.tasks and len(args.tasks) != 1:
+        parser.error("--tasks all cannot be combined with task names")
+    if args.skin_replay_root and not args.verify_only:
+        if args.tasks != ["skin_reaction"]:
+            parser.error("Skin publication requires --tasks skin_reaction")
+        print(json.dumps(publish_skin_replay(args.skin_replay_root, args.output_root), indent=2))
+        return 0
+    if args.verify_only:
+        gold_tasks = {"bbb_martins": "BBB_Martins", "bioavailability_ma": "Bioavailability_Ma",
+                      "skin_reaction": "Skin_Reaction", **{task: spec["gold"] for task, spec in TASKS.items()}}
+        report = {}
+        for task, name in gold_tasks.items():
+            if args.tasks != ["all"] and task not in args.tasks:
+                continue
+            library = REPO_ROOT / "data/evidence_libraries" / task
+            try:
+                report[task] = verify_membership(args.output_root / name / "v1/scaffold",
+                                                  library / (library / "CURRENT").read_text().strip())
+            except (ValueError, FileNotFoundError) as exc:
+                report[task] = {"status": "blocked", "reason": str(exc)}
+            if task == "skin_reaction" and args.skin_replay_root:
+                report[task]["reconstruction"] = audit_skin_replay(
+                    args.skin_replay_root, args.output_root / name / "v1/scaffold",
+                    library / (library / "CURRENT").read_text().strip())
+        if args.report:
+            args.report.parent.mkdir(parents=True, exist_ok=True)
+            args.report.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
+        print(json.dumps(report, indent=2))
+        return int(any(row["status"] != "verified" for row in report.values()))
     tasks = tuple(TASKS) if args.tasks == ["all"] else tuple(dict.fromkeys(args.tasks))
+    if any(task not in TASKS for task in tasks):
+        parser.error("Publication supports Ames, DILI and Carcinogens; use --verify-only to audit all six tasks")
     print(json.dumps({
         task: publish_task(
             task, args.output_root, args.replay_root, args.ames_membership_root

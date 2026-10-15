@@ -21,6 +21,7 @@ from predict.retrieval.assay_reranking.build_tdc_score_overlay import (
 )
 from data.processing.paths import REPO_ROOT
 from predict.retrieval.assay_reranking.ranked_uid_retrieval import hydrate_uids
+from predict.retrieval.assay_reranking.artifact_bundle import DEFAULT_CACHE_SET, CACHE_SET_SCHEMA, cache_task
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
 from predict.retrieval.selection import assert_disjoint, indexed_manifests
 from optimization.semantic_buckets.inputs import (
@@ -197,8 +198,7 @@ def _semantic_ledger(
         expected = extra.get("inputs") or {}
         table = extension.with_name(extra["projection"]["path"])
         if (
-            task not in {"dili", "ames"}
-            or extra.get("schema_version") != "semantic_retrieval_mean_weights.v2"
+            extra.get("schema_version") != "semantic_retrieval_mean_weights.v2"
             or extra.get("status") != "candidate_unreviewed"
             or (expected["ledger"]["sha256"] != pins[str(artifacts.central_ledger)])
             or (
@@ -233,16 +233,19 @@ def _semantic_ledger(
 
 
 def prepare_bbb_filter(
-    subset: str, target: Path, *, cache_bundle: Path | None = None
+    subset: str, target: Path, *, cache_bundle: Path | None = None, benchmark: str = "tdc"
 ) -> Path:
     from predict.harnesses.branches.flat import _source_semantic_card
 
     "Classify the frozen BBB indirect universe once before profile optimization."
     if subset not in {"valid", "test"} or target.exists():
         raise ValueError("Expected a valid/test split and a new filter directory")
-    cache_bundle = cache_bundle or BUNDLE
+    cache_bundle = cache_bundle or DEFAULT_CACHE_SET
     bundle = yaml.safe_load(cache_bundle.read_text())
-    if bundle.get("benchmark") == "tdc" and "tasks" in bundle:
+    if bundle.get("schema_version") == CACHE_SET_SCHEMA:
+        spec = cache_task(cache_bundle, "bbb_martins", benchmark)
+        index_path = (REPO_ROOT / spec["retrieval"]["later"]).resolve()
+    elif bundle.get("benchmark") == "tdc" and "tasks" in bundle:
         later = bundle["tasks"]["bbb_martins"]["retrieval"]["later"]
         index_path = (REPO_ROOT / later).resolve()
     else:
@@ -500,6 +503,7 @@ def load_indirect(
     dili_score_cache: Path | None = None,
     prediction_filter: Path | None = None,
     cache_bundle: Path | None = None,
+    exclude_disjoint_violations: bool = False,
 ) -> tuple[dict, dict]:
     from predict.retrieval.assay_reranking.ranked_uid_retrieval import (
         load_ranked_universe,
@@ -553,12 +557,22 @@ def load_indirect(
             )
         ):
             raise ValueError("prediction filter omits candidate UIDs")
+    from predict.retrieval.policies import decide_candidate, normalize_molecule_identity
+
+    disjoint_exclusions = []
     output = {query: [] for query in queries}
     for level, by_query in ranked.items():
         manifest = json.loads(manifests[level].read_text())
         for query_id, rows in by_query.items():
             for row in rows:
                 uid = str(row["item_id"])
+                if exclude_disjoint_violations:
+                    decision = decide_candidate(normalize_molecule_identity(queries[query_id]),
+                        {"canonical_smiles": row["parent_smiles"]}, manifest.get("neighbor_identity_policy", "parent_disjoint"))
+                    if decision.excluded:
+                        disjoint_exclusions.append(dict(benchmark_row_id=query_id, level=level,
+                                                       source_row_uid=uid, reason=decision.reason))
+                        continue
                 assert_disjoint(
                     queries[query_id],
                     row["parent_smiles"],
@@ -580,13 +594,14 @@ def load_indirect(
     for query_id, rows in output.items():
         if len({str(row["item_id"]) for row in rows}) != len(rows):
             raise ValueError("joint indirect pool repeats physical UIDs")
-        for level in levels:
-            attach_exact_scores(
-                [row for row in rows if row["level"] == level],
-                query_id=query_id,
-                level=level,
-                scores=scores or {},
-            )
+        if scores is not None:
+            for level in levels:
+                attach_exact_scores(
+                    [row for row in rows if row["level"] == level],
+                    query_id=query_id,
+                    level=level,
+                    scores=scores,
+                )
     return (
         output,
         dict(
@@ -596,6 +611,8 @@ def load_indirect(
             semantics=dict(pinned_inputs=semantic_pins),
             dili_tool_scores=tool_audit,
             prediction_filter=filter_pins,
+            disjoint_candidate_filter=dict(enabled=exclude_disjoint_violations,
+                                            exclusions=disjoint_exclusions),
         ),
     )
 
@@ -607,7 +624,7 @@ def prepare_l1_cache(
     output: Path,
     *,
     capacity: int = 100,
-    identity_policy: str = "parent_disjoint",
+    identity_policy: str = "scaffold_disjoint",
     membership_path: Path | None = None,
     membership_projection: Path | None = None,
 ) -> Path:
@@ -622,6 +639,8 @@ def prepare_l1_cache(
     )
     from predict.retrieval.assay_reranking.ranked_uid_retrieval import SCHEMA_VERSION
 
+    if identity_policy != "scaffold_disjoint":
+        raise ValueError("Direct L1 construction requires scaffold-disjoint candidates")
     if output.exists() or capacity < 1:
         raise ValueError("L1 cache requires a fresh root and positive card capacity")
     train = read_jsonl(train_path)
@@ -951,7 +970,7 @@ if __name__ == "__main__":
     parser.add_argument("--capacity", type=int, default=100)
     parser.add_argument(
         "--identity-policy",
-        choices=("parent_disjoint", "scaffold_disjoint"),
+        choices=("scaffold_disjoint",),
         default="scaffold_disjoint",
     )
     args = parser.parse_args()

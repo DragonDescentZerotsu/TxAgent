@@ -4,7 +4,7 @@ from __future__ import annotations
 from data.processing.paths import resolve_legacy_path
 from predict.utils.json import read_json
 
-from collections import Counter, defaultdict
+from collections import defaultdict
 import json
 import math
 from pathlib import Path
@@ -18,7 +18,6 @@ from predict.utils.json import sha256_file
 
 SCHEMA_VERSION = "ranked_uid_retrieval.v1"
 CAPACITY = 100
-CONTRAST_WIDTHS = (15, 25, 50, 100)
 HYBRID_METHOD = "assay_transfer_complete_or_hidden"
 HIDDEN_PARTIAL_METHOD = "assay_transfer_partial_hidden"
 QUERY_PURE_METHOD = "assay_transfer_complete_else_morgan"
@@ -61,6 +60,8 @@ def _manifest(path: Path, task: str, subset: str, level: str) -> dict[str, Any]:
                 "parent_disjoint", "scaffold_disjoint",
             }):
         raise ValueError(f"Incompatible ranked UID cache: {path}")
+    if level == "L1" and document.get("neighbor_identity_policy") != "scaffold_disjoint":
+        raise ValueError("Direct L1 retrieval requires scaffold-disjoint candidates")
     return document
 
 
@@ -343,8 +344,15 @@ def _payload(row: Mapping[str, Any], ranked: Mapping[str, Any], method: str) -> 
     if not math.isfinite(similarity) or not 0 <= similarity <= 1:
         raise ValueError("Invalid cached Morgan similarity")
     payload = json.loads(str(row["payload"]))
-    if payload.get("label_source") == "tdc" or str(payload.get("label_source") or "").startswith("tdc_v"):
+    canonical_card = payload.get("label_source") == "canonical_context_cards.v1"
+    if canonical_card or payload.get("label_source") == "tdc" or str(payload.get("label_source") or "").startswith("tdc_v"):
         source_fields = dict(payload.get("source_fields") or {})
+        if canonical_card and (
+            set(source_fields) != {"label"}
+            or source_fields["label"] not in {0, 1}
+            or source_fields["label"] != payload.get("Y")
+        ):
+            raise ValueError("Canonical context card has an invalid label contract")
         payload.setdefault("family_key", "tdc_training_labels")
         payload.setdefault("source_id", str(payload["label_source"]))
         payload.setdefault("record_id", str(row["external_record_id"]))
@@ -386,113 +394,6 @@ def _payload(row: Mapping[str, Any], ranked: Mapping[str, Any], method: str) -> 
     return result
 
 
-def _select_assay_contrastive(
-    rows: list[dict[str, Any]], contexts: Mapping[str, Mapping[str, Any]], *,
-    molecule_limit: int, primary_width: int, min_contrast: int,
-    context_scores: Sequence[Mapping[str, Any]] = (),
-) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """Rank assay scores inside a Morgan pool, widening only for label balance."""
-    if primary_width not in CONTRAST_WIDTHS or min_contrast < 0:
-        raise ValueError("Unsupported Morgan width or negative contrast")
-    if molecule_limit < 2 * min_contrast:
-        raise ValueError("Contrastive L1 requires K >= 2*M")
-
-    def label(row: Mapping[str, Any]) -> int:
-        context = contexts.get(str(row["assay_context_id"]))
-        if context is None:
-            raise ValueError("Assay-ranked L1 context is missing")
-        return int(context["gold_label"])
-
-    primary = [row for row in rows if int(row["morgan_rank"]) <= primary_width]
-    if len(primary) < molecule_limit:
-        raise ValueError(f"Morgan top-{primary_width} has fewer than K candidates")
-    assay_key = lambda row: (int(row["assay_rank"]), str(row["item_id"]))
-    selected = sorted(primary, key=assay_key)[:molecule_limit]
-    counts = Counter(label(row) for row in selected)
-    base_by_parent = {
-        str(row.get("parent_id", row["item_id"])): row for row in rows
-    }
-    alternatives = []
-    for score in context_scores:
-        base = base_by_parent.get(str(score["parent_id"]))
-        if base is None:
-            continue
-        alternative = dict(base)
-        alternative.update({
-            "assay_context_id": str(score["context_id"]),
-            "assay_transfer_score": float(score["assay_transfer_score"]),
-            "assay_rank": int(score["assay_rank"]),
-            "assay_member_count": int(score["member_count"]),
-            "score_key": str(score["score_key"]),
-        })
-        alternatives.append(alternative)
-    candidates_by_score = alternatives or rows
-    score_key = lambda row: (
-        -float(row["assay_transfer_score"]), str(row["assay_context_id"])
-    )
-    candidate_key = score_key if alternatives else assay_key
-    replacements = []
-    fallback_widths = [width for width in CONTRAST_WIDTHS if width >= primary_width]
-    for missing_label in (0, 1):
-        while counts[missing_label] < min_contrast:
-            added = None
-            effective_width = None
-            for width in fallback_widths:
-                candidates = [
-                    row for row in candidates_by_score
-                    if int(row["morgan_rank"]) <= width
-                    and label(row) == missing_label
-                    and not any(
-                        str(current["item_id"]) == str(row["item_id"])
-                        and str(current["assay_context_id"]) == str(row["assay_context_id"])
-                        for current in selected
-                    )
-                ]
-                if candidates:
-                    added = min(candidates, key=candidate_key)
-                    effective_width = width
-                    break
-            if added is None:
-                raise ValueError("Morgan top-100 cannot satisfy the requested label contrast")
-            removed = next(
-                (row for row in selected if str(row["item_id"]) == str(added["item_id"])),
-                None,
-            )
-            if removed is None:
-                removable = [
-                    row for row in selected
-                    if label(row) != missing_label and counts[label(row)] > min_contrast
-                ]
-                if not removable:
-                    raise ValueError("Cannot satisfy the requested binary label balance")
-                removed = max(removable, key=candidate_key)
-            elif counts[label(removed)] <= min_contrast:
-                raise ValueError("Cannot satisfy the requested binary label balance")
-            selected[selected.index(removed)] = added
-            counts[label(removed)] -= 1
-            counts[missing_label] += 1
-            replacements.append({
-                "added_context_id": str(added["assay_context_id"]),
-                "added_label": missing_label,
-                "added_parent_rank": int(added["morgan_rank"]),
-                "effective_parent_width": effective_width,
-                "removed_context_id": str(removed["assay_context_id"]),
-                "removed_label": label(removed),
-            })
-    selected.sort(key=candidate_key)
-    return selected, {
-        "morgan_primary_parent_width": primary_width,
-        "morgan_fallback_parent_width": CAPACITY,
-        "morgan_candidate_parent_widths": fallback_widths,
-        "candidate_contexts_primary": len(primary),
-        "selected_label_counts": {str(value): counts[value] for value in (0, 1)},
-        "replacement_count": len(replacements),
-        "fallback_beyond_primary": any(
-            replacement["added_parent_rank"] > primary_width
-            for replacement in replacements
-        ),
-        "replacements": replacements,
-    }
 
 
 def _hydrate(
@@ -500,6 +401,12 @@ def _hydrate(
 ) -> dict[str, dict[str, Any]]:
     if not uids:
         return {}
+    if any(uid.startswith("skin_gold_v1_member_") for uid in uids):
+        raise ValueError(
+            "Skin Gold cache contains synthetic member IDs, not canonical evidence UIDs. "
+            "Rebuild from verified voter membership before inference; "
+            "see docs/look/gold_voter_provenance.md."
+        )
     table = pq.read_table(
         path, columns=["source_row_uid", "external_record_id", "payload"],
         filters=[("source_row_uid", "in", sorted(uids))],
@@ -526,7 +433,7 @@ def load_candidates(
     queries: Mapping[str, str], *, task: str, subset: str, policy: Mapping[str, Any],
     molecule_limit: int = 10, l1_limit: int = 10,
     later_limit: int | Mapping[str, int] = 50, tie_seed: int = 0,
-    cache_pool: str = "all", min_contrast: int = 3,
+    cache_pool: str = "all",
     morgan_primary_parent_width: int = CAPACITY,
     preselected_uids: Mapping[str, Mapping[str, Sequence[str]]] | None = None,
     preselected_contexts: Mapping[str, Sequence[str]] | None = None,
@@ -541,7 +448,7 @@ def load_candidates(
         raise ValueError("ranked_uid_retrieval.v1 supports only pool=all and tie_seed=0")
     stages = dict(policy["stages"])
     l1_selection = stages.get("L1")
-    if l1_selection not in {"morgan", "assay_transfer", "assay_transfer_contrastive", QUERY_PURE_METHOD}:
+    if l1_selection not in {"morgan", "assay_transfer", QUERY_PURE_METHOD}:
         raise ValueError("ranked_uid_retrieval.v1 does not support this L1 selection")
     limits = _limits(stages, later_limit)
     physical_context_uids: dict[tuple[str, str], list[str]] = defaultdict(list)
@@ -604,18 +511,12 @@ def load_candidates(
     identities = None
     documents = {}
     for level, method in stages.items():
-        read_method = (
-            "morgan" if level == "L1" and method == "assay_transfer_contrastive"
-            else method
-        )
         rows, current, document = _ranked_rows(
-            manifests[level], task=task, subset=subset, level=level, method=read_method,
+            manifests[level], task=task, subset=subset, level=level, method=method,
             queries=queries,
             limit=(
                 None if physical_selection is not None and level == "L1" else
-                CAPACITY
-                if level == "L1" and method == "assay_transfer_contrastive"
-                else molecule_limit if level == "L1"
+                molecule_limit if level == "L1"
                 else None if all_later_records or preselected_uids is not None else limits[level]
             ),
             parent_morgan_width=(
@@ -741,26 +642,7 @@ def load_candidates(
     candidate_contexts = {
         selected_context_id(row) for rows in ranked["L1"].values() for row in rows
     }
-    contrast_audits: dict[str, Any] = {}
     with _open(l1_database) as connection:
-        context_scores: dict[str, list[dict[str, Any]]] = {}
-        if (
-            l1_selection == "assay_transfer_contrastive"
-            and l1_document.get("l1_context_score_contract") == "l1_context_scores.v1"
-        ):
-            for query_id, rows in ranked["L1"].items():
-                parents = {str(row["parent_id"]) for row in rows}
-                placeholders = ",".join("?" for _ in parents)
-                context_scores[query_id] = [
-                    dict(row) for row in connection.execute(
-                        "SELECT * FROM context_scores WHERE benchmark_row_id=? "
-                        f"AND parent_id IN ({placeholders}) ORDER BY assay_rank,context_id",
-                        (query_id, *sorted(parents)),
-                    )
-                ]
-                candidate_contexts.update(
-                    str(row["context_id"]) for row in context_scores[query_id]
-                )
         placeholders = ",".join("?" for _ in candidate_contexts)
         contexts = {
             str(row["context_id"]): dict(row)
@@ -771,18 +653,6 @@ def load_candidates(
         }
         if candidate_contexts != set(contexts):
             raise ValueError("Ranked L1 contexts are absent from the context ledger")
-        if l1_selection == "assay_transfer_contrastive" and preselected_contexts is None:
-            for query_id, rows in ranked["L1"].items():
-                ranked["L1"][query_id], contrast_audits[query_id] = (
-                    _select_assay_contrastive(
-                        rows,
-                        contexts,
-                        molecule_limit=molecule_limit,
-                        primary_width=morgan_primary_parent_width,
-                        min_contrast=min_contrast,
-                        context_scores=context_scores.get(query_id, ()),
-                    )
-                )
         chosen_contexts = {
             selected_context_id(row) for rows in ranked["L1"].values() for row in rows
         }
@@ -839,7 +709,7 @@ def load_candidates(
     later_by_query: dict[str, dict[str, Any]] = {}
     query_audits: dict[str, Any] = {}
     for query_id in queries:
-        method = "assay_transfer" if l1_selection == "assay_transfer_contrastive" else l1_selection
+        method = l1_selection
         molecules = []
         for selection_rank, row in enumerate(ranked["L1"][str(query_id)]):
             row_method = row.get("_selection_method", method)
@@ -906,8 +776,6 @@ def load_candidates(
             **({"selection_mode": molecules[0]["ranking_method"]}
                if l1_selection == QUERY_PURE_METHOD else {}),
         }}
-        if query_id in contrast_audits:
-            level_audits["L1"].update(contrast_audits[query_id])
         for level, level_method in stages.items():
             if level == "L1":
                 continue
@@ -992,11 +860,10 @@ def load_candidates(
             "later_limits": limits,
             "preselected_uid_budget": preselected_uid_budget,
             "all_later_records": all_later_records,
-            "min_contrast": min_contrast if l1_selection == "assay_transfer_contrastive" else 0,
+            "min_contrast": 0,
             "morgan_primary_parent_width": (
                 morgan_primary_parent_width
-                if l1_selection == "assay_transfer_contrastive"
-                or any(
+                if any(
                     level != "L1" and method == "assay_transfer"
                     for level, method in stages.items()
                 ) else None

@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from predict.llm_io.evidence import ASSAY_RAW_CARD_PROMPT_PROFILE
+from predict.utils.evidence import ASSAY_RAW_CARD_PROMPT_PROFILE
 from predict.harnesses.branches.inference import RAW_ASSAY_MAX_PAYLOAD_TOKENS, bound_group_prompt_payload, load_frozen_single_analysis
 
 
@@ -11,7 +11,8 @@ def test_load_frozen_single_analysis(tmp_path):
     run_dir.mkdir()
     path = run_dir / "single_molecule_reasoning_output.json"
     path.write_text(
-        json.dumps({"status": "ok", "llm": {"content": {"confidence": "low"}}})
+        json.dumps({"status": "ok", "llm": {"content": {"confidence": "low"},
+                                          "structured_output_validation": {"valid": True}}})
     )
 
     output = load_frozen_single_analysis(str(run_dir))

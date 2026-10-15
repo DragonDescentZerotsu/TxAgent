@@ -66,6 +66,7 @@ def test_filter_preparation_search_and_source_bindings(tmp_path, monkeypatch, ca
                            "q", f"u{rank}", identity.parent_inchi_key, identity.parent_smiles,
                            0.5, rank, 1, rank,
                        ))
+        db.execute("UPDATE rankings SET assay_transfer_score=0.8,assay_rank=1,score_key='exact' WHERE item_id='u1'")
     manifest = tmp_path / "VERSION.json"
     manifest.write_text(json.dumps(dict(
         schema_version="ranked_uid_retrieval.v1", status="complete", task_id="bbb_martins",
@@ -107,6 +108,7 @@ def test_filter_preparation_search_and_source_bindings(tmp_path, monkeypatch, ca
     rows, audit = pool.load_indirect(index, task="bbb_martins", subset="valid", queries={"q": "CCO"},
         prediction_filter=filter_path, cache_bundle=bundle)
     assert [row["item_id"] for row in rows["q"]] == ["u1"]
+    assert rows["q"][0]["assay_transfer_score"] == 0.8
     assert set(audit["prediction_filter"]) == {str(filter_path), str(filter_path.with_name("eligibility.tsv"))}
     query = tmp_path / "query.jsonl"
     query.write_text(json.dumps(dict(benchmark_row_id="q", drug="CCO")))
@@ -115,10 +117,16 @@ def test_filter_preparation_search_and_source_bindings(tmp_path, monkeypatch, ca
     grid.write_text(json.dumps(dict(kind="indirect", diversity="log", profiles=[
         asdict(objectives.IndirectProfile("fixture", 0, 0, 1, 0, 0, ())),
     ])))
+    named = tmp_path / "catalog.json"
+    named.write_text(json.dumps(dict(schema_version="retrieval_cache_set.v1", name="fixture", release="v1",
+        benchmarks={"gold_v1": {"bbb_martins": dict(retrieval=dict(L1=str(index), later=str(index)))}})))
+    named_filter = pool.prepare_bbb_filter("valid", tmp_path / "named_filter", cache_bundle=named, benchmark="gold_v1")
     result = search.build(tmp_path / "search", ["bbb_martins"], kind="indirect", subset="valid",
-        cache_bundle=bundle, grid=grid, budget=1, prediction_filter=filter_path)
+        cache_bundle=named, grid=grid, budget=1, prediction_filter=named_filter)
     selected = result.parent / json.loads(result.read_text())["profiles"][0]["task_manifests"]["bbb_martins"]["path"]
-    assert search.validate_selection_manifest(selected)["inputs"]["pool"]["prediction_filter"] == audit["prediction_filter"]
+    selected_filter = search.validate_selection_manifest(selected)["inputs"]["pool"]["prediction_filter"]
+    assert selected_filter == {str(path): sha256_file(path) for path in (
+        named_filter, named_filter.with_name("eligibility.tsv"))}
 
     original_bundle = bundle.read_text()
     bundle.write_text(original_bundle + "\n")
@@ -140,6 +148,7 @@ def test_filter_preparation_search_and_source_bindings(tmp_path, monkeypatch, ca
         pool.load_indirect(index, task="bbb_martins", subset="valid", queries={"q": "CCO"},
             prediction_filter=filter_path, cache_bundle=bundle)
     with pytest.raises(ValueError, match="selection input changed"):
+        named_filter.with_name("eligibility.tsv").write_text("source_row_uid\tprediction_only\nu1\t0\n")
         search.validate_selection_manifest(selected)
     document = json.loads(original)
     document["files"]["eligibility.tsv"] = dict(sha256=sha256_file(table), rows=1)

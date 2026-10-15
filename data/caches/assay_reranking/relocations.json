@@ -1,0 +1,4 @@
+{
+  "data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/canonical_voters_v1/original": "data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1",
+  "data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/replayed_votes_v1/scoring": "data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/scoring"
+}

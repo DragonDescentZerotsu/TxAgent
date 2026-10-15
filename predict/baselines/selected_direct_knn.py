@@ -1,4 +1,4 @@
-"""Score frozen TDC direct-card selections under an explicit benchmark contract."""
+"""Score frozen Gold or TDC direct-card selections under their benchmark contract."""
 
 from __future__ import annotations
 
@@ -13,9 +13,9 @@ from pathlib import Path
 
 from sklearn.metrics import accuracy_score, f1_score
 
-from data.processing.gold_labels.conditioned_benchmark import tdc_split_path
+from data.processing.gold_labels.conditioned_benchmark import split_path, tdc_split_path
 from predict.baselines.direct_l1_knn import _write_tsv
-from predict.harnesses.branches.flat import _load_preselected_contexts
+from predict.harnesses.branches.flat import _load_preselected_contexts, PRESELECTED_DIRECT_SCHEMAS
 from predict.harnesses.branches.matrix import load_preselected_direct_grid
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
 
@@ -24,9 +24,7 @@ def run(
     grid_path: Path, output_dir: Path, *, benchmark: str, subset: str, task: str,
     neighbor_order: str, ks: tuple[int, ...], ambiguous_card_policy: str | None,
 ) -> Path:
-    if (benchmark, neighbor_order) not in {
-        ("tdc", "assay-rank"), ("tdc", "policy-relevance")
-    }:
+    if benchmark not in {"gold_v1", "tdc"} or neighbor_order not in {"assay-rank", "policy-relevance"}:
         raise ValueError("Neighbor order is incompatible with the requested benchmark")
     if not ks or any(k < 1 or k > 10 for k in ks) or len(set(ks)) != len(ks):
         raise ValueError("K values must be distinct integers from 1 to 10")
@@ -34,7 +32,8 @@ def run(
     profiles = load_preselected_direct_grid(grid_path, benchmark=benchmark, subset=subset)
     if not profiles or any(task not in profile["tasks"] for profile in profiles):
         raise ValueError(f"Grid does not cover {task} in every profile")
-    target_path = tdc_split_path(task, subset)
+    subset = profiles[0]["subset"]
+    target_path = (split_path if benchmark == "gold_v1" else tdc_split_path)(task, subset)
     targets = {str(row["benchmark_row_id"]): int(row["Y"]) for row in read_jsonl(target_path)}
     queries = {str(row["benchmark_row_id"]): str(row["drug"]) for row in read_jsonl(target_path)}
     metrics, predictions, neighbors, sources = [], [], [], []
@@ -44,18 +43,18 @@ def run(
         name = profile["name"]
         leaf_path = Path(profile["task_manifests"][task]["path"])
         leaf = json.loads(leaf_path.read_text(encoding="utf-8"))
-        if leaf.get("schema_version") != "direct_context_selection.v2" or leaf.get("status") != "complete":
+        if leaf.get("schema_version") not in PRESELECTED_DIRECT_SCHEMAS or leaf.get("status") != "complete":
             raise ValueError(f"Incomplete direct selection: {leaf_path}")
         inputs = leaf["inputs"]
         cache = inputs["direct_cache"]
         policy = leaf.get("score_policy")
-        expected_policy = "tdc_v2_exact_direct_40_70.v1" if benchmark == "tdc" else None
+        score_policy_name = (policy or {}).get("version")
+        label_release = "v1" if benchmark == "gold_v1" else {"benchmark": "tdc"}
         if (leaf["benchmark"] != benchmark or leaf["subset"] != subset
                 or leaf["task_id"] != task or leaf["profile"] != name
                 or Path(inputs["queries"]).resolve() != target_path.resolve()
                 or inputs["queries_sha256"] != sha256_file(target_path)
-                or cache["label_release"] != {"benchmark": "tdc", "version": benchmark.removeprefix("tdc_")}
-                or (policy or {}).get("version") != expected_policy):
+                or cache["label_release"] != label_release):
             raise ValueError(f"Selection identity or score policy differs: {name}")
         for field in ("release_index", "l1_manifest"):
             if sha256_file(Path(cache[field])) != cache[f"{field}_sha256"]:
@@ -78,17 +77,13 @@ def run(
             raise ValueError(f"Selected query identities differ: {name}")
         if identity not in ranks_by_cache:
             with sqlite3.connect(f"file:{Path(cache['database']).resolve()}?mode=ro&immutable=1", uri=True) as db:
-                if benchmark == "tdc" and db.execute(
-                    "SELECT count(*) FROM rankings WHERE assay_rank IS NULL "
-                    "OR assay_transfer_score IS NULL"
-                ).fetchone()[0]:
-                    raise ValueError("TDC-v1 L1 cache has missing assay-transfer scores")
                 ranks = defaultdict(dict)
-                context_field = "r.assay_context_id" if benchmark == "tdc" else "r.morgan_context_id"
                 for qid, cid, parent, label, assay_rank, assay_score, similarity in db.execute(
-                    "SELECT r.benchmark_row_id, c.context_id, c.parent_id, c.gold_label, r.assay_rank, "
-                    "r.assay_transfer_score, r.morgan_similarity FROM rankings r JOIN contexts c "
-                    f"ON c.context_id = {context_field}"
+                    "SELECT r.benchmark_row_id, c.context_id, c.parent_id, c.gold_label, "
+                    "CASE WHEN c.context_id=r.assay_context_id THEN r.assay_rank END, "
+                    "CASE WHEN c.context_id=r.assay_context_id THEN r.assay_transfer_score END, "
+                    "r.morgan_similarity FROM rankings r JOIN contexts c "
+                    "ON c.context_id=r.morgan_context_id OR c.context_id=r.assay_context_id"
                 ):
                     ranks[qid][cid] = (parent, int(label), assay_rank, assay_score, float(similarity))
             ranks_by_cache[identity] = ranks
@@ -103,14 +98,15 @@ def run(
                 parent, label, assay_rank, assay_score, similarity = ranks[qid][cid]
                 if parent != card["parent_id"] or label != int(card["gold_label"]):
                     raise ValueError(f"Frozen card identity differs: {name}/{qid}/{cid}")
-                if benchmark == "tdc":
+                if neighbor_order == "assay-rank":
                     if assay_rank is None or assay_score is None:
-                        raise ValueError(f"TDC-v1 assay score is missing: {name}/{qid}/{cid}")
+                        raise ValueError(f"Assay rank or score is missing: {name}/{qid}/{cid}")
                     relevance = -int(assay_rank)
                 else:
-                    exact = float(card["assay_transfer_score"]) if card["assay_transfer_score"] else None
+                    raw = card.get("assay_transfer_score")
+                    exact = (float(raw) if raw not in (None, "") else None) if policy else assay_score
                     weight = float(leaf["objective"]["gated_assay_lambda"])
-                    relevance = (similarity if bands[qid] == "low" or exact is None else
+                    relevance = (similarity if bands.get(qid) == "low" or exact is None else
                                  (similarity + weight * similarity * exact) / (1 + weight))
                 ordered.append((relevance, cid, label, card, similarity))
             ordered.sort(key=lambda item: (-item[0], item[1]))
@@ -138,7 +134,7 @@ def run(
         sources.append({"profile": name, "selection_manifest": str(leaf_path),
                         "selection_manifest_sha256": sha256_file(leaf_path),
                         "cache_database_sha256_from_manifest": cache["database_sha256"],
-                        "score_policy": expected_policy})
+                        "score_policy": score_policy_name})
     for name in (profile["name"] for profile in profiles):
         for k in ks:
             rows = [row for row in predictions if row["profile"] == name and row["k"] == k]
@@ -176,7 +172,7 @@ def run(
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--selection-grid", type=Path)
-    parser.add_argument("--benchmark", choices=("tdc", "tdc"))
+    parser.add_argument("--benchmark", choices=("gold_v1", "tdc"))
     parser.add_argument("--subset", choices=("valid", "test"))
     parser.add_argument("--task")
     parser.add_argument("--neighbor-order", choices=("assay-rank", "policy-relevance"))

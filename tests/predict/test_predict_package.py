@@ -20,7 +20,7 @@ def test_public_mode_harness_forces_existing_experiment_mode(monkeypatch):
     monkeypatch.setattr(
         runner,
         "main",
-        lambda selected_config, argv: captured.update(config=selected_config, argv=argv) or 0,
+        lambda selected_config, argv, **kwargs: captured.update(config=selected_config, argv=argv) or 0,
     )
     assert runner.mode_main("full_flat", ["--task", "bbb_martins", "--limit", "1"]) == 0
     assert captured == {"config": config, "argv": ["--limit", "1", "--experiment-mode", "full_flat"]}
@@ -34,11 +34,8 @@ def test_public_harness_cli_selects_the_evidence_plan(monkeypatch):
         return 0
 
     monkeypatch.setattr(runner, "mode_main", record)
-    monkeypatch.setattr(flat, "run", lambda argv: record("full_flat", argv))
-    for organization in ("flat",):
-        assert branches_cli.main(
-            ["--organization", organization, "--task", "bbb_martins"]
-        ) == 0
+    monkeypatch.setattr(branches_cli, "run", lambda argv: record("full_flat", argv))
+    assert branches_cli.main(["--task", "bbb_martins"]) == 0
 
     assert captured == [
         ("full_flat", ["--task", "bbb_martins"]),
@@ -80,3 +77,20 @@ def test_central_trace_and_viewer_adapter_cover_progressive(tmp_path, monkeypatc
     row = json.loads(predictions.read_text(encoding="utf-8"))
     assert row["pred_label"] == "fail"
     assert row["confidence"] == "moderate"
+
+
+def test_viewer_reads_named_run_traces_without_reading_query_snapshots(tmp_path):
+    from predict.traces.catalog import discover_traces
+    root = tmp_path/'flat/final_full_flat/semantic-top50'
+    samples = root/'traces/ames/flat/run/samples/query_idx00000'
+    samples.mkdir(parents=True)
+    trace = {'schema_version':'predict_trace.v1','experiment_id':'semantic-top50',
+             'task':'ames','harness':'flat','sample_id':'query_idx00000','stage':'final',
+             'llm':{'content':{'final_prediction':'positive'},'messages':[]}}
+    (samples/'final.json').write_text(json.dumps(trace))
+    batch = root/'gold_v1/ames/test/default'
+    (batch/'runs/query').mkdir(parents=True)
+    (batch/'manifest.json').write_text('{}')
+    (batch/'runs/query/retrieval.json').write_text('not a trace')
+    assert len(discover_traces(tmp_path)) == 1
+    assert build_dataset([tmp_path],tmp_path/'viewer') == 1

@@ -8,7 +8,8 @@ input hashes in each `VERSION.json`.
 ## Published caches
 
 BBB and Oral use `v10_3_best_scaffold_morgan100_v1`; Skin uses
-`v9_skin_gold_v1_scaffold_morgan100_v1`. Each profile contains independent
+`flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/scoring/`.
+The corrected Skin cache replaces its obsolete scaffold ranking source. Each profile contains independent
 valid and test Parquet files. No file is split or packed. Verify every published
 file and reconstruct its deterministic candidate membership with:
 

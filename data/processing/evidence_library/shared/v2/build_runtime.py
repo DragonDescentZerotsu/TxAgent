@@ -220,7 +220,7 @@ def implementation_fingerprint(
         for path in (
             evidence_root / "compact_artifacts.py",
             evidence_root / "evidence_library.py",
-            repo_root / "predict/llm_io/evidence.py",
+            repo_root / "predict/utils/evidence.py",
             repo_root / "predict/retrieval/policies.py",
             evidence_root / "units.py",
             evidence_root / "index_builder.py",

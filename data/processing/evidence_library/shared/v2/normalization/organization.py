@@ -9,7 +9,7 @@ from collections import Counter, defaultdict
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from predict.llm_io.evidence import attach_minimal_evidence
+from predict.utils.evidence import attach_minimal_evidence
 from data.processing.evidence_library.evidence_library import starling_molecule_id
 
 from .cleaning import stable_id

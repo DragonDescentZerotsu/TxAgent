@@ -19,6 +19,10 @@ SCORING_CONTRACT_VERSION = (
 FA3_SCORING_CONTRACT_VERSION = (
     "assay_transfer_chat_first_divergent_token_bf16_backbone_fp32_head.fa3.v1"
 )
+SCORING_CONTRACTS = {
+    "flash_attention_2": SCORING_CONTRACT_VERSION,
+    "sgl_fa3": FA3_SCORING_CONTRACT_VERSION,
+}
 COMPACT_CACHE_SCHEMA_VERSION = "txagent_assay_transfer_compact_cache.v1"
 REQUIRED_TRANSFORMERS_VERSION = "4.57.6"
 CACHE_ROOT = Path(__file__).resolve().parents[1] / "cache" / "assay_reranking"
@@ -94,7 +98,6 @@ ACTIVE_CACHE_PROFILES = frozenset(
         "tdc_mixed_l1_v1",
         "v10_4_direct_gold_morgan100_v1",
         "v9_skin_gold_v1_morgan100_v1",
-        "v9_skin_gold_v1_scaffold_morgan100_v1",
     }
 )
 
@@ -344,6 +347,7 @@ def build_prompt_task(
     molecule_id: str,
     model: str,
     model_revision: str,
+    scoring_contract_version: str = SCORING_CONTRACT_VERSION,
 ) -> PromptTask:
     prompt = renderer.render(record, query_smiles)
     prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
@@ -352,7 +356,7 @@ def build_prompt_task(
         "prompt_hash": prompt_hash,
         "model": model,
         "model_revision": revision,
-        "scoring_contract_version": SCORING_CONTRACT_VERSION,
+        "scoring_contract_version": scoring_contract_version,
         "template_hash": renderer.template_hash,
         "projection_hash": renderer.projection_hash,
     }
@@ -370,7 +374,7 @@ def build_prompt_task(
         record_id=str(record["record_id"]),
         model=model,
         model_revision=revision,
-        scoring_contract_version=SCORING_CONTRACT_VERSION,
+        scoring_contract_version=scoring_contract_version,
         template_hash=renderer.template_hash,
         projection_hash=renderer.projection_hash,
     )
@@ -606,10 +610,7 @@ def load_model(
     import transformers
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
-    backend = attention_backend or (
-        "sgl_fa3" if torch.cuda.get_device_capability(device)[0] >= 9
-        else "flash_attention_2"
-    )
+    backend = attention_backend or "flash_attention_2"
     required = {
         "flash_attention_2": REQUIRED_TRANSFORMERS_VERSION,
         "sgl_fa3": "5.12.1",

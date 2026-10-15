@@ -13,13 +13,15 @@ import os
 from pathlib import Path
 import re
 import shutil
+import subprocess
 import uuid
 
 from predict.harnesses.branches.manifests import (
     ROOT, SCHEMA, FINAL_SCHEMA, SCHEMAS, canonical_location, compact_record,
     read_record, selection_parameters, named_artifacts, scientific_settings, write_batch,
+    PREDICTION_ROOT, prediction_run_root, prediction_batch_directory,
 )
-from predict.utils.json import write_json_atomic
+from predict.utils.json import write_json_atomic, read_json, sha256_file, atomic_output_path
 
 
 def discover(roots):
@@ -35,7 +37,8 @@ def discover(roots):
             if "manifest.json" in files:
                 # Only these headers define prediction preparation/overlay records.
                 document = json.loads((path / "manifest.json").read_text())
-                if (document.get("schema_version") == "branch_query_prior_overlay.v1"
+                if ((path / "inputs/assay_transfer_cache.json").is_file()
+                        or document.get("schema_version") == "branch_query_prior_overlay.v1"
                         or "harness_version" in document and "input_jsonl" in document):
                     yield path
 
@@ -54,10 +57,12 @@ def _query(path):
 
 def materialize_overlay(batch: Path, document: dict):
     """Keep reuse inputs local; hardlinks avoid copying immutable payload bytes."""
+    previous = read_record(batch / "manifest.json") if (batch / "manifest.json").exists() else {}
+    label = document.get("batch_id") or previous.get("batch_id") or batch.name
     for entry in document.get("sources") or []:
         index = int(entry["target_index"])
         source = canonical_location(entry["run_dir"])
-        target = batch / "runs" / f"{batch.name}_idx{index:05d}"
+        target = batch / "runs" / f"{label}_idx{index:05d}"
         target.mkdir(parents=True, exist_ok=True)
         for name in ("retrieval.json", "single_molecule_reasoning_output.json", "trace_messages.jsonl"):
             original, destination = source / name, target / name
@@ -329,16 +334,353 @@ def refresh_indexes(batches, inventory=None):
             changed += 1
     return changed
 
+def migrate_cache_catalog(batch: Path, catalog: Path, *, apply=False) -> dict:
+    """Migrate prepared cache bindings only after proving identical frozen inputs."""
+    from predict.retrieval.assay_reranking.artifact_bundle import cache_task
+    from predict.harnesses.branches.manifests import resolve_artifact, require_query_ids
+
+    path, snapshot = batch / "manifest.json", batch / "inputs/assay_transfer_cache.json"
+    result = {"batch": str(batch), "status": "unrelated"}
+    if not snapshot.is_file():
+        return result
+    record = json.loads(path.read_text())
+    parent_path = batch.parent / "manifest.json"
+    parent = json.loads(parent_path.read_text()) if parent_path.is_file() else {}
+    if (record.get("status") in {"complete", "completed", "done"}
+            or parent.get("status") in {"complete", "completed", "done"}
+            or any((root / name).exists() for root in (batch, batch.parent)
+                   for name in ("metrics.json", "completion.json", "predictions.jsonl"))):
+        return dict(result, status="completed_preserved")
+    if not record.get("run_uid") or not record.get("queries") or not all(record["queries"].values()):
+        raise ValueError("Historical query identities are unknown; cannot migrate cache bindings")
+    effective = read_record(path)
+    source = resolve_artifact(record, "input_jsonl", batch)
+    if source is None or not source.is_file():
+        raise ValueError("Frozen query input is unavailable; cannot migrate cache bindings")
+    rows = [json.loads(line) for line in source.read_text().splitlines() if line.strip()]
+    require_query_ids(effective, rows, effective["indices"])
+    query_hash = sha256_file(source)
+    history = batch / "inputs/historical_tdc"
+    old = read_json(history / "catalog.json" if (history / "catalog.json").exists() else snapshot)
+    current = read_json(catalog)
+    if (old.get("schema_version"), old.get("name"), old.get("release")) != (
+            current.get("schema_version"), current.get("name"), current.get("release")):
+        raise ValueError("Cache set identity differs; use a new run identity")
+    task, subset = effective["task"], effective["evaluation_subset"]
+    benchmark = effective.get("benchmark", "gold")
+    selected = cache_task(catalog, task, benchmark)
+    candidates = [tasks[task] for scope, tasks in old["benchmarks"].items()
+                  if task in tasks and (scope == selected["benchmark"] or benchmark == "tdc" and scope.startswith("tdc_"))]
+    if len(candidates) != 1:
+        raise ValueError("Frozen cache benchmark binding is unknown or ambiguous")
+    for role in ("L1", "later"):
+        indexes = [canonical_location(spec["retrieval"][role]) for spec in (candidates[0], selected)]
+        headers = [read_json(index) for index in indexes]
+        if any(header.get("task_id") != task or header.get("status") != "complete" for header in headers):
+            raise ValueError("Cache task or completion differs; cannot migrate cache bindings")
+        coverage = [header["splits"][subset]["levels"] for header in headers]
+        if coverage[0].keys() != coverage[1].keys():
+            raise ValueError("Cache level coverage differs; use a new run identity")
+        for level in coverage[0]:
+            paths = [index.parent / levels[level]["manifest"] for index, levels in zip(indexes, coverage)]
+            if any(sha256_file(path) != levels[level].get("manifest_sha256") for path, levels in zip(paths, coverage)):
+                raise ValueError("Cache manifest pin differs; cannot migrate cache bindings")
+            manifests = [read_json(path) for path in paths]
+            identities = [(m.get("content_id"), m.get("database_sha256"), m.get("inputs", {}).get("query_sha256")) for m in manifests]
+            # L1 predecessors may pin compact queries or only their membership database.
+            if (not all(identities[0][:2]) or identities[0] != identities[1]
+                    or level != "L1" and identities[0][2] != query_hash):
+                raise ValueError("Cache payload or query identity differs; use a new run identity")
+    def canonical(value, key=""):
+        if isinstance(value, dict):
+            return {name: canonical(item, name) for name, item in value.items()}
+        if isinstance(value, list):
+            return [canonical(item, key) for item in value]
+        return "tdc" if key in {"benchmark", "benchmark_release"} and value in ("tdc_v1", "tdc_v2") else value
+    migrated = canonical(record)
+    parent_matches = (parent.get("run_uid") and parent.get("queries") == record["queries"]
+                      and parent.get("settings", {}).get("cache_set") == selected["cache_set"])
+    if (migrated == record and snapshot.read_bytes() == catalog.read_bytes()
+            and not (parent_matches and canonical(parent) != parent)):
+        return dict(result, status="already_converted", run_uid=record["run_uid"])
+    if apply:
+        history.mkdir(parents=True, exist_ok=True)
+        if not (history / "manifest.json").exists():
+            shutil.copyfile(path, history / "manifest.json")
+        if not (history / "catalog.json").exists():
+            shutil.copyfile(snapshot, history / "catalog.json")
+        write_json_atomic(path, migrated)
+        with atomic_output_path(snapshot) as temporary:
+            shutil.copyfile(catalog, temporary)
+        if parent_matches:
+            parent_history = batch.parent / "inputs/historical_tdc/manifest.json"
+            parent_history.parent.mkdir(parents=True, exist_ok=True)
+            if not parent_history.exists():
+                shutil.copyfile(parent_path, parent_history)
+            write_json_atomic(parent_path, canonical(parent))
+    return dict(result, status="converted" if apply else "planned", run_uid=record["run_uid"])
+
+
+def plan_output_relocations(roots: list[Path], output_root: Path, classifications: dict) -> dict:
+    """Inventory batch containers and indexes without walking query payloads."""
+    from data.processing.paths import task_id
+    containers, indexes = {}, []
+    for root in roots:
+        root = root.resolve()
+        for directory, children, files in os.walk(root, followlinks=False):
+            path = Path(directory)
+            children[:] = [name for name in children if not name.startswith(".") and name not in {
+                "final", "git_bundle", "logs", "inputs", "queries", "requests", "responses", "traces", "samples", "__pycache__"}]
+            if "runs" in children or "cache_matched_retrieval" in children:
+                containers[path] = root
+                children[:] = [name for name in children if name not in {"runs", "cache_matched_retrieval"}]
+            for name in ("matrix.json", "execution.json"):
+                if name in files:
+                    indexes.append((path / name, root))
+    headers = {}
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        paths = [path / "manifest.json" if (path / "manifest.json").exists()
+                 else path / "cache_matched_retrieval/manifest.json" for path in containers]
+        for path, content in zip(paths, pool.map(lambda p: p.read_text() if p.is_file() else "{}", paths)):
+            try:
+                headers[path] = json.loads(content)
+            except ValueError:
+                headers[path] = {}
+    index_headers = {}
+    for path, root in indexes:
+        try:
+            index_headers[path] = json.loads(path.read_text())
+        except ValueError:
+            index_headers[path] = {}
+    moves, manual = [], []
+    for source, root in containers.items():
+        header_path = source / "manifest.json"
+        if header_path not in headers:
+            header_path = source / "cache_matched_retrieval/manifest.json"
+        header = headers[header_path]
+        settings = header.get("settings") or header
+        context = {}
+        for parent in (source, *source.parents):
+            if not parent.is_relative_to(root):
+                break
+            for name in ("matrix.json", "execution.json"):
+                index_path = parent / name
+                if index_path not in index_headers:
+                    relocated = canonical_location(index_path)
+                    index_headers[index_path] = json.loads(relocated.read_text()) if relocated.is_file() else {}
+                if index_headers[index_path]:
+                    context = index_headers[index_path]
+                    break
+            if context:
+                break
+        artifact = (header.get("artifacts") or {}).get("input_jsonl") or {}
+        prior = settings.get("experiment_mode") == "none" or header.get("schema_version") == "branch_query_prior_overlay.v1"
+        identity = {
+            "harness": ("query-prior" if prior else settings.get("harness_version") or settings.get("organization")
+                        or context.get("harness_version") or context.get("organization")),
+            "prompt": settings.get("prompt_version") or settings.get("flat_prompt_version")
+                      or context.get("prompt_version") or (settings.get("task_prompt_profile") if prior else None),
+            "task": settings.get("task") or settings.get("task_id") or artifact.get("task"),
+            "benchmark": settings.get("benchmark") or context.get("benchmark")
+                         or ("tdc" if artifact.get("benchmark") == "TDC" else "gold_v1" if artifact.get("kind") == "benchmark" else None),
+            "subset": settings.get("evaluation_subset") or settings.get("subset") or context.get("subset"),
+            "run_name": source.relative_to(root).parts[0],
+            "profile": "query-prior" if prior else header.get("batch_id") or source.name,
+        }
+        if identity["run_name"] in {"query_priors", "legacy", "_batches"} and len(source.relative_to(root).parts) > 1:
+            identity["run_name"] = source.relative_to(root).parts[1]
+        if not identity["subset"]:
+            for split in ("valid_small", "valid", "test", "train", "fresh"):
+                if artifact.get("name", "") in {split, split + "_molecule_condition_labels"}:
+                    identity["subset"] = split
+                    break
+        identity.update(classifications.get(str(source.relative_to(ROOT)), classifications.get(str(source), {})))
+        if identity["task"]:
+            identity["task"] = task_id(identity["task"])
+        missing = [key for key, value in identity.items() if not value]
+        if missing:
+            manual.append({"source": str(source), "missing": missing, "identity": identity})
+            continue
+        try:
+            campaign = prediction_run_root(output_root, identity["harness"], identity["prompt"], identity["run_name"])
+            target = prediction_batch_directory(campaign, identity["benchmark"], identity["task"], identity["subset"], identity["profile"])
+        except ValueError as error:
+            manual.append({"source": str(source), "reason": str(error), "identity": identity})
+            continue
+        stat = header_path.stat()
+        legacy_run_id = next((context[key].get("run_id") for key in
+                              ("preselected_direct_grid_manifest", "preselected_grid_manifest")
+                              if isinstance(context.get(key), dict) and context[key].get("run_id")), None)
+        if not legacy_run_id:
+            for marker in ("with_query_prior", "no_query_prior"):
+                if marker in source.parts and source.parts.index(marker) + 1 < len(source.parts) - 2:
+                    legacy_run_id = source.parts[source.parts.index(marker) + 1]
+                    break
+        moves.append({"source": str(source), "destination": str(target), "kind": "batch", "identity": identity,
+                      "legacy_run_id": legacy_run_id,
+                      "run_uid": header.get("run_uid"), "header": str(header_path.relative_to(source)),
+                      "header_stat": [stat.st_ino, stat.st_size, stat.st_mtime_ns], "status": "planned"})
+    batch_sources = {Path(move["source"]) for move in moves}
+    for source, root in indexes:
+        if any(parent in batch_sources for parent in source.parents):
+            continue
+        header = index_headers[source]
+        harness = header.get("harness_version") or header.get("organization")
+        if source.name == "execution.json" and header.get("prompt_version"):
+            harness = "query-prior"
+        prompt = header.get("prompt_version")
+        if not harness or not prompt:
+            continue
+        relative = source.relative_to(root)
+        name = relative.parts[0]
+        if name in {"query_priors", "_batches", "legacy"} and len(relative.parts) > 2:
+            name = relative.parts[1]
+        try:
+            campaign = prediction_run_root(output_root, harness, prompt, name)
+        except ValueError as error:
+            manual.append({"source": str(source), "kind": "index", "reason": str(error)})
+            continue
+        target = campaign / "matrices" / relative
+        moves.append({"source": str(source), "destination": str(target), "kind": "index", "status": "planned"})
+    destinations = Counter(move["destination"] for move in moves)
+    for move in moves:
+        if destinations[move["destination"]] > 1 and move.get("legacy_run_id"):
+            identity = move["identity"]
+            identity["run_name"] += "__" + move["legacy_run_id"]
+            campaign = prediction_run_root(output_root, identity["harness"], identity["prompt"], identity["run_name"])
+            move["destination"] = str(prediction_batch_directory(campaign, identity["benchmark"], identity["task"], identity["subset"], identity["profile"]))
+    destinations = Counter(move["destination"] for move in moves)
+    for move in moves:
+        if destinations[move["destination"]] > 1 or Path(move["destination"]).exists():
+            move["status"] = "collision"
+            manual.append({**move, "reason": "Destination collision; choose a distinct semantic run name"})
+    unresolved_parents = {parent for row in manual for parent in Path(row["source"]).parents}
+    for move in moves:
+        if move["kind"] == "batch" and move["status"] == "planned" and Path(move["source"]) in unresolved_parents:
+            move["status"] = "manual"
+            manual.append({**move, "reason": "Contains an unclassified nested run; leave the parent in place"})
+    return {"schema_version": "prediction_output_relocation.v1", "roots": [str(root.resolve()) for root in roots],
+            "moves": sorted((move for move in moves if move["status"] == "planned"),
+                            key=lambda move: len(Path(move["source"]).parts), reverse=True),
+            "manual_classification": manual}
+
+
+def apply_output_relocations(plan: dict, report: Path, registry: Path) -> None:
+    """Rename frozen containers, preserving bytes and recording resumable locators."""
+    if any(move["status"] == "collision" for move in plan["moves"]):
+        raise ValueError(f"Output relocation has collisions; review {report}")
+    processes = subprocess.run(["ps", "-u", str(os.getuid()), "-o", "pid=,args="], check=True,
+                               capture_output=True, text=True).stdout.splitlines()
+    try:
+        jobs = subprocess.run(["squeue", "--me", "--json"], check=True, capture_output=True,
+                              text=True, timeout=15).stdout
+    except (OSError, subprocess.SubprocessError):
+        jobs = ""
+    mapping = json.loads(registry.read_text()) if registry.exists() else {}
+    registered = False
+    added = set()
+    for ordinal, move in enumerate(plan["moves"]):
+        source, target = Path(move["source"]), Path(move["destination"])
+        if move["status"] == "moved":
+            if not target.exists() or source.exists():
+                raise ValueError(f"Relocation receipt disagrees with the filesystem: {source}")
+            continue
+        if not source.exists() and target.exists() and mapping.get(str(source.relative_to(ROOT))) == str(target.relative_to(ROOT)):
+            move["status"] = "moved"
+            continue
+        if not source.exists() or target.exists():
+            raise ValueError(f"Relocation source is missing or destination exists: {source} -> {target}")
+        locations = [str(source)]
+        for root in map(Path, plan.get("roots", [])):
+            locations.extend(str(parent) for parent in source.parents if parent != root and parent.is_relative_to(root))
+        active = any(any(location in line for location in locations) and "migrate_manifests" not in line for line in processes)
+        if any(location in jobs for location in locations):
+            active = True
+        locks = []
+        try:
+            for parent in (source, *source.parents):
+                if not parent.is_relative_to(ROOT / "outputs"):
+                    break
+                lock_path = parent / "launcher.lock"
+                if lock_path.is_file():
+                    handle = lock_path.open("a")
+                    locks.append(handle)
+                    try:
+                        fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    except BlockingIOError:
+                        active = True
+            if active:
+                move["status"] = "active_deferred"
+                continue
+            move["status"] = "planned"
+            if move.get("header"):
+                stat = (source / move["header"]).stat()
+                if [stat.st_ino, stat.st_size, stat.st_mtime_ns] != move["header_stat"]:
+                    raise ValueError(f"Batch metadata changed after inventory; regenerate the plan: {source}")
+            source_stat = source.stat()
+            target.parent.mkdir(parents=True, exist_ok=True)
+            if not registered:
+                for candidate in plan["moves"]:
+                    if candidate["status"] == "planned":
+                        key = str(Path(candidate["source"]).relative_to(ROOT))
+                        mapping[key] = str(Path(candidate["destination"]).relative_to(ROOT))
+                        added.add(key)
+                write_json_atomic(registry, mapping)
+                registered = True
+            source.rename(target)
+            if (target.stat().st_dev, target.stat().st_ino) != (source_stat.st_dev, source_stat.st_ino):
+                raise ValueError(f"Relocation did not preserve the original filesystem object: {target}")
+            move["status"] = "moved"
+        finally:
+            for handle in locks:
+                handle.close()
+            if move["status"] != "moved" or ordinal % 25 == 0:
+                write_json_atomic(report, plan)
+    for key in added:
+        if (ROOT / key).exists():
+            mapping.pop(key, None)
+    if registered:
+        write_json_atomic(registry, mapping)
+    write_json_atomic(report, plan)
+    parents = {parent for move in plan["moves"] if move["status"] == "moved"
+               for parent in Path(move["source"]).parents
+               if any(parent != Path(root) and parent.is_relative_to(root) for root in plan.get("roots", []))}
+    for parent in sorted(parents, key=lambda path: len(path.parts), reverse=True):
+        try:
+            parent.rmdir()
+        except OSError:
+            pass
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--roots", nargs="+", type=Path, default=[ROOT / "outputs", ROOT / "archive"])
     parser.add_argument("--inventory", type=Path)
     parser.add_argument("--containers", type=Path, help="Completed batch-container inventory")
     parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--relocate-runs", action="store_true")
+    parser.add_argument("--output-root", type=Path, default=PREDICTION_ROOT)
+    parser.add_argument("--classifications", type=Path)
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--no-index-refresh", action="store_true")
+    parser.add_argument("--cache-catalog", type=Path, help="Migrate prepared bindings to a payload-identical named cache catalog")
     parser.add_argument("--report", type=Path, required=True)
     args = parser.parse_args(argv)
+    if args.relocate_runs:
+        if args.apply and args.classifications and args.report.exists():
+            parser.error("Generate a new dry-run report with --classifications before applying it")
+        roots = args.roots if args.roots != [ROOT / "outputs", ROOT / "archive"] else [ROOT / "outputs/paper/assay_transfer_harness/joseph"]
+        classifications = json.loads(args.classifications.read_text()) if args.classifications else {}
+        plan = (json.loads(args.report.read_text()) if args.apply and args.report.exists()
+                else plan_output_relocations(roots, args.output_root, classifications))
+        if plan.get("schema_version") != "prediction_output_relocation.v1":
+            parser.error("Report is not a prediction-output relocation plan")
+        write_json_atomic(args.report, plan)
+        if args.apply:
+            apply_output_relocations(plan, args.report, PREDICTION_ROOT / "relocations.json")
+        print(json.dumps({"statuses": dict(Counter(move["status"] for move in plan["moves"])),
+                          "manual_classification": len(plan["manual_classification"]), "report": str(args.report)}))
+        return
     if args.containers:
         batches = {canonical_location(name) for name in args.containers.read_text().splitlines() if name}
     elif args.inventory:
@@ -367,6 +709,8 @@ def main(argv=None):
     pending = sorted(batch for batch in batches if str(batch) not in completed)
     def convert(batch):
         try:
+            if args.cache_catalog:
+                return migrate_cache_catalog(batch, args.cache_catalog, apply=args.apply)
             return convert_batch(batch, apply=args.apply, run_uid=identities[str(batch)], source_uids=identities)
         except (OSError, ValueError, TypeError, KeyError) as error:
             return {"batch": str(batch), "status": "error", "error": str(error)}
@@ -378,7 +722,9 @@ def main(argv=None):
             if number % 25 == 0:
                 print(number, "/", len(pending), dict(counts), flush=True)
     print(dict(counts), flush=True)
-    if args.apply and not args.no_index_refresh and not counts["error"]:
+    if args.cache_catalog and counts["error"]:
+        raise SystemExit(1)
+    if args.apply and not args.cache_catalog and not args.no_index_refresh and not counts["error"]:
         print("Updated operational indexes:", refresh_indexes(batches, args.inventory), flush=True)
 
 

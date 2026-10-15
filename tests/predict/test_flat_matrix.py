@@ -30,28 +30,14 @@ def test_tdc_version_switch_is_retired(capsys) -> None:
     assert "unrecognized arguments: --tdc-label-version v1" in capsys.readouterr().err
 
 
-def test_upstream_v5_matrix_uses_reviewed_safety_levels(tmp_path: Path) -> None:
-    args = flat_matrix._selection_args(
-        "dili", tmp_path, limit=0, context_v5_six_tasks=True,
-        six_task_prompt_version=flat_matrix.flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
-        all_levels=True,
-        assay_transfer_cache=Path(
-            "ranked_level_retrieval_tdc_v1_v27_successors_v1.yaml"
-        ),
-    )
-    assert args.max_level == 7
-    assert "L7" in args.record_limits_by_level
-    historical = flat_matrix._selection_args(
-        "dili", tmp_path, limit=0, context_v5_six_tasks=True,
-        six_task_prompt_version=flat_matrix.flat.CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
-        all_levels=True,
-    )
-    assert historical.max_level == 2
-    assert flat_matrix._selection_args(
-        "dili", tmp_path, limit=0, context_v5_six_tasks=True,
-        six_task_prompt_version=flat_matrix.flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
-        all_levels=True,
-    ).max_level == 2
+def test_cache_metadata_controls_safety_levels_independent_of_prompt(tmp_path: Path) -> None:
+    for prompt in (flat_matrix.flat.FINAL_FULL_FLAT_PROMPT_VERSION, flat_matrix.flat.CONTEXT_V5_SIX_TASKS_PROMPT_VERSION):
+        args = flat_matrix._selection_args("dili", tmp_path, limit=0, context_v5_six_tasks=True,
+                                            six_task_prompt_version=prompt, all_levels=True)
+        assert args.max_level == 7
+        assert "L7" in args.record_limits_by_level
+        assert args.prompt_version == prompt
+        assert not hasattr(args, "harness_version")
 
 
 def test_upstream_v2_routes_preselected_test_without_changing_budgets(tmp_path: Path) -> None:
@@ -64,7 +50,7 @@ def test_upstream_v2_routes_preselected_test_without_changing_budgets(tmp_path: 
         evaluation_subset="test", flat_mixed_selection=tmp_path / "mixed.json",
     )
     assert args.prompt_version == version
-    assert args.harness_version == flat_matrix.flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_V2_HARNESS_VERSION
+    assert not hasattr(args, "harness_version")
     assert args.evaluation_subset == "test"
     assert args.l1_molecules == 10
 
@@ -196,7 +182,7 @@ def test_matrix_builds_final_record10_command(tmp_path: Path) -> None:
     command = flat_matrix._batch_command(args, source).command
 
     assert args.records_per_level == 10
-    assert args.harness_version == flat_matrix.flat.FINAL_FULL_FLAT_HARNESS_VERSION
+    assert not hasattr(args, "harness_version")
     assert args.prompt_version == flat_matrix.flat.FINAL_FULL_FLAT_PROMPT_VERSION
     assert args.l1_molecules == 10
     assert args.l1_records_per_molecule == 10
@@ -247,7 +233,9 @@ def test_matrix_wires_test_split_and_explicit_prior_root(tmp_path: Path) -> None
 
 
 def test_matrix_wires_explicit_cache_bundle(tmp_path: Path) -> None:
-    cache = tmp_path / "v9.yaml"
+    from predict.retrieval.assay_reranking.artifact_bundle import DEFAULT_CACHE_SET
+    cache = tmp_path / "pinned.json"
+    cache.write_bytes(DEFAULT_CACHE_SET.read_bytes())
     args = flat_matrix._selection_args(
         "bbb_martins", tmp_path, limit=0, context_width=25, context_v5=True,
         min_contrast=1, assay_transfer_cache=cache,
@@ -297,7 +285,7 @@ def test_matrix_builds_assay_transfer_all_pool_command(tmp_path: Path) -> None:
 def test_matrix_builds_l1_uid_context_command(tmp_path: Path) -> None:
     args = flat_matrix._selection_args(
         "bbb_martins", tmp_path, limit=0,
-        reranking="assay-transfer-contrastive", context_width=15,
+        reranking="assay-transfer", context_width=15,
         min_contrast=2,
     )
     source = args.batch_root / args.batch_id / "cache_matched_retrieval"
@@ -309,7 +297,7 @@ def test_matrix_builds_l1_uid_context_command(tmp_path: Path) -> None:
         "joseph_flat_context_v4_v1"
     )
     assert command[command.index("--flat-reranking") + 1] == (
-        "assay-transfer-contrastive"
+        "assay-transfer"
     )
     assert command[command.index("--flat-layout") + 1] == "global"
     assert command[command.index("--flat-query-prior") + 1] == "cached"
@@ -341,7 +329,7 @@ def test_replay_subset_uses_query_uids_and_frozen_retrievals(tmp_path: Path) -> 
     input_jsonl.write_text('{"drug":"C","benchmark_row_id":"q0"}\n{"drug":"N","benchmark_row_id":"q1"}\n', encoding="utf-8")
     prompt_version = flat_matrix.flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION
     manifest = {
-        "harness_version": flat_runner.JOSEPH_PROMPT_HARNESSES[prompt_version],
+        "harness_version": flat_matrix.flat.JOSEPH_PROMPT_HARNESSES[prompt_version],
         "prompt_version": prompt_version,
         "task": "bbb_martins",
         "reranking": "morgan",
@@ -385,84 +373,88 @@ def test_replay_subset_uses_query_uids_and_frozen_retrievals(tmp_path: Path) -> 
         flat_runner._validated_flat_selection_manifest(config, args, [1])
 
 
-def test_chained_recovery_accepts_only_previous_missing_cohort(tmp_path: Path, monkeypatch) -> None:
-    input_jsonl = tmp_path / "queries.jsonl"
-    input_jsonl.write_text('{"drug":"C","benchmark_row_id":"q0"}\n{"drug":"N","benchmark_row_id":"q1"}\n{"drug":"O","benchmark_row_id":"q2"}\n', encoding="utf-8")
-    mixed = tmp_path / "mixed.json"
-    mixed.write_text("{}", encoding="utf-8")
-    cache = tmp_path / "cache.yaml"
-    cache.write_text("cache", encoding="utf-8")
-    source = tmp_path / "previous" / "cache_matched_retrieval"
-    source.mkdir(parents=True)
-    args = SimpleNamespace(
-        task="bbb_martins", evaluation_subset="valid", input_jsonl=input_jsonl,
-        prompt_version="full_flat_context_v5_six_tasks_upstream_v1",
-        flat_mixed_selection=mixed, flat_preselected_contexts=None,
-        assay_transfer_cache=cache,
-    )
-    manifest = {
-        "task": args.task, "evaluation_subset": args.evaluation_subset,
-        "input_jsonl": str(input_jsonl),
-        "input_sha256": sha256_file(input_jsonl),
-        "prompt_version": args.prompt_version,
-        "prompt_assets": {"sha256": "frozen-prompt"},
-        "flat_mixed_selection": str(mixed),
-        "flat_mixed_selection_sha256": sha256_file(mixed),
-        "flat_preselected_contexts": "",
-        "flat_preselected_contexts_sha256": "",
-        "assay_transfer_cache": str(cache), "indices": [1, 2],
-    }
-    path = source / "manifest.json"
-    write_batch(path, manifest)
-    previous = {"path": str(path), "sha256": sha256_file(path),
-                "assay_transfer_cache_sha256": sha256_file(cache)}
-    monkeypatch.setattr(flat_matrix.flat, "_preselected_query_indices", lambda *a, **kw: [0, 1, 2])
-    monkeypatch.setattr(flat_matrix.flat, "prompt_asset_manifest", lambda *a: {"sha256": "frozen-prompt"})
-    monkeypatch.setattr(flat_matrix, "collect_completed_item", lambda *a: None)
-    assert flat_matrix._missing_from_previous_batch(previous, args, [2]) == ([2], 0)
-    monkeypatch.setattr(flat_matrix, "collect_completed_item", lambda *a: {"run_dir": str(tmp_path)})
-    assert flat_matrix._missing_from_previous_batch(previous, args, [2]) == ([], 1)
-    args.batch_id = "bbb_martins__ga000_mc000_label000"
-    matrix_path = tmp_path / "resume" / "matrix.json"
-    replayed_batch = (matrix_path.parent / "ga000_mc000_label000" / "with_query_prior"
-                      / "run" / args.task / args.batch_id)
-    replayed_batch.mkdir(parents=True)
-    (replayed_batch / "manifest.json").write_text("{}", encoding="utf-8")
-    observed = []
-    def completed_from_replayed_batch(prepared, item):
+@pytest.fixture
+def recovery(tmp_path, monkeypatch):
+    input_jsonl = tmp_path / 'queries.jsonl'
+    input_jsonl.write_text(''.join(json.dumps(dict(drug='CCO',benchmark_row_id=f'q{i}'))+'\n' for i in range(3)))
+    selected = tmp_path/'grid/manifest.json';selected.parent.mkdir();selected.write_text('{}')
+    cache=tmp_path/'cache.yaml';cache.write_text('cache')
+    source=tmp_path/'previous/cache_matched_retrieval'
+    requested=tmp_path/'requested/cache_matched_retrieval'
+    args=SimpleNamespace(task='bbb_martins',evaluation_subset='valid',input_jsonl=input_jsonl,
+                         prompt_version=flat_matrix.flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+                         flat_mixed_selection=selected,flat_preselected_contexts=None,assay_transfer_cache=cache,
+                         layout='global',reranking='morgan',query_prior='none',batch_id='bbb_fixture')
+    document=dict(task=args.task,evaluation_subset='valid',input_jsonl=str(input_jsonl),
+                  prompt_version=args.prompt_version,flat_mixed_selection=str(selected),
+                  assay_transfer_cache=str(cache),indices=[1,2],layout=args.layout,reranking=args.reranking,
+                  query_prior=args.query_prior,objective={'weight':0})
+    write_batch(source/'manifest.json',document)
+    write_batch(requested/'manifest.json',{**document,'indices':[0,1,2]})
+    retrieval={'text':'same','groups':[{'neighbors':[{'evidence_rows':[
+        dict(selection_provenance=dict(level='L1',diagnostic_context_id=f'c{i}'),
+             source_provenance=dict(source_row_uid=f'u{i}')) for i in range(2)]}]}]}
+    for root in (source,requested):
+        path=root/'runs/cache_matched_retrieval_idx00002/retrieval.json';path.parent.mkdir(parents=True);path.write_text(json.dumps(retrieval))
+    run=source.parent/'runs/previous_idx00002';run.mkdir(parents=True)
+    request={'schema_version':'joseph_flat_context_request.v1','messages':[{'role':'user','content':'same'}],'message_char_count':4}
+    (run/'request.json').write_text(json.dumps(request))
+    monkeypatch.setattr(flat_matrix.flat,'_preselected_query_indices',lambda *a,**kw:[0,1,2])
+    monkeypatch.setattr(flat_matrix.flat,'_materialize_cache_matched_retrievals',lambda *a:(requested,read_record(requested/'manifest.json')))
+    monkeypatch.setattr(flat_matrix,'attach_external_condition',lambda r,record:r)
+    monkeypatch.setattr(flat_matrix.flat,'build_flat_context_request',lambda r,**kw:([{'role':'user','content':r['text']}],{}))
+    monkeypatch.setattr(flat_matrix,'collect_completed_item',lambda *a:{'run_dir':str(run)})
+    return SimpleNamespace(args=args,source=source,requested=requested,run=run,retrieval=retrieval,request=request,
+                           previous={'path':str(source/'manifest.json')})
+
+
+def test_chained_recovery_accepts_only_previous_missing_cohort(tmp_path, monkeypatch, recovery):
+    import shutil
+    r=recovery
+    assert flat_matrix._missing_from_previous_batch(r.previous,r.args,[2]) == ([],1)
+    monkeypatch.setattr(flat_matrix,'collect_completed_item',lambda *a:None)
+    assert flat_matrix._missing_from_previous_batch(r.previous,r.args,[2]) == ([2],0)
+    with pytest.raises(ValueError,match='different query cohort'):
+        flat_matrix._missing_from_previous_batch(r.previous,r.args,[0])
+    matrix_path=tmp_path/'resume/matrix.json'
+    batch=matrix_path.parent/'fixture/with_query_prior/run'/r.args.task/r.args.batch_id
+    (batch/'manifest.json').parent.mkdir(parents=True)
+    (batch/'manifest.json').write_text('{}')
+    shutil.copytree(r.run,batch/'runs/00002')
+    observed=[]
+    def completed(prepared,item):
         observed.append(prepared.batch_dir)
-        return {"run_dir": str(tmp_path)}
-    monkeypatch.setattr(flat_matrix, "collect_completed_item", completed_from_replayed_batch)
-    assert flat_matrix._missing_from_previous_batch(
-        previous, args, [2], matrix_path=matrix_path,
-    ) == ([], 1)
-    assert observed == [replayed_batch]
-    monkeypatch.setattr(flat_matrix, "collect_completed_item", lambda *a: {"run_dir": str(tmp_path)})
-    with pytest.raises(ValueError, match="different query cohort"):
-        flat_matrix._missing_from_previous_batch(previous, args, [0])
-    batch_dir = source.parent
-    (batch_dir / "manifest.json").write_text(json.dumps({
-        "task_prompt_profile": "test", "flat_layout": "global", "flat_reranking": "morgan",
-    }), encoding="utf-8")
-    retrieval = source / "runs" / "cache_matched_retrieval_idx00002" / "retrieval.json"
-    retrieval.parent.mkdir(parents=True)
-    retrieval.write_text("{}", encoding="utf-8")
-    run = batch_dir / "runs" / "previous_idx00002"
-    run.mkdir(parents=True)
-    (run / "single_molecule_reasoning_output.json").write_text("{}", encoding="utf-8")
-    request = {"schema_version": "joseph_flat_context_request.v1",
-               "messages": [{"role": "user", "content": "same"}],
-               "message_char_count": 4}
-    (run / "request.json").write_text(json.dumps(request), encoding="utf-8")
-    monkeypatch.setattr(flat_matrix, "attach_external_condition", lambda retrieval, record: retrieval)
-    monkeypatch.setattr(flat_matrix, "validated_branch_content", lambda prior: prior)
-    monkeypatch.setattr(flat_matrix.flat, "build_flat_context_request", lambda *a, **kw: (
-        request["messages"], {},
-    ))
-    assert flat_matrix._missing_from_previous_batch(previous, args, [2]) == ([], 1)
-    request["messages"][0]["content"] = "different"
-    (run / "request.json").write_text(json.dumps(request), encoding="utf-8")
-    assert flat_matrix._missing_from_previous_batch(previous, args, [2]) == ([2], 0)
+        return {'run_dir':str(batch/'runs/00002')}
+    monkeypatch.setattr(flat_matrix,'collect_completed_item',completed)
+    assert flat_matrix._missing_from_previous_batch(r.previous,r.args,[2],matrix_path=matrix_path) == ([],1)
+    assert observed == [batch]
+
+
+@pytest.mark.parametrize('change',['uid','order','context'])
+def test_recovery_rejects_changed_selected_evidence_with_same_manifest_name(recovery,change):
+    r=recovery
+    rows=r.retrieval['groups'][0]['neighbors'][0]['evidence_rows']
+    if change=='uid':rows[0]['source_provenance']['source_row_uid']='different'
+    elif change=='context':rows[0]['selection_provenance']['diagnostic_context_id']='different'
+    else:rows.reverse()
+    (r.requested/'runs/cache_matched_retrieval_idx00002/retrieval.json').write_text(json.dumps(r.retrieval))
+    with pytest.raises(ValueError,match='different ordered evidence'):
+        flat_matrix._missing_from_previous_batch(r.previous,r.args,[2])
+
+
+def test_recovery_checks_effective_parameters_and_newly_rendered_request(recovery):
+    r=recovery
+    path=r.requested/'manifest.json';document=json.loads(path.read_text())
+    document['settings']['objective']['weight']=1;path.write_text(json.dumps(document))
+    with pytest.raises(ValueError,match='selection parameters'):
+        flat_matrix._missing_from_previous_batch(r.previous,r.args,[2])
+    document['settings']['objective']['weight']=0;path.write_text(json.dumps(document))
+    # Same UIDs and settings, but changed requested content must be rendered again.
+    r.retrieval['text']='different'
+    (r.requested/'runs/cache_matched_retrieval_idx00002/retrieval.json').write_text(json.dumps(r.retrieval))
+    assert flat_matrix._missing_from_previous_batch(r.previous,r.args,[2]) == ([2],0)
+    (r.run/'request.json').unlink()
+    assert flat_matrix._missing_from_previous_batch(r.previous,r.args,[2]) == ([2],0)
 
 
 def test_mixed_test_grids_allow_task_specific_winners(tmp_path: Path) -> None:
@@ -578,7 +570,7 @@ def test_preselected_grid_uses_oral_high_low_v6_bundle(tmp_path: Path) -> None:
         context_width=25, context_v6=True, all_levels=True,
     )
 
-    assert args.harness_version == flat_matrix.flat.CONTEXT_V6_HARNESS_VERSION
+    assert not hasattr(args, "harness_version")
     assert args.prompt_version == flat_matrix.flat.CONTEXT_V6_PROMPT_VERSION
     assert args.max_level == 6
     assert args.morgan_primary_parent_width == 25
@@ -591,7 +583,7 @@ def test_preselected_grid_can_use_v5_bundle(tmp_path: Path) -> None:
         context_width=25, context_v5=True, all_levels=True,
     )
 
-    assert args.harness_version == flat_matrix.flat.CONTEXT_V5_HARNESS_VERSION
+    assert not hasattr(args, "harness_version")
     assert args.prompt_version == flat_matrix.flat.CONTEXT_V5_PROMPT_VERSION
     assert args.layout == "level-grouped"
     assert args.max_level == 6
@@ -605,7 +597,7 @@ def test_direct_grid_uses_six_task_successor_and_context_manifest(tmp_path: Path
     prior_root = tmp_path / "priors"
     args = flat_matrix._selection_args(
         "skin_reaction", tmp_path, limit=0,
-        reranking="assay-transfer-contrastive",
+        reranking="assay-transfer",
         context_width=25,
         flat_preselected_contexts=manifest,
         context_v5_six_tasks=True,
@@ -619,9 +611,7 @@ def test_direct_grid_uses_six_task_successor_and_context_manifest(tmp_path: Path
         args, source, max_tokens=65_536,
     ).command
 
-    assert args.harness_version == (
-        flat_matrix.flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_HARNESS_VERSION
-    )
+    assert not hasattr(args, "harness_version")
     assert args.prompt_version == (
         flat_matrix.flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION
     )
@@ -749,11 +739,15 @@ def test_synchronized_query_prior_is_not_rewritten(tmp_path: Path) -> None:
     batch = tmp_path / "source"
     source = batch / "runs" / "source_idx00000"
     source.mkdir(parents=True)
-    (source / "single_molecule_reasoning_output.json").write_text("{}\n")
+    prior = {"status": "ok", "llm": {"content": {"reasoning_summary": "frozen"},
+                                      "structured_output_validation": {"valid": True}}}
+    source_prior = source / "single_molecule_reasoning_output.json"
+    source_prior.write_text(json.dumps(prior))
     run = tmp_path / "target"
     run.mkdir()
     target = run / "single_molecule_reasoning_output.json"
-    target.write_text('{"already": "frozen"}\n')
+    target.write_text(json.dumps({**prior, "already": "frozen"}))
+    before = target.read_bytes()
     (run / "stage_resume.json").write_text(json.dumps({"single_analysis_source_run_uid": "source-uid"}))
     write_batch(batch / "manifest.json", {"batch_id": "source"}, records=[(0, {"benchmark_row_id": "q"})])
     source_record = json.loads((batch / "manifest.json").read_text())
@@ -762,8 +756,150 @@ def test_synchronized_query_prior_is_not_rewritten(tmp_path: Path) -> None:
 
     synchronize_configured_single_reuse(
         SimpleNamespace(args=SimpleNamespace(single_analysis_source_batch=str(batch))),
-        SimpleNamespace(index=0),
+        SimpleNamespace(index=0, record={"benchmark_row_id": "q"}),
         run,
     )
 
-    assert json.loads(target.read_text()) == {"already": "frozen"}
+    assert target.read_bytes() == before
+    prior["llm"]["content"]["reasoning_summary"] = "changed"
+    source_prior.write_text(json.dumps(prior))
+    with pytest.raises(ValueError, match="Query prior changed"):
+        synchronize_configured_single_reuse(
+            SimpleNamespace(args=SimpleNamespace(single_analysis_source_batch=str(batch))),
+            SimpleNamespace(index=0, record={"benchmark_row_id": "q"}), run,
+        )
+    assert target.read_bytes() == before
+
+
+@pytest.mark.parametrize('change', ['uid', 'context', 'objective'])
+@pytest.mark.parametrize('manual', [False, True])
+def test_existing_prepared_selection_is_revalidated_before_recovery(tmp_path, monkeypatch, change, manual):
+    from copy import deepcopy
+    flat=flat_matrix.flat
+    query=tmp_path/'queries.jsonl';query.write_text(json.dumps(dict(benchmark_row_id='q',drug='CCO'))+'\n')
+    leaf=tmp_path/'manifest.json';leaf.write_text('{}')
+    args=flat_matrix._selection_args('bbb_martins',tmp_path/'batch',limit=0,context_width=20,
+                                      input_jsonl=query,flat_preselected_contexts=leaf)
+    args.indices=['0']
+    if manual:
+        args.uids_file, args.flat_preselected_contexts = leaf, None
+    current=dict(uid='u1',context='c1',weight=0)
+    audit=dict(selection_policy=flat.CONTEXT_V4_SELECTION_CONTRACT,inputs={},query_audits={'q':{}},
+               contract=dict(policy={"uid_retrieval": {"cache_set": "canonical"}},
+                             all_later_records=False,objective={'weight':0}),cache_pool='all',
+               similarity_floor=None,scaffold_overlap=0,parent_overlap=0,query_identities={},l1_cache={},later_cache=None)
+    def candidates(*args,**kwargs):
+        fresh=deepcopy(audit);fresh['contract']['objective']['weight']=current['weight']
+        return {'q':[]},{'q':{}},fresh
+    def project(*args,**kwargs):
+        assert kwargs["preserve_physical_records"] is True
+        return {'query':{'canonical_smiles':'CCO'},'groups':[{'neighbors':[{'evidence_rows':[
+            dict(selection_provenance=dict(level='L1',diagnostic_context_id=current['context']),
+                 source_provenance=dict(source_row_uid=current['uid']))]}]}]}
+    monkeypatch.setattr(flat,'_load_flat_context_candidates',candidates)
+    monkeypatch.setattr(flat,'cache_matched_flat_retrieval',project)
+    monkeypatch.setattr(flat,'_attach_molecule_descriptions',lambda *a:[])
+    source,_=flat._materialize_cache_matched_retrievals(args)
+    frozen={p:p.read_bytes() for p in source.rglob('*.json')}
+    flat._materialize_cache_matched_retrievals(args)
+    current[change]=1 if change=='objective' else 'different'
+    if change=='objective':current['weight']=1
+    with pytest.raises(ValueError,match='immutable and differs'):
+        flat._materialize_cache_matched_retrievals(args)
+    assert all(p.read_bytes()==value for p,value in frozen.items())
+
+
+def test_matrix_no_prior_uses_selected_cache_without_prior_source(tmp_path):
+    args = flat_matrix._selection_args('skin_reaction', tmp_path, limit=1)
+    args.query_prior = 'none'
+    command = flat_matrix._batch_command(args, tmp_path).command
+    assert command[command.index('--flat-query-prior') + 1] == 'none'
+    assert '--single-analysis-source-batch' not in command
+    assert args.evidence_library.name == 'v10_main_universe_v5'
+
+
+def test_recovery_rejects_changed_requested_prior_without_changing_saved_run(recovery, monkeypatch, tmp_path):
+    r = recovery
+    r.args.query_prior, r.args.benchmark = 'cached', 'gold'
+    r.args.prior_root = tmp_path / 'priors'
+    for root in (r.source, r.requested):
+        path = root / 'manifest.json'
+        document = json.loads(path.read_text())
+        document['settings']['query_prior'] = 'cached'
+        path.write_text(json.dumps(document))
+    prior = {'status': 'ok', 'llm': {'content': {'reasoning_summary': 'same'},
+                                    'structured_output_validation': {'valid': True}}}
+    saved = r.run / 'single_molecule_reasoning_output.json'
+    saved.write_text(json.dumps(prior))
+    current = r.args.prior_root / r.args.task / f'{r.args.task}__none/runs/{r.args.task}__none_idx00002'
+    current.mkdir(parents=True)
+    source = current / saved.name
+    source.write_text(json.dumps(prior))
+    assert flat_matrix._missing_from_previous_batch(r.previous, r.args, [2]) == ([], 1)
+    before = {path: path.read_bytes() for path in r.run.iterdir()}
+    prior['llm']['content']['reasoning_summary'] = 'changed'
+    source.write_text(json.dumps(prior))
+    with pytest.raises(ValueError, match='Query prior changed'):
+        flat_matrix._missing_from_previous_batch(r.previous, r.args, [2])
+    assert {path: path.read_bytes() for path in r.run.iterdir()} == before
+
+
+def test_named_preparation_repeats_with_selected_provider_model(tmp_path, monkeypatch):
+    config = json.loads(flat_matrix.DEFAULT_PROVIDER_CONFIG.read_text())
+    for provider in config['providers']:
+        provider['model'] = 'different-model'
+    provider_path = tmp_path / 'provider.json'
+    provider_path.write_text(json.dumps(config))
+    source = tmp_path / 'selection'
+    source.mkdir()
+    write_batch(source / 'manifest.json', {'batch_id': 'prepared'})
+    monkeypatch.setattr(flat_matrix.flat, '_materialize_cache_matched_retrievals',
+                        lambda args: (source, {}))
+    monkeypatch.setattr(flat_matrix, 'prepare_batch_commands', lambda *a, **kw: {})
+    monkeypatch.setattr(flat_matrix, 'select_healthy_providers',
+                        lambda *a: pytest.fail('Preparation must not probe providers'))
+    argv = ['--output-root', str(tmp_path / 'outputs'), '--run-name', 'selected-model',
+            '--provider-pool-config', str(provider_path), '--tasks', 'ames',
+            '--query-prior', 'none', '--evaluation-subset', 'valid', '--prepare-only']
+    assert flat_matrix.main(argv) == 0
+    metadata = next((tmp_path / 'outputs').rglob('matrix.json'))
+    assert json.loads(metadata.read_text())['model'] == 'different-model'
+    assert flat_matrix.main(argv) == 0
+
+
+@pytest.mark.parametrize('benchmark', ('gold', 'tdc'))
+@pytest.mark.parametrize('kind', ('direct', 'mixed'))
+def test_selected_matrix_uses_supported_cache_ranking(tmp_path, monkeypatch, benchmark, kind):
+    from predict.retrieval.assay_reranking.cache_matched import load_cache_policy
+    leaf = tmp_path / 'selection.json'
+    leaf.write_text('{}')
+    grid = tmp_path / 'grid.json'
+    grid.write_text('{}')
+    profile = dict(name='selected', tasks=['skin_reaction'], subset='valid',
+                   task_manifests={'skin_reaction': {'path': str(leaf)}})
+    monkeypatch.setattr(flat_matrix, 'load_preselected_direct_grid', lambda *a, **kw: [profile])
+    monkeypatch.setattr(flat_matrix, 'load_mixed_selection_grids', lambda *a, **kw: [profile])
+    source = tmp_path / 'prepared'
+    source.mkdir()
+    write_batch(source / 'manifest.json', {'batch_id': 'prepared'})
+    seen = []
+    def materialize(args):
+        policy = load_cache_policy(args.assay_transfer_cache, args.task, args.evaluation_subset,
+                                   args.reranking, args.max_level, benchmark=args.benchmark)
+        seen.append(policy)
+        return source, {}
+    monkeypatch.setattr(flat_matrix.flat, '_materialize_cache_matched_retrievals', materialize)
+    monkeypatch.setattr(flat_matrix, 'prepare_batch_commands', lambda *a, **kw: {})
+    monkeypatch.setattr(flat_matrix, '_materialize_direct_request_review',
+                        lambda *a, **kw: {'batch_count': 1, 'request_count': 0})
+    monkeypatch.setattr(flat_matrix, 'select_healthy_providers',
+                        lambda *a: pytest.fail('Preparation must not contact providers'))
+    option = '--preselected-direct-grid-manifest' if kind == 'direct' else '--mixed-selection-grid-manifest'
+    assert flat_matrix.main([
+        '--output-root', str(tmp_path / 'outputs'), '--run-name', 'selected-ranking',
+        '--benchmark', benchmark, '--tasks', 'skin_reaction', '--query-prior', 'none',
+        '--evaluation-subset', 'valid', '--prepare-only', option, str(grid),
+    ]) == 0
+    assert len(seen) == 1
+    assert seen[0]['stages']['L1'] == 'assay_transfer'
+    assert len(seen[0]['stages']) == (1 if kind == 'direct' else 3)

@@ -1,0 +1,74 @@
+{
+  "content_id": "bb4b1f8e599413e7dd9effe308fc2685c73b40e04f668a537e41016935cb8f17",
+  "evidence_content_id": "e2dc96a76bee17e7a6e74477b27c603f69f16c529269079475099bcda674a621",
+  "evidence_records_sha256": "4ae4d3de652feb4729d43262a896c28e5e7667c829f0d7a9b67f8f51ac6da8e1",
+  "schema_version": "ranked_uid_release_validation.v1",
+  "splits": {
+    "test": {
+      "L2": {
+        "content_id": "7bd388e51a711e9aa47e6b656583402356510a933a2c317bc9994d2b7d35c440",
+        "database_sha256": "c715b7f4e446c5356d6480ce9abb2572b44a4746454c9fb6493f7f9f35e59797",
+        "stored_rows": 25098
+      },
+      "L3": {
+        "content_id": "dce5f7bc6474c7fc104337d283f9f5a540403921f1a3a97fe66006aa2561f459",
+        "database_sha256": "729058f8585985615e2bbd8e7492cf419a9058cb68a61c4feb357d8ffd88e381",
+        "stored_rows": 69331
+      },
+      "L4": {
+        "content_id": "2da22c2a3561df31a9b6e527f7565cd70af4ef18cd606f8c6caa08d367924f6a",
+        "database_sha256": "9971e00de662e792e4427950a7807c22a2987efcc89854ef4a7256af65a594d2",
+        "stored_rows": 47587
+      },
+      "L5": {
+        "content_id": "1e5a0da82054f75ccc542d01a861f3392f7981530f52291a999d550dc8cf4f3a",
+        "database_sha256": "bd9fa1e708b45eb198ba6d2d49a6a1257a593af8ba2cdde2e5260cb7708906e9",
+        "stored_rows": 61177
+      },
+      "L6": {
+        "content_id": "12b29b739c9110d6b223f99d2def56536c675c8954be7cc8569da3a1eff0a8fc",
+        "database_sha256": "307432ac3e1b5fed90deb9e56ffb67fbb930f29c8ec94a75f62c6e540b21e74c",
+        "stored_rows": 16922
+      },
+      "L7": {
+        "content_id": "9bb3a02b40424fef01d82d1696792828ab83488cac81e3c45aa7959e0ab78e2f",
+        "database_sha256": "f938bf4d55d3a3599977e00a7fc040431424e56f566b612fec8a98099392dc72",
+        "stored_rows": 44629
+      }
+    },
+    "valid": {
+      "L2": {
+        "content_id": "8c045d38237494bcc29aeeef1ae03067c0996832ed03d0414e154d8bac761063",
+        "database_sha256": "a2ac0af2c633f649b0e16126e4c4802a0d32bbb6402432f972ffe3764b95f40f",
+        "stored_rows": 13951
+      },
+      "L3": {
+        "content_id": "ad45e2723905728ec899e570a606e98f07b2e594a381fb31e394a3d9bb3daee1",
+        "database_sha256": "a081f6df802b9e44529b4791c42362d326c724ec1b303480c1736c53b2f952bc",
+        "stored_rows": 41009
+      },
+      "L4": {
+        "content_id": "ff4ef17c157e1b5dca81b0614f293a5e04381125c8162c1989ebc612fdd2ad1a",
+        "database_sha256": "04db9aa5ca0654e4818da2f39764404b809c176547bd27db84d158da55c3af28",
+        "stored_rows": 28122
+      },
+      "L5": {
+        "content_id": "654f96397970a097cc723656ab0d5774ef12f6bc1a4722165f2bea750df900f9",
+        "database_sha256": "fe8141237fb6f956e5b554bb3a4f11ef03fc3012047aa6bcd0de2dacf5379389",
+        "stored_rows": 29137
+      },
+      "L6": {
+        "content_id": "298e6a8f4261196f58d665d701304917cd290a08ba88f4a7ad9219dd1c065eb2",
+        "database_sha256": "d3b494ea90a85c52ac99f249fc7a90191b325851229c480110f042ca11f73d02",
+        "stored_rows": 10283
+      },
+      "L7": {
+        "content_id": "ebd111d7c302f863211f4a370de43285c5ba601c5600b7faac6b40ab0dc64e15",
+        "database_sha256": "7fc27d819d7931d5e6685a14b49568ad09043dce9515f8610be938270fd7873f",
+        "stored_rows": 12192
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "carcinogens"
+}

@@ -1,4 +1,4 @@
-"""Generate hash-pinned full-split query-prior overlays for six tasks."""
+"""Generate validated full-split query-prior overlays for six tasks."""
 
 from __future__ import annotations
 
@@ -26,11 +26,20 @@ from predict.harnesses.branches.matrix import provider_client, sample_provider_l
 from predict.harnesses.branches.flat import (
     CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+    FINAL_FULL_FLAT_PROMPT_VERSION,
     prompt_assets,
 )
 from predict.tools.client import ToolServiceClient, retry_failed_tool_calls
+from predict.utils.response import (
+    allowed_values_from_required_schema, call_with_json_validation,
+    structured_response_is_valid, validated_branch_content,
+    validate_query_prior_output,
+)
 from predict.utils.json import read_jsonl, write_json_atomic
-from predict.harnesses.branches.manifests import read_record, read_run, write_batch, write_prior_batch, prior_sources
+from predict.harnesses.branches.manifests import (
+    read_record, read_run, write_batch, write_prior_batch, prior_sources, canonical_location,
+    PREDICTION_ROOT, prediction_run_root, prediction_batch_directory, query_prior_batch,
+)
 
 
 TASKS = (
@@ -78,12 +87,16 @@ def _inputs(
 
 
 def _prior_source(run_dir: Path, required: set[str] = REQUIRED_CONTENT) -> dict[str, Any] | None:
+    run_dir = canonical_location(run_dir)
     retrieval = run_dir / "retrieval.json"
     single = run_dir / "single_molecule_reasoning_output.json"
     if not retrieval.is_file() or not single.is_file():
         return None
-    result = json.loads(single.read_text(encoding="utf-8"))
-    content = ((result.get("llm") or {}).get("content"))
+    try:
+        result = validate_query_prior_output(json.loads(single.read_text(encoding="utf-8")))
+    except ValueError:
+        return None
+    content = validated_branch_content(result)
     if result.get("status") != "ok" or not isinstance(content, dict) or not required <= content.keys():
         return None
     manifest = run_dir.parent.parent / "manifest.json"
@@ -96,10 +109,11 @@ def _prior_source(run_dir: Path, required: set[str] = REQUIRED_CONTENT) -> dict[
 def _reusable_sources(
     root: Path | None, task: str, rows: list[tuple[int, dict[str, Any]]],
     required: set[str],
+    *, subset: str = "valid", benchmark: str = "gold",
 ) -> dict[str, dict[str, Any]]:
     if root is None:
         return {}
-    batch = root.resolve() / task / f"{task}__none"
+    batch = query_prior_batch(root, task, subset, benchmark)
     if not (batch / "manifest.json").is_file():
         return {}
     output = {}
@@ -114,7 +128,8 @@ def _reusable_sources(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output-root", type=Path, required=True)
+    parser.add_argument("--output-root", type=Path, default=PREDICTION_ROOT)
+    parser.add_argument("--run-name")
     parser.add_argument("--subset", choices=("valid", "valid_small", "test", "fresh"), required=True)
     parser.add_argument("--input-root", type=Path,
                         help="Explicit per-task JSONL directory for fresh unique queries.")
@@ -128,8 +143,9 @@ def main(argv: list[str] | None = None) -> int:
         choices=(
             CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
             CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+            FINAL_FULL_FLAT_PROMPT_VERSION,
         ),
-        default=CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
+        default=FINAL_FULL_FLAT_PROMPT_VERSION,
     )
     parser.add_argument(
         "--provider-pool-config", type=Path,
@@ -150,7 +166,13 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--subset fresh and --input-root must be supplied together")
     if args.native_task_priors and set(args.tasks) - NATIVE_REQUIRED_CONTENT.keys():
         parser.error("--native-task-priors supports only BBB and Oral")
-    root = args.output_root.resolve()
+    if not args.run_name and (not args.resume or args.output_root == PREDICTION_ROOT):
+        parser.error("New query-prior runs require --run-name")
+    root = (prediction_run_root(args.output_root, "query-prior", args.prompt_version, args.run_name)
+            if args.run_name else canonical_location(args.output_root))
+    batches = {task: (prediction_batch_directory(root, args.benchmark, task, args.subset, "query-prior")
+                      if args.run_name else query_prior_batch(root, task, args.subset, args.benchmark))
+               for task in args.tasks}
     if root.exists() and not args.resume:
         raise FileExistsError(f"Refusing to replace query-prior run: {root}")
     if args.max_attempts < 1:
@@ -158,6 +180,14 @@ def main(argv: list[str] | None = None) -> int:
     os.environ.setdefault("DEEPSEEK_API_KEY", "EMPTY")
     config_path = args.provider_pool_config.resolve()
     candidate = load_provider_pool_config(config_path)
+    if (root / "execution.json").is_file():
+        previous = json.loads((root / "execution.json").read_text())
+        expected = {"model": candidate.providers[0].model, "prompt_version": args.prompt_version,
+                    "subset": args.subset, "benchmark": args.benchmark, "max_tokens": args.max_tokens,
+                    "native_task_priors": args.native_task_priors}
+        changed = [key for key, value in expected.items() if previous.get(key) != value]
+        if changed:
+            raise ValueError(f"Named query-prior run has incompatible settings {changed}; use a new --run-name")
     if args.providers:
         candidate = replace(
             candidate,
@@ -211,10 +241,11 @@ def main(argv: list[str] | None = None) -> int:
     for task in args.tasks:
         path, rows = _inputs(task, args.subset, args.benchmark, args.input_root)
         task_inputs[task] = {"path": str(path)}
-        batch = root / task / f"{task}__none"
+        batch = batches[task]
         write_batch(batch / "manifest.json", {
             "task_id": task, "subset": args.subset, "benchmark": args.benchmark,
-            "input_jsonl": str(path), "batch_id": batch.name, "experiment_mode": "none",
+            "input_jsonl": str(path), "batch_id": f"{task}__none", "experiment_mode": "none",
+            "run_name": args.run_name or "", "harness_version": "query-prior",
             "model": candidate.providers[0].model, "reasoning_effort": "high",
             "max_tokens": args.max_tokens, "temperature": 0,
             "thinking": provider_from_base_url(candidate.providers[0].base_url) == "local",
@@ -224,7 +255,7 @@ def main(argv: list[str] | None = None) -> int:
         contract = _contract(task, args.prompt_version)
         required = _required_content(task, args.native_task_priors)
         reusable = (
-            _reusable_sources(args.reuse_root, task, rows, required)
+            _reusable_sources(args.reuse_root, task, rows, required, subset=args.subset, benchmark=args.benchmark)
             if task in args.reuse_tasks
             else {}
         )
@@ -237,7 +268,7 @@ def main(argv: list[str] | None = None) -> int:
         }
         reusable_by_identity = {}
         for reuse_root in args.reuse_identity_root:
-            overlay_path = reuse_root / task / f"{task}__none" / "manifest.json"
+            overlay_path = query_prior_batch(reuse_root, task, args.subset, args.benchmark) / "manifest.json"
             for entry in prior_sources(overlay_path.parent):
                 key = (str(entry["molecule_identity_key"]), str(entry.get("condition_group") or ""))
                 source = _prior_source(Path(entry["run_dir"]), required)
@@ -262,7 +293,7 @@ def main(argv: list[str] | None = None) -> int:
                     sources[task, index] = {**source, "source": "reused"}
                     continue
             prior_path = (
-                root / task / f"{task}__none" / "runs"
+                batches[task] / "runs"
                 / f"{task}__none_idx{index:05d}"
                 / "single_molecule_reasoning_output.json"
             )
@@ -312,7 +343,8 @@ def main(argv: list[str] | None = None) -> int:
         task, index, row, properties, messages, query = item
         selected_client = (clients["cohere" if index % 4 == 3 else "together"]
                            if args.per_task_provider_split else client)
-        for retry in range(2 if args.per_task_provider_split else 1):
+        attempts = 2 if args.per_task_provider_split else 1
+        for retry in range(attempts):
             try:
                 if args.native_task_priors:
                     if task == "bbb_martins":
@@ -326,13 +358,19 @@ def main(argv: list[str] | None = None) -> int:
                     response = single["llm"]
                     messages = response.get("messages") or []
                 else:
-                    response = selected_client.chat_json(messages, max_tokens=args.max_tokens)
+                    response = call_with_json_validation(
+                        selected_client.chat_json, messages,
+                        required_fields=REQUIRED_CONTENT,
+                        allowed_values=allowed_values_from_required_schema(messages),
+                        branch_name="query-prior", max_attempts=1,
+                    )
                 content = response.get("content")
-                if not isinstance(content, dict) or not _required_content(task, args.native_task_priors) <= content.keys():
+                if (not structured_response_is_valid(response) or not isinstance(content, dict)
+                        or not _required_content(task, args.native_task_priors) <= content.keys()):
                     raise ValueError(f"Invalid query prior for {task}/{index}")
                 break
             except Exception:
-                if retry:
+                if retry == attempts - 1:
                     raise
         return task, index, row, properties, messages, response
 
@@ -362,7 +400,7 @@ def main(argv: list[str] | None = None) -> int:
                             file=sys.stderr, flush=True,
                         )
                     continue
-                batch = root / task / f"{task}__none"
+                batch = batches[task]
                 run_dir = batch / "runs" / f"{task}__none_idx{index:05d}"
                 retrieval = {
                     "status": "ok", "evidence_source": {"type": "none"},
@@ -388,7 +426,7 @@ def main(argv: list[str] | None = None) -> int:
         write_json_atomic(root / "execution.json", execution)
         raise RuntimeError(f"Query-prior recovery exhausted for {len(pending)} items")
     for task in args.tasks:
-        batch = root / task / f"{task}__none"
+        batch = batches[task]
         path, rows = _inputs(task, args.subset, args.benchmark, args.input_root)
         entries = []
         for index, row in rows:

@@ -47,7 +47,7 @@ def _configure(benchmark: str, *, training_template: bool = False) -> str:
     builder.SHARED_LATER_PARENT_UNIVERSE = training_template
     builder.QUERY_BENCHMARK = benchmark
     builder.LABEL_RELEASE = (
-        "v1" if benchmark == "gold" else {"benchmark": "tdc", "version": "v1"}
+        "v1" if benchmark == "gold" else {"benchmark": "tdc"}
     )
     builder.TASK_LEVELS = LEVELS
     return profile

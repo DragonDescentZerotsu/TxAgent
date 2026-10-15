@@ -8,7 +8,7 @@ from functools import partial
 
 from typing import Any
 
-from predict.llm_io.evidence import evidence_for_llm
+from predict.utils.evidence import evidence_for_llm
 
 from predict.api_client.client import OpenAICompatibleClient
 
@@ -18,7 +18,7 @@ from predict.harnesses.branches.artifacts import write_trace_jsonl
 
 from predict.harnesses.branches.inference import call_single_molecule_branch
 
-from predict.llm_io.response import structured_response_is_valid
+from predict.utils.response import structured_response_is_valid
 
 from predict.prompts import native_prior_messages, task_profiles
 

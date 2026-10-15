@@ -8,11 +8,12 @@ import os
 from pathlib import Path
 from typing import Any, Callable, Mapping
 
-from predict.llm_io.evidence import ASSAY_RAW_CARD_PROMPT_PROFILE
+from predict.utils.evidence import ASSAY_RAW_CARD_PROMPT_PROFILE
 from predict.api_client.client import OpenAICompatibleClient
-from predict.llm_io.response import (
+from predict.utils.response import (
     allowed_values_from_required_schema,
     call_with_json_validation,
+    validate_query_prior_output,
 )
 
 
@@ -170,9 +171,7 @@ def load_frozen_single_analysis(source_run_dir: str) -> dict[str, Any] | None:
     path = Path(source_run_dir) / "single_molecule_reasoning_output.json"
     if not path.exists():
         raise FileNotFoundError(f"Frozen single-molecule analysis not found: {path}")
-    output = json.loads(path.read_text(encoding="utf-8"))
-    if output.get("status") != "ok":
-        raise ValueError(f"Frozen single-molecule analysis is not successful: {path}")
+    output = validate_query_prior_output(json.loads(path.read_text(encoding="utf-8")))
     output["reused_from"] = str(path)
     return output
 

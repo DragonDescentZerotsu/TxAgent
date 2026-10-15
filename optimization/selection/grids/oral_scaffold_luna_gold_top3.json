@@ -1,0 +1,40 @@
+{
+  "name": "oral_scaffold_luna_gold_top3",
+  "kind": "indirect",
+  "diversity": "sqrt",
+  "profiles": [
+    {
+      "name": "ga075_mc010_sr025_sd010_ld025",
+      "gated_assay": 0.75,
+      "molecular": 0.1,
+      "semantic_relevance": 0.25,
+      "semantic_diversity": 0.1,
+      "level_diversity": 0.25,
+      "aliases": [],
+      "record_diversity": 0,
+      "dili_geomean": false
+    },
+    {
+      "name": "ga075_mc010_sr050_sd010_ld025",
+      "gated_assay": 0.75,
+      "molecular": 0.1,
+      "semantic_relevance": 0.5,
+      "semantic_diversity": 0.1,
+      "level_diversity": 0.25,
+      "aliases": [],
+      "record_diversity": 0,
+      "dili_geomean": false
+    },
+    {
+      "name": "ga075_mc025_sr050_sd010_ld025",
+      "gated_assay": 0.75,
+      "molecular": 0.25,
+      "semantic_relevance": 0.5,
+      "semantic_diversity": 0.1,
+      "level_diversity": 0.25,
+      "aliases": [],
+      "record_diversity": 0,
+      "dili_geomean": false
+    }
+  ]
+}

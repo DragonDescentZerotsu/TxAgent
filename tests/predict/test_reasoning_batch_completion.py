@@ -118,7 +118,7 @@ def test_batch_preserves_final_prompt_provenance_and_rejects_changed_resume(tmp_
     config = importlib.import_module(f"predict.harnesses.branches.tasks.{task}.contract").CONFIG
 
     path = tmp_path / "input.jsonl"
-    path.write_text(json.dumps({"drug": "CCO", "Y": 1}) + "\n")
+    path.write_text(json.dumps({"benchmark_row_id": "q", "drug": "CCO", "Y": 1}) + "\n")
     args = _parse_args(config, [
         "--input-jsonl", str(path), "--batch-root", str(tmp_path), "--batch-id", "final",
         "--flat-prompt-version", "final_full_flat", "--flat-reranking", "morgan",
@@ -136,7 +136,7 @@ def test_batch_preserves_final_prompt_provenance_and_rejects_changed_resume(tmp_
     assert provenance["contract_sha256"]
     runner.prepare_batch(config, args)
     monkeypatch.setattr(runner, "flat_prompt_provenance", lambda *a, **k: {
-        **provenance, "contract_sha256": "changed",
+        **provenance, "prompt_version": "changed",
     })
     with pytest.raises(ValueError, match="provenance mismatch"):
         runner.prepare_batch(config, args)

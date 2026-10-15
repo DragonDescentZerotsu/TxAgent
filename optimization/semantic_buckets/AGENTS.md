@@ -14,6 +14,7 @@ Use only `optimization.semantic_buckets` and paths under this owner. Read [READM
 - `publication.py` installs only explicitly reviewed successors. Finished candidates stay
   unselected until publication; never change evidence CURRENT or overwrite selected payloads.
 - Preserve selected releases, essential assets and maintained pinned retrieval policies.
+- Evidence level zero means unreviewed: keep those UID census rows unleveled, outside semantic assignment and pending atom construction. An L1-only evidence successor may reuse reviewed indirect maps and weights after exact row/level equivalence checks; rebuild its complete UID ledger and validate the resulting weight projection.
 - Per-level selection, fixed-neighbor calibration, Bradley–Terry ranking and root aliases are
   retired. Do not recreate obsolete module aliases or historical recovery/migration commands.
 - Task policies are invocation-local; no global task mutation. Python owns science and

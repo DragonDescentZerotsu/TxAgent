@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from predict.harnesses.branches.flat import resolve_default_cache_bundle
+from predict.retrieval.assay_reranking.artifact_bundle import resolve_cache_set, cache_task, DEFAULT_CACHE_SET
 from predict.retrieval.assay_reranking.runtime import cache_profile_root
 from predict.retrieval.assay_reranking.artifact_bundle import (
     ArtifactBundleError,
@@ -182,23 +182,18 @@ def test_canonical_cache_identity_and_legacy_alias() -> None:
     )
 
 
-def test_default_cache_bundle_is_task_and_benchmark_scoped(tmp_path: Path) -> None:
-    explicit = tmp_path / "custom.yaml"
-    assert resolve_default_cache_bundle("bbb_martins", "gold", explicit) == explicit
-    tdc = resolve_default_cache_bundle(
-        "bbb_martins",
-        "tdc",
-        Path("predict/retrieval/assay_reranking/ranked_level_retrieval_v4.yaml"),
-    )
-    assert tdc == Path("data/gold_labels/TDC/manifest.json").resolve()
-    with pytest.raises(TypeError):
-        resolve_default_cache_bundle("bbb_martins", "tdc", Path("predict/retrieval/assay_reranking/ranked_level_retrieval_v4.yaml"), tdc_version="v1")
-    safety = resolve_default_cache_bundle(
-        "ames",
-        "gold",
-        Path("predict/retrieval/assay_reranking/ranked_level_retrieval_v4.yaml"),
-    )
-    assert safety.name == "ranked_level_retrieval_gold_v1_all_tasks_v1.yaml"
+def test_default_cache_set_is_task_and_benchmark_scoped(tmp_path: Path) -> None:
+    for task in ("bbb_martins", "bioavailability_ma", "skin_reaction", "ames", "dili", "carcinogens"):
+        path = resolve_cache_set(task, "tdc")
+        assert path == DEFAULT_CACHE_SET.resolve()
+        assert cache_task(path, task, "tdc")["benchmark"] == "tdc"
+    explicit = tmp_path / "pinned.json"
+    explicit.write_bytes(DEFAULT_CACHE_SET.read_bytes())
+    assert resolve_cache_set("bbb_martins", "gold", explicit) == explicit
+    with pytest.raises(ValueError, match="historical benchmark versions"):
+        cache_task(explicit, "bioavailability_ma", "tdc_v2")
+    with pytest.raises(ValueError, match="numbered"):
+        resolve_cache_set("bbb_martins", "gold", Path("predict/retrieval/assay_reranking/ranked_level_retrieval_v4.yaml"))
 
 
 def test_archive_round_trip_restores_relative_payloads(tmp_path: Path) -> None:
@@ -218,3 +213,26 @@ def test_archive_round_trip_restores_relative_payloads(tmp_path: Path) -> None:
     receipt = restore_archive(archive_root, repo_root=restored)
     assert receipt["status"] == "verified"
     assert (restored / "data/cache/bbb/RELEASE_INDEX.json").is_file()
+
+
+def test_named_bundle_accepts_exact_snapshot_and_rejects_changed_binding(tmp_path: Path) -> None:
+    repo, old_config = _fixture_repo(tmp_path)
+    catalog = old_config.with_name('catalog.json')
+    catalog.write_text(json.dumps(dict(schema_version='retrieval_cache_set.v1', name='fixture', release='v1',
+        benchmarks={'gold_v1': {'bbb_martins': dict(retrieval=dict(
+            L1='data/cache/bbb/RELEASE_INDEX.json', later='data/cache/bbb/RELEASE_INDEX.json'))}})))
+    manifest = bundle_manifest_path('bbb_martins', 'gold', cache_set=catalog, repo_root=repo)
+    document = build_bundle_manifest(task='bbb_martins', benchmark='gold', cache_config=catalog,
+                                    output=manifest, repo_root=repo)
+    assert document['cache_set'] == dict(name='fixture', release='v1')
+    verify_bundle(manifest, repo_root=repo)
+    snapshot = tmp_path / 'batch' / 'inputs' / 'cache.json'
+    snapshot.parent.mkdir(parents=True)
+    snapshot.write_bytes(catalog.read_bytes())
+    require_receipt(manifest, repo_root=repo, expected_cache_config=snapshot,
+                    expected_task='bbb_martins', expected_benchmark='gold')
+    changed = json.loads(snapshot.read_text())
+    changed['benchmarks']['gold_v1']['bbb_martins']['retrieval']['later'] = 'other/index.json'
+    snapshot.write_text(json.dumps(changed))
+    with pytest.raises(ArtifactBundleError, match='configuration differs'):
+        require_receipt(manifest, repo_root=repo, expected_cache_config=snapshot)

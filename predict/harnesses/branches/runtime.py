@@ -54,11 +54,12 @@ from predict.harnesses.branches.flat import (
     native_flat_prediction,
 )
 from predict.harnesses.branches.prompt import attach_external_condition
-from predict.harnesses.branches.manifests import read_run, read_record, write_batch, run_directory
-from predict.llm_io.response import (
+from predict.harnesses.branches.manifests import read_run, read_record, write_batch, run_directory, canonical_location
+from predict.utils.response import (
     call_with_json_validation,
     structured_response_is_valid,
     validated_branch_content,
+    validate_query_prior_output,
 )
 from predict.harnesses.branches.artifacts import (
     load_reusable_group_outputs,
@@ -346,34 +347,44 @@ def synchronize_configured_single_reuse(
     )
     if not source_dir:
         return
-    if not run_dir.is_dir() or not (
-        Path(source_dir) / "single_molecule_reasoning_output.json"
-    ).is_file():
+    if not run_dir.is_dir() or getattr(prepared.args, "flat_query_prior", "cached") == "none":
         return
     target_path = run_dir / "single_molecule_reasoning_output.json"
+    source_path = Path(source_dir) / target_path.name
+    if target_path.is_file():
+        require_matching_query_prior(target_path, source_path, item.record.get("benchmark_row_id", item.index))
+        return
+    if not source_path.is_file():
+        return
     manifest_path = run_dir / "stage_resume.json"
     source_manifest = Path(source_dir).parent.parent / "manifest.json"
     source_uid = read_record(source_manifest).get("run_uid", "") if source_manifest.exists() else ""
-    if target_path.is_file() and manifest_path.is_file():
-        checkpoint = _read_json(manifest_path)
-        if source_uid and checkpoint.get("single_analysis_source_run_uid") == source_uid:
-            return
     source_output = load_frozen_single_analysis(source_dir)
     if source_output is None:
         return
-    target_output = _read_json(target_path) if target_path.is_file() else None
-    source_visible = (source_output.get("status"), validated_branch_content(source_output))
-    target_visible = (
-        (target_output or {}).get("status"),
-        validated_branch_content(target_output or {}),
-    )
+    if validated_branch_content(source_output) is None:
+        raise ValueError(f"Requested query prior is invalid: {source_path}")
     _write_json_atomic(target_path, source_output)
     if source_uid:
         checkpoint = _read_json(manifest_path) if manifest_path.exists() else {}
         checkpoint["single_analysis_source_run_uid"] = source_uid
         _write_json_atomic(manifest_path, checkpoint)
-    if target_visible != source_visible:
-        _invalidate_dependent_final(run_dir)
+
+
+def require_matching_query_prior(saved: Path, requested: Path, query_id: Any) -> Any:
+    """Validate model-visible prior content without modifying either checkpoint."""
+    try:
+        old_document, current_document = _read_json(saved), _read_json(requested)
+        old = validated_branch_content(validate_query_prior_output(old_document))
+        current = validated_branch_content(validate_query_prior_output(current_document))
+    except (OSError, ValueError, TypeError) as error:
+        raise ValueError(f"Cannot validate query prior for {query_id}: saved={saved}, requested={requested}") from error
+    if old is None or current is None or old != current:
+        raise ValueError(
+            f"Query prior changed or is invalid for {query_id}: saved={saved}, requested={requested}. "
+            "Use a new run identity; the saved checkpoint was left unchanged."
+        )
+    return current
 
 
 
@@ -389,6 +400,10 @@ def _execute_single(
     source_batch = str(state.prepared.args.single_analysis_source_batch or "")
     if source_batch:
         source_dir = _source_run_dir(Path(source_batch), state.item.index)
+        saved = state.run_dir / "single_molecule_reasoning_output.json"
+        if saved.is_file():
+            require_matching_query_prior(saved, source_dir / saved.name,
+                                         state.item.record.get("benchmark_row_id", state.item.index))
         output = load_frozen_single_analysis(str(source_dir))
         if output is None:
             raise RuntimeError(f"Frozen single stage was not loaded: {source_dir}")
@@ -436,7 +451,7 @@ def _execute_flat_context_final(
         state.run_dir / "single_molecule_reasoning_output.json"
     )
     query_prior = (
-        validated_branch_content(single_output)
+        validated_branch_content(validate_query_prior_output(single_output))
         if state.prepared.args.flat_query_prior == "cached"
         else {}
     )
@@ -670,10 +685,11 @@ def _query_prior_overlay(source_batch: Path) -> tuple[Path, ...] | None:
 
 
 def _source_run_dir(source_batch: Path, query_index: int) -> Path:
+    source_batch = canonical_location(source_batch)
     overlay = _query_prior_overlay(source_batch.resolve())
     if overlay is not None:
         try:
-            return overlay[query_index]
+            return canonical_location(overlay[query_index])
         except IndexError as error:
             raise ValueError(f"Query-prior overlay lacks index {query_index}") from error
     return run_directory(source_batch, query_index)
@@ -736,9 +752,17 @@ def _write_stage_trace(
 ) -> None:
     mode = str(getattr(state.prepared.args, "experiment_mode", "native"))
     harness = {"full_flat": "flat", "full_mechanism": "full"}.get(mode, mode)
+    experiment = state.prepared.batch_id
+    if getattr(state.prepared.args, "run_name", ""):
+        metadata = state.prepared.manifest
+        benchmark = metadata.get("benchmark") or metadata["benchmark_release"]
+        experiment = "__".join((
+            state.prepared.args.run_name, state.prepared.args.flat_prompt_version,
+            str(benchmark), str(metadata["evaluation_subset"]), experiment,
+        ))
     write_trace(
         trace_root=getattr(state.prepared.args, "trace_root", "outputs/paper/live"),
-        experiment_id=state.prepared.batch_id,
+        experiment_id=experiment,
         task=_task_id(state.prepared),
         harness=harness,
         sample_id=f"query_idx{state.item.index:05d}",

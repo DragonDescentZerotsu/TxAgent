@@ -29,7 +29,11 @@ from predict.harnesses.branches.scheduler import (
     BatchCommand, prepare_batch_commands, run_prepared_prompt_pool,
 )
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic, write_jsonl_atomic
-from predict.harnesses.branches.manifests import read_record, read_run, run_directory, prior_sources, write_prior_batch
+from predict.utils.response import validate_query_prior_output
+from predict.harnesses.branches.manifests import (
+    read_record, read_run, run_directory, prior_sources, write_prior_batch,
+    PREDICTION_ROOT, prediction_run_root, prediction_batch_directory, canonical_location, query_prior_batch,
+)
 
 
 TASKS = (
@@ -69,6 +73,7 @@ def _run(batch: Path, index: int) -> Path:
 
 
 def _source_prompt_profile(task: str, run: Path) -> tuple[Path, str]:
+    run = canonical_location(run)
     manifest_path = run / "manifest.json"
     if not manifest_path.is_file():
         manifest_path = run.parent.parent / "manifest.json"
@@ -88,11 +93,11 @@ def _gold_sources(task: str) -> dict[tuple[str, str], Path]:
         root = default_query_prior_root(
             CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION, "gold", subset
         )
-        batch = (root / task / f"{task}__none").resolve()
+        batch = query_prior_batch(root, task, subset, "gold")
         manifest = read_record(batch / "manifest.json")
         for row in prior_sources(batch):
             key = (str(row["molecule_identity_key"]), str(row.get("condition_group") or ""))
-            run = Path(row["run_dir"])
+            run = canonical_location(row["run_dir"])
             retrieval = run / "retrieval.json"
             single = run / "single_molecule_reasoning_output.json"
             if not retrieval.is_file() or not single.is_file():
@@ -112,6 +117,7 @@ def _tdc_sources(task: str, subsets: tuple[str, ...]) -> dict[tuple[str, str], P
                 root / task / f"{task}__none/manifest.json",
             )
             for manifest_path in manifest_paths:
+                manifest_path = canonical_location(manifest_path)
                 if not manifest_path.is_file():
                     continue
                 manifest = read_record(manifest_path)
@@ -119,7 +125,7 @@ def _tdc_sources(task: str, subsets: tuple[str, ...]) -> dict[tuple[str, str], P
                     continue
                 for row in prior_sources(manifest_path.parent):
                     key = (str(row["molecule_identity_key"]), str(row.get("condition_group") or ""))
-                    run = Path(row["run_dir"])
+                    run = canonical_location(row["run_dir"])
                     try:
                         _source_prompt_profile(task, run)
                     except ValueError:
@@ -138,6 +144,10 @@ def _matching_source(
             continue
         retrieval = json.loads((run / "retrieval.json").read_text(encoding="utf-8"))
         if str((retrieval.get("query") or {}).get("input_smiles") or "") == str(row["drug"]):
+            try:
+                validate_query_prior_output(json.loads((run / "single_molecule_reasoning_output.json").read_text()))
+            except (ValueError, FileNotFoundError):
+                continue
             return source, run
     return None
 
@@ -254,8 +264,7 @@ def publish_overlays(
         fresh = {(_key(row), str(row["drug"])): _run(fresh_batch, index)
                  for index, row in enumerate(fresh_rows)}
         for key, run in fresh.items():
-            if json.loads((run / "single_molecule_reasoning_output.json").read_text()).get("status") != "ok":
-                raise ValueError(f"Fresh query prior is incomplete: {run}")
+            validate_query_prior_output(json.loads((run / "single_molecule_reasoning_output.json").read_text()))
         for subset in subsets:
             input_path = tdc_split_path(task, subset).with_name(
                 f"{subset}_molecule_condition_labels.jsonl"
@@ -282,11 +291,13 @@ def publish_overlays(
                     "prompt_profile_manifest": str(profile_manifest),
 
                 })
-            batch = output_root / "overlays" / subset / task / f"{task}__none"
+            batch = prediction_batch_directory(output_root, "tdc", task, subset, "query-prior")
             batch.mkdir(parents=True, exist_ok=True)
             write_prior_batch(batch, {
                 "schema_version": "branch_query_prior_overlay.v1", "status": "complete",
                 "task_id": task, "subset": subset, "input_jsonl": str(input_path),
+                "benchmark": "tdc", "harness_version": "query-prior",
+                "prompt_version": CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
                 "n_items": len(sources),
                 "task_prompt_profile": PROFILES[task][1],
                 "reused": reused, "fresh": len(sources) - reused, "sources": sources,
@@ -297,7 +308,8 @@ def publish_overlays(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output-root", type=Path)
+    parser.add_argument("--output-root", type=Path, default=PREDICTION_ROOT)
+    parser.add_argument("--run-name")
     parser.add_argument(
         "--provider-pool-config", type=Path,
         default=Path("predict/api_client/providers/current_endpoints.json"),
@@ -312,9 +324,11 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.max_stage_requeues < 0:
         parser.error("--max-stage-requeues must be non-negative")
-    output_root = (args.output_root or Path(
-        "outputs/paper/assay_transfer_harness/joseph/query_priors"
-    ) / time.strftime("tdc_high_%Y%m%d_%H%M%S")).resolve()
+    if not args.run_name and not args.publish_only and not (args.output_root / "prepared.json").exists():
+        parser.error("New query-prior runs require --run-name")
+    output_root = (prediction_run_root(args.output_root, "query-prior",
+                                       CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION, args.run_name)
+                   if args.run_name else canonical_location(args.output_root))
     tasks = tuple(dict.fromkeys(args.tasks))
     subsets = tuple(dict.fromkeys(args.subsets))
     if args.publish_only:

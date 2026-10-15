@@ -95,14 +95,17 @@ def write_parquet(frame: pd.DataFrame, path: Path) -> None:
         temporary.unlink(missing_ok=True)
 
 
-def write_stage1_protection(mapping_root: Path, output: Path) -> dict:
-    """Publish the Gold-owned L1 UIDs without inventing vote-card metadata."""
+def write_stage1_protection(mapping_root: Path, output: Path, membership: Path | None = None) -> dict:
+    """Protect reviewed L1 rows and any additional physical voters."""
     mapping = pq.read_table(mapping_root, columns=["source_row_uid", "level"])
-    rows = [
-        {"task": "skin_reaction", "source_row_uid": str(row["source_row_uid"])}
+    uids = {
+        str(row["source_row_uid"])
         for row in mapping.to_pylist()
         if int(row["level"]) == 1
-    ]
+    }
+    if membership is not None:
+        uids.update(pq.read_table(membership, columns=["source_row_uid"])["source_row_uid"].to_pylist())
+    rows = [{"task": "skin_reaction", "source_row_uid": uid} for uid in sorted(uids)]
     table = pa.Table.from_pylist(
         rows,
         schema=pa.schema(
@@ -124,8 +127,53 @@ def write_stage1_protection(mapping_root: Path, output: Path) -> dict:
         "path": output.name,
         "sha256": sha256(output),
         "rows": len(rows),
-        "source": "level_mapping/level=1",
+        "source": "level_mapping/level=1" + (" union physical voters" if membership else ""),
     }
+
+
+def publish_skin_voter_correction(membership: Path, output: Path,
+                                  canonical_records: Path | None = None) -> None:
+    """Preserve reviewed levels and add missing physical voters at L1."""
+    if canonical_records is not None and (output / "level_mapping").exists():
+        raise FileExistsError(f"refusing to replace a level mapping: {output / 'level_mapping'}")
+    prior_root = ROOT / "data/gold_labels/Skin_Reaction/level_mappings/v1"
+    prior = prior_root / "level_mapping"
+    protection = write_stage1_protection(prior, output / "stage1_voter_protection.parquet", membership)
+    if canonical_records is None:
+        return
+    mapping = pq.read_table(prior)
+    frame = mapping.to_pandas()
+    voters = set(pq.read_table(membership, columns=["source_row_uid"])["source_row_uid"].to_pylist())
+    levels = indexed(frame)["level"]
+    if any(int(levels.loc[uid]) != 1 for uid in voters.intersection(levels.index)):
+        raise ValueError("Skin voter correction would change an existing level assignment")
+    missing = sorted(voters - set(levels.index))
+    additions = pq.read_table(canonical_records, columns=["source_row_uid", "canonical_record_id"],
+                              filters=[("source_row_uid", "in", missing)]).to_pylist() if missing else []
+    if len(additions) != len(missing) or {r["source_row_uid"] for r in additions} != set(missing):
+        raise ValueError("Skin voters are absent or nonunique in canonical records")
+    route = dict(source_group_id="Direct.skin_reaction", family_key="direct_skin_reaction", level=1)
+    rows = mapping.to_pylist() + [{**row, **route} for row in additions]
+    target = output / "level_mapping/part-00000.parquet"
+    target.parent.mkdir(parents=True)
+    pq.write_table(pa.Table.from_pylist(rows, schema=mapping.schema), target, compression="zstd")
+    manifest = json.loads((prior_root / "manifest.json").read_text())
+    manifest["builder"] = {"path": "data/processing/evidence_library/publish_gold_level_mappings.py",
+                           "sha256": sha256(Path(__file__))}
+    manifest["inputs"] = {"prior_manifest_sha256": sha256(prior_root / "manifest.json"),
+                          "voter_membership_sha256": sha256(membership),
+                          "canonical_records_sha256": sha256(canonical_records)}
+    manifest["reviewed_voter_additions"] = missing
+    manifest["validations"] = {"existing_levels_unchanged": True, "all_physical_voters_at_l1": True}
+    manifest["outputs"] = {
+        "level_mapping": {"kind": "parquet_dataset", "path": "level_mapping", "rows": len(rows),
+                          "rows_by_level": {str(k): sum(int(r["level"]) == k for r in rows)
+                                            for k in sorted(set(frame["level"]))},
+                          "parts": [{"path": target.name, "sha256": sha256(target),
+                                     "size_bytes": target.stat().st_size}]},
+        "stage1_voter_protection": protection,
+    }
+    write_json_atomic(output / "manifest.json", manifest)
 
 
 def copy_file(source: Path, destination: Path) -> None:
@@ -541,7 +589,15 @@ def publish_index(source_manifest: dict) -> None:
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--current-voter-successors", action="store_true")
+    parser.add_argument("--skin-voter-membership", type=Path)
+    parser.add_argument("--canonical-records", type=Path)
+    parser.add_argument("--output-root", type=Path)
     args = parser.parse_args(argv)
+    if args.skin_voter_membership:
+        if args.output_root is None or args.current_voter_successors:
+            parser.error("Skin voter correction requires --output-root and no successor sweep")
+        publish_skin_voter_correction(args.skin_voter_membership, args.output_root, args.canonical_records)
+        return
     source_manifest = json.loads((SHARDED_ORIGINALS / "manifest.json").read_text())
     if args.current_voter_successors:
         for task in CURRENT_VOTER_SUCCESSOR_DEMOTIONS:

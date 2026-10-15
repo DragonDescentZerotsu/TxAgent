@@ -12,11 +12,12 @@ from predict.utils.json import write_json_atomic
 from data.processing.paths import resolve_legacy_path
 
 ROOT = Path(__file__).resolve().parents[3]
+PREDICTION_ROOT = ROOT / "outputs/predictions"
 SCHEMA = "prediction_batch.v2"
 FINAL_SCHEMA = "joseph_final_arm.v3"
 SCHEMAS = {SCHEMA, FINAL_SCHEMA, "prediction_selection.v2"}
 RUNTIME = {
-    "paths", "indices", "n_items", "n_queries", "query_index", "run_id",
+    "paths", "indices", "n_items", "n_queries", "query_index", "run_id", "run_name",
     "batch_id", "schema_version", "status", "started_at", "finished_at",
     "parallelism", "requested_parallelism", "group_workers", "scheduler",
     "save_trace", "combine_traces", "stream_logs", "execution_mode",
@@ -50,8 +51,46 @@ def canonical_location(value: str | Path) -> Path:
     return resolve_legacy_path(path if path.is_absolute() else ROOT / path)
 
 
+def prediction_run_root(output_root: Path, harness: str, prompt: str, run_name: str) -> Path:
+    for value in (harness, prompt, run_name):
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", value or "") or len(value.encode()) > 255:
+            raise ValueError(f"Expected a readable single-component run name or identity, got {value!r}")
+    return canonical_location(output_root) / harness / prompt / run_name
+
+
+def prediction_batch_directory(run_root: Path, benchmark: str, task: str, subset: str,
+                               profile: str = "default") -> Path:
+    parts = ("gold_v1" if benchmark == "gold" else benchmark, task, subset, profile or "default")
+    if any(not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", part) for part in parts):
+        raise ValueError(f"Invalid prediction output identity: {parts}")
+    return run_root.joinpath(*parts)
+
+
+def query_prior_batch(root: Path, task: str, subset: str, benchmark: str) -> Path:
+    root = canonical_location(root)
+    candidates = (root, root / task / f"{task}__none",
+                  root / subset / task / f"{task}__none",
+                  prediction_batch_directory(root, benchmark, task, subset, "query-prior"))
+    for candidate in candidates:
+        candidate = canonical_location(candidate)
+        path = candidate / "manifest.json"
+        if path.is_file():
+            header = json.loads(path.read_text())
+            settings = header.get("settings") or header
+            if settings.get("experiment_mode") == "none" or header.get("schema_version") == "branch_query_prior_overlay.v1":
+                return candidate
+    return canonical_location(root / task / f"{task}__none")
+
+
 def artifact_name(value: str | Path) -> dict:
     path = canonical_location(value)
+    if path.suffix == ".json" and path.is_file():
+        try:
+            document = json.loads(path.read_text())
+        except ValueError:
+            document = {}
+        if isinstance(document, dict) and document.get("schema_version") == "retrieval_cache_set.v1":
+            return {"kind": "retrieval", "format": "cache_set", "name": document["name"], "version": document["release"]}
     recorded = Path(value)
     if "TDC" in recorded.parts and {"v1", "v2"}.intersection(recorded.parts):
         path = recorded
@@ -85,7 +124,13 @@ def artifact_name(value: str | Path) -> dict:
     if "assay_reranking" in parts and "active" in parts:
         tail = parts[parts.index("active") + 1:]
         result["kind"] = "retrieval"
-        if len(tail) >= 7 and tail[0] == "flat_v5":
+        if len(tail) >= 4 and tail[:2] == ("flat_v5", "tdc"):
+            result.update(benchmark="tdc", task=tail[2], role=tail[3])
+            if len(tail) >= 7 and tail[4] not in {"scaffold", "original", "evidence"}:
+                result.update(method=tail[4], version=tail[5], variant=tail[6])
+            else:
+                result.pop("version", None)
+        elif len(tail) >= 7 and tail[0] == "flat_v5":
             result.update(benchmark=tail[1], task=tail[2], role=tail[3], method=tail[4],
                           version=tail[5], variant=tail[6])
         elif len(tail) >= 2:
@@ -93,7 +138,7 @@ def artifact_name(value: str | Path) -> dict:
         if any(part in {"original", "scaffold"} for part in tail):
             result["partition"] = next(part for part in tail if part in {"original", "scaffold"})
         for part in tail:
-            if part in {"L1", "L2", "L3", "L4", "L5", "L6"}:
+            if part in {"L1", "L2", "L3", "L4", "L5", "L6", "L7"}:
                 result["level"] = part
     return result
 
@@ -161,6 +206,8 @@ def compact_record(document: dict, *, schema=SCHEMA, run_uid=None) -> dict:
     result = {"schema_version": schema, "run_uid": run_uid or str(uuid.uuid4()),
             "batch_id": document.get("batch_id", ""), "settings": settings,
             "artifacts": artifacts, "queries": {}, "query_overrides": {}}
+    if document.get("run_name"):
+        result["run_name"] = document["run_name"]
     if "status" in document:
         result["status"] = document["status"]
     if document.get("source_run_uids"):
@@ -175,6 +222,8 @@ def resolve_artifact(record: dict, role: str, batch: Path) -> Path | None:
     if entry.get("local_format"):
         return batch / "inputs" / (role + entry["local_format"])
     kind, task, version = entry.get("kind"), entry.get("task"), entry.get("version")
+    if kind == "retrieval" and entry.get("format") == "cache_set" and version:
+        return ROOT / "predict/retrieval/assay_reranking/flat_v5_manifests" / (entry["name"] + "_" + version) / "catalog.json"
     if kind == "benchmark" and entry.get("cohort") == "tdc":
         return ROOT / "data/gold_labels/TDC" / task / (entry["name"] + ".jsonl")
     if kind == "benchmark" and version:
@@ -213,6 +262,14 @@ def write_batch(path: Path, document: dict, *, records=None) -> dict:
         require_artifact_versions(old, {key: value.get("path") if isinstance(value, dict) else value
                                       for key, value in document.items() if key in PATH_FIELDS and value})
     input_path = document.get("input_jsonl")
+    cache = document.get("assay_transfer_cache")
+    cache_identity = result["artifacts"].get("assay_transfer_cache", {})
+    if cache and cache_identity.get("format") == "cache_set":
+        target = path.parent / "inputs/assay_transfer_cache.json"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            shutil.copyfile(canonical_location(cache), target)
+        cache_identity["local_format"] = ".json"
     if input_path and canonical_location(input_path).is_file():
         if not result["queries"]:
             rows = [json.loads(line) for line in canonical_location(input_path).read_text().splitlines() if line.strip()]
@@ -228,12 +285,15 @@ def write_batch(path: Path, document: dict, *, records=None) -> dict:
 
 
 def read_record(path: Path) -> dict:
+    path = canonical_location(path)
     if not path.exists() and path.parent.parent.name == "runs":
         return read_run(path.parent)
     document = json.loads(path.read_text())
     if document.get("schema_version") not in SCHEMAS:
         return document
     result = dict(document["settings"])
+    if document.get("run_name"):
+        result["run_name"] = document["run_name"]
     result.update(schema_version=document["schema_version"], run_uid=document["run_uid"],
                   batch_id=document.get("batch_id", ""), indices=[int(i) for i in document["queries"]],
                   n_items=len(document["queries"]), n_queries=len(document["queries"]),
@@ -252,6 +312,7 @@ def read_record(path: Path) -> dict:
 
 
 def read_run(run_dir: Path, *, batch=None) -> dict:
+    run_dir = canonical_location(run_dir)
     parent = run_dir.parent.parent
     if not batch and not (parent / "manifest.json").exists():
         return json.loads((run_dir / "manifest.json").read_text())
@@ -296,12 +357,14 @@ def require_artifact_versions(record: dict, inputs: dict) -> None:
             continue
         observed = record.get("artifacts", {}).get(role) or {}
         expected = artifact_name(location)
-        for key in ("name", "kind", "task", "version", "cohort", "generation", "partition"):
-            if key in expected and observed.get(key) != expected[key]:
-                raise ValueError(f"Incompatible {role} {key}: {observed.get(key)!r} != {expected[key]!r}")
+        for key in ("name", "kind", "task", "version", "cohort", "generation", "operation",
+                    "partition", "benchmark", "role", "method", "variant", "level"):
+            if observed.get(key) != expected.get(key):
+                raise ValueError(f"Incompatible {role} {key}: {observed.get(key)!r} != {expected.get(key)!r}")
 
 
 def run_directory(batch: Path, index: int) -> Path:
+    batch = canonical_location(batch)
     record = read_record(batch / "manifest.json") if (batch / "manifest.json").exists() else {}
     label = record.get("batch_id") or batch.name
     raw = batch / "runs" / f"{label}_idx{index:05d}"
@@ -326,7 +389,7 @@ def write_prior_batch(batch: Path, document: dict):
     materialize_overlay(batch, document)
     old = read_record(batch / "manifest.json") if (batch / "manifest.json").exists() else {}
     document = dict(old, **document)
-    document.update(experiment_mode="none", batch_id=batch.name)
+    document.update(experiment_mode="none", batch_id=old.get("batch_id") or document.get("batch_id") or batch.name)
     source_ids = [entry.get("source_run_uid") for entry in document.get("sources") or []]
     document["source_run_uids"] = list(dict.fromkeys(uid for uid in source_ids if uid))
     return write_batch(batch / "manifest.json", document)

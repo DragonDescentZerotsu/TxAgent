@@ -145,8 +145,8 @@ def _fixture(
     version.write_text(json.dumps(manifest))
     return {
         "selection_contract": schema_version,
-        "reranking": "assay-transfer-contrastive",
-        "stages": {"L1": "assay_transfer_contrastive"},
+        "reranking": "morgan-contrastive",
+        "stages": {"L1": "morgan_contrastive"},
         "cache_manifest": str(version),
         "inputs": {},
     }
@@ -182,183 +182,6 @@ def test_l1_only_accepts_per_level_limit_mapping(tmp_path):
 
     assert len(molecules["q"]) == 3
     assert later == {"q": {}}
-
-
-def test_active_context_v2_uses_wider_pool_only_for_label_balance(tmp_path):
-    policy = _fixture(
-        tmp_path,
-        primary_width=10,
-        candidate_widths=[10, 15, 25, 100],
-        labels=[1] * 10 + [0, 0],
-        schema_version=ACTIVE_CONTEXT_SCHEMA_VERSION,
-    )
-    _, _, audit = load_candidates(
-        {"q": "CCO"}, task="bbb_martins", subset="valid", policy=policy,
-        molecule_limit=10, l1_limit=1, min_contrast=2,
-    )
-    selected = audit["query_audits"]["q"]["L1"]
-    assert selected["selected_label_counts"] == {"0": 2, "1": 8}
-    assert selected["replacement_count"] == 2
-    assert selected["fallback_beyond_primary"]
-
-
-@pytest.mark.parametrize(
-    ("primary_width", "candidate_widths"),
-    [(50, [50, 100]), (100, [100])],
-)
-def test_active_context_v2_supports_wider_primary_pools(
-    tmp_path, primary_width, candidate_widths,
-):
-    policy = _fixture(
-        tmp_path,
-        primary_width=primary_width,
-        candidate_widths=candidate_widths,
-        labels=[1] * 6 + [0],
-        schema_version=ACTIVE_CONTEXT_SCHEMA_VERSION,
-    )
-    _, _, audit = load_candidates(
-        {"q": "CCO"}, task="bbb_martins", subset="valid", policy=policy,
-        molecule_limit=6, l1_limit=1, min_contrast=1,
-    )
-    selected = audit["query_audits"]["q"]["L1"]
-    assert selected["morgan_primary_parent_width"] == primary_width
-    assert selected["morgan_candidate_parent_widths"] == candidate_widths
-    assert selected["selected_label_counts"] == {"0": 1, "1": 5}
-
-
-
-
-
-
-
-
-
-
-
-
-def test_contrastive_selection_prefers_top25_and_keeps_context_cards_separate(tmp_path):
-    policy = _fixture(tmp_path)
-    molecules, later, audit = load_candidates(
-        {"q": "CCO"}, task="bbb_martins", subset="valid", policy=policy,
-        molecule_limit=6, l1_limit=1, min_contrast=2,
-    )
-    selected = molecules["q"]
-    assert later == {"q": {}}
-    assert [row["context_card_id"] for row in selected] == [
-        "ctx-1", "ctx-2", "ctx-3", "ctx-4", "ctx-6", "ctx-7"
-    ]
-    assert audit["query_audits"]["q"]["L1"]["selected_label_counts"] == {
-        "0": 2, "1": 4
-    }
-    assert not audit["query_audits"]["q"]["L1"]["fallback_beyond_primary"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def test_contrastive_selection_uses_top100_only_after_top25_is_exhausted(tmp_path):
-    policy = _fixture(tmp_path, fallback_only=True)
-    _, _, audit = load_candidates(
-        {"q": "CCO"}, task="bbb_martins", subset="valid", policy=policy,
-        molecule_limit=6, l1_limit=1, min_contrast=2,
-    )
-    assert audit["query_audits"]["q"]["L1"]["fallback_beyond_primary"]
 
 
 def test_morgan100_uses_the_whole_primary_pool_without_fallback(tmp_path):
@@ -425,31 +248,6 @@ def test_assay_transfer_reorders_only_the_frozen_morgan_top_k(tmp_path):
     rendered = []
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def test_morgan_contrastive_rebalances_by_morgan_rank_and_hides_transfer(tmp_path):
     policy = _fixture(tmp_path)
     policy.update(
@@ -471,27 +269,6 @@ def test_morgan_contrastive_rebalances_by_morgan_rank_and_hides_transfer(tmp_pat
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def test_contrastive_shape_fails_closed(tmp_path):
     policy = _fixture(tmp_path)
     with pytest.raises(ValueError, match=r"K >= 2\*M"):
@@ -499,47 +276,6 @@ def test_contrastive_shape_fails_closed(tmp_path):
             {"q": "CCO"}, task="bbb_martins", subset="valid", policy=policy,
             molecule_limit=5, l1_limit=1, min_contrast=3,
         )
-
-
-def test_zero_contrast_is_exact_unbalanced_assay_transfer_top_k(tmp_path):
-    contrastive = _fixture(tmp_path)
-    plain = dict(contrastive)
-    plain.update(reranking="assay-transfer", stages={"L1": "assay_transfer"})
-    selected = []
-    for policy in (contrastive, plain):
-        molecules, _, audit = load_candidates(
-            {"q": "CCO"}, task="bbb_martins", subset="valid", policy=policy,
-            molecule_limit=6, l1_limit=1, min_contrast=0,
-        )
-        selected.append([row["context_card_id"] for row in molecules["q"]])
-        assert audit["query_audits"]["q"]["L1"]["replacement_count"] == 0
-    assert selected[0] == selected[1]
-
-
-def test_assay_transfer_fallback_uses_top25_before_higher_scored_top100(tmp_path):
-    policy = _fixture(
-        tmp_path, primary_width=15, candidate_widths=[15, 25, 100],
-        labels=[1] * 6 + [0, 0],
-    )
-    database = policy["cache_manifest"].replace("VERSION.json", "retrieval.sqlite3")
-    with sqlite3.connect(database) as connection:
-        connection.execute(
-            "UPDATE candidates SET morgan_parent_rank=20,transfer_score=.20 "
-            "WHERE context_key=7"
-        )
-        connection.execute(
-            "UPDATE candidates SET morgan_parent_rank=26,transfer_score=.99 "
-            "WHERE context_key=8"
-        )
-    molecules, _, audit = load_candidates(
-        {"q": "CCO"}, task="bbb_martins", subset="valid", policy=policy,
-        molecule_limit=6, l1_limit=1, min_contrast=1,
-    )
-    assert "ctx-7" in [row["context_card_id"] for row in molecules["q"]]
-    assert "ctx-8" not in [row["context_card_id"] for row in molecules["q"]]
-    assert audit["query_audits"]["q"]["L1"]["replacements"][0][
-        "added_parent_width"
-    ] == 25
 
 
 def test_maximum_contrast_produces_exact_balance(tmp_path):

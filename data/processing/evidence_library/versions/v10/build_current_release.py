@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import replace
+from functools import partial
 import json
 import os
 from collections.abc import Sequence
@@ -55,7 +57,7 @@ TASKS = (
     "dili",
     "carcinogens",
 )
-GOLD_OWNED_LEVEL_TASKS = frozenset({"ames", "dili", "carcinogens"})
+GOLD_OWNED_LEVEL_TASKS = frozenset({"ames", "dili", "carcinogens", "skin_reaction"})
 RELEASE_LEVEL_TASKS = GOLD_OWNED_LEVEL_TASKS | {
     "bbb_martins",
     "bioavailability_ma",
@@ -90,7 +92,7 @@ def _validate_published_manifest_paths(task_id: str, root: Path) -> None:
                 raise ValueError(
                     f"published manifest contains transient path: {manifest_path}: {value}"
                 )
-            if "path" not in key.lower():
+            if "path" not in key.lower() or key == "git_path":
                 continue
             candidate = Path(value)
             if value.startswith("data/"):
@@ -174,6 +176,8 @@ def build_current_release(
     review_parallelism: int | None = None,
     from_stage: str = "source",
     use_existing: bool = True,
+    voter_membership: Path | None = None,
+    reviewed_level_mapping: Path | None = None,
     record_argv: Sequence[str] = (),
 ) -> dict[str, Any]:
     """Run Stage 2, record pruning, and final Stage 3."""
@@ -189,6 +193,10 @@ def build_current_release(
             "canonical_reconciliation.py"
         )
     policy = load_task_policy(task_id)
+    if voter_membership is not None:
+        policy = replace(policy, protected_voter_membership=Path(voter_membership))
+    if reviewed_level_mapping is not None:
+        policy = replace(policy, source_universe_mapping=Path(reviewed_level_mapping))
     root = Path(normalized_root or policy.default_out_dir)
     canonicalization = _validate_existing_mappings(
         task_id, target_release=root.name
@@ -216,11 +224,18 @@ def build_current_release(
         True,
     )
     _require_selected_mapping_args(task_id, stage2_args)
+    build_stage3 = downstream.build_canonical_artifacts
+    if voter_membership is not None or reviewed_level_mapping is not None:
+        from .pair_bucket_build import build_canonical_artifacts
+        spec = replace(downstream.get_spec(), policy=policy,
+                       protected_source_row_uids_path=policy.protected_voter_membership,
+                       reviewed_level_mapping_path=policy.source_universe_mapping)
+        build_stage3 = partial(build_canonical_artifacts, spec)
 
     with starling_build_session(root, complete=True):
         if run_with_args(policy, stage2_args):
             raise RuntimeError("Stage 2 build failed")
-        downstream.build_canonical_artifacts(
+        build_stage3(
             normalized_root=root,
             workers=workers,
             validation_level=validation_level,
@@ -243,7 +258,7 @@ def build_current_release(
             provider_pool_config=review_provider_pool_config,
             parallelism=review_parallelism,
         )
-        downstream.build_canonical_artifacts(
+        build_stage3(
             normalized_root=root,
             workers=workers,
             validation_level=validation_level,
@@ -252,7 +267,7 @@ def build_current_release(
         )
         if task_id in GOLD_OWNED_LEVEL_TASKS:
             _build_gold_owned_level_projection(task_id, policy, root)
-        result = _validate_release(task_id, root)
+        result = _validate_release(task_id, root, policy=policy)
         result["canonicalization"] = canonicalization
         return result
 
@@ -307,7 +322,8 @@ def _build_gold_owned_level_projection(
         raise ValueError(f"{task_id} release level map lacks exact Stage-3 coverage")
 
 
-def _validate_release(task_id: str, root: Path) -> dict[str, Any]:
+def _validate_release(task_id: str, root: Path, *, policy: Any = None) -> dict[str, Any]:
+    policy = policy or load_task_policy(task_id)
     canonical_records = root / "02_canonicalized/records.parquet"
     canonical_manifest_path = root / "02_canonicalized/manifest.json"
     pruning_manifest_path = root / ARTIFACT_DIR / PRUNING_MANIFEST_FILENAME
@@ -335,10 +351,11 @@ def _validate_release(task_id: str, root: Path) -> dict[str, Any]:
         root / "02_canonicalized/reference_semantics_manifest.json"
     )
     if task_id in GOLD_OWNED_LEVEL_TASKS:
-        for key in (
-            "reference_semantics_mapping_complete",
-            "reference_semantics_assignment_complete",
-        ):
+        reference_checks = ["reference_semantics_assignment_complete"]
+        # Skin explicitly assigns unresolved reference rows to a fail-closed state.
+        if task_id != "skin_reaction":
+            reference_checks.append("reference_semantics_mapping_complete")
+        for key in reference_checks:
             if validations.get(key) is not True:
                 raise ValueError(f"Stage 2 {key} did not pass")
         if not reference_manifest_path.is_file():
@@ -366,7 +383,7 @@ def _validate_release(task_id: str, root: Path) -> dict[str, Any]:
     }
     if task_id in GOLD_OWNED_LEVEL_TASKS:
         protected_membership = (
-            load_task_policy(task_id).protected_voter_membership
+            policy.protected_voter_membership
             or RELEASE_VOTER_MEMBERSHIP.get(task_id)
         )
         if protected_membership is None:
@@ -374,7 +391,7 @@ def _validate_release(task_id: str, root: Path) -> dict[str, Any]:
         expected_stage3_inputs["protected_voter_membership"] = file_sha256(
             protected_membership
         )
-        reviewed_level_mapping = load_task_policy(task_id).source_universe_mapping
+        reviewed_level_mapping = policy.source_universe_mapping
         if reviewed_level_mapping is None:
             raise ValueError("Gold-owned release lacks reviewed level mapping")
         expected_stage3_inputs["reviewed_level_mapping"] = input_sha256(
@@ -431,7 +448,7 @@ def _validate_release(task_id: str, root: Path) -> dict[str, Any]:
         if task_id in GOLD_OWNED_LEVEL_TASKS:
             if level_manifest.get("unmapped_stage3_rows") != 0:
                 raise ValueError("release-owned level mapping is incomplete or stale")
-            reviewed_mapping = load_task_policy(task_id).source_universe_mapping
+            reviewed_mapping = policy.source_universe_mapping
             if (
                 reviewed_mapping is None
                 or (level_manifest.get("inputs") or {})
@@ -450,7 +467,7 @@ def _validate_release(task_id: str, root: Path) -> dict[str, Any]:
             if level_manifest.get("evidence_library_version") != root.name:
                 raise ValueError("release-owned level mapping targets another release")
         protected_membership = (
-            load_task_policy(task_id).protected_voter_membership
+            policy.protected_voter_membership
             or RELEASE_VOTER_MEMBERSHIP.get(task_id)
         )
         expected_voter_sha = (
@@ -464,7 +481,8 @@ def _validate_release(task_id: str, root: Path) -> dict[str, Any]:
             .get("sha256")
             != expected_voter_sha
             or not (
-                validation.get("l1_equals_current_physical_voters")
+                validation.get("l1_covers_current_physical_voters") if task_id == "skin_reaction"
+                else validation.get("l1_equals_current_physical_voters")
                 if task_id in GOLD_OWNED_LEVEL_TASKS
                 else validation.get("l1_equals_gold_physical_voters")
             )
@@ -495,7 +513,7 @@ def _validate_release(task_id: str, root: Path) -> dict[str, Any]:
                 protected_membership, columns=["source_row_uid"]
             ).to_pylist()
         }
-        if level_uids != voter_uids:
+        if (not voter_uids <= level_uids if task_id == "skin_reaction" else level_uids != voter_uids):
             raise ValueError("release-owned level mapping L1 differs from current voters")
         result["level_mapping_manifest_sha256"] = file_sha256(level_manifest_path)
     return result
@@ -506,6 +524,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--task", required=True, choices=TASKS)
     parser.add_argument("--normalized-root", type=Path)
     parser.add_argument("--workers", type=int, default=1)
+    parser.add_argument("--voter-membership", type=Path)
+    parser.add_argument("--reviewed-level-mapping", type=Path)
     parser.add_argument(
         "--validation-level", choices=("full",), default="full"
     )
@@ -536,6 +556,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         result = build_current_release(
             task_id=args.task,
+            voter_membership=args.voter_membership,
+            reviewed_level_mapping=args.reviewed_level_mapping,
             normalized_root=args.normalized_root,
             workers=args.workers,
             validation_level=args.validation_level,

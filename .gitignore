@@ -8,6 +8,9 @@ outputs/
 # Track only the compatibility links created by the canonical data layout.
 !outputs/
 outputs/*
+!outputs/predictions/
+outputs/predictions/*
+!outputs/predictions/relocations.json
 !outputs/chembl_tool/
 outputs/chembl_tool/*
 !outputs/chembl_tool/tasks/
@@ -73,8 +76,6 @@ predict/retrieval/cache/assay_reranking/*
 predict/retrieval/cache/assay_reranking/active/*
 !predict/retrieval/cache/assay_reranking/active/v10_3_best_scaffold_morgan100_v1/
 !predict/retrieval/cache/assay_reranking/active/v10_3_best_scaffold_morgan100_v1/**
-!predict/retrieval/cache/assay_reranking/active/v9_skin_gold_v1_scaffold_morgan100_v1/
-!predict/retrieval/cache/assay_reranking/active/v9_skin_gold_v1_scaffold_morgan100_v1/**
 
 # Bulk scientific payloads are durable on /vast, not in Git. Existing files
 # already tracked upstream remain tracked; do not add new payloads here.
@@ -108,6 +109,7 @@ predict/retrieval/cache/assay_reranking/active/*
 # on /vast and commit their compact manifests, hashes, and validation receipts.
 /optimization/semantic_buckets/**/requests.sqlite3
 /data/raw/starling/main_universe_v1/*/records.parquet
+/data/raw/starling/main_universe_skin_gold_voters_v1/*/records.parquet
 /data/caches/**/rankings.sqlite3
 /data/caches/**/records.parquet
 /data/legacy/artifacts/evidence_libraries/**/records.parquet
@@ -120,3 +122,36 @@ predict/retrieval/cache/assay_reranking/active/*
 
 # Restorable workspace-history payloads; track their compact inventories and receipts.
 /archive/workspace_history/**/*.tar.gz
+
+# Publish only the relocated compact Skin direct scores and cache locator map.
+!/data/caches/
+/data/caches/*
+!/data/caches/assay_reranking/
+/data/caches/assay_reranking/*
+!/data/caches/assay_reranking/relocations.json
+!/data/caches/assay_reranking/active/
+/data/caches/assay_reranking/active/*
+!/data/caches/assay_reranking/active/flat_v5/
+/data/caches/assay_reranking/active/flat_v5/*
+!/data/caches/assay_reranking/active/flat_v5/gold_v1/
+/data/caches/assay_reranking/active/flat_v5/gold_v1/*
+!/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/
+/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/*
+!/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/
+/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/*
+!/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/
+/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/*
+!/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/
+/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/*
+!/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/
+/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/*
+!/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/scoring/
+/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/scoring/*
+!/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/scoring/valid/
+/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/scoring/valid/*
+!/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/scoring/valid/VERSION.json
+!/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/scoring/valid/rankings.parquet
+!/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/scoring/test/
+/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/scoring/test/*
+!/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/scoring/test/VERSION.json
+!/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/scoring/test/rankings.parquet

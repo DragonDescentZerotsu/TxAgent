@@ -237,7 +237,7 @@ def prepare(task: str, output_root: Path) -> dict[str, Any]:
                 "schema_version": SCHEMA_VERSION, "status": "prepared",
                 "task_id": task, "subset": subset, "level": "L1", "pool": "fixed",
                 "capacity": CAPACITY, "parent_capacity": CAPACITY,
-                "label_release": {"benchmark": "tdc", "version": "v1"},
+                "label_release": {"benchmark": "tdc"},
                 "l1_sources": ["gold_v1", "tdc_v1"],
                 "neighbor_identity_policy": "scaffold_disjoint",
                 "shared_candidate_universe": True, "query_count": len(queries),
@@ -412,7 +412,7 @@ def finalize(task: str, output_root: Path, num_shards: int) -> dict[str, Any]:
     index = {
         "schema_version": "ranked_uid_task_release_index.v1", "selection_contract": SCHEMA_VERSION,
         "profile": PROFILE, "task_id": task, "status": "complete",
-        "label_release": {"benchmark": "tdc", "version": "v1"}, "l1_sources": ["gold_v1", "tdc_v1"],
+        "label_release": {"benchmark": "tdc"}, "l1_sources": ["gold_v1", "tdc_v1"],
         "pool": "all", "parent_capacity": CAPACITY, "levels_independent": True,
         "ranking_modes": ["morgan", "assay-transfer"], "assay_transfer_status": "complete",
         "neighbor_identity_policy_by_level": {"L1": "scaffold_disjoint"},

@@ -31,10 +31,48 @@ from predict.utils.json import sha256_file, write_json_atomic
 BUNDLE_SCHEMA = "flat_v5_artifact_bundle.v1"
 RECEIPT_SCHEMA = "flat_v5_artifact_receipt.v1"
 ARCHIVE_SCHEMA = "flat_v5_artifact_archive.v1"
+CACHE_SET_SCHEMA = "retrieval_cache_set.v1"
+DEFAULT_CACHE_SET = Path(__file__).with_name("flat_v5_manifests") / "scaffold_disjoint_parent100_v2" / "catalog.json"
 
 
 class ArtifactBundleError(RuntimeError):
     """A required retrieval artifact is absent, stale, or incompatible."""
+
+
+def cache_task(cache_set: Path, task: str, benchmark: str) -> dict[str, Any]:
+    """Resolve a task's explicit cache bindings, keeping label lineage separate."""
+    document = yaml.safe_load(Path(cache_set).read_text())
+    if (not isinstance(document, dict) or document.get("schema_version") != CACHE_SET_SCHEMA
+            or not document.get("name") or not document.get("release")):
+        raise ValueError("Prediction requires a named retrieval cache set; numbered configurations are historical inputs")
+    requested = benchmark_id(benchmark)
+    if requested not in {"gold_v1", "tdc"}:
+        raise ValueError("Named cache sets use gold_v1 or tdc; historical benchmark versions require legacy decoding")
+    matches = [(scope, tasks[task]) for scope, tasks in document.get("benchmarks", {}).items()
+               if task in tasks and scope == requested]
+    if len(matches) != 1:
+        raise ValueError(f"Cache set must bind exactly one {benchmark}/{task} release")
+    scope, spec = matches[0]
+    if set(spec.get("retrieval", {})) != {"L1", "later"}:
+        raise ValueError(f"{scope}/{task}: cache set requires L1 and later release indexes")
+    return {**spec, "benchmark": scope, "indirect_identity_policy": document.get("indirect_identity_policy"),
+            "cache_set": {"name": document["name"], "release": document["release"]}}
+
+
+def resolve_cache_set(task: str, benchmark: str, configured: Path | None = None) -> Path:
+    path = Path(configured or DEFAULT_CACHE_SET).resolve()
+    cache_task(path, task, benchmark)
+    return path
+
+
+def cache_level_limit(cache_set: Path, task: str, benchmark: str) -> int:
+    spec = cache_task(cache_set, task, benchmark)
+    index = read_json(REPO_ROOT / spec["retrieval"]["later"])
+    levels = [{int(level.removeprefix("L")) for level in split["levels"]}
+              for split in index["splits"].values()]
+    if not levels or any(value != levels[0] for value in levels):
+        raise ValueError(f"Cache level coverage differs across splits: {task}")
+    return max(levels[0])
 
 
 def _component(value: str) -> str:
@@ -122,9 +160,15 @@ def canonical_cache_alias(
 
 
 def bundle_manifest_path(
-    task: str, benchmark: str, *, repo_root: Path = REPO_ROOT
+    task: str, benchmark: str, *, repo_root: Path = REPO_ROOT, cache_set: Path | None = None
 ) -> Path:
     """Return the tracked manifest location for one task/benchmark bundle."""
+    if cache_set is not None:
+        spec = cache_task(cache_set, task, benchmark)
+        identity = spec["cache_set"]
+        return (repo_root / "predict/retrieval/assay_reranking/flat_v5_manifests"
+                / _component(identity["name"] + "_" + identity["release"])
+                / spec["benchmark"] / f"{_component(task)}.json")
     return (
         repo_root
         / "predict/retrieval/assay_reranking/flat_v5_manifests"
@@ -134,9 +178,15 @@ def bundle_manifest_path(
 
 
 def bundle_receipt_path(
-    task: str, benchmark: str, *, repo_root: Path = REPO_ROOT
+    task: str, benchmark: str, *, repo_root: Path = REPO_ROOT, cache_set: Path | None = None
 ) -> Path:
     """Return the ignored local receipt location for one bundle."""
+    if cache_set is not None:
+        spec = cache_task(cache_set, task, benchmark)
+        identity = spec["cache_set"]
+        return (repo_root / "data/caches/assay_reranking/active/flat_v5/receipts"
+                / _component(identity["name"] + "_" + identity["release"])
+                / spec["benchmark"] / f"{_component(task)}.json")
     return (
         repo_root
         / "data/caches/assay_reranking/active/flat_v5/receipts"
@@ -297,7 +347,14 @@ def build_bundle_manifest(
     benchmark = benchmark_id(benchmark)
     cache_config = cache_config.resolve()
     config = yaml.safe_load(resolve_legacy_path(cache_config).read_text(encoding="utf-8"))
-    if config.get("benchmark") == "tdc" and "tasks" in config:
+    if config.get("schema_version") == CACHE_SET_SCHEMA:
+        spec = cache_task(cache_config, task, benchmark)
+        benchmark = spec["benchmark"]
+        selected = {role: str(repo_root / value) for role, value in spec["retrieval"].items()}
+        if spec.get("selection", {}).get("direct_cache"):
+            selected["optimizer_L1"] = str(repo_root / spec["selection"]["direct_cache"])
+        config = {"caches": {task: selected}}
+    elif config.get("benchmark") == "tdc" and "tasks" in config:
         config = {"caches": {key: {**{role: str(repo_root / value) for role, value in spec["retrieval"].items()},
                                     "optimizer_L1": str(repo_root / spec["selection"]["direct_cache"])}
                              for key, spec in config["tasks"].items()}}
@@ -334,7 +391,7 @@ def build_bundle_manifest(
         "bundle_id": f"flat_v5/{benchmark}/{task}",
         "task": task,
         "benchmark": benchmark,
-        "harness_version": "full-flat-context-v5",
+        "organization": "flat",
         "max_level": max_level,
         "cache_config": {
             "path": _repo_relative(cache_config, repo_root),
@@ -343,6 +400,9 @@ def build_bundle_manifest(
         "artifacts": entries,
         "missing": missing,
     }
+    if yaml.safe_load(cache_config.read_text()).get("schema_version") == CACHE_SET_SCHEMA:
+        manifest["cache_set"] = cache_task(cache_config, task, benchmark)["cache_set"]
+        manifest["bundle_id"] += "/" + manifest["cache_set"]["name"] + "_" + manifest["cache_set"]["release"]
     if output is not None:
         write_json_atomic(output, manifest)
     return manifest
@@ -409,7 +469,8 @@ def verify_bundle(
             }
         )
     receipt_path = receipt_path or bundle_receipt_path(
-        str(manifest["task"]), str(manifest["benchmark"]), repo_root=repo_root
+        str(manifest["task"]), str(manifest["benchmark"]), repo_root=repo_root,
+        cache_set=(repo_root / manifest["cache_config"]["path"] if manifest.get("cache_set") else None),
     )
     receipt = {
         "schema_version": RECEIPT_SCHEMA,
@@ -464,14 +525,19 @@ def require_receipt(
             raise ArtifactBundleError(
                 f"configured cache bundle is absent or unreadable: {config}"
             ) from error
-        if config_path != recorded.get("path") or config_hash != recorded.get("sha256"):
+        configured = yaml.safe_load(config.read_text())
+        same_named_set = (manifest.get("cache_set") is not None
+                          and configured.get("schema_version") == CACHE_SET_SCHEMA
+                          and {"name": configured.get("name"), "release": configured.get("release")} == manifest["cache_set"])
+        if (not same_named_set and config_path != recorded.get("path")) or config_hash != recorded.get("sha256"):
             raise ArtifactBundleError(
                 f"artifact bundle cache configuration differs from {config}"
             )
     if verify:
         return verify_bundle(manifest_path, repo_root=repo_root, receipt_path=receipt_path)
     receipt_path = receipt_path or bundle_receipt_path(
-        str(manifest.get("task") or ""), str(manifest.get("benchmark") or ""), repo_root=repo_root
+        str(manifest.get("task") or ""), str(manifest.get("benchmark") or ""), repo_root=repo_root,
+        cache_set=(repo_root / manifest["cache_config"]["path"] if manifest.get("cache_set") else None),
     )
     try:
         receipt = read_json(receipt_path)

@@ -19,7 +19,7 @@ from typing import Any
 from rdkit import Chem, DataStructs, RDLogger
 from rdkit.Chem import AllChem, inchi
 
-from predict.llm_io.evidence import attach_minimal_evidence
+from predict.utils.evidence import attach_minimal_evidence
 from predict.utils.files import ensure_dir
 from predict.retrieval.policies import normalize_molecule_identity
 

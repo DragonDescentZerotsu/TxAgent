@@ -1,6 +1,6 @@
 # Assay-reranking cache layout
 
-## Canonical full-flat V5 identities
+## Cache identities and active selection
 
 New or restored caches use the semantic identity layout:
 
@@ -16,38 +16,64 @@ successor is:
 flat_v5/gold_v1/bbb_martins/l2plus/assay_transfer/v24_1/morgan75
 ```
 
-The historical `v24_1_bbb_uid_levels_morgan75` and Oral V25 profile names remain
-valid compatibility aliases. `runtime.cache_profile_root()` uses the canonical
-location automatically when that successor has been restored, and otherwise
-continues to resolve the historical location. Generate and verify the tracked
-task/benchmark bundle manifest with:
+Active prediction reads the declarative cache set
+`flat_v5_manifests/scaffold_disjoint_parent100_v2/catalog.json`. It binds six
+Gold-v1 tasks and all six canonical TDC tasks. Each task
+binds an immutable L1 index and a scaffold-disjoint L2+ index. Retrieval L1 and
+optimizer direct-card L1 remain distinct bindings. Numeric YAML configurations
+are retained for historical decoding and frozen build provenance.
+
+`flat_v5_manifests/parent_disjoint_parent100_v1/catalog.json` binds the same
+scaffold-disjoint L1 indexes and the published parent-disjoint L2+ indexes.
+Direct L1 always requires scaffold-disjointness; only indirect L2+ offers both
+policies. The parent-disjoint Gold Ames/DILI/Carcinogens bindings retain their
+published Morgan-only coverage. Switching policies never invents missing scores
+or redirects to a different candidate universe.
+
+All active TDC bindings and receipts use `tdc`. Scaffold-disjoint payloads live
+under `flat_v5/tdc/<task>/l2plus/assay_transfer/<model-release>/scaffold_disjoint_parent100_v1/`.
+Canonical query hashes bind the frozen cohorts. Historical headers and paths are
+preserved in `data/legacy/tdc/` through the shared relocation resolver.
+
+The cache index declares levels, disjointness, score availability and any
+incomplete-score ordering. The prompt release does not choose those policies.
+Prediction accepts `--retrieval-cache` and `--prompt`; see
+[the prediction interface](../../README.md).
+
+Generate and verify a task bundle with its actual label lineage:
 
 ```bash
 python -m predict.retrieval.assay_reranking.artifact_bundle inventory \
   --task bbb_martins --benchmark gold_v1 \
-  --cache-config predict/retrieval/assay_reranking/ranked_level_retrieval_v4.yaml \
-  --output predict/retrieval/assay_reranking/flat_v5_manifests/gold_v1/bbb_martins.json
+  --cache-config predict/retrieval/assay_reranking/flat_v5_manifests/scaffold_disjoint_parent100_v2/catalog.json \
+  --output predict/retrieval/assay_reranking/flat_v5_manifests/scaffold_disjoint_parent100_v2/gold_v1/bbb_martins.json
 python -m predict.retrieval.assay_reranking.artifact_bundle verify \
-  --manifest predict/retrieval/assay_reranking/flat_v5_manifests/gold_v1/bbb_martins.json
+  --manifest predict/retrieval/assay_reranking/flat_v5_manifests/scaffold_disjoint_parent100_v2/gold_v1/bbb_martins.json
 ```
 
 Verification hashes the evidence/cache payloads once and writes an ignored
-receipt. Full-flat V5 preparation checks the receipt's manifest, size, and mtime
-fingerprints; it does not repeat the payload hash scan. Use
-`--verify-flat-artifacts` only when intentionally refreshing the receipt.
+receipt under `receipts/<cache-set>/<benchmark>/<task>.json`. Preparation checks
+the receipt's manifest, size and mtime without repeating payload scans.
+`--verify-flat-artifacts` explicitly refreshes it. Evidence payloads remain under
+`data/evidence_libraries/<task>/<release>/retrieval_projection/`; the cache index
+pins the exact projection and release.
 
-The current cache is
-`data/caches/assay_reranking/active/ranked_level_retrieval_v4/`. Evidence
-payloads remain with their semantic owners under the active V10 release at
-`data/evidence_libraries/<task>/<release>/retrieval_projection/ranked_evidence_v2/`.
-
-The compact Gold-v1 direct ranking sources are published in normal Git under
-`predict/retrieval/cache/assay_reranking/active/`: BBB and Oral use
-`v10_3_best_scaffold_morgan100_v1`, while Skin uses
-`v9_skin_gold_v1_scaffold_morgan100_v1`. Their aggregate hashes and size gate
-are in `direct_gold_v1_release.json`; validate all six task/split caches with
+The compact BBB/Oral Gold-v1 direct ranking sources remain under
+`predict/retrieval/cache/assay_reranking/active/v10_3_best_scaffold_morgan100_v1/`.
+Skin uses the corrected source at
+`data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/scoring/`.
+Its prediction index, canonical voter projection and SQLite rankings live beside
+`scoring/`. The obsolete Skin scaffold ranking source has been retired.
+Current source hashes and the size gate are in `direct_gold_v1_release.json`;
+validate all six task/split caches with
 `python -m predict.retrieval.assay_reranking.v9 validate-release`. These source
 rankings are distinct from the derived V4 level databases and from TDC caches.
+
+Cache renames use `data/caches/assay_reranking/relocations.json` through the
+shared path resolver. Skin's corrected source and canonical voter cache were
+relocated byte-for-byte; their frozen profile/provenance fields and content IDs
+remain unchanged. Newly built indexes use the uniform profile above. The deleted
+obsolete source is not redirected to scientifically different corrected scores.
 
 - `ranked_level_retrieval_v4`: current BBB/Oral Gold-v1 retrieval. Every
   task, split, and level owns one independent SQLite database. L1 contains 100
@@ -79,8 +105,7 @@ rankings are distinct from the derived V4 level databases and from TDC caches.
   level-specific assay-transfer scores.
 
 All other profiles are retained unchanged under `archive/`. Active code never
-searches that directory or substitutes an archived profile. Historical replay
-must opt in with `--legacy` and provide the exact archived manifest or cache
+searches that directory or substitutes an archived profile. Historical decoding must use the exact archived manifest or cache
 path recorded by the original run.
 
 Every task/split/level directory is self-describing through `VERSION.json`.

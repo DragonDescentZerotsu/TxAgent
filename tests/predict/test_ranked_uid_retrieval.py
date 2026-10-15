@@ -16,7 +16,6 @@ from predict.retrieval.assay_reranking.ranked_uid_retrieval import (
     HIDDEN_PARTIAL_METHOD,
     HYBRID_METHOD,
     QUERY_PURE_METHOD,
-    _select_assay_contrastive,
     load_candidates,
     load_ranked_panels,
     load_ranked_universe,
@@ -360,7 +359,8 @@ def test_batched_head_copy_preserves_fp32_logits(count) -> None:
 
 
 @pytest.mark.parametrize("oom_first", (False, True))
-def test_score_level_uses_matching_pretokenized_shard(tmp_path: Path, monkeypatch, oom_first) -> None:
+@pytest.mark.parametrize("backend", ("flash_attention_2", "sgl_fa3"))
+def test_score_level_uses_matching_pretokenized_shard(tmp_path: Path, monkeypatch, oom_first, backend) -> None:
     import torch
 
     level = tmp_path / "prepared/ames/scaffold/valid/L2"
@@ -371,6 +371,8 @@ def test_score_level_uses_matching_pretokenized_shard(tmp_path: Path, monkeypatc
     ]), level / "prompts.parquet")
     (level / "VERSION.json").write_text(json.dumps({
         "status": "prepared", "database": "rankings.sqlite3", "prompts": "prompts.parquet",
+        "scoring_contract_version": builder.runtime.SCORING_CONTRACTS[backend],
+        "model": {"model": "test-model", "revision": "pinned"},
     }))
     token_dir = tmp_path / "tokens/ames/scaffold/valid/L2"
     token_dir.mkdir(parents=True)
@@ -391,13 +393,14 @@ def test_score_level_uses_matching_pretokenized_shard(tmp_path: Path, monkeypatc
     monkeypatch.setattr(builder.runtime, "load_model", lambda *_, **__: (object(), object()))
 
     def fake_score(_model, _tokenizer, tasks, *, device, tokenized):
+        assert all(task.scoring_contract_version == builder.runtime.SCORING_CONTRACTS[backend] for task in tasks)
         seen.append((device, tokenized))
         if oom_first and len(seen) == 1:
             raise torch.cuda.OutOfMemoryError("test batch limit")
         return [SimpleNamespace(cache_key=task.cache_key, transfer_probability=0.75) for task in tasks]
 
     monkeypatch.setattr(builder.runtime, "score_prompt_batch", fake_score)
-    result = builder.score_level("ames", "valid", "L2", tmp_path / "prepared", 0, 1, 0, 2, tmp_path / "tokens")
+    result = builder.score_level("ames", "valid", "L2", tmp_path / "prepared", 0, 1, 0, 2, tmp_path / "tokens", attention_backend=backend)
 
     assert result["scores"] == 2
     assert seen == [(0, ([[1, 2], [5, 6]], [3, 7], [4, 8]))] + (
@@ -405,14 +408,14 @@ def test_score_level_uses_matching_pretokenized_shard(tmp_path: Path, monkeypatc
     )
     assert [row["score_key"] for row in builder.read_jsonl(Path(result["journal"]))] == ["a", "b"]
     before_resume = list(seen)
-    assert builder.score_level("ames", "valid", "L2", tmp_path / "prepared", 0, 1, 0, 2, tmp_path / "tokens")["scores"] == 2
+    assert builder.score_level("ames", "valid", "L2", tmp_path / "prepared", 0, 1, 0, 2, tmp_path / "tokens", attention_backend=backend)["scores"] == 2
     assert seen == before_resume
     Path(result["journal"]).unlink()
     pq.write_table(pa.Table.from_pylist([
         {"score_key": "a", "prompt": "changed", "projection_hash": "p"},
     ]), level / "prompts.parquet")
     with pytest.raises(ValueError, match="Pretokenized score inputs"):
-        builder.score_level("ames", "valid", "L2", tmp_path / "prepared", 0, 1, 0, 2, tmp_path / "tokens")
+        builder.score_level("ames", "valid", "L2", tmp_path / "prepared", 0, 1, 0, 2, tmp_path / "tokens", attention_backend=backend)
 
 
 def test_shared_l2plus_parent_universe_expands_only_matching_later_records(
@@ -942,7 +945,7 @@ def test_shared_parent_policy_keeps_every_later_physical_record(tmp_path: Path, 
         "    L1: L1_INDEX.json\n    later: RELEASE_INDEX.json\n"
     )
 
-    policy = cache_matched.load_cache_policy(
+    policy = cache_matched.load_legacy_cache_policy(
         config, "bbb_martins", "valid", "assay-transfer", 2,
     )
     ranked, _, release = load_ranked_universe(
@@ -978,7 +981,7 @@ def test_shared_safety_policy_exposes_all_scored_levels(tmp_path: Path, task: st
         f"version: 20\ncaches:\n  {task}:\n"
         "    L1: direct.json\n    later: later.json\n"
     )
-    policy = cache_matched.load_cache_policy(
+    policy = cache_matched.load_legacy_cache_policy(
         config, task, "valid", "assay-transfer", 7,
     )
     assert tuple(policy["stages"]) == tuple(f"L{i}" for i in range(1, 8))
@@ -1010,7 +1013,7 @@ def test_version_21_policy_requires_and_selects_hybrid_later_levels(tmp_path: Pa
         "    L1: direct.json\n    later: later.json\n"
     )
 
-    policy = cache_matched.load_cache_policy(
+    policy = cache_matched.load_legacy_cache_policy(
         config, "ames", "test", "assay-transfer", 2,
     )
 
@@ -1040,7 +1043,7 @@ def test_version_22_policy_selects_query_pure_levels(tmp_path: Path) -> None:
     (tmp_path / "later.json").write_text(json.dumps(later))
     config = tmp_path / "cache.yaml"
     config.write_text("version: 22\ncaches:\n  ames:\n    L1: direct.json\n    later: later.json\n")
-    policy = cache_matched.load_cache_policy(config, "ames", "test", "assay-transfer", 2)
+    policy = cache_matched.load_legacy_cache_policy(config, "ames", "test", "assay-transfer", 2)
     assert policy["stages"] == {"L1": QUERY_PURE_METHOD, "L2": QUERY_PURE_METHOD}
     assert policy["all_later_records"] is True
 
@@ -1056,12 +1059,12 @@ def test_composite_direct_policy_ignores_absent_later_index(tmp_path: Path) -> N
         "version: 20\ncaches:\n  ames:\n"
         "    L1: direct.json\n    later: missing.json\n"
     )
-    policy = cache_matched.load_cache_policy(
+    policy = cache_matched.load_legacy_cache_policy(
         config, "ames", "test", "assay-transfer", 1,
     )
     assert tuple(policy["stages"]) == ("L1",)
     with pytest.raises(FileNotFoundError):
-        cache_matched.load_cache_policy(config, "ames", "test", "assay-transfer", 2)
+        cache_matched.load_legacy_cache_policy(config, "ames", "test", "assay-transfer", 2)
 
 
 def test_preselected_uids_preserve_order_and_use_authoritative_payloads(tmp_path: Path) -> None:
@@ -1142,58 +1145,8 @@ def test_assay_records_are_reranked_inside_morgan_parent_width(tmp_path: Path) -
     assert audit["contract"]["morgan_primary_parent_width"] == 1
 
 
-def test_contrastive_selection_widens_only_for_missing_label() -> None:
-    rows = [
-        {
-            "item_id": f"p{rank}", "morgan_rank": rank, "assay_rank": rank,
-            "assay_context_id": f"c{rank}",
-        }
-        for rank in range(1, 101)
-    ]
-    contexts = {
-        f"c{rank}": {"gold_label": 1 if rank == 16 else 0}
-        for rank in range(1, 101)
-    }
-
-    selected, audit = _select_assay_contrastive(
-        rows, contexts, molecule_limit=10, primary_width=15, min_contrast=1,
-    )
-
-    assert [row["morgan_rank"] for row in selected] == [1, 2, 3, 4, 5, 6, 7, 8, 9, 16]
-    assert audit["selected_label_counts"] == {"0": 9, "1": 1}
-    assert audit["fallback_beyond_primary"] is True
-    assert audit["replacements"][0]["effective_parent_width"] == 25
 
 
-def test_contrastive_selection_uses_scored_alternate_context() -> None:
-    rows = [
-        {
-            "item_id": f"p{rank}", "parent_id": f"p{rank}",
-            "morgan_rank": rank, "assay_rank": rank,
-            "assay_transfer_score": 1 - rank / 1000,
-            "assay_context_id": f"positive-{rank}",
-            "assay_member_count": 1, "score_key": f"positive-key-{rank}",
-        }
-        for rank in range(1, 101)
-    ]
-    contexts = {
-        **{f"positive-{rank}": {"gold_label": 1} for rank in range(1, 101)},
-        "negative-11": {"gold_label": 0},
-    }
-    selected, audit = _select_assay_contrastive(
-        rows, contexts, molecule_limit=10, primary_width=25, min_contrast=1,
-        context_scores=[{
-            "parent_id": "p11", "context_id": "negative-11",
-            "assay_transfer_score": 0.25, "assay_rank": 101,
-            "member_count": 2, "score_key": "negative-key-11",
-        }],
-    )
-
-    negative = next(row for row in selected if row["assay_context_id"] == "negative-11")
-    assert negative["item_id"] == "p11"
-    assert negative["assay_member_count"] == 2
-    assert len({row["item_id"] for row in selected}) == 10
-    assert audit["selected_label_counts"] == {"0": 1, "1": 9}
 
 
 def test_l1_only_policy_does_not_open_later_manifest(tmp_path: Path) -> None:
@@ -1467,7 +1420,7 @@ def test_flat_manual_selection_does_not_fill_or_drop_records(tmp_path):
                            l1_molecules=10, l1_records_per_molecule=10, morgan_primary_parent_width=25,
                            l1_min_contrast=0, record_limits_by_level={"L2": 50}, indices=None, ranking_tie_seed=0)
     molecules, later, audit = flat._load_flat_context_candidates(
-        args, {"q1": "CCC"}, load_cache_policy=lambda *args: policy, load_candidates=load_candidates)
+        args, {"q1": "CCC"}, load_cache_policy=lambda *args, **kwargs: policy, load_candidates=load_candidates)
     assert [row["record_id"] for row in molecules["q1"][0]["l1_records"]] == ["r2", "r1"]
     assert later["q1"]["L2"]["records"] == []
     assert audit["manual_uid_selection"]["uids"] == ["u2", "u1"]
@@ -1492,3 +1445,196 @@ def test_manual_l1_rejects_shared_scaffold_and_index_policy_drift(tmp_path):
     index_path.write_text(json.dumps(index))
     with pytest.raises(ValueError, match="disjointness policy differs"):
         indexed_manifests(index_path, "valid", ["L1"])
+
+
+def _named_cache_set(tmp_path):
+    policy, level = _release(tmp_path)
+    path = tmp_path / "catalog.json"
+    path.write_text(json.dumps({
+        "schema_version": "retrieval_cache_set.v1", "name": "fixture", "release": "v1",
+        "benchmarks": {"gold_v1": {"bbb_martins": {"retrieval": {
+            "L1": policy["cache_index"], "later": policy["cache_index"],
+        }}}},
+    }))
+    return path, Path(policy["cache_index"]), level
+
+
+def test_named_cache_policy_reads_metadata_and_hydrates(tmp_path):
+    from predict.retrieval.assay_reranking.cache_matched import load_cache_policy
+    from predict.retrieval.assay_reranking.artifact_bundle import cache_level_limit
+    catalog, index_path, level = _named_cache_set(tmp_path)
+    document = json.loads(level.read_text())
+    document["neighbor_identity_policy"] = "scaffold_disjoint"
+    level.write_text(json.dumps(document))
+    index = json.loads(index_path.read_text())
+    index["neighbor_identity_policy_by_level"]["L2"] = "scaffold_disjoint"
+    index["splits"]["valid"]["levels"]["L2"]["manifest_sha256"] = sha256_file(level)
+    index_path.write_text(json.dumps(index))
+    policy = load_cache_policy(catalog, "bbb_martins", "valid", "assay-transfer", benchmark="gold")
+    assert cache_level_limit(catalog, "bbb_martins", "gold") == 2
+    assert policy["stages"] == {"L1": "assay_transfer", "L2": "assay_transfer"}
+    molecules, later, audit = load_candidates({"q1": "CCC"}, task="bbb_martins", subset="valid", policy=policy,
+                                             molecule_limit=1, l1_limit=2, later_limit={"L2": 2}, cache_pool="all")
+    assert [r["record_id"] for r in later["q1"]["L2"]["records"]] == ["r4", "r6"]
+    assert audit["neighbor_identity_policy_by_level"]["L2"] == "scaffold_disjoint"
+
+
+@pytest.mark.parametrize("model,expected", [(None, "morgan"), ({"model": "pinned"}, "assay_transfer")])
+def test_named_cache_policy_uses_declared_l5_scoring(tmp_path, model, expected):
+    from predict.retrieval.assay_reranking.cache_matched import load_cache_policy
+    catalog, index_path, level = _named_cache_set(tmp_path)
+    index = json.loads(index_path.read_text())
+    for number in range(3, 6):
+        document = json.loads(level.read_text())
+        name = "L" + str(number)
+        document.update(level=name, model=model)
+        child = tmp_path / name / "VERSION.json"
+        child.parent.mkdir(exist_ok=True)
+        child.write_text(json.dumps(document))
+        index["splits"]["valid"]["levels"][name] = {"manifest": str(child), "manifest_sha256": sha256_file(child)}
+        index["neighbor_identity_policy_by_level"][name] = "parent_disjoint"
+    index_path.write_text(json.dumps(index))
+    policy = load_cache_policy(catalog, "bbb_martins", "valid", "assay-transfer", benchmark="gold")
+    assert policy["stages"]["L5"] == expected
+
+
+@pytest.mark.parametrize("change", ["partial", "disjointness"])
+def test_named_cache_policy_rejects_incompatible_inputs(tmp_path, change):
+    from predict.retrieval.assay_reranking.cache_matched import load_cache_policy
+    catalog, index_path, level = _named_cache_set(tmp_path)
+    index = json.loads(index_path.read_text())
+    if change == "partial":
+        index["status"] = "partial"
+    else:
+        index["neighbor_identity_policy_by_level"]["L2"] = "scaffold_disjoint"
+    index_path.write_text(json.dumps(index))
+    with pytest.raises(ValueError, match="incomplete|differs"):
+        load_cache_policy(catalog, "bbb_martins", "valid", "morgan", benchmark="gold")
+
+
+def test_active_reader_rejects_numbered_recipe(tmp_path):
+    from predict.retrieval.assay_reranking.cache_matched import load_cache_policy
+    path = tmp_path / "old.yaml"
+    path.write_text("version: 24\ncaches: {}\n")
+    with pytest.raises(ValueError, match="numbered"):
+        load_cache_policy(path, "bbb_martins", "valid", "morgan", benchmark="gold")
+
+
+def test_flat_trace_uses_validated_disjointness():
+    from predict.harnesses.branches.flat import cache_matched_flat_retrieval
+    policies = {"L1": "scaffold_disjoint", "L2": "scaffold_disjoint"}
+    result = cache_matched_flat_retrieval("q1", "CCC", [], {"L2": {"records": []}}, task="bbb_martins",
+                                         reranking="morgan", query_audit={}, selection_contract="ranked_uid_retrieval.v1",
+                                         neighbor_identity_policy_by_level=policies)
+    assert result["retrieval_policy"]["neighbor_identity_policy_by_level"] == policies
+
+
+@pytest.mark.parametrize('wrong_query', (False, True))
+def test_canonical_tdc_cache_validates_frozen_cohort(tmp_path, monkeypatch, wrong_query):
+    from predict.retrieval.assay_reranking.cache_matched import load_cache_policy
+    from data.processing.gold_labels import conditioned_benchmark
+    catalog, index_path, _ = _named_cache_set(tmp_path)
+    config = json.loads(catalog.read_text())
+    config['benchmarks']['tdc'] = config['benchmarks'].pop('gold_v1')
+    catalog.write_text(json.dumps(config))
+    index = json.loads(index_path.read_text())
+    index['label_release'] = {'benchmark': 'tdc'}
+    index.pop('gold_release', None)
+    for entry in index['splits']['valid']['levels'].values():
+        path = index_path.parent / entry['manifest']
+        header = json.loads(path.read_text())
+        header.setdefault('inputs', {})['query_sha256'] = 'different' if wrong_query else 'frozen-query'
+        path.write_text(json.dumps(header))
+        entry['manifest_sha256'] = sha256_file(path)
+    index_path.write_text(json.dumps(index))
+    monkeypatch.setattr(conditioned_benchmark, 'tdc_config', lambda task: {
+        'outputs': {'valid_molecule_condition_labels.jsonl': 'frozen-query'}})
+    if wrong_query:
+        with pytest.raises(ValueError, match='cohort differs'):
+            load_cache_policy(catalog, 'bbb_martins', 'valid', 'assay-transfer', benchmark='tdc')
+    else:
+        policy = load_cache_policy(catalog, 'bbb_martins', 'valid', 'assay-transfer', benchmark='tdc')
+        assert policy['benchmark'] == 'tdc'
+
+
+def test_manual_l1_shared_member_requires_and_preserves_context(tmp_path):
+    from predict.retrieval.selection import resolve_selection
+    policy, _ = _release(tmp_path)
+    with sqlite3.connect(Path(policy['cache_manifests']['L1']).with_name('rankings.sqlite3')) as db:
+        db.execute("INSERT INTO contexts SELECT 'conditioned',parent_id,'disease=test',gold_label FROM contexts WHERE context_id='ctx'")
+        db.execute("INSERT INTO context_records VALUES ('conditioned','u1',1)")
+        db.execute("UPDATE rankings SET assay_context_id='conditioned' WHERE morgan_context_id='ctx'")
+    kwargs = dict(task='bbb_martins', subset='valid', queries={'q1': 'CCC'},
+                  cache_manifests=policy['cache_manifests'])
+    selected = dict(benchmark_row_id='q1', level='L1', source_row_uid='u1')
+    with pytest.raises(ValueError, match='ambiguous L1 membership'):
+        resolve_selection([selected], **kwargs)
+    rows = resolve_selection([{**selected, 'context_id': context}
+                              for context in ('ctx', 'conditioned')], **kwargs)
+    assert [(row['source_row_uid'], row['context_id']) for row in rows] == [
+        ('u1', 'ctx'), ('u1', 'conditioned')]
+    with pytest.raises(ValueError, match='Repeated evidence UID'):
+        resolve_selection([{**selected, 'context_id': 'ctx'}] * 2, **kwargs)
+
+
+def test_synthetic_skin_members_are_rejected_before_hydration(tmp_path):
+    from predict.retrieval.assay_reranking.ranked_uid_retrieval import _hydrate
+    with pytest.raises(ValueError, match='synthetic member IDs'):
+        _hydrate(tmp_path / 'must-not-read.parquet', {'skin_gold_v1_member_123'})
+
+
+def test_named_indirect_policies_keep_identical_scaffold_disjoint_l1():
+    from predict.retrieval.assay_reranking.artifact_bundle import DEFAULT_CACHE_SET
+    from predict.utils.json import read_json
+    catalogs = [DEFAULT_CACHE_SET,
+                DEFAULT_CACHE_SET.parent.parent / 'parent_disjoint_parent100_v1/catalog.json']
+    documents = [read_json(path) for path in catalogs]
+    for benchmark, tasks in documents[0]['benchmarks'].items():
+        for task, spec in tasks.items():
+            assert documents[1]['benchmarks'][benchmark][task]['retrieval']['L1'] == spec['retrieval']['L1']
+            for path, document in zip(catalogs, documents):
+                for subset in ('valid', 'test'):
+                    policy = cache_matched.load_cache_policy(path, task, subset, 'assay-transfer', benchmark=benchmark)
+                    for level, manifest in policy['cache_manifests'].items():
+                        expected = 'scaffold_disjoint' if level == 'L1' else document['indirect_identity_policy']
+                        assert read_json(Path(manifest))['neighbor_identity_policy'] == expected
+
+
+def test_named_cache_rejects_parent_disjoint_direct_before_loading_candidates(tmp_path):
+    from predict.retrieval.assay_reranking.artifact_bundle import DEFAULT_CACHE_SET
+    document = json.loads(DEFAULT_CACHE_SET.read_text())
+    spec = document['benchmarks']['gold_v1']['skin_reaction']
+    index = json.loads(Path(spec['retrieval']['L1']).read_text())
+    index['neighbor_identity_policy_by_level']['L1'] = 'parent_disjoint'
+    changed = tmp_path / 'RELEASE_INDEX.json'
+    changed.write_text(json.dumps(index))
+    spec['retrieval']['L1'] = str(changed)
+    catalog = tmp_path / 'catalog.json'
+    catalog.write_text(json.dumps(document))
+    with pytest.raises(ValueError, match='Direct L1 retrieval requires scaffold-disjoint'):
+        cache_matched.load_cache_policy(catalog, 'skin_reaction', 'valid', 'morgan', benchmark='gold')
+
+
+def test_retired_assay_contrastive_selection_is_rejected(tmp_path):
+    policy, _ = _release(tmp_path)
+    policy['stages']['L1'] = 'assay_transfer_contrastive'
+    with pytest.raises(ValueError, match='does not support this L1 selection'):
+        load_candidates({'q1': 'CCO'}, task='bbb_martins', subset='valid', policy=policy)
+
+
+def test_indirect_policies_distinguish_same_scaffold_analogs():
+    from predict.retrieval.policies import decide_candidate, normalize_molecule_identity
+    query = normalize_molecule_identity('Nc1ccccc1')
+    candidate = {'canonical_smiles': 'Oc1ccccc1'}
+    assert not decide_candidate(query, candidate, 'parent_disjoint').excluded
+    assert decide_candidate(query, candidate, 'scaffold_disjoint').excluded
+
+
+def test_skin_cache_relocation_preserves_inputs_and_does_not_alias_retired_scores():
+    from data.processing.paths import resolve_legacy_path
+    old = Path('data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer')
+    new = old / 'v9_0_2/scaffold_disjoint_parent100_v1'
+    assert resolve_legacy_path(old / 'canonical_voters_v1/original/RELEASE_INDEX.json').resolve() == (new / 'RELEASE_INDEX.json').resolve()
+    assert resolve_legacy_path(old / 'replayed_votes_v1/scoring/valid/rankings.parquet').resolve() == (new / 'scoring/valid/rankings.parquet').resolve()
+    assert not Path('predict/retrieval/cache/assay_reranking/active/v9_skin_gold_v1_scaffold_morgan100_v1').exists()
+    assert resolve_legacy_path(Path('predict/retrieval/cache/assay_reranking/active/v9_skin_gold_v1_scaffold_morgan100_v1')).resolve() != new.resolve()

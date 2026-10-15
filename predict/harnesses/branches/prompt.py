@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from predict.llm_io.query import external_condition_sentence
+from predict.utils.query import external_condition_sentence
 
 
 def attach_external_condition(

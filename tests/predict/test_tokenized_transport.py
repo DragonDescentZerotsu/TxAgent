@@ -4,7 +4,7 @@ from types import SimpleNamespace
 import pytest
 from predict.api_client.client import OpenAICompatibleClient
 from predict.api_client.pool import ProviderPoolConfig, ProviderSpec, preflight_sglang_tokenized_completion
-from predict.llm_io.response import call_with_json_validation
+from predict.utils.response import call_with_json_validation
 MODEL = "deepseek-ai/DeepSeek-V4-Flash-0731"
 
 class _FakeOpenAI:

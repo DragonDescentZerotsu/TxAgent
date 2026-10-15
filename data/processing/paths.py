@@ -16,9 +16,8 @@ ARTIFACTS_ROOT = DATA_ROOT / "artifacts"
 LEGACY_ROOT = DATA_ROOT / "legacy"
 
 
-@lru_cache(maxsize=1)
-def _tdc_relocations():
-    path = LEGACY_ROOT / "tdc/relocations.json"
+@lru_cache(maxsize=4)
+def _relocations(path: Path, modified: int):
     return json.loads(path.read_text()) if path.is_file() else {}
 
 
@@ -34,12 +33,22 @@ def resolve_legacy_path(value: str | Path) -> Path:
     if not absolute.is_relative_to(REPO_ROOT):
         return path
     relative = str(absolute.relative_to(REPO_ROOT))
-    mapping = _tdc_relocations()
-    if relative in mapping:
-        return REPO_ROOT / mapping[relative]
-    for source in sorted(mapping, key=len, reverse=True):
-        if relative.startswith(source + "/"):
-            return REPO_ROOT / mapping[source] / relative[len(source) + 1:]
+    mappings = []
+    for registry in (LEGACY_ROOT / "tdc/relocations.json",
+                     DATA_ROOT / "caches/assay_reranking/relocations.json",
+                     REPO_ROOT / "outputs/predictions/relocations.json"):
+        if registry.is_file():
+            mappings.append(_relocations(registry, registry.stat().st_mtime_ns))
+    for mapping in reversed(mappings):
+        if relative in mapping:
+            return REPO_ROOT / mapping[relative]
+    for parent in absolute.parents:
+        if not parent.is_relative_to(REPO_ROOT):
+            break
+        source = str(parent.relative_to(REPO_ROOT))
+        for mapping in reversed(mappings):
+            if source in mapping:
+                return REPO_ROOT / mapping[source] / absolute.relative_to(parent)
     return absolute
 
 _TASK_NAMES = {
@@ -66,7 +75,8 @@ KNOWN_RELEASES = {
         "v10_main_universe_v3"
     ),
     "skin_reaction": (
-        "v7", "v8", "v9", "v10", "v10_main_universe_v5", "v10_main_universe_v6"
+        "v7", "v8", "v9", "v10", "v10_main_universe_v5", "v10_main_universe_v6",
+        "v10_main_universe_v7"
     ),
     "ames": (
         "v8", "v9", "v10", "v10_main_universe_v1", "v10_main_universe_v2",

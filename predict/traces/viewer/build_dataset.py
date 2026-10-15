@@ -11,10 +11,12 @@ from typing import Any
 from predict.traces.catalog import discover_traces
 
 
-def build_dataset(trace_root: Path, output_root: Path) -> int:
+def build_dataset(trace_root: Path | list[Path], output_root: Path) -> int:
     grouped: dict[tuple[str, str, str], list[dict[str, Any]]] = defaultdict(list)
-    for trace in discover_traces(trace_root):
-        grouped[(trace["experiment_id"], trace["task"], trace["harness"])].append(trace)
+    roots = trace_root if isinstance(trace_root, list) else [trace_root]
+    for root in roots:
+        for trace in discover_traces(root):
+            grouped[(trace["experiment_id"], trace["task"], trace["harness"])].append(trace)
 
     for (experiment, task, harness), traces in grouped.items():
         condition = f"{experiment}__{harness}"
@@ -103,7 +105,7 @@ def _viewer_record(trace: dict[str, Any]) -> dict[str, Any]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--trace-root", type=Path, required=True)
+    parser.add_argument("--trace-root", type=Path, action="append", required=True)
     parser.add_argument("--output-root", type=Path, required=True)
     args = parser.parse_args()
     print(build_dataset(args.trace_root, args.output_root))

@@ -1,0 +1,67 @@
+{
+  "evidence": {
+    "content_id": "643e647a02d581712055a3a221b8ce7c3aec9051e537739c2d60f6d294b0ebe3",
+    "manifest": "../../../../../../../../../../../evidence_libraries/skin_reaction/v10_main_universe_v5/retrieval_projection/ranked_evidence_v27_training_v1/VERSION.json",
+    "manifest_sha256": "7c0f173e92bbc4d380424e6ec4d10a199a531008ee456d27f5aba8655f53e368",
+    "record_count": 24494
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v1"
+  },
+  "later_candidate_universe": "all_uids_under_shared_l2plus_morgan_top_100_parents",
+  "levels_independent": false,
+  "neighbor_identity_policy_by_level": {
+    "L2": "scaffold_disjoint",
+    "L3": "scaffold_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "flat_v5/tdc_v1/skin_reaction/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1",
+  "ranking_modes": [
+    "morgan",
+    "assay-transfer"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L2": {
+          "content_id": "d136379131cc408c1c4963776f38a5bedb7e30b47498342f4ec9cda0406fc509",
+          "manifest": "scaffold/test/L2/VERSION.json",
+          "manifest_sha256": "e92fcc16488532bee952cb1b58d6cfbd23849833f79fb2cadccf0925a629ec21"
+        },
+        "L3": {
+          "content_id": "0053eb0f1b24373bc9195b969e938a156715e235a0173cda12d81cd73d315da1",
+          "manifest": "scaffold/test/L3/VERSION.json",
+          "manifest_sha256": "d9cb98c9e13736a9c62ec360c51400233b3284569f654758e1e5642f2559f654"
+        }
+      },
+      "parent_universe": {
+        "file": "scaffold/test/PARENT_UNIVERSE.json",
+        "sha256": "b5d7e47757549c839adf5a2b38c4ad5d88464e5b2bc759fb7f2d85cde8e48bb2"
+      }
+    },
+    "valid": {
+      "levels": {
+        "L2": {
+          "content_id": "ca11049b180eac70e4abaab2de3c52498c02bda68818655c30a71c067a77f740",
+          "manifest": "scaffold/valid/L2/VERSION.json",
+          "manifest_sha256": "e6793485253ee52872413816889f9edd93cdc0726732ce97359ad52d6e9a4120"
+        },
+        "L3": {
+          "content_id": "024272b2a8ffd531d7978bdde4fd3741b0b92c7164b5573bb9258b8c478ecbfc",
+          "manifest": "scaffold/valid/L3/VERSION.json",
+          "manifest_sha256": "b0b6e97b1a8efbab56e871eda9818fd95f53c2e7610356a0675f5d24431539c1"
+        }
+      },
+      "parent_universe": {
+        "file": "scaffold/valid/PARENT_UNIVERSE.json",
+        "sha256": "4b194c82f10302525a6d37b716b5a3e0e15baf3797c80702770d24aaf55061ad"
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "skin_reaction"
+}

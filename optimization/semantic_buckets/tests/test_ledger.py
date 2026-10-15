@@ -1,7 +1,34 @@
 from pathlib import Path
 import pandas as pd
 import pytest
+import sqlite3
+import json
+from predict.utils.json import sha256_file
 from optimization.semantic_buckets import ledger as central_ledger
+
+
+def test_retrieval_world_accepts_named_cache_sets(tmp_path, monkeypatch):
+    database = tmp_path / "rankings.sqlite3"
+    with sqlite3.connect(database) as db:
+        db.execute("CREATE TABLE rankings(item_id TEXT)")
+        db.execute("INSERT INTO rankings VALUES ('physical')")
+    version = tmp_path / "VERSION.json"
+    version.write_text(json.dumps(dict(database=database.name)))
+    index = tmp_path / "index.json"
+    entry = dict(manifest=version.name, manifest_sha256=sha256_file(version))
+    index.write_text(json.dumps(dict(status="complete", task_id="ames",
+        splits={split: dict(levels={"L2": entry}) for split in ("valid", "test")})))
+    bundle = tmp_path / "cache_set.json"
+    spec = dict(retrieval=dict(later=index.name))
+    bundle.write_text(json.dumps(dict(schema_version="retrieval_cache_set.v1",
+        benchmarks={"gold_v1": {"ames": spec}, "tdc": {"ames": spec}})))
+    monkeypatch.setattr(central_ledger, "ROOT", tmp_path)
+    target = tmp_path / "world"
+    result = central_ledger.collect_retrieval_world("ames", (bundle,), target)
+    assert result["uids"]["rows"] == 1
+    assert pd.read_parquet(target / "retrieval_uids.parquet").to_dict("records") == [
+        dict(source_row_uid="physical", level="L2")
+    ]
 
 
 def _source(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict[str, Path]:
@@ -25,7 +52,7 @@ def _source(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict[str, Path]:
         ],
     ).to_parquet(stage, index=False)
     pd.DataFrame(
-        [("c1", "u1", 2), ("c2", "u2", 3), ("c3", "u3", 2), ("c5", "u5", 2)],
+        [("c1", "u1", 2), ("c2", "u2", 3), ("c3", "u3", 2), ("c4", "u4", 0), ("c5", "u5", 2)],
         columns=["canonical_record_id", "source_row_uid", "level"],
     ).to_parquet(levels, index=False)
     pd.DataFrame(

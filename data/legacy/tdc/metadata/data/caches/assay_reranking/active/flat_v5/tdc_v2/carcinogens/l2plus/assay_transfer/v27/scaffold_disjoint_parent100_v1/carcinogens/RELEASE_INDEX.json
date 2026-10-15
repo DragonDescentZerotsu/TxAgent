@@ -1,0 +1,111 @@
+{
+  "evidence": {
+    "content_id": "e2dc96a76bee17e7a6e74477b27c603f69f16c529269079475099bcda674a621",
+    "manifest": "../../../../../../../../../../../evidence_libraries/carcinogens/v10_main_universe_v3/retrieval_projection/ranked_evidence_safety_v27_v1/VERSION.json",
+    "manifest_sha256": "1f5c9d5dfd04a69a3d8a07551b8e1ac527be7f0e1f33a4a42624f3332cd1dd55",
+    "record_count": 3147370
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v2"
+  },
+  "later_candidate_universe": "all_uids_under_shared_l2plus_morgan_top_100_parents",
+  "levels_independent": false,
+  "neighbor_identity_policy_by_level": {
+    "L2": "scaffold_disjoint",
+    "L3": "scaffold_disjoint",
+    "L4": "scaffold_disjoint",
+    "L5": "scaffold_disjoint",
+    "L6": "scaffold_disjoint",
+    "L7": "scaffold_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "flat_v5/tdc_v2/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1",
+  "ranking_modes": [
+    "morgan",
+    "assay-transfer"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L2": {
+          "content_id": "7bd388e51a711e9aa47e6b656583402356510a933a2c317bc9994d2b7d35c440",
+          "manifest": "scaffold/test/L2/VERSION.json",
+          "manifest_sha256": "9d8e3bf0a5ed9d13749554e83b0d264eba67c5d05dba8fd372e634ed5253e157"
+        },
+        "L3": {
+          "content_id": "dce5f7bc6474c7fc104337d283f9f5a540403921f1a3a97fe66006aa2561f459",
+          "manifest": "scaffold/test/L3/VERSION.json",
+          "manifest_sha256": "b99722c73a15a1e1789311618b61dd0d1b7e1266aac6f20ddf6afe33701ef611"
+        },
+        "L4": {
+          "content_id": "2da22c2a3561df31a9b6e527f7565cd70af4ef18cd606f8c6caa08d367924f6a",
+          "manifest": "scaffold/test/L4/VERSION.json",
+          "manifest_sha256": "c63b2f61bfb4c1e19060124e70bbc4fb09b18f7d18ee0fb8926a8044c0e217fa"
+        },
+        "L5": {
+          "content_id": "1e5a0da82054f75ccc542d01a861f3392f7981530f52291a999d550dc8cf4f3a",
+          "manifest": "scaffold/test/L5/VERSION.json",
+          "manifest_sha256": "40d35959e3c29aa8dc171f5c400c835e7a85e7951a75c29ee5e9d566d893db2b"
+        },
+        "L6": {
+          "content_id": "12b29b739c9110d6b223f99d2def56536c675c8954be7cc8569da3a1eff0a8fc",
+          "manifest": "scaffold/test/L6/VERSION.json",
+          "manifest_sha256": "9e205b23505bc83ce83c6a1fd93776118de59b315d533446132e823497d85c1f"
+        },
+        "L7": {
+          "content_id": "9bb3a02b40424fef01d82d1696792828ab83488cac81e3c45aa7959e0ab78e2f",
+          "manifest": "scaffold/test/L7/VERSION.json",
+          "manifest_sha256": "b6693336452c4b80218c793e043bf32db49c3868ba71543d626c22ce4d0f2412"
+        }
+      },
+      "parent_universe": {
+        "file": "scaffold/test/PARENT_UNIVERSE.json",
+        "sha256": "239858a12ca2369c239ceb8fe10cd77d341ae2582a392bac17e839ddc21b82ff"
+      }
+    },
+    "valid": {
+      "levels": {
+        "L2": {
+          "content_id": "8c045d38237494bcc29aeeef1ae03067c0996832ed03d0414e154d8bac761063",
+          "manifest": "scaffold/valid/L2/VERSION.json",
+          "manifest_sha256": "489341d83358a6ce12cadf7bb552e511f42de05ced2814f081ef57441846c0c2"
+        },
+        "L3": {
+          "content_id": "ad45e2723905728ec899e570a606e98f07b2e594a381fb31e394a3d9bb3daee1",
+          "manifest": "scaffold/valid/L3/VERSION.json",
+          "manifest_sha256": "7da18c03c574d00c145f6ff47ffe9b40d85592bd5743463d2ed041d9b1874294"
+        },
+        "L4": {
+          "content_id": "ff4ef17c157e1b5dca81b0614f293a5e04381125c8162c1989ebc612fdd2ad1a",
+          "manifest": "scaffold/valid/L4/VERSION.json",
+          "manifest_sha256": "5860ed0580c2b27e9f59a116e0e22244722112e7081dcb2032e0eb9cd989e8ec"
+        },
+        "L5": {
+          "content_id": "654f96397970a097cc723656ab0d5774ef12f6bc1a4722165f2bea750df900f9",
+          "manifest": "scaffold/valid/L5/VERSION.json",
+          "manifest_sha256": "d748a20537a5f8f8800c4ca1ad2b806ece5df9d0c8928a691b1afe465bc697a8"
+        },
+        "L6": {
+          "content_id": "298e6a8f4261196f58d665d701304917cd290a08ba88f4a7ad9219dd1c065eb2",
+          "manifest": "scaffold/valid/L6/VERSION.json",
+          "manifest_sha256": "26509fc0dca6ef2140abb3a187204d0ea45016ffd12f39609c08fc742644f364"
+        },
+        "L7": {
+          "content_id": "ebd111d7c302f863211f4a370de43285c5ba601c5600b7faac6b40ab0dc64e15",
+          "manifest": "scaffold/valid/L7/VERSION.json",
+          "manifest_sha256": "6e4ef2ff892d28be0247adf01b31bd46430b6235f9204090301f2a7e46ea1f74"
+        }
+      },
+      "parent_universe": {
+        "file": "scaffold/valid/PARENT_UNIVERSE.json",
+        "sha256": "a78a70c7770a58671f409ed1508fbdce7fb36081328289b5aa1bb1fb768de9d9"
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "carcinogens"
+}

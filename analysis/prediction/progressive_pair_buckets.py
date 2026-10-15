@@ -15,7 +15,7 @@ from typing import Any
 import pyarrow.parquet as pq
 
 from data.processing.gold_labels.conditioned_benchmark import split_path
-from predict.retrieval.assay_reranking.cache_matched import load_cache_policy
+from predict.retrieval.assay_reranking.cache_matched import load_legacy_cache_policy
 from predict.retrieval.assay_reranking.cache_matched_v2 import load_candidates
 from predict.utils.json import read_jsonl
 
@@ -100,7 +100,7 @@ def _selected_records(
         str(row["benchmark_row_id"]): str(row["drug"])
         for row in read_jsonl(query_path)
     }
-    policy = load_cache_policy(
+    policy = load_legacy_cache_policy(
         cache_config, task, subset, mode, max_level=last_level
     )
     molecules, later, audit = load_candidates(

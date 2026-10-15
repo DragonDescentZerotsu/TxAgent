@@ -1,0 +1,214 @@
+{
+  "corrected_files": {
+    "heldout_molecule_condition_labels.jsonl": {
+      "after_sha256": "3d9ba1e841733e6878efde17647ed88a3e8b280de2c7ea8f319bfbd408cb2acd",
+      "before_sha256": "00292854e43995ece92238a6eb1d97689880e8c444d922ed72e7ffddb15b3749"
+    },
+    "test_molecule_condition_labels.jsonl": {
+      "after_sha256": "c073e195589817f99843e1a3f008d40b15c711a9c1df9dae7aba6eb6e27c751f",
+      "before_sha256": "e56f076fbfa762aae15fae36ba147c0c0c00e6867df2fe5a717567d4ab43cb47"
+    },
+    "train_molecule_condition_labels.jsonl": {
+      "after_sha256": "ab03f36d38f46667c97e7824f3544149439fbb8196f1f4c109105c3829e94275",
+      "before_sha256": "fe3b355423c8b6fdf80f61554c95b4fc7b3ca0d858321025dc31c292c74fde2a"
+    },
+    "valid_molecule_condition_labels.jsonl": {
+      "after_sha256": "84df3d879cc3a60bae45060ae669079a77b31aa77ddac9a9806a87f55c081750",
+      "before_sha256": "3045830e4bc0ffdc06d98679d0575dba12081c1482bf836b0093a4ff5dbf2db7"
+    },
+    "valid_small_molecule_condition_labels.jsonl": {
+      "after_sha256": "e75333d050ec472c161beccd43ae8a4e9d1ee7c66b6a80e1742c5e76281643db",
+      "before_sha256": "b0f3994e97f721aa389cd481fe73ee5cad482374bccf01d4daba38cd3ea25ffe"
+    }
+  },
+  "corrections": [
+    {
+      "benchmark_row_id": "NULL_153D0B21EC5F45A9B5C1",
+      "new_label_counts": {
+        "0": 2
+      },
+      "old_label_counts": {
+        "0": 3
+      },
+      "split": "train"
+    },
+    {
+      "benchmark_row_id": "NULL_401850A87BB20685957F",
+      "new_label_counts": {
+        "0": 5,
+        "1": 1
+      },
+      "old_label_counts": {
+        "0": 6,
+        "1": 1
+      },
+      "split": "train"
+    },
+    {
+      "benchmark_row_id": "NULL_04516113CB711A958F01",
+      "new_label_counts": {
+        "0": 3,
+        "1": 22
+      },
+      "old_label_counts": {
+        "0": 4,
+        "1": 22
+      },
+      "split": "train"
+    },
+    {
+      "benchmark_row_id": "NULL_C9DA8E22D56D5688E0C6",
+      "new_label_counts": {
+        "0": 1,
+        "1": 3
+      },
+      "old_label_counts": {
+        "0": 1,
+        "1": 4
+      },
+      "split": "train"
+    },
+    {
+      "benchmark_row_id": "NULL_F7F1E31B521F697F6747",
+      "new_label_counts": {
+        "0": 7,
+        "1": 51
+      },
+      "old_label_counts": {
+        "0": 8,
+        "1": 51
+      },
+      "split": "train"
+    },
+    {
+      "benchmark_row_id": "NULL_A7A76EAB9842E16D2BF4",
+      "new_label_counts": {
+        "0": 19,
+        "1": 199
+      },
+      "old_label_counts": {
+        "0": 19,
+        "1": 200
+      },
+      "split": "train"
+    },
+    {
+      "benchmark_row_id": "NULL_8E8FFFE408E4F0F5D8AE",
+      "new_label_counts": {
+        "0": 25,
+        "1": 130
+      },
+      "old_label_counts": {
+        "0": 25,
+        "1": 131
+      },
+      "split": "train"
+    },
+    {
+      "benchmark_row_id": "NULL_EED40E13B19E495FA480",
+      "new_label_counts": {
+        "0": 92,
+        "1": 1363
+      },
+      "old_label_counts": {
+        "0": 92,
+        "1": 1364
+      },
+      "split": "train"
+    },
+    {
+      "benchmark_row_id": "NULL_2FAD49CF6B41C248C83C",
+      "new_label_counts": {
+        "1": 4
+      },
+      "old_label_counts": {
+        "1": 5
+      },
+      "split": "train"
+    },
+    {
+      "benchmark_row_id": "NULL_A2E7ACDFD1842BA2BF74",
+      "new_label_counts": {
+        "0": 4,
+        "1": 11
+      },
+      "old_label_counts": {
+        "0": 4,
+        "1": 12
+      },
+      "split": "train"
+    },
+    {
+      "benchmark_row_id": "NULL_4A8AA11B288BAE885237",
+      "new_label_counts": {
+        "0": 30,
+        "1": 304
+      },
+      "old_label_counts": {
+        "0": 31,
+        "1": 307
+      },
+      "split": "train"
+    },
+    {
+      "benchmark_row_id": "NULL_C664D8659A164E9D276C",
+      "new_label_counts": {
+        "0": 3,
+        "1": 27
+      },
+      "old_label_counts": {
+        "0": 3,
+        "1": 29
+      },
+      "split": "valid"
+    }
+  ],
+  "counts": {
+    "distinct_physical_uids": 34950,
+    "gold_label_cards": 2421,
+    "physical_members": 35004,
+    "vote_units": 35004
+  },
+  "inputs": {
+    "classifier": {
+      "git_path": "tools/chembl_tool/tasks/skin_reaction/canonical_starling_source.py",
+      "sha256": "8f1d82719f4831ba3eddfadaf3a1643012bc2e2434b3c48b281c55df9e1100cb"
+    },
+    "identity": {
+      "git_path": "tools/chembl_tool/common/molecule_identity.py",
+      "sha256": "d9f5e9e005ee2e17ca33c7aadf298ef9d59c0831b36b1fa1f0227e0776617050"
+    },
+    "molecule_labels_sha256": "ff8a04abaaff104ae2d61943bcd5ab8d19abba2920b150639a6e18bef96d8263",
+    "raw": {
+      "git_path": "data/starling_data/skin_reaction/direct_skin_reaction/extractions.parquet",
+      "sha256": "e7c4819c98af47eae4dc0563f40dc39f8b09eb8e03c9626daee603147125f9c1"
+    },
+    "source_condition_review_sha256": "f784c13bed258f3d1b85f90425c484132f399c1a507705072e3100de12b2d34e",
+    "upstream_commit": "26d44f121141f3738764c0b00dc09e185445341b"
+  },
+  "outputs": {
+    "gold_label_record_index": {
+      "path": "data/gold_labels/Skin_Reaction/v1/scaffold/gold_label_record_index.parquet",
+      "sha256": "365e53c7ce3cba0d04b94356696f17afc7eda113782715cc591ae39a4b8cf362"
+    },
+    "vote_units": {
+      "path": "data/gold_labels/Skin_Reaction/v1/scaffold/vote_units.parquet",
+      "sha256": "47b1c45ec1b7aa49b393a313187d9f1225e013297d7e1b25bffbf27f4da265cb"
+    },
+    "voter_membership": {
+      "path": "data/gold_labels/Skin_Reaction/v1/scaffold/voter_membership.parquet",
+      "sha256": "f5b6000428c05009f69e21bd8bf5ce556bb14b1e67eb6c46de6759c11812a419"
+    }
+  },
+  "policy": {
+    "aggregation": "one vote per (benchmark_row_id, vote_id)",
+    "gold_release": "v1",
+    "physical_member_weight": "1",
+    "vote_unit": "one accepted physical source row per context"
+  },
+  "status": "complete",
+  "task": "skin_reaction",
+  "version": "gold_v1_voter_contract.v1",
+  "evidence_release": "v10_main_universe_v7",
+  "correction_receipt": "../reviews/voter_membership_replay_v1/correction_receipt.json"
+}

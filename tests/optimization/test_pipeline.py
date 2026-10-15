@@ -45,7 +45,7 @@ def _cards(tmp_path):
         train,
         {"valid": query},
         tmp_path / "cache",
-        identity_policy="parent_disjoint",
+        identity_policy="scaffold_disjoint",
     )
     return (train, query, index)
 
@@ -229,3 +229,12 @@ def test_explicit_grids_and_dili_policy():
             dili_scores=Path("scores"),
             direct_manifest=None,
         )
+
+
+def test_direct_builder_rejects_parent_only_policy_before_writing(tmp_path):
+    import pytest
+    with pytest.raises(ValueError, match='requires scaffold-disjoint'):
+        pool.prepare_l1_cache('bbb_martins', tmp_path / 'missing-train.jsonl',
+                              {'valid': tmp_path / 'missing-valid.jsonl'}, tmp_path / 'cache',
+                              identity_policy='parent_disjoint')
+    assert not (tmp_path / 'cache').exists()

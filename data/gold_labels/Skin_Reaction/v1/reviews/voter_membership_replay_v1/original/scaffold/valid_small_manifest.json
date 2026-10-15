@@ -1,0 +1,42 @@
+{
+  "contract": "valid_small.scaffold_group_selection.v2",
+  "task": "skin_reaction",
+  "selection": {
+    "method": "whole_scaffold_dynamic_program",
+    "objective_order": [
+      "minimum_absolute_row_count_error",
+      "minimum_validation_label_ratio_error",
+      "stable_scaffold_hash_tie_break"
+    ],
+    "target_rows": 100,
+    "actual_rows": 100,
+    "row_count_error": 0,
+    "seed": 20260723
+  },
+  "source": {
+    "valid": "data/gold_labels/Skin_Reaction/v1/scaffold/valid.jsonl",
+    "valid_sha256": "fa673c9d2f33f18f6ec35e5e506fd13dd1c7c5120fb9006f8ad527d8db70e130",
+    "valid_molecule_condition_labels": "data/gold_labels/Skin_Reaction/v1/scaffold/valid_molecule_condition_labels.jsonl",
+    "valid_molecule_condition_labels_sha256": "3045830e4bc0ffdc06d98679d0575dba12081c1482bf836b0093a4ff5dbf2db7",
+    "rows": 239,
+    "label_counts": {
+      "0": 72,
+      "1": 167
+    }
+  },
+  "valid_small": {
+    "path": "data/gold_labels/Skin_Reaction/v1/scaffold/valid_small.jsonl",
+    "sha256": "fa982a26c7e6b7cc9887a406ff96a202a6abb2ec4cff480c5160afb10ddee904",
+    "molecule_condition_labels_path": "data/gold_labels/Skin_Reaction/v1/scaffold/valid_small_molecule_condition_labels.jsonl",
+    "molecule_condition_labels_sha256": "b0f3994e97f721aa389cd481fe73ee5cad482374bccf01d4daba38cd3ea25ffe",
+    "rows": 100,
+    "distinct_parents": 100,
+    "distinct_scaffolds": 74,
+    "label_counts": {
+      "0": 30,
+      "1": 70
+    },
+    "label_ratio_absolute_error": 0.001255230125522977,
+    "scaffold_overlap_with_valid_remainder": 0
+  }
+}

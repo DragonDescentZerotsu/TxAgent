@@ -1,0 +1,111 @@
+{
+  "evidence": {
+    "content_id": "29e0430275fdb7bf6453aa7d32906a2cb78a943eee871aef03d6fbbfed5436f9",
+    "manifest": "../../../../../../../../../../../evidence_libraries/dili/v10_main_universe_v3/retrieval_projection/ranked_evidence_safety_v27_v1/VERSION.json",
+    "manifest_sha256": "1876c9e92ae695174e69f153e0c2bfaaf67d84ded9d36a1fc57d144e5ba4d4b1",
+    "record_count": 1384007
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v2"
+  },
+  "later_candidate_universe": "all_uids_under_shared_l2plus_morgan_top_100_parents",
+  "levels_independent": false,
+  "neighbor_identity_policy_by_level": {
+    "L2": "scaffold_disjoint",
+    "L3": "scaffold_disjoint",
+    "L4": "scaffold_disjoint",
+    "L5": "scaffold_disjoint",
+    "L6": "scaffold_disjoint",
+    "L7": "scaffold_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "flat_v5/tdc_v2/dili/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1",
+  "ranking_modes": [
+    "morgan",
+    "assay-transfer"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L2": {
+          "content_id": "885a565ad1b82eae4814231145317f5c7ad92e40e794c7c54c86b4fbcd51fa21",
+          "manifest": "scaffold/test/L2/VERSION.json",
+          "manifest_sha256": "01031e8be1f341180609f4ea1c4a58c7660a5b7f414f5e8d7032a408e4a12777"
+        },
+        "L3": {
+          "content_id": "129876402dba7e616bbe990442b0aa20c7df8b4c0a7b52cc2b3e8a3bd7cd1132",
+          "manifest": "scaffold/test/L3/VERSION.json",
+          "manifest_sha256": "6a55324b8683ba7bf9d125e7020c94d4648ac713111305f4d7fcf5df08c2ee78"
+        },
+        "L4": {
+          "content_id": "f35b7c3f5068273ab2fcf2f819665e190e4cf5c150b744477533968042528473",
+          "manifest": "scaffold/test/L4/VERSION.json",
+          "manifest_sha256": "18866210c7d76e128901950656a25f45b4c4c7589b4b3f85fc2bbfec2371fb0d"
+        },
+        "L5": {
+          "content_id": "c94681844161ba0015e39ce1bafd233e914ca3894097ba05dde1f1cd541bd209",
+          "manifest": "scaffold/test/L5/VERSION.json",
+          "manifest_sha256": "4f8dbad8f79b2a066eb73073b6e26286d6946a60f97f65b468a223ac516b6977"
+        },
+        "L6": {
+          "content_id": "7c1cebbda80c1e93d932c1ad77340b100b8f8780875d2c2ab78aa2f7b10ca9f1",
+          "manifest": "scaffold/test/L6/VERSION.json",
+          "manifest_sha256": "27120033854d1468519e42f86030fd6ced88ab6151396e12011afef158fd49a0"
+        },
+        "L7": {
+          "content_id": "f528fea5b827fee0b3b8e4427a409c2f94923ff92e02bdafd2ef58afc0a348bd",
+          "manifest": "scaffold/test/L7/VERSION.json",
+          "manifest_sha256": "e8df87666252a57fc3418eabedfe3f06bfe877e6931a86d1f34b1c7b9817522d"
+        }
+      },
+      "parent_universe": {
+        "file": "scaffold/test/PARENT_UNIVERSE.json",
+        "sha256": "e18b91d079f77d2799588e74897a9fd34050a87d59b416bacadc55d22f1b1082"
+      }
+    },
+    "valid": {
+      "levels": {
+        "L2": {
+          "content_id": "2e8e6c8519bbed4b0f6ab167b175d5140b83da207b9711dd862ca3f9c1cca42a",
+          "manifest": "scaffold/valid/L2/VERSION.json",
+          "manifest_sha256": "72bc7a2eeab3274305e167a372cf7ab843dd45c7e6e70a58e445fd26d2031556"
+        },
+        "L3": {
+          "content_id": "cfab828551152149db80ee7a26dc370eb7cc2473106164298163f4e1b5f10687",
+          "manifest": "scaffold/valid/L3/VERSION.json",
+          "manifest_sha256": "83569f8a5f67bbd480acdcf35837dfb548919bd8a9ee98f9b47f4817f6b48550"
+        },
+        "L4": {
+          "content_id": "c7eb8ba030c5680023695f1b27ef0fa6c5c18045fafc963e33f5090527e0008e",
+          "manifest": "scaffold/valid/L4/VERSION.json",
+          "manifest_sha256": "b375c53a41f53591b20bfc412a0577bbcea3ac0cf662bf37664109111ffe1b12"
+        },
+        "L5": {
+          "content_id": "9aa86e9836b3f4b30b2c556c19e26d669a6e525b7719ee0df28f5ce7519ee00a",
+          "manifest": "scaffold/valid/L5/VERSION.json",
+          "manifest_sha256": "9f1c3e4b415d3571aebddebd6f9d6ce6b15e0d8ddf9301f7e7a6e73d41936aa0"
+        },
+        "L6": {
+          "content_id": "faa8012e9441a299a5e373c26ec66710504a78dc3f99d995df6f54b87a640350",
+          "manifest": "scaffold/valid/L6/VERSION.json",
+          "manifest_sha256": "087d8f6ebd9c5f7a7870dcb126f7397faadfdf4bdcec62bb2e8ef9cbf7efa931"
+        },
+        "L7": {
+          "content_id": "e5a9dc4bc1e43513e1fabbafe43c93abdcfc496bcf2285e780f2d41677269da8",
+          "manifest": "scaffold/valid/L7/VERSION.json",
+          "manifest_sha256": "55727c44a5a2679e115caaee57806dddca659a9125cd89808793d922a2dbaec2"
+        }
+      },
+      "parent_universe": {
+        "file": "scaffold/valid/PARENT_UNIVERSE.json",
+        "sha256": "b953e3fabe734a976e465d523d0e793b3b5694a470becef62d4e19944e3d0c55"
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "dili"
+}

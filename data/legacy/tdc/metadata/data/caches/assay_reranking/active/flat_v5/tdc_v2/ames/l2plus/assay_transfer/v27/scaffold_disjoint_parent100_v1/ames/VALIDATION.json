@@ -1,0 +1,54 @@
+{
+  "content_id": "eef5d5fa08bd5d4f5d1c09c3c2a0351bec2b3c84f793a25f6d047541d665f90d",
+  "evidence_content_id": "967161f7cedf478a3599266aabb1d8ddc5433d74f30383217abd47e30d458a32",
+  "evidence_records_sha256": "b8596a0484d272e45495f498f19819154cd59504142e6a9f6a9fe7c439d880fc",
+  "schema_version": "ranked_uid_release_validation.v1",
+  "splits": {
+    "test": {
+      "L2": {
+        "content_id": "317ad86cc89d7b8a12ffdf0a6e8a2528002d9ce162fe87163da9e63595216471",
+        "database_sha256": "b7283c424bad3dd1aa601654704704d4e928c725b2d0d37dd5fbd0fe31336b25",
+        "stored_rows": 1498194
+      },
+      "L3": {
+        "content_id": "2f895fc8f0570256cfdc5cb3e7db005dddbc2b195eeb169e17fa0a82ff295a18",
+        "database_sha256": "8fdb04004f07705c8cd84a77ad2ec07f6e5f367aa877894605e09ba981638e55",
+        "stored_rows": 1467875
+      },
+      "L4": {
+        "content_id": "458f9a5a4888e46e53f8fb28d5099baf487bdf9249497d8b1381762170cfb02f",
+        "database_sha256": "98f2f0e31befeda2d798a6906b6a5c433644b3e83a068a32de363a3d00cc889b",
+        "stored_rows": 2716825
+      },
+      "L5": {
+        "content_id": "52fe4c8e6a5c0fc107bfa9d4f6a33bdc024590b95ab2272b73f7fe7c1506eb4d",
+        "database_sha256": "b3ef576a1d2d15c082b1780917eb2a69dc1145319e3126285d2125fa4629ec0f",
+        "stored_rows": 2480841
+      }
+    },
+    "valid": {
+      "L2": {
+        "content_id": "a5b51212001444707fe9c3df03cc5c964e99b5d4ce7202fdd274905019255dda",
+        "database_sha256": "023cd03ae004b358d7004de701ad0e21caf4327e105f4edb3648c9ced85faa1c",
+        "stored_rows": 691844
+      },
+      "L3": {
+        "content_id": "b4cb1a4da6a1a84eae82afb929a6760be01ad7a256e494dbdd7e93a5ecf67e22",
+        "database_sha256": "566b1efe068c13313db75618f2fc53027fc2a20773393a65fd8a93df47b48ecf",
+        "stored_rows": 654015
+      },
+      "L4": {
+        "content_id": "06c0cd69680eb7e7a3ca618ae0b5f07c8cefed128b921ef6baaeae6908c1d1ac",
+        "database_sha256": "56207a8ab049db106a4c955564ac855e6d0678d60e3da9604d82aadc53f6db00",
+        "stored_rows": 1317205
+      },
+      "L5": {
+        "content_id": "b879caef9df092280f0dd0f00bf3ed53d90059971dbdf536ade9a368542220e7",
+        "database_sha256": "3e56324597bacd303f02a5566cfcc309691923daddb2355f03604872d5c7b3e1",
+        "stored_rows": 1201816
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "ames"
+}

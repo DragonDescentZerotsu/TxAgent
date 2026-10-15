@@ -1,0 +1,113 @@
+{
+  "schema_version": "retrieval_cache_set.v1",
+  "name": "scaffold_disjoint_parent100",
+  "release": "v1",
+  "benchmarks": {
+    "gold_v1": {
+      "bbb_martins": {
+        "retrieval": {
+          "L1": "data/caches/assay_reranking/active/ranked_level_retrieval_v4/bbb_martins/RELEASE_INDEX.json",
+          "later": "data/caches/assay_reranking/active/flat_v5/gold_v1/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/RELEASE_INDEX.json"
+        }
+      },
+      "bioavailability_ma": {
+        "retrieval": {
+          "L1": "data/caches/assay_reranking/active/ranked_level_retrieval_v4/bioavailability_ma/RELEASE_INDEX.json",
+          "later": "data/caches/assay_reranking/active/flat_v5/gold_v1/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/RELEASE_INDEX.json"
+        }
+      },
+      "skin_reaction": {
+        "retrieval": {
+          "L1": "data/caches/assay_reranking/active/ranked_level_retrieval_skin_gold_v1_l1_adapter_v2/skin_reaction/RELEASE_INDEX.json",
+          "later": "data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/skin_reaction/RELEASE_INDEX.json"
+        }
+      },
+      "ames": {
+        "retrieval": {
+          "L1": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/ames/RELEASE_INDEX.json",
+          "later": "data/caches/assay_reranking/active/flat_v5/gold_v1/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/RELEASE_INDEX.json"
+        }
+      },
+      "dili": {
+        "retrieval": {
+          "L1": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/RELEASE_INDEX.json",
+          "later": "data/caches/assay_reranking/active/flat_v5/gold_v1/dili/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/dili/RELEASE_INDEX.json"
+        }
+      },
+      "carcinogens": {
+        "retrieval": {
+          "L1": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/carcinogens/RELEASE_INDEX.json",
+          "later": "data/caches/assay_reranking/active/flat_v5/gold_v1/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/RELEASE_INDEX.json"
+        }
+      }
+    },
+    "tdc": {
+      "bioavailability_ma": {
+        "retrieval": {
+          "L1": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l1/RELEASE_INDEX.json",
+          "later": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/RELEASE_INDEX.json"
+        },
+        "selection": {
+          "direct_cache": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l1_cards/RELEASE_INDEX.json",
+          "context_identity": "canonical_context_molecule.v1",
+          "direct_assay_scores": "not_computed"
+        }
+      },
+      "skin_reaction": {
+        "retrieval": {
+          "L1": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l1/RELEASE_INDEX.json",
+          "later": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/skin_reaction/RELEASE_INDEX.json"
+        },
+        "selection": {
+          "direct_cache": "data/caches/assay_reranking/active/flat_v5/tdc/skin_reaction/l1_cards/RELEASE_INDEX.json",
+          "context_identity": "canonical_context_molecule.v1",
+          "direct_assay_scores": "not_computed"
+        }
+      },
+      "bbb_martins": {
+        "retrieval": {
+          "L1": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1/RELEASE_INDEX.json",
+          "later": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/RELEASE_INDEX.json"
+        },
+        "selection": {
+          "direct_cache": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1_cards/RELEASE_INDEX.json",
+          "context_identity": "canonical_context_molecule.v1",
+          "direct_assay_scores": "not_computed"
+        }
+      },
+      "ames": {
+        "retrieval": {
+          "L1": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l1/RELEASE_INDEX.json",
+          "later": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/RELEASE_INDEX.json"
+        },
+        "selection": {
+          "direct_cache": "data/caches/assay_reranking/active/flat_v5/tdc/ames/l1_cards/RELEASE_INDEX.json",
+          "context_identity": "canonical_context_molecule.v1",
+          "direct_assay_scores": "not_computed"
+        }
+      },
+      "dili": {
+        "retrieval": {
+          "L1": "data/caches/assay_reranking/active/flat_v5/tdc/dili/l1/RELEASE_INDEX.json",
+          "later": "data/caches/assay_reranking/active/flat_v5/tdc/dili/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/dili/RELEASE_INDEX.json"
+        },
+        "selection": {
+          "direct_cache": "data/caches/assay_reranking/active/flat_v5/tdc/dili/l1_cards/RELEASE_INDEX.json",
+          "context_identity": "canonical_context_molecule.v1",
+          "direct_assay_scores": "not_computed"
+        }
+      },
+      "carcinogens": {
+        "retrieval": {
+          "L1": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l1/RELEASE_INDEX.json",
+          "later": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/RELEASE_INDEX.json"
+        },
+        "selection": {
+          "direct_cache": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l1_cards/RELEASE_INDEX.json",
+          "context_identity": "canonical_context_molecule.v1",
+          "direct_assay_scores": "not_computed"
+        }
+      }
+    }
+  }
+}

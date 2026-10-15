@@ -4,7 +4,7 @@ from unittest.mock import Mock
 import pytest
 import requests
 
-from predict.llm_io.evidence import ASSAY_MECHANISM_TAGGED_PROMPT_PROFILE, evidence_for_group_llm
+from predict.utils.evidence import ASSAY_MECHANISM_TAGGED_PROMPT_PROFILE, evidence_for_group_llm
 from predict.harnesses.branches.visibility import find_identity_blind_leaks, prepare_harness_prefetched_retrieval, prepare_prefetched_final_retrieval, prepare_replayed_prefetched_retrieval, prepare_reasoning_retrieval, query_without_prefetched_tools, sanitize_identity_blind_branch_outputs
 from predict.tools.client import ToolServiceClient, retry_failed_tool_calls
 

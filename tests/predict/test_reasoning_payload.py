@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 
 from predict.harnesses.branches.prompt import attach_external_condition, clean_exact_match, clean_shared_assay_context, llm_evidence_query_payload, llm_query_payload
-from predict.llm_io.query import external_condition_sentence
+from predict.utils.query import external_condition_sentence
 from predict.harnesses.branches.artifacts import write_trace_jsonl
 
 

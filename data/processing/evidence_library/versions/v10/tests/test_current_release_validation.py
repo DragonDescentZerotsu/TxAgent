@@ -68,7 +68,7 @@ def _release_tree(tmp_path, *, pair: str, transfer: str):
     return root
 
 
-def test_release_validation_requires_full_scientific_checks(tmp_path) -> None:
+def test_release_validation_requires_full_scientific_checks(tmp_path, monkeypatch) -> None:
     root = _release_tree(tmp_path, pair="not_run", transfer="not_run")
     with pytest.raises(ValueError, match="pair validation did not pass"):
         release._validate_release("skin_reaction", root)
@@ -81,7 +81,31 @@ def test_release_validation_requires_full_scientific_checks(tmp_path) -> None:
 
     manifest["validations"]["final_assay_transfer_measurement_validation"] = "passed"
     (root / "02_canonicalized/manifest.json").write_text(json.dumps(manifest))
-    assert release._validate_release("skin_reaction", root)["task_id"] == "skin_reaction"
+    with pytest.raises(ValueError, match="reference_semantics_assignment_complete"):
+        release._validate_release("skin_reaction", root)
+    manifest["validations"].update(reference_semantics_mapping_complete=False,
+                                    reference_semantics_assignment_complete=True)
+    (root / "02_canonicalized/manifest.json").write_text(json.dumps(manifest))
+    reference = root / "02_canonicalized/reference_semantics_manifest.json"
+    reference.write_text('{}')
+    stage3 = root / "03_pair_buckets/records.parquet"
+    pq.write_table(pa.Table.from_pylist([dict(source_row_uid=uid, canonical_record_id=uid,
+        pair_bucket_key='bucket', measurement_kind='categorical', assay_transfer_eligible=True,
+        assay_transfer_ineligibility_reason='') for uid in ('legacy-l1', 'voter')]), stage3)
+    voters, prior = tmp_path / 'voters.parquet', tmp_path / 'prior.parquet'
+    pq.write_table(pa.table({'source_row_uid': ['voter', 'voter']}), voters)
+    pq.write_table(pa.table({'source_row_uid': ['legacy-l1', 'voter'], 'level': [1, 1]}), prior)
+    from data.processing.evidence_library.build_release_level_mapping import build_subset
+    build_subset('skin_reaction', stage3, prior, root / 'level_mapping', current_voter_membership=voters)
+    stage_manifest_path = root / '03_pair_buckets/manifest.json'
+    stage_manifest = json.loads(stage_manifest_path.read_text())
+    stage_manifest['outputs']['records.parquet'] = release.file_sha256(stage3)
+    stage_manifest['input_hashes'].update(protected_voter_membership=release.file_sha256(voters),
+        reviewed_level_mapping=release.input_sha256(prior), reference_semantics_manifest=release.file_sha256(reference))
+    stage_manifest_path.write_text(json.dumps(stage_manifest))
+    policy = SimpleNamespace(protected_voter_membership=voters, source_universe_mapping=prior)
+    monkeypatch.setattr(release, '_validate_published_manifest_paths', lambda *_: None)
+    assert release._validate_release('skin_reaction', root, policy=policy)['task_id'] == 'skin_reaction'
 
 
 def test_release_validation_checks_bbb_level_mapping(tmp_path, monkeypatch) -> None:
@@ -149,6 +173,8 @@ def test_release_validation_checks_bbb_level_mapping(tmp_path, monkeypatch) -> N
 def test_publication_rejects_transient_manifest_paths(tmp_path) -> None:
     root = tmp_path / "v10_test"
     root.mkdir()
+    (root / "manifest.json").write_text(json.dumps({"git_path": "data/deleted-historical-source"}))
+    release._validate_published_manifest_paths("bbb_martins", root)
     (root / "manifest.json").write_text(json.dumps({"input_path": "/tmp/lost"}))
     with pytest.raises(ValueError, match="transient path"):
         release._validate_published_manifest_paths("bbb_martins", root)

@@ -396,7 +396,12 @@ def test_skin_stage1_protection_is_exactly_gold_v1_l1():
     ).to_pylist()
     expected = {str(row["source_row_uid"]) for row in mapping if row["level"] == 1}
     assert set(protected) == expected
-    assert len(protected) == 42_435
+    assert len(protected) == 42_457
+    voters = set(pq.read_table(
+        "data/gold_labels/Skin_Reaction/v1/scaffold/voter_membership.parquet",
+        columns=["source_row_uid"],
+    )["source_row_uid"].to_pylist())
+    assert voters <= set(protected)
 
 
 def test_complete_level_mapping_publishes_record_eligibility_sidecar(tmp_path):
@@ -536,7 +541,10 @@ def test_subset_level_mapping_resolves_stage1_duplicate_lineage_and_reviewed_dro
         audit,
     )
 
-    build_subset("skin_reaction", records, prior, output, audit)
+    stage3_duplicates = tmp_path / "duplicates.parquet"
+    pq.write_table(pa.table({}), stage3_duplicates)
+    build_subset("skin_reaction", records, prior, output, audit,
+                 stage3_duplicate_lineage=stage3_duplicates)
 
     assert pq.read_table(output / "records.parquet").to_pylist() == [
         {"source_row_uid": retained, "canonical_record_id": "record-1", "level": 2}

@@ -1,0 +1,204 @@
+{
+  "source_structure_policy": "upstream canonical_smiles is the V10 source seed",
+  "tasks": {
+    "skin_reaction": {
+      "gold_voter_duplicates_rehydrated": 0,
+      "gold_voter_physical_uid_rows": 34950,
+      "gold_voter_rows_restored": 22,
+      "path": "skin_reaction/records.parquet",
+      "rows": 806621,
+      "sha256": "0fb36f311e943044510c7df59daa40d850f54174c6607815504da53718cba0a7",
+      "uid_join": "permanent acquisition identity by source, physical row, and source record ID",
+      "upstream_records_sha256": "85b464d5ff7d89480b2cea4342d2f039515edf13d8840b33a254dd6db2f5df76"
+    }
+  },
+  "uid_ledger_manifest": "data/raw/starling/source_row_uid_ledger/manifest.json",
+  "uid_ledger_manifest_sha256": "6b265fef59b7fc5b676b30def5b00f1ff1f1f73fa5b66bfce9dd843f83025a27",
+  "upstream_commit": "26d44f121141f3738764c0b00dc09e185445341b",
+  "upstream_manifest": "artifacts/chembl_tool/starling/current_records/manifest.json",
+  "upstream_manifest_sha256": "c8184520ce6f842bfe65bf696f96928a2f5ce9272c80ab9e00c72ecdc1171a6a",
+  "version": "main_source_universe.v1",
+  "voter_restoration": {
+    "base_manifest": "data/raw/starling/main_universe_v1/manifest.json",
+    "base_manifest_sha256": "64065303e95962bc24adcfbdc7d958d92975ddaf302e14be26f88106bcafb005",
+    "rows": [
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_71",
+        "source_row_number": 7437,
+        "source_row_uid": "sr_f2a2acee6a2f4cfb9e507a214d3ca301"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_114",
+        "source_row_number": 13872,
+        "source_row_uid": "sr_75fbc851fbad4f648423c680791dfde3"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_14",
+        "source_row_number": 16355,
+        "source_row_uid": "sr_33e3e52bfa6442aca36abeba4f2eb41f"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_47",
+        "source_row_number": 18200,
+        "source_row_uid": "sr_4f4413fe61a4436da92f4a47b7ed6fc1"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_49",
+        "source_row_number": 18202,
+        "source_row_uid": "sr_3a0232a588fc42c482c6216d98cea59c"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_51",
+        "source_row_number": 18204,
+        "source_row_uid": "sr_5b66b5f381b741e2bc9c101c986fc1de"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_55",
+        "source_row_number": 18207,
+        "source_row_uid": "sr_e8770bf88ae94e41ac7ed7bd1ac33ac6"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_57",
+        "source_row_number": 18209,
+        "source_row_uid": "sr_5c4c58483c28480aaa38ac9d18bad0fa"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_63",
+        "source_row_number": 25255,
+        "source_row_uid": "sr_592f4c85e268459ca031d16735051849"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_59",
+        "source_row_number": 26678,
+        "source_row_uid": "sr_607ea0fe9c9742d99a561df26db5ce84"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_40",
+        "source_row_number": 26735,
+        "source_row_uid": "sr_096eddfd7d8d40d0b28ac61302d4815b"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_64",
+        "source_row_number": 27425,
+        "source_row_uid": "sr_a6f14b17bede4152815ef5d8c867c053"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_65",
+        "source_row_number": 27426,
+        "source_row_uid": "sr_cfe49327840141dfa22ca26d9ae88419"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_59",
+        "source_row_number": 27823,
+        "source_row_uid": "sr_bbdc2fcca0ba471a87ffc088f01702a8"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_60",
+        "source_row_number": 27824,
+        "source_row_uid": "sr_b9d800f5eff445fea9b9e7a14b68be2c"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_61",
+        "source_row_number": 27825,
+        "source_row_uid": "sr_c73e30fed8a947168f968c1c4125c6ae"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_47",
+        "source_row_number": 34349,
+        "source_row_uid": "sr_80f1fa9d71d3482eba658d42c0d6f4c3"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_48",
+        "source_row_number": 34350,
+        "source_row_uid": "sr_04083b233a184f1fb36242b725ac12ce"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_11",
+        "source_row_number": 50601,
+        "source_row_uid": "sr_fa4795834fca4e71b978ff8df7bc18c8"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_4",
+        "source_row_number": 51560,
+        "source_row_uid": "sr_ad23cdfc6cb547c695103f8f7f66adf9"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_13",
+        "source_row_number": 53994,
+        "source_row_uid": "sr_303d99eae4344a3c89658643d2858e60"
+      },
+      {
+        "raw_source": "data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet",
+        "raw_source_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+        "source_id": "direct_skin_reaction",
+        "source_record_id": "ext_15",
+        "source_row_number": 53996,
+        "source_row_uid": "sr_69514b1c619e460eabcf613dd1d6e000"
+      }
+    ],
+    "voter_membership_sha256": "f5b6000428c05009f69e21bd8bf5ce556bb14b1e67eb6c46de6759c11812a419"
+  }
+}

@@ -211,7 +211,7 @@ def test_persisted_aggregate_is_exported_with_uncertainty(tmp_path) -> None:
         "candidate_aliases": ["Candidate 1", "Candidate 2"],
         "candidate_bucket_ids": ["bucket-1", "bucket-2"],
         "anchor_bucket_ids": [],
-        "selected_endpoint": "fixture",
+        "selected_endpoint": "shared_provider_pool",
         "task": "dili",
         "level": "L2",
     }
@@ -255,6 +255,7 @@ def test_persisted_aggregate_is_exported_with_uncertainty(tmp_path) -> None:
     )
     connection.close()
     assert scores["bucket-1"]["weight"] == 0.51
+    assert scores["bucket-1"]["execution_backend"] == "shared_provider_pool"
     assert len(json.loads(scores["bucket-1"]["component_weights_json"])) == 8
     assert scores["bucket-1"]["weight_stddev"] > 0
     assert json.loads(scores["bucket-1"]["component_weights_json"]) == [

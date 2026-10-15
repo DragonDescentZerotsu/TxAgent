@@ -65,5 +65,11 @@
     "train__test": 0,
     "valid__test": 0
   },
-  "migration_receipt": "data/conditioned_benchmark/migration_receipt.json"
+  "migration_receipt": "data/conditioned_benchmark/migration_receipt.json",
+  "voter_counts": {
+    "gold_label_cards": 2421,
+    "vote_units": 35004,
+    "physical_members": 35004,
+    "distinct_physical_uids": 34950
+  }
 }

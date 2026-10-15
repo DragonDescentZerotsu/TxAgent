@@ -1,0 +1,54 @@
+{
+  "content_id": "a810db8ad4e7ef0def0d78454a1226b3a1410ed96bffbcaaf39287b6445aad26",
+  "evidence_content_id": "af72d87641148353952b48365ef5abcdd5310bf89e4284c9206472d0c3999ea0",
+  "evidence_records_sha256": "885206183b06909af58830e52c06443d01ede77144f5bc16f2e4d1a389838cb2",
+  "schema_version": "ranked_uid_release_validation.v1",
+  "splits": {
+    "test": {
+      "L2": {
+        "content_id": "0cc46563f6daceeec3fa764ae40f963b7c7e0e53185e943a211146456c1aaf24",
+        "database_sha256": "d6888f916e768707af5f45a02f89be3fb1be46b803a4d5c4d0fb731e7bea6088",
+        "stored_rows": 656976
+      },
+      "L3": {
+        "content_id": "b4adb4ac921f90c73dec69c5eb6de0d19bf079a39829b1256367338aec2fc3e6",
+        "database_sha256": "4f9d3b497072ecf341eb8b091162e07ebee862c4d6eefc0b0f4576357ec22a47",
+        "stored_rows": 132386
+      },
+      "L4": {
+        "content_id": "ea65322e34d52819403eb49a83ea3b2b8e4a86f1ad2d8c240804b0b8068f5c12",
+        "database_sha256": "8cee3fb82769b51ecdc4f1db04da84eb6787b411d123da0379a6501dc75c5ad8",
+        "stored_rows": 721775
+      },
+      "L5": {
+        "content_id": "39af0312bc64a889280969a95d3ea62aaa5084a1e2c0f3ad6448de4ad7982b74",
+        "database_sha256": "6b7f8c911dd4b04d0a8c4cc42c6bb44aa878571abbe301215413b0722c593846",
+        "stored_rows": 856928
+      }
+    },
+    "valid": {
+      "L2": {
+        "content_id": "30832e8c8172f07fe869b6f5a7cf6662cc988b3246e64ef8205aea3088763435",
+        "database_sha256": "07b05b4070d0376d241239f17c243914ca58a62f289b9e4e3f3e8ac530c31168",
+        "stored_rows": 315327
+      },
+      "L3": {
+        "content_id": "43d03e8e322fc236502d470a2ea72cc29715a86dbf14233bd68e0c0293cd6543",
+        "database_sha256": "8262a6d2552b4a269c1fd5cbdd46d8a1d2b4ed793f53683b63375f0657219e06",
+        "stored_rows": 61958
+      },
+      "L4": {
+        "content_id": "47540ff22b56ae2052ceb7da868ad4f2f94610fcddabc59420123b3ffd6c37ea",
+        "database_sha256": "4b41639b7d51aedb9c1c7606cd70189d14a5f216511dda8651b35662ddd87f69",
+        "stored_rows": 401758
+      },
+      "L5": {
+        "content_id": "d7ad2cb8fbbb262f3907c95869cb283bcb26c182468cb2ac5b567e870f94546c",
+        "database_sha256": "da81fd03d440f332406b4307274136df26f90da4d872eabf22c366bf59985ac7",
+        "stored_rows": 310246
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "bbb_martins"
+}

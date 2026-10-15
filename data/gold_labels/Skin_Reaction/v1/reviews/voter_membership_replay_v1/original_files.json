@@ -1,0 +1,26 @@
+{
+  "files": {
+    "level_mappings/alignment_report.json": "cd48eec303634cdd3c8dfbf0fbb1616a38a5aef8d1be05a1ed8307c96e2304fa",
+    "level_mappings/level_mapping/part-00000.parquet": "1bd3a033fcd60364691edb18b8f68d8da31cddcbea610b05b338b6282db026ca",
+    "level_mappings/manifest.json": "bd86f7dc25b9670ef281f64d2c7bfee3be3260c77c982d0a020d451d66d1a297",
+    "level_mappings/original_level_mapping/part-00000.parquet": "1bd3a033fcd60364691edb18b8f68d8da31cddcbea610b05b338b6282db026ca",
+    "level_mappings/stage1_voter_protection.parquet": "f48ed34fc14dd7892116ebfd6606a4abc00e8d6d10e692923eb7b38a0e023648",
+    "scaffold/accepted_parent_conditions_before_group_gate.jsonl": "0ecb1fc19437c0b72c34140524bab45371984107112c6a6331399786fb382a9e",
+    "scaffold/group_distribution.csv": "528f61883421c8e73b09ea212c75231ed4b7a9c0c2446b81ca6ae274e44a5a18",
+    "scaffold/group_gate_rejected_parent_conditions.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scaffold/heldout_molecule_condition_labels.jsonl": "00292854e43995ece92238a6eb1d97689880e8c444d922ed72e7ffddb15b3749",
+    "scaffold/rejected_parent_conditions.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scaffold/source_condition_review.jsonl": "f784c13bed258f3d1b85f90425c484132f399c1a507705072e3100de12b2d34e",
+    "scaffold/summary.json": "66b5a6a15872973bb31200101b4d402d2b2014768809e112efb6622b1bd7c037",
+    "scaffold/test.jsonl": "649c692e492a631bcfff89b154beeb81174e813128cebcc6190bc09b5dc33f11",
+    "scaffold/test_molecule_condition_labels.jsonl": "e56f076fbfa762aae15fae36ba147c0c0c00e6867df2fe5a717567d4ab43cb47",
+    "scaffold/train.jsonl": "402b1fd7dc05336bec1671a76a88519d48409518e64a97f0dece825aeeb6c5b0",
+    "scaffold/train_molecule_condition_labels.jsonl": "fe3b355423c8b6fdf80f61554c95b4fc7b3ca0d858321025dc31c292c74fde2a",
+    "scaffold/valid.jsonl": "fa673c9d2f33f18f6ec35e5e506fd13dd1c7c5120fb9006f8ad527d8db70e130",
+    "scaffold/valid_molecule_condition_labels.jsonl": "3045830e4bc0ffdc06d98679d0575dba12081c1482bf836b0093a4ff5dbf2db7",
+    "scaffold/valid_small.jsonl": "fa982a26c7e6b7cc9887a406ff96a202a6abb2ec4cff480c5160afb10ddee904",
+    "scaffold/valid_small_manifest.json": "08ebd6b113ae294e28880cbcd9469534dff041c340b330bc83d1079d54a18b0c",
+    "scaffold/valid_small_molecule_condition_labels.jsonl": "b0f3994e97f721aa389cd481fe73ee5cad482374bccf01d4daba38cd3ea25ffe"
+  },
+  "version": "skin_gold_voter_original_snapshot.v1"
+}

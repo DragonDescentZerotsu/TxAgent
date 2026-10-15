@@ -139,11 +139,13 @@ class SkinV27PromptRenderer:
             ).strip()
         return self.render_pair(record, {**record, "canonical_smiles": query_smiles})
 
-    def prompt_task(self, record: Mapping[str, Any], query_smiles: str) -> runtime.PromptTask:
+    def prompt_task(self, record: Mapping[str, Any], query_smiles: str, *,
+                    scoring_contract_version: str = runtime.SCORING_CONTRACT_VERSION) -> runtime.PromptTask:
         model = TRAINING_MODEL if self.template_name == "prompt_training.jinja" else MODEL
         return runtime.build_prompt_task(
             self, record, query_smiles=query_smiles,
             group_id=str(record["progressive_level"]),
             molecule_id=str(record.get("parent_id") or ""),
             model=model["model"], model_revision=model["revision"],
+            scoring_contract_version=scoring_contract_version,
         )

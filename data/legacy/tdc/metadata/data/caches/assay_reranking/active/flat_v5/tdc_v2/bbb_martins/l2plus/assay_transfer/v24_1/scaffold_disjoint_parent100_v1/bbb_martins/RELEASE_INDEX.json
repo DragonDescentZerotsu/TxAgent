@@ -1,0 +1,81 @@
+{
+  "evidence": {
+    "content_id": "af72d87641148353952b48365ef5abcdd5310bf89e4284c9206472d0c3999ea0",
+    "manifest": "../../../../../../../../../../../evidence_libraries/bbb_martins/v10_main_universe_v3/retrieval_projection/ranked_evidence_v2/VERSION.json",
+    "manifest_sha256": "0481e9ab3dc262243cedc65dd76eb5828f22dc52195e9f586b1eb75665f1eb15",
+    "record_count": 496135
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v2"
+  },
+  "later_candidate_universe": "all_uids_under_morgan_top_100_parents",
+  "levels_independent": true,
+  "neighbor_identity_policy_by_level": {
+    "L2": "scaffold_disjoint",
+    "L3": "scaffold_disjoint",
+    "L4": "scaffold_disjoint",
+    "L5": "scaffold_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1",
+  "ranking_modes": [
+    "morgan",
+    "assay-transfer"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L2": {
+          "content_id": "0cc46563f6daceeec3fa764ae40f963b7c7e0e53185e943a211146456c1aaf24",
+          "manifest": "scaffold/test/L2/VERSION.json",
+          "manifest_sha256": "e0bd5d74d070b97a8781598b4d4a772fc22d6edf69a4caec9a67903c58191646"
+        },
+        "L3": {
+          "content_id": "b4adb4ac921f90c73dec69c5eb6de0d19bf079a39829b1256367338aec2fc3e6",
+          "manifest": "scaffold/test/L3/VERSION.json",
+          "manifest_sha256": "8f1ff4771bbc3565a453a6c48dc9a2994c8fe5af7a01c2813b1756ffd5f5bfaf"
+        },
+        "L4": {
+          "content_id": "ea65322e34d52819403eb49a83ea3b2b8e4a86f1ad2d8c240804b0b8068f5c12",
+          "manifest": "scaffold/test/L4/VERSION.json",
+          "manifest_sha256": "8b66cbbd97ad7436e5ab07c325a5ec8fa652bd93ac10c891ddf377d3029b5b82"
+        },
+        "L5": {
+          "content_id": "39af0312bc64a889280969a95d3ea62aaa5084a1e2c0f3ad6448de4ad7982b74",
+          "manifest": "scaffold/test/L5/VERSION.json",
+          "manifest_sha256": "9738956f3ab68844ba3aea305ee42b6ec49c8579ba5bbd887532260f28c1ece4"
+        }
+      }
+    },
+    "valid": {
+      "levels": {
+        "L2": {
+          "content_id": "30832e8c8172f07fe869b6f5a7cf6662cc988b3246e64ef8205aea3088763435",
+          "manifest": "scaffold/valid/L2/VERSION.json",
+          "manifest_sha256": "36a713419eb0301fecb8996989f335e97470b8e21c9a05663c6fcd712180c169"
+        },
+        "L3": {
+          "content_id": "43d03e8e322fc236502d470a2ea72cc29715a86dbf14233bd68e0c0293cd6543",
+          "manifest": "scaffold/valid/L3/VERSION.json",
+          "manifest_sha256": "f89cdc302d2641650886fef8c240a69d0dc093bba5538b76ae0e8ba36456932f"
+        },
+        "L4": {
+          "content_id": "47540ff22b56ae2052ceb7da868ad4f2f94610fcddabc59420123b3ffd6c37ea",
+          "manifest": "scaffold/valid/L4/VERSION.json",
+          "manifest_sha256": "12947429e9692deef80e342c8fc337627996658a27e0a669e2e553ded9fc7bd4"
+        },
+        "L5": {
+          "content_id": "d7ad2cb8fbbb262f3907c95869cb283bcb26c182468cb2ac5b567e870f94546c",
+          "manifest": "scaffold/valid/L5/VERSION.json",
+          "manifest_sha256": "c904bbd9c8e8d876c423ecef93b088fffe2649c51bb358260c0f24e409c339f8"
+        }
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "bbb_martins"
+}

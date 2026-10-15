@@ -1,0 +1,250 @@
+{
+  "schema_version": "flat_v5_artifact_bundle.v1",
+  "status": "complete",
+  "bundle_id": "flat_v5/tdc/bioavailability_ma/scaffold_disjoint_parent100_v2",
+  "task": "bioavailability_ma",
+  "benchmark": "tdc",
+  "organization": "flat",
+  "max_level": null,
+  "cache_config": {
+    "path": "predict/retrieval/assay_reranking/flat_v5_manifests/scaffold_disjoint_parent100_v2/catalog.json",
+    "sha256": "f3982f2a740013f4ec165f98a386972a4aacedb0deb0470ceeaf0a3a96348855"
+  },
+  "artifacts": [
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l1/RELEASE_INDEX.json",
+      "size": 1990,
+      "sha256": "08b9ccfbd4dd082099fea71d4286296c266246fb09ff2f62d3348a1352746a75"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l1/evidence/VERSION.json",
+      "size": 627,
+      "sha256": "8bad8f4378b3c4b3cdda0e62884953a1ac95caf2b22933f49eaf69b2075e7eaf"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l1/evidence/records.parquet",
+      "size": 41170,
+      "sha256": "a1d9bb7c59e8357985fcaafb342d1b0aa3721bcc0975fdcdacc482a926b13eca"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l1/scaffold/test/L1/VERSION.json",
+      "size": 24261,
+      "sha256": "433237a343fc3d9e2bb41da73148ca6bce2d97b08c9f9770a467303b17fb88e9"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l1/scaffold/test/L1/rankings.sqlite3",
+      "size": 7618560,
+      "sha256": "93ad92a68c838a262a3d537487ef36745d2f3a742f0a39a03f10330726616613"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l1/scaffold/valid/L1/VERSION.json",
+      "size": 13507,
+      "sha256": "1e685a673e7b8a57a931417e0b3bd79d7686e81d550545e04e4f2fc0a5c2f6c2"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l1/scaffold/valid/L1/rankings.sqlite3",
+      "size": 3903488,
+      "sha256": "b71a0d563bdb5d35e5cc0b033e2bbaf66427e27a188abdfe3e4627cc6cb35390"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l1_cards/RELEASE_INDEX.json",
+      "size": 1597,
+      "sha256": "0b276e257be3de9ab6ef7a98f746ff52f717e62c0bc4a331f705ddf23f7e718a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l1_cards/evidence/VERSION.json",
+      "size": 1041,
+      "sha256": "44af7a892da42a1831d7c5d080a31e0c2c90089cc337d30552679891dcf2ae63"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l1_cards/evidence/records.parquet",
+      "size": 79357,
+      "sha256": "390ed7548108788599feedde3bf0a20bccdafcbe0151a59c3cd6ededf4185dd3"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l1_cards/scaffold/test/L1/VERSION.json",
+      "size": 26533,
+      "sha256": "3c08eae5a908316271670bffe2747686c407d20e07da7ad29293cfbdd86de319"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l1_cards/scaffold/test/L1/rankings.sqlite3",
+      "size": 7798784,
+      "sha256": "b9521d43681f0f82cb657c65d33e2189ad70749bdc5db37592d9546bcf7a8c97"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l1_cards/scaffold/valid/L1/VERSION.json",
+      "size": 13988,
+      "sha256": "5de077214fc079ee33a96244d513110876931eb682086617f8851a7243c5f2ff"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l1_cards/scaffold/valid/L1/rankings.sqlite3",
+      "size": 3993600,
+      "sha256": "fb9c8a14e74c6041b83e4ecbe66c8cdf49451408c8db3fb64b708f10d9b24e11"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/RELEASE_INDEX.json",
+      "size": 3932,
+      "sha256": "99c0931ac5a9837106be0e11831fae51173e83c000be9d8a015a57347287f390"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L2/VERSION.json",
+      "size": 19908,
+      "sha256": "3695f5477e48d3c814c05ca0b986d09f34212f11015574d7d865f0a537a106f4"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L2/rankings.sqlite3",
+      "size": 134545408,
+      "sha256": "c3645e82d517c933056fea92cb646824b0fde54b485f308a08453c6c8f79c6f6"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L2/score_reuse_conflicts.json",
+      "size": 3013322,
+      "sha256": "56fe7e214e90858e12186b1803b3529c583c6da0b2d45b826a63ea8e17c2f277"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L3/VERSION.json",
+      "size": 19944,
+      "sha256": "b0003ef99200589983d5210fd1e5c1951cdc22a8a7416c9e56832f10fcfa8378"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L3/rankings.sqlite3",
+      "size": 327479296,
+      "sha256": "3a0a4fd95ae899180c876c1833d994d1b21f97692ba6af85ccad80b448eb1d37"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L3/score_reuse_conflicts.json",
+      "size": 7564564,
+      "sha256": "ff2d4c99c27a5c93fa6f4ce6d3dc5da094f542c89f5ac637f04a6b8fa11b208d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L4/VERSION.json",
+      "size": 19923,
+      "sha256": "0e880a72e6e02201cb96ce3955aa6cfce23a566029b38c86460752d6c98a8341"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L4/rankings.sqlite3",
+      "size": 157462528,
+      "sha256": "bc375699b3054d1fda3ccf913eae1f6024eb074824b9808fbb4e7ac313894e5a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L4/score_reuse_conflicts.json",
+      "size": 2508496,
+      "sha256": "2525d5dc917e56aec68ba2bf7d7810a77564c355d50c0f191a74e5b66cd86154"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L5/VERSION.json",
+      "size": 19360,
+      "sha256": "cb8beed2fbf0ae6dacf31452c5ebce62a29b47fe37a304027462f037ecf55ea6"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L5/rankings.sqlite3",
+      "size": 59371520,
+      "sha256": "ef878e071f8b91b0c213a93b7fd911232912150dab2b94fef803d885e7b393b7"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L6/VERSION.json",
+      "size": 19898,
+      "sha256": "bb68d54b9a4211d09bbb43745adbe186e8fd8235451bd7b9262219da1e477372"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L6/rankings.sqlite3",
+      "size": 112254976,
+      "sha256": "1af9ac22fd6864b819b430959fc99915d76c080eddd31902649414a885e56b8b"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L6/score_reuse_conflicts.json",
+      "size": 2695392,
+      "sha256": "6192f2090f72a98464fcb17bb8bf5a4ce5d90551f77edf933c4686527f5aeddc"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L2/VERSION.json",
+      "size": 11978,
+      "sha256": "87539e02fb6524945c3d855d3946a6a1ade08eac3878e0590d6207223bbd6161"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L2/rankings.sqlite3",
+      "size": 59424768,
+      "sha256": "5b5ff74a3a05d302ae3dcf2c2d1c29cc197190533ee26363ea0c079d444bae23"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L2/score_reuse_conflicts.json",
+      "size": 1166368,
+      "sha256": "73c8574819112986c07c7ff20126752fb023e5de4f05f75b9a4280f46323336d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L3/VERSION.json",
+      "size": 12008,
+      "sha256": "e86d158dc472d40803aca45b8275cb712a762143d489de0cc144c647f6dffeb6"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L3/rankings.sqlite3",
+      "size": 152182784,
+      "sha256": "0e2bb8902f3b73f6100afa8046e883ef56eb6bda6ffa57a2b2830962a0848f06"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L3/score_reuse_conflicts.json",
+      "size": 3049691,
+      "sha256": "dd0bafa47eea440ec224cb3e3ed457ccd9fb7af582182f5efd5c03cc7265a754"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L4/VERSION.json",
+      "size": 11998,
+      "sha256": "b84189f71a6b5dc71161975b8d06547ad48e6e7a006bc885d96186d20b98151a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L4/rankings.sqlite3",
+      "size": 79663104,
+      "sha256": "00ab0895e48c8b631e990bf6bcc95941529b632186d07231ccf29eaf665ddade"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L4/score_reuse_conflicts.json",
+      "size": 1363391,
+      "sha256": "6e8c196949fae80f46f962358560bc39aa3d27c40d9983731831af9ab9c988b6"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L5/VERSION.json",
+      "size": 11456,
+      "sha256": "1b1792ed1d8f2ddf31cc0e9150ca8a0e3f2f99c84bb7c438b1ee00cde573d2da"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L5/rankings.sqlite3",
+      "size": 24592384,
+      "sha256": "c7fb45cba43eaae52a6fda0a216fdb1f3dbc69fd3d1d39d7911c69eadff78781"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L6/VERSION.json",
+      "size": 11972,
+      "sha256": "2f08659ef0097c0e016b1f230e002fc7160214b3c157bad0b792c90fdd1103d2"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L6/rankings.sqlite3",
+      "size": 49471488,
+      "sha256": "aaeb3d3e65073205fb43b8ced54ebaec55e849e0a77da684562f7a2cf98c65d3"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L6/score_reuse_conflicts.json",
+      "size": 1125382,
+      "sha256": "9f8fc8b44ede3365526b9ca26508481afbe233c51beda7a4fd0eb63b6e34b25c"
+    },
+    {
+      "path": "data/evidence_libraries/bioavailability_ma/v10_main_universe_v3/retrieval_projection/ranked_evidence_v2/VERSION.json",
+      "size": 1848,
+      "sha256": "762e0a12de27425a597260817990494e7ec78f6e12dea09a2d69f4f289c82461"
+    },
+    {
+      "path": "data/evidence_libraries/bioavailability_ma/v10_main_universe_v3/retrieval_projection/ranked_evidence_v2/records.parquet",
+      "size": 188451377,
+      "sha256": "03df7a952ab877b21adf7833b1e8657a834ce9c58d5083c008ebce15d7a9e6b1"
+    },
+    {
+      "path": "predict/retrieval/assay_reranking/flat_v5_manifests/scaffold_disjoint_parent100_v2/catalog.json",
+      "size": 5986,
+      "sha256": "f3982f2a740013f4ec165f98a386972a4aacedb0deb0470ceeaf0a3a96348855"
+    }
+  ],
+  "missing": [],
+  "cache_set": {
+    "name": "scaffold_disjoint_parent100",
+    "release": "v2"
+  }
+}

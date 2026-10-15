@@ -26,7 +26,7 @@ from predict.utils.json import read_jsonl, sha256_file
 from .cache_matched import (
     DEFAULT_GOLD_CONTEXT_MAPPING,
     _load_candidates_v1,
-    load_cache_policy,
+    load_legacy_cache_policy,
 )
 from .cache_matched_v2 import (
     ACTIVE_GOLD_RELEASES,
@@ -251,7 +251,7 @@ def build(
     if len(queries) != len(frozen):
         raise ValueError("Duplicate benchmark row IDs")
 
-    legacy_policy = load_cache_policy(legacy_bundle, task, subset, "joint")
+    legacy_policy = load_legacy_cache_policy(legacy_bundle, task, subset, "joint")
     replay_policy = legacy_policy
     if l5_ranker is not None:
         replay_policy = {

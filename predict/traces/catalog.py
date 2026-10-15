@@ -10,20 +10,28 @@ from pathlib import Path
 from typing import Any
 
 from predict.traces.io import DEFAULT_TRACE_ROOT, TRACE_SCHEMA_VERSION
+from data.processing.paths import resolve_legacy_path
 
 
 def discover_traces(root: str | Path = DEFAULT_TRACE_ROOT) -> list[dict[str, Any]]:
     rows = []
-    paths = {
-        path for path in Path(root).rglob("*.json")
-        if "public" not in path.parts and path.parent.parent.name == "samples"
-    }
+    paths = set()
+    for directory, children, files in os.walk(resolve_legacy_path(Path(root))):
+        blocked = {"public"} if "run.json" in files else set()
+        if "manifest.json" in files or "cache_matched_retrieval" in children:
+            blocked.update({"runs", "cache_matched_retrieval", "inputs", "logs", "git_bundle"})
+        children[:] = [name for name in children if name not in blocked]
+        parent = Path(directory)
+        if parent.parent.name == "samples" or parent.name.startswith("query_idx"):
+            paths.update(parent / name for name in files if name.endswith(".json"))
     for path in sorted(paths):
         try:
             row = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):
             continue
         if row.get("schema_version") == TRACE_SCHEMA_VERSION:
+            if row.get("checkpoint_path"):
+                row["checkpoint_path"] = str(resolve_legacy_path(Path(row["checkpoint_path"])))
             rows.append({**row, "path": str(path)})
     return rows
 
@@ -49,7 +57,9 @@ def _refresh_results_catalog(root):
     with lock_path.open("r+") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
         rows, ledger = [], []
-        for path in sorted(root.glob("*/*/*/*/run.json")):
+        run_paths = {path for pattern in ("*/*/*/*/run.json", "*/*/*/run.json", "*/*/*/profiles/*/run.json")
+                     for path in root.glob(pattern)}
+        for path in sorted(run_paths):
             document = json.loads(path.read_text())
             if not str(document.get("schema_version", "")).startswith(
                 ("progressive_study_run.v", "organized_study_run.v")
@@ -87,12 +97,16 @@ def _refresh_results_catalog(root):
                 ),
             }
             for task in document.get("tasks") or [None]:
-                metric_root = Path(document.get("metric_source_dir") or path.parent)
+                metric_root = resolve_legacy_path(Path(document.get("metric_source_dir") or path.parent))
                 metric_paths = sorted(
                     metric_root.glob(f"{task}/levels/level_*/metrics.json")
                 ) if task else []
                 if task and not metric_paths:
                     metric_paths = sorted(metric_root.glob(f"{task}/*/metrics.json"))
+                if task and not metric_paths:
+                    metric_paths = sorted(metric_root.glob(f"*/{task}/*/*/metrics.json"))
+                    if document.get("selection_profile"):
+                        metric_paths = [path for path in metric_paths if path.parent.name == document["selection_profile"]]
                 if not metric_paths:
                     ledger.append(base | {"task": task})
                     continue

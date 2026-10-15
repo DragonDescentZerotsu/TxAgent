@@ -300,7 +300,7 @@ def test_publisher_writes_a_complete_directly_readable_database(tmp_path, monkey
         "stages": {"L1": "joint", "L2": "assay_transfer", "L5": "morgan"},
         "cache_manifests": {"L1": str(tmp_path / "L1.json"), "L2": str(later_manifest)},
     }
-    monkeypatch.setattr(publisher, "load_cache_policy", lambda *args: policy)
+    monkeypatch.setattr(publisher, "load_legacy_cache_policy", lambda *args: policy)
     monkeypatch.setattr(publisher, "_load_candidates_v1", lambda *args, **kwargs: legacy_result)
     output = tmp_path / "published"
     manifest = publisher.build(

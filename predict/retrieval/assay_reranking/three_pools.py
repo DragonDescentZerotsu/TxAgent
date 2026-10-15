@@ -99,13 +99,13 @@ class Renderer:
         ).strip()
         return prompt, self.text_projection_hash
 
-    def prompt_task(self, record, query):
+    def prompt_task(self, record, query, *, scoring_contract_version=runtime.SCORING_CONTRACT_VERSION):
         prompt, projection = self.render(record, query)
         spec = self.module.MODELS[record["progressive_level"]]
         prompt_hash = hashlib.sha256(prompt.encode()).hexdigest()
         identity = dict(prompt_hash=prompt_hash, model=spec["model"], model_revision=spec["revision"],
                         template_hash=self.template_hash, projection_hash=projection,
-                        scoring_contract_version=runtime.SCORING_CONTRACT_VERSION)
+                        scoring_contract_version=scoring_contract_version)
         return runtime.PromptTask(cache_key=digest(identity), prompt=prompt, task_id=self.module.TASK_ID,
                                   query_smiles=query, group_id=record["progressive_level"],
                                   molecule_id=record.get("parent_id", ""), record_id=record["record_id"], **identity)

@@ -4,7 +4,7 @@ import json
 
 import pandas as pd
 
-from predict.llm_io.evidence import evidence_for_llm
+from predict.utils.evidence import evidence_for_llm
 from predict.retrieval.retrieve import retrieve_neighbors
 from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_compact_artifacts import (
     BANNED_PERSISTED_FIELDS,

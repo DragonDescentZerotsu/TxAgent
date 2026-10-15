@@ -679,3 +679,41 @@ The concurrently refactored optimizer uses separate full-molecule L1 card caches
 parent-grouped scores remain distinct. See [implementation, validation and the
 Carcinogens disjointness limitation](canonical_prompts_tdc.md). Completed runs,
 FINAL artifacts and frozen score values were not rewritten. No model calls ran.
+
+## Group 17: retired assay contrastive execution and obsolete Skin scoring cache
+
+Status: approved and deleted on 2026-10-15 on `login01`.
+
+Deleted cache: `predict/retrieval/cache/assay_reranking/active/v9_skin_gold_v1_scaffold_morgan100_v1/`:
+four valid/test VERSION and ranking Parquet files, totaling 3,225,573 bytes.
+These held the pre-correction Skin direct scores and depended on old Gold vote
+summaries. The corrected source passed the shared six-entry direct-release
+validator before deletion. Maintained builder defaults, the scoring recipe and
+release receipts now use the corrected source; no lookup aliases the deleted
+scores to the corrected scores.
+
+The corrected cache and scoring source were relocated to
+`data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/`.
+All eleven files retain their exact bytes and content IDs. Old corrected-cache
+locators resolve through `data/caches/assay_reranking/relocations.json`; the
+pre-correction deleted cache has no replacement alias. The deletion receipt is
+`/tmp/txagent-skin-cache-retirement.json`.
+
+Removed executable assay-transfer contrastive selection, its matrix sweep
+branches/arguments and dedicated builder report. Kept the general matrix
+launcher, ordinary Morgan/assay-transfer ranking, frozen optimizer selections,
+standalone cache construction, historical prompt rendering, and the separate
+legacy Morgan contrastive capability. Completed results and provenance remain
+unchanged. Direct L1 always uses scaffold-disjoint candidates. Both named
+indirect-policy catalogs share those L1 bindings and retain published score
+availability; all 24 task/benchmark bundle receipts were verified.
+
+Validation: the broad CPU suite finished with 859 passed and four pre-existing
+failures (two missing external V10.4 provenance manifests and two obsolete TDC
+path/configuration expectations). The scoring checks passed five tests and
+skipped four GPU-only cases. All 24 published task/benchmark bundle receipts
+passed verification. Eight actual Skin retrieval/manual-UID round trips passed
+across Gold/TDC, valid/test and both indirect policies. All eleven relocated
+files remain byte-identical. Retained standalone cache-builder functions are
+AST-identical, and `git diff --check` passes. No new assay scores or model API
+calls were made; no commit or push was performed.

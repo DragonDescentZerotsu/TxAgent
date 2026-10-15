@@ -191,7 +191,7 @@ def test_repaired_prerequisite_invalidates_stale_final_and_trace(tmp_path):
     assert not (run_dir / "trace_messages.jsonl").exists()
 
 
-def test_hydrating_changed_frozen_single_invalidates_stale_final(tmp_path):
+def test_hydrating_changed_frozen_single_raises_without_modifying_outputs(tmp_path):
     prepared = _prepared(tmp_path)
     source_batch = tmp_path / "source"
     prepared.args.single_analysis_source_batch = str(source_batch)
@@ -232,16 +232,13 @@ def test_hydrating_changed_frozen_single_invalidates_stale_final(tmp_path):
     )
     (run_dir / "trace_messages.jsonl").write_text("{}\n", encoding="utf-8")
 
-    _hydrate_configured_branch_reuse(prepared, prepared.items[0], {}, run_dir)
-
-    assert json.loads(
-        (run_dir / "single_molecule_reasoning_output.json").read_text(encoding="utf-8")
-    )["analysis"] == "frozen"
-    assert not (run_dir / "final_reasoning_output.json").exists()
-    assert not (run_dir / "trace_messages.jsonl").exists()
+    before = {path: path.read_bytes() for path in run_dir.iterdir()}
+    with pytest.raises(ValueError, match="Query prior changed"):
+        _hydrate_configured_branch_reuse(prepared, prepared.items[0], {}, run_dir)
+    assert {path: path.read_bytes() for path in run_dir.iterdir()} == before
 
 
-def test_changed_frozen_single_invalidates_final_before_prepare_overwrites_it(tmp_path):
+def test_changed_frozen_single_raises_before_prepare_overwrites_it(tmp_path):
     prepared = _prepared(tmp_path)
     source_batch = tmp_path / "source"
     prepared.args.single_analysis_source_batch = str(source_batch)
@@ -278,12 +275,10 @@ def test_changed_frozen_single_invalidates_final_before_prepare_overwrites_it(tm
     )
     (run_dir / "trace_messages.jsonl").write_text("{}\n", encoding="utf-8")
 
-    synchronize_configured_single_reuse(
-        prepared, prepared.items[0], run_dir
-    )
-
-    assert not (run_dir / "final_reasoning_output.json").exists()
-    assert not (run_dir / "trace_messages.jsonl").exists()
+    before = {path: path.read_bytes() for path in run_dir.iterdir()}
+    with pytest.raises(ValueError, match="Query prior changed"):
+        synchronize_configured_single_reuse(prepared, prepared.items[0], run_dir)
+    assert {path: path.read_bytes() for path in run_dir.iterdir()} == before
 
 
 
@@ -364,3 +359,27 @@ def test_six_task_flat_trace_uses_shared_serializer(tmp_path, monkeypatch, trace
     assert output["status"] == "ok"
     assert trace[-1]["prediction"] == "positive"
 
+
+
+@pytest.mark.parametrize("benchmark_field", ["benchmark", "benchmark_release"])
+def test_named_trace_identity_separates_benchmark_and_split(tmp_path, benchmark_field):
+    from predict.harnesses.branches.runtime import _write_stage_trace
+    from predict.traces.viewer.build_dataset import build_dataset
+    prepared = _prepared(tmp_path)
+    prepared.args.run_name = "same-study"
+    prepared.args.flat_prompt_version = "final_full_flat"
+    prepared.args.experiment_mode = "full_flat"
+    prepared.args.trace_root = tmp_path / "traces"
+    checkpoint = tmp_path / "final_reasoning_output.json"
+    output = {"status": "ok", "llm": {"messages": [{"role": "user", "content": "query"}],
+                                         "content": {"final_prediction": "pass"}}}
+    checkpoint.write_text(json.dumps(output))
+    state = SimpleNamespace(prepared=prepared, item=prepared.items[0])
+    for benchmark, subset in (("gold_v1", "valid"), ("gold_v1", "test"), ("tdc", "test")):
+        prepared.manifest = {benchmark_field: benchmark, "evaluation_subset": subset}
+        _write_stage_trace(state, "final", output, checkpoint)
+    viewer = tmp_path / "viewer"
+    assert build_dataset(prepared.args.trace_root, viewer) == 3
+    manifests = list(viewer.glob("runs/*/*/manifest.json"))
+    assert len(manifests) == 3
+    assert all(json.loads(p.read_text())["n_samples"] == 1 for p in manifests)

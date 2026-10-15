@@ -55,6 +55,13 @@ atomically writes hash-pinned per-shard Parquet. Pass that same sidecar through
 scorer. Existing running scorers and journals are unaffected.
 Stage resumable journals on that node's `/local`, copy only closed trees to
 `/vast`, validate there, then publish under the semantic `flat_v5/...` identity.
+
+The shared loader defaults to `flash_attention_2` with Transformers 4.57.6 on
+every GPU generation and returns a tokenizer for existing scoring callers.
+Ranked-UID `prepare-level` and `score` explicitly select `--attention-backend sgl_fa3`.
+Scoring additionally requires `--tokenized-root`; this workflow uses Transformers 5.12.1 and the installed
+SGLang FA3 kernel. Frozen token sidecars also work with FA2. FA3 without a
+validated token sidecar is rejected before loading the model.
 Pass a closed prior stage with `--score-reuse-root` during preparation to reuse
 matching score keys from a finalized SQLite cache or a validated journal prefix;
 the prompt and model key must match, and the reused stage is hash-pinned in the

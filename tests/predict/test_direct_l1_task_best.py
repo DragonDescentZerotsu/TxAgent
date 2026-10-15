@@ -4,7 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from predict.retrieval.assay_reranking.cache_matched import TASKS, load_cache_policy
+from predict.retrieval.assay_reranking.cache_matched import TASKS, load_legacy_cache_policy as load_cache_policy
 from predict.retrieval.assay_reranking.runtime import cache_profile_root, model_profile
 from predict.retrieval.assay_reranking.score_tdc_ranked_retrieval import (
     DirectL1PromptRenderer,

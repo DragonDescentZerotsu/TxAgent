@@ -20,7 +20,7 @@ from typing import Any
 import numpy as np
 from rdkit import DataStructs
 
-from predict.llm_io.evidence import attach_minimal_evidence
+from predict.utils.evidence import attach_minimal_evidence
 
 
 DISPLAY_INVERSE_LOG10 = "inverse_log10.v1"

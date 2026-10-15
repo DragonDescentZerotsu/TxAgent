@@ -4,19 +4,21 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import math
+import sqlite3
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import asdict
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Sequence
-import yaml
 from data.processing.gold_labels.conditioned_benchmark import (
     split_path,
     tdc_split_path,
     tdc_manifest,
-    TDC_MANIFEST,
 )
 from data.processing.paths import REPO_ROOT
-from predict.retrieval.selection import attach_uid_selection, indexed_manifests
+from predict.retrieval.selection import attach_uid_selection, indexed_manifests, export_selection
+from predict.retrieval.assay_reranking.artifact_bundle import cache_task, resolve_cache_set
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
 from . import objectives, policies, pool
 
@@ -99,9 +101,12 @@ def build(
     budget: int | None = None,
     workers: int = 1,
     sqrt_gated_assay: bool = False,
+    exclude_disjoint_violations: bool = False,
 ) -> Path:
     if kind not in {"direct", "indirect"} or workers < 1:
         raise ValueError("invalid search policy or worker count")
+    if exclude_disjoint_violations and kind != "indirect":
+        raise ValueError("Disjoint candidate filtering applies only to indirect pools")
     if output_root.exists():
         raise FileExistsError("search requires a fresh output identity")
     grid_name = grid or ("direct" if kind == "direct" else "sqrt48")
@@ -138,25 +143,13 @@ def build(
                     dili_scores=dili_score_cache,
                     direct_manifest=direct_manifest,
                 )
-        if benchmark == "tdc" and cache_bundle is None and (direct_cache is None):
-            cache_bundle = TDC_MANIFEST
-        bundle = yaml.safe_load(cache_bundle.read_text()) if cache_bundle else None
-        if bundle and bundle.get("benchmark") == "tdc" and ("tasks" in bundle):
-            bundle = {
-                "caches": {
-                    name: {
-                        "L1": str(REPO_ROOT / spec["selection"]["direct_cache"]),
-                        "later": str(REPO_ROOT / spec["retrieval"]["later"]),
-                    }
-                    for name, spec in bundle["tasks"].items()
-                }
-            }
+        if cache_bundle is not None or kind == "indirect" or benchmark == "tdc" and direct_cache is None:
+            cache_bundle = resolve_cache_set(task, benchmark, cache_bundle)
+        spec = cache_task(cache_bundle, task, benchmark) if cache_bundle else None
         index = direct_cache if kind == "direct" else None
-        if index is None and bundle:
-            index = (
-                cache_bundle.parent
-                / bundle["caches"][task]["L1" if kind == "direct" else "later"]
-            ).resolve()
+        if index is None and spec:
+            binding = (spec.get("selection", {}).get("direct_cache") if kind == "direct" else spec["retrieval"]["later"])
+            index = (REPO_ROOT / binding).resolve() if binding else None
         if index is None:
             raise ValueError(
                 "declare the canonical direct cache or pinned cache bundle"
@@ -191,12 +184,13 @@ def build(
                 task=task,
                 subset=cache_subset,
                 queries=queries,
-                scores=scores,
+                scores=scores if score_audit else None,
                 semantic_extension=semantic_extension,
                 semantic_snapshot=semantic_snapshot,
                 dili_score_cache=dili_score_cache,
                 prediction_filter=prediction_filter,
                 cache_bundle=cache_bundle,
+                exclude_disjoint_violations=exclude_disjoint_violations,
             )
         frozen = None
         if direct_manifest:
@@ -406,9 +400,40 @@ def validate_selection_manifest(path: Path) -> dict:
     return document
 
 
-def compose(direct_manifest: Path, indirect_manifest: Path, output: Path) -> Path:
+def compose(direct_manifest: Path, indirect_manifest: Path, output: Path,
+            cache_bundle: Path | None = None) -> Path:
     if output.exists():
         raise FileExistsError(output)
+    if cache_bundle is not None:
+        from predict.harnesses.branches.flat import _load_preselected_contexts
+
+        indirect = validate_selection_manifest(indirect_manifest)
+        if indirect["kind"] != "indirect" or indirect["benchmark"] != "gold_v1" or output.name != "manifest.json":
+            raise ValueError("Frozen direct composition requires Gold indirect selection and manifest.json")
+        queries, _ = query_cohort(indirect["task_id"], "gold_v1", indirect["subset"])
+        queries = {query: queries[query] for query in indirect["benchmark_row_ids"]}
+        contexts, receipt = _load_preselected_contexts(
+            direct_manifest, task=indirect["task_id"], queries=queries,
+            budget=10, allow_subset=True, benchmark="gold_v1")
+        if receipt.get("_selected_scores"):
+            raise ValueError("Frozen direct composition requires cache-provided scores")
+        spec = cache_task(cache_bundle, indirect["task_id"], "gold_v1")
+        subset = "valid" if indirect["subset"] == "valid_small" else indirect["subset"]
+        manifests = indexed_manifests(REPO_ROOT / spec["retrieval"]["L1"], subset, ("L1",))
+        child = json.loads((indirect_manifest.parent / indirect["uid_selection"]["path"]).read_text())
+        manifests.update({level: Path(pin["path"]) for level, pin in child["cache_manifests"].items()})
+        rows = [dict(benchmark_row_id=query, level="L1", context_id=context)
+                for query, panel in contexts.items() for context in panel]
+        with (indirect_manifest.parent / indirect["records"]["path"]).open() as handle:
+            rows.extend(csv.DictReader(handle, delimiter="\t"))
+        return export_selection(
+            output.parent, rows, task=indirect["task_id"], subset=subset,
+            queries=queries, cache_manifests=manifests,
+            limits={level: indirect["budget"] for level in manifests if level != "L1"},
+            provenance=dict(selection_cohort=indirect["subset"], frozen_direct=receipt,
+                            indirect=dict(path=str(indirect_manifest.resolve()), sha256=sha256_file(indirect_manifest)),
+                            cache_bundle=dict(path=str(cache_bundle.resolve()), sha256=sha256_file(cache_bundle)),
+                            score_policy="unchanged_cache_scores"))
     direct = validate_selection_manifest(direct_manifest)
     indirect = validate_selection_manifest(indirect_manifest)
     if (
@@ -462,6 +487,84 @@ def compose(direct_manifest: Path, indirect_manifest: Path, output: Path) -> Pat
     return output
 
 
+def rank(candidates: Path, output: Path) -> dict:
+    """Freeze a validation winner only after every declared batch is complete."""
+    from predict.harnesses.branches.manifests import read_record
+
+    if output.exists():
+        raise FileExistsError(output)
+    declared = json.loads(candidates.read_text())
+    expected = declared["benchmark_row_ids"]
+    if not expected or len(expected) != len(set(expected)) or len({c["profile"] for c in declared["candidates"]}) != len(declared["candidates"]):
+        raise ValueError("Validation cohort and candidate names must be nonempty and unique")
+    ranked = []
+    for candidate in declared["candidates"]:
+        batch = Path(candidate["batch"])
+        manifest = read_record(batch / "manifest.json")
+        metrics = json.loads((batch / "metrics.json").read_text())
+        predictions = list(read_jsonl(batch / "predictions.jsonl"))
+        settings = manifest
+        query_ids = list(manifest["queries"].values())
+        if (settings["evaluation_subset"] != "valid" or settings["model"] != declared["model"]
+                or settings["benchmark_release"] != declared["benchmark"]
+                or set(query_ids) != set(expected) or len(query_ids) != len(expected)
+                or any(metrics.get(key) != len(expected) for key in ("n_total", "n_evaluable", "n_successful"))
+                or metrics.get("n_failed_runs") != 0 or len(predictions) != len(expected)
+                or len({row["query_index"] for row in predictions}) != len(expected)
+                or any(row.get("status") != "ok" or row.get("final_status") != "ok" or row.get("pred_label") not in (0, 1) for row in predictions)
+                or {str(row["query_index"]) for row in predictions} != set(manifest["queries"])):
+            raise ValueError(f"Incomplete or incompatible validation batch: {batch}")
+        if any(not math.isfinite(metrics[key]) for key in ("macro_f1", "accuracy")):
+            raise ValueError("Validation metrics must be finite")
+        for row in predictions:
+            response = json.loads((batch / "runs" / row["run_id"] / "final_reasoning_output.json").read_text())
+            if (response.get("status") != "ok" or response["llm"].get("model") != declared["model"]
+                    or (declared.get("provider") and response["llm"].get("provider") != declared["provider"])):
+                raise ValueError(f"Validation response model/provider differs: {batch}/{row['run_id']}")
+        ranked.append(dict(**candidate, macro_f1=metrics["macro_f1"], accuracy=metrics["accuracy"],
+                           manifest_sha256=sha256_file(batch / "manifest.json"),
+                           metrics_sha256=sha256_file(batch / "metrics.json"),
+                           predictions_sha256=sha256_file(batch / "predictions.jsonl")))
+    ranked.sort(key=lambda row: (-row["macro_f1"], -row["accuracy"], row["profile"]))
+    if not ranked:
+        raise ValueError("No validation candidates")
+    result = dict(schema_version="validation_selection.v1", status="complete", frozen_at=datetime.now(timezone.utc).isoformat(), benchmark=declared["benchmark"],
+                  benchmark_row_ids=expected, model=declared["model"], provider=declared.get("provider"), selection_cohort=declared["selection_cohort"],
+                  rule="macro_f1 desc, accuracy desc, profile asc", candidates_sha256=sha256_file(candidates),
+                  winner=ranked[0]["profile"], leaderboard=ranked)
+    write_json_atomic(output, result)
+    return result
+
+
+def extend_semantics(task: str, cache_bundle: Path, output_root: Path) -> Path:
+    """Project missing cache UIDs using existing reviewed memberships and weights."""
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+    from optimization.semantic_buckets.inputs import resolve_semantic_bucket_artifacts
+    from optimization.semantic_buckets.ledger import project_retrieval_weights
+
+    if output_root.exists():
+        raise FileExistsError(output_root)
+    semantics, _ = pool._semantic_ledger(task)
+    missing = set()
+    for benchmark in ("gold_v1", "tdc"):
+        spec = cache_task(cache_bundle, task, benchmark)
+        index = REPO_ROOT / spec["retrieval"]["later"]
+        for subset in ("valid", "test"):
+            for level, manifest in indexed_manifests(index, subset, ("L2", "L3", "L4", "L5", "L6")).items():
+                with sqlite3.connect(f"file:{manifest.with_name('rankings.sqlite3').resolve()}?mode=ro&immutable=1", uri=True) as db:
+                    missing.update((uid, level) for (uid,) in db.execute("SELECT DISTINCT item_id FROM rankings")
+                                   if (uid, level) not in semantics)
+    output_root.mkdir(parents=True)
+    targets = output_root / "missing_retrieval_uids.parquet"
+    pq.write_table(pa.table({"source_row_uid": [uid for uid, _ in sorted(missing)],
+                             "level": [level for _, level in sorted(missing)]}), targets)
+    source = resolve_semantic_bucket_artifacts(task, "CURRENT")
+    project_retrieval_weights(source.central_ledger, source.semantic_bucket_weights, targets,
+                              output_root / "projection", provisional_mean=False)
+    return output_root / "projection" / "manifest.json"
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
@@ -490,9 +593,18 @@ def main() -> None:
         ):
             sub.add_argument("--" + name, type=Path)
         sub.add_argument("--sqrt-gated-assay", action="store_true")
+        sub.add_argument("--exclude-disjoint-violations", action="store_true")
     sub = commands.add_parser("compose")
     sub.add_argument("--direct-manifest", type=Path, required=True)
     sub.add_argument("--indirect-manifest", type=Path, required=True)
+    sub.add_argument("--output", type=Path, required=True)
+    sub.add_argument("--cache-bundle", type=Path)
+    sub = commands.add_parser("extend-semantics")
+    sub.add_argument("--task", required=True)
+    sub.add_argument("--cache-bundle", type=Path, required=True)
+    sub.add_argument("--output-root", type=Path, required=True)
+    sub = commands.add_parser("rank")
+    sub.add_argument("--candidates", type=Path, required=True)
     sub.add_argument("--output", type=Path, required=True)
     sub = commands.add_parser("validate")
     sub.add_argument("--manifest", type=Path, required=True)
@@ -504,6 +616,10 @@ def main() -> None:
         result = build(kind=command, **values)
     elif command == "compose":
         result = compose(**values)
+    elif command == "rank":
+        result = rank(**values)
+    elif command == "extend-semantics":
+        result = extend_semantics(**values)
     else:
         result = validate_selection_manifest(args.manifest)
     print(result)

@@ -22,7 +22,7 @@ from predict.utils.json import read_jsonl, sha256_file
 
 from .build_ranked_retrieval import _digest
 from .build_ranked_uid_retrieval import _schema, _write_complete
-from .build_skin_gold_v1_l1_adapter import GOLD, _cards, _member_uid, _projection
+from .build_skin_gold_v1_l1_adapter import GOLD, _cards, _projection
 from .build_tdc_mixed_ranked_l1 import _projection_entry
 from .ranked_uid_retrieval import CAPACITY, SCHEMA_VERSION
 from .runtime import cache_profile_root
@@ -141,12 +141,12 @@ def build(output_root: Path, *, subset: str = "valid", profile: str = PROFILE) -
                     scored.append((score, cid, origin))
                 score, chosen, origin = min(scored, key=lambda item: (-item[0], item[1]))
                 chosen_row = contexts[chosen]
-                member_count = len(chosen_row.get("source_record_ids") or [])
+                member_count = len(chosen_row["source_row_uids"]) if chosen in gold else len(tdc_members[chosen])
                 rows.append((
                     query_id, parent, parent,
                     str(chosen_row["molecule_identity"]["parent_smiles"]), similarity,
                     rank, 1, rank, score, None, ids[0], chosen,
-                    len(contexts[ids[0]].get("source_record_ids") or []), member_count,
+                    len(contexts[ids[0]]["source_row_uids"]) if ids[0] in gold else len(tdc_members[ids[0]]), member_count,
                     f"{origin}:{query_id}:{chosen}",
                 ))
             assay_order = sorted(rows, key=lambda row: (-row[8], row[1]))
@@ -166,7 +166,7 @@ def build(output_root: Path, *, subset: str = "valid", profile: str = PROFILE) -
                 cid, parent, str(row.get("condition_group") or ""), int(row["Y"]),
             ))
             members = (
-                [_member_uid(cid, rank, str(record)) for rank, record in enumerate(row.get("source_record_ids") or [], 1)]
+                row["source_row_uids"]
                 if cid in gold else tdc_members[cid]
             )
             if not members:
@@ -180,7 +180,7 @@ def build(output_root: Path, *, subset: str = "valid", profile: str = PROFILE) -
             "subset": subset, "level": "L1", "pool": "fixed", "capacity": CAPACITY,
             "parent_capacity": CAPACITY, "query_count": len(queries),
             "stored_rows": len(queries) * CAPACITY, "query_counts": query_counts,
-            "label_release": {"benchmark": "tdc", "version": "v1"},
+            "label_release": {"benchmark": "tdc"},
             "l1_sources": ["gold_v1", "tdc_v1"],
             "neighbor_identity_policy": "scaffold_disjoint",
             "shared_candidate_universe": True, "assay_transfer_status": "complete",
@@ -209,7 +209,7 @@ def build(output_root: Path, *, subset: str = "valid", profile: str = PROFILE) -
             "schema_version": "ranked_uid_task_release_index.v1",
             "selection_contract": SCHEMA_VERSION, "profile": profile,
             "task_id": TASK, "status": "complete", "pool": "all",
-            "label_release": {"benchmark": "tdc", "version": "v1"},
+            "label_release": {"benchmark": "tdc"},
             "l1_sources": ["gold_v1", "tdc_v1"], "parent_capacity": CAPACITY,
             "levels_independent": True, "ranking_modes": ["morgan", "assay-transfer"],
             "assay_transfer_status": "complete",

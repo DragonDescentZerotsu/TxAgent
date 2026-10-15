@@ -61,19 +61,21 @@ from predict.harnesses.branches.flat import (
     DILI_TDC_V2_MIXED_V3_PROMPT_VERSION,
     DILI_TDC_V2_POLARIZED_PROMPT_VERSION,
     FINAL_FULL_FLAT_PROMPT_VERSION,
+    FINAL_FULL_FLAT_PROMPT_VERSIONS,
     FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
     FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
     CONTEXT_PROMPT_VERSIONS,
     EVIDENCE_PROJECTION,
     EXTRA_DETAILS_POLICY,
     JOSEPH_PROMPT_VERSION,
-    JOSEPH_PROMPT_HARNESSES,
     JOSEPH_PROMPT_VERSIONS,
     TIANANG_PROMPT_VERSION,
     TASKS,
     flat_group_validation,
     flat_prompt_provenance,
+    prompt_assets,
 )
+from predict.api_client.transport import DEFAULT_ENV_FILE
 from predict.traces.io import DEFAULT_TRACE_ROOT
 from predict.utils.json import sha256_file
 from predict.api_client.pool import (
@@ -84,7 +86,7 @@ from predict.api_client.pool import (
     select_healthy_providers,
 )
 from predict.retrieval.assay_reranking.runtime import ARCHIVE_CACHE_ROOT
-from predict.harnesses.branches.manifests import selection_parameters, run_directory, read_record, read_run, write_batch, scientific_settings, require_query_ids, require_artifact_versions
+from predict.harnesses.branches.manifests import selection_parameters, run_directory, read_record, read_run, write_batch, scientific_settings, require_query_ids, require_artifact_versions, canonical_location
 
 
 SUMMARY_ONLY = "summary_only"
@@ -201,7 +203,7 @@ class PreparedBatch:
     manifest: dict[str, Any]
 
 
-def main(config: BatchConfig, argv: list[str] | None = None) -> int:
+def main(config: BatchConfig, argv: list[str] | None = None, *, launch_command: list[str] | None = None) -> int:
     from predict.live import PILOT_SIZE, create_run, update_run
 
     raw_argv = list(sys.argv[1:] if argv is None else argv)
@@ -235,17 +237,12 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
     mode = str(args.experiment_mode)
     harness = {"full_flat": "flat", "full_mechanism": "full"}.get(mode, mode)
     args.live_method = f"{harness}_{args.retrieval_strategy}"
-    command = [
-        sys.executable,
-        "-m",
-        "predict.harnesses.branches",
-        "--organization",
-        harness,
-        "--task",
-        task,
-        *raw_argv,
+    command = list(launch_command) if launch_command is not None else [
+        sys.executable, "-m", config.pipeline_module.rsplit(".", 1)[0] + ".contract", *raw_argv,
     ]
-    command.extend(["--batch-id", prepared.batch_id, "--batch-root", str(Path(args.batch_root))])
+    command.extend(["--batch-id", prepared.batch_id])
+    if "--run-name" not in {part.split("=", 1)[0] for part in command}:
+        command.extend(["--batch-root", str(Path(args.batch_root))])
     run_dir = create_run(
         root=args.trace_root,
         dataset=task,
@@ -266,7 +263,7 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
     args.live_run_dir = run_dir
     update_run(
         run_dir,
-        resume_command=[*command, "--live-run-id", run_dir.name],
+        resume_command=[*command, "--skip-existing", "--live-run-id", run_dir.name],
     )
     all_items = prepared.items
     pilot_only = (
@@ -315,7 +312,7 @@ def main(config: BatchConfig, argv: list[str] | None = None) -> int:
     return 1 if failed else 0
 
 
-def mode_main(mode: str, argv: list[str] | None = None) -> int:
+def mode_main(mode: str, argv: list[str] | None = None, *, launch_command: list[str] | None = None) -> int:
     """Run one public evidence organization through the shared batch harness."""
     task_modules = {
         task: f"predict.harnesses.branches.tasks.{task}.contract"
@@ -337,7 +334,7 @@ def mode_main(mode: str, argv: list[str] | None = None) -> int:
     if "--experiment-mode" in remaining:
         selector.error("this harness fixes --experiment-mode")
     module = importlib.import_module(task_modules[selected.task])
-    return main(module.CONFIG, [*remaining, "--experiment-mode", mode])
+    return main(module.CONFIG, [*remaining, "--experiment-mode", mode], launch_command=launch_command)
 
 
 def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatch:
@@ -362,7 +359,7 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
     indices = _select_indices(args, len(records))
     flat_selection = _validated_flat_selection_manifest(config, args, indices)
     batch_id = args.batch_id or time.strftime(f"{config.batch_id_prefix}_%Y%m%d_%H%M%S")
-    batch_dir = _ensure_dir(Path(args.batch_root) / batch_id)
+    batch_dir = _ensure_dir(canonical_location(Path(args.batch_root) / batch_id))
     _validate_group_prompt_contract(
         batch_dir,
         group_prompt_provenance,
@@ -474,7 +471,11 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
         "experiment_mode": args.experiment_mode,
         "retrieval_source": args.retrieval_source,
         "retrieval_strategy": args.retrieval_strategy,
-        "harness_version": flat_selection.get("harness_version", ""),
+        "organization": flat_selection.get("organization", "flat"),
+        "cache_set": flat_selection.get("cache_set", {}),
+        "benchmark_release": flat_selection.get("benchmark_release", ""),
+        "filtering_policy": flat_selection.get("filtering_policy", {}),
+        "selection_method": flat_selection.get("selection_method", ""),
         "flat_reranking": flat_selection.get("reranking", ""),
         "flat_layout": args.flat_layout,
         "flat_one_call": args.flat_prompt_version in CONTEXT_PROMPT_VERSIONS and args.experiment_mode == "full_flat",
@@ -601,6 +602,7 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
             if args.harness_prefetch_tools
             else "deployment_visible"
         ),
+        "run_name": getattr(args, "run_name", ""),
         "max_tokens": args.max_tokens,
         "temperature": args.temperature,
         "top_k_per_group_requested": requested_top_k_per_group,
@@ -910,6 +912,14 @@ def _collect_result(
     )
     prediction = _normalize_prediction(config, raw_prediction)
     pred_label = prediction_to_label(config, prediction)
+    prompt_version = manifest.get("flat_prompt_version") or manifest.get("group_prompt_version")
+    if manifest.get("flat_one_call") and prompt_version in FINAL_FULL_FLAT_PROMPT_VERSIONS:
+        task = config.pipeline_module.split(".")[-2]
+        contract = prompt_assets(prompt_version)["tasks"][task]
+        pred_label = {contract["positive_prediction"]: 1,
+                      contract["negative_prediction"]: 0}.get(raw_prediction)
+        if pred_label is not None:
+            prediction = config.canonical_positive if pred_label else config.canonical_negative
     true_label = _parse_label(item.record.get(args.label_field))
     correct = bool(pred_label == true_label) if pred_label is not None and true_label is not None else False
     return {
@@ -1155,7 +1165,7 @@ def _read_jsonl(path: Path) -> list[dict[str, Any]]:
 
 
 def _read_json(path: Path) -> dict[str, Any]:
-    return read_record(path) if path.name == "manifest.json" else json.loads(path.read_text(encoding="utf-8"))
+    return read_record(path) if path.name == "manifest.json" else json.loads(canonical_location(path).read_text(encoding="utf-8"))
 
 
 def _write_json(path: Path, data: Any) -> None:
@@ -1225,6 +1235,7 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
         help="Reuse each query's frozen harness-prefetched tool outputs from another batch.",
     )
     parser.add_argument("--batch-root", default=config.default_batch_root)
+    parser.add_argument("--run-name", default="")
     parser.add_argument("--batch-id", default="")
     parser.add_argument("--python-executable", default=sys.executable)
     parser.add_argument("--indices", nargs="*", default=None, help="Indices or inclusive ranges, e.g. 0 3 5-8.")
@@ -1276,7 +1287,7 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     )
     parser.add_argument("--stream-logs", dest="stream_logs", action="store_true", default=True)
     parser.add_argument("--no-stream-logs", dest="stream_logs", action="store_false")
-    parser.add_argument("--env-file", default=".env")
+    parser.add_argument("--env-file", default=str(DEFAULT_ENV_FILE))
     parser.add_argument("--api-key-env", default=config.default_api_key_env)
     parser.add_argument("--base-url", default=config.default_base_url)
     parser.add_argument(
@@ -1445,6 +1456,14 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     parser.add_argument("--harness-prefetch-tools", action="store_true")
     parser.set_defaults(group_analysis_source_batch='', final_only_source_batch='', final_only_groups=None, group_prompt_format='legacy', group_prompt_min_similarity=None, presentation_style='legacy', group_output_schema='', group_prompt_instructions_file='', neighbor_context_profile='standard', tier1_replacement_index='', tier1_replacement_groups=None, groups=None, max_groups=0)
     args = parser.parse_args(argv)
+    if args.flat_reranking == "assay-transfer-contrastive" and not args.flat_request_replay_root:
+        parser.error("Assay-transfer contrastive selection is retired; its labels require frozen request replay")
+    supplied = {value.split("=", 1)[0] for value in (argv if argv is not None else sys.argv[1:])}
+    if (args.flat_prompt_version in FINAL_FULL_FLAT_PROMPT_VERSIONS
+            and config.prompt_profile_option
+            and config.prompt_profile_option not in supplied):
+        task = config.pipeline_module.split(".")[-2]
+        args.task_prompt_profile = prompt_assets(args.flat_prompt_version)["tasks"][task]["prompt_profile"]
     if args.assay_transfer_profile == "v9_direct_gold":
         custom_v9_cache = args.rerank_cache != config.rerank_cache_default
         if args.assay_transfer_initial_morgan_filter == 100:
@@ -1579,7 +1598,7 @@ def _is_versioned_flat(args: argparse.Namespace) -> bool:
 def _validate_flat_prompt(config: BatchConfig, args: argparse.Namespace) -> None:
     if not args.flat_prompt_version:
         if args.experiment_mode == "full_flat":
-            raise SystemExit("FINAL inference requires a versioned prompt; use --organization flat")
+            raise SystemExit("FINAL inference requires a prompt artifact; use --prompt")
         return
     if args.experiment_mode != "full_flat":
         raise SystemExit("--flat-prompt-version requires --experiment-mode full_flat")
@@ -1708,8 +1727,8 @@ def _validated_flat_selection_manifest(
     """Bind a Joseph batch to the materialized cache-matched selection receipt."""
     if args.flat_prompt_version not in JOSEPH_PROMPT_VERSIONS:
         return {}
-    path = Path(args.flat_selection_manifest).resolve()
-    if path.parent != Path(args.retrieval_replay_source_batch).resolve():
+    path = canonical_location(args.flat_selection_manifest)
+    if path.parent != canonical_location(args.retrieval_replay_source_batch):
         raise SystemExit("flat selection manifest must own the retrieval replay batch")
     manifest = _read_json(path)
     predecessor = bool(getattr(args, "flat_prompt_successor_replay", False))
@@ -1725,10 +1744,6 @@ def _validated_flat_selection_manifest(
     ):
         raise SystemExit("Prompt-successor replay is limited to TDC Skin retrieval")
     expected = {
-        "harness_version": JOSEPH_PROMPT_HARNESSES[
-            CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION
-            if predecessor else args.flat_prompt_version
-        ],
         "prompt_version": (
             CONTEXT_V5_SIX_TASKS_UPSTREAM_V3_PROMPT_VERSION
             if predecessor else args.flat_prompt_version

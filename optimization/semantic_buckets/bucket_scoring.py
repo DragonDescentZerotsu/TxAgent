@@ -230,7 +230,8 @@ def _scores(connection: sqlite3.Connection, stage: str) -> pd.DataFrame:
                     ),
                     "endpoint": validation["selected_endpoint"],
                     "execution_backend": validation.get(
-                        "execution_backend", "local_dgx"
+                        "execution_backend", "shared_provider_pool"
+                        if validation["selected_endpoint"] == "shared_provider_pool" else "local_dgx"
                     ),
                     "weight_stddev": component["sample_stddev"],
                     "weight_min": component["min"],

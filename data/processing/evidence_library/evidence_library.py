@@ -15,7 +15,7 @@ import time
 from collections.abc import Callable, Mapping
 from typing import Any
 
-from predict.llm_io.evidence import attach_minimal_evidence
+from predict.utils.evidence import attach_minimal_evidence
 from data.processing.evidence_library.index_builder import build_neighbor_index, fingerprint_metadata, standardize_smiles
 
 

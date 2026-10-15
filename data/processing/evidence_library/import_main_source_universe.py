@@ -338,11 +338,98 @@ def import_task(task: str, root: Path, upstream: dict[str, Any]) -> dict[str, An
     }
 
 
+def restore_voter_rows(task: str, base_root: Path, membership: Path, output_root: Path) -> dict[str, Any]:
+    """Restore omitted physical voters using their own acquisition payloads."""
+    base_root, membership, output_root = base_root.resolve(), membership.resolve(), output_root.resolve()
+    if task != "skin_reaction":
+        raise ValueError("Acquisition-row restoration currently supports Skin")
+    if output_root.exists():
+        raise FileExistsError(f"Refusing to replace a source release: {output_root}")
+    from data.processing.evidence_library.shared.v2.normalization.cleaning import clean_source_rows
+    from data.processing.evidence_library.versions.v10.tasks.skin_reaction.starling_normalization_sources import source_profiles
+
+    manifest = json.loads((base_root / "manifest.json").read_text())
+    spec = manifest["tasks"][task]
+    source = base_root / spec["path"]
+    if _sha256(source) != spec["sha256"]:
+        raise ValueError("Source universe differs from its publication manifest")
+    existing = pq.read_table(source)
+    present = set(existing["source_row_uid"].to_pylist())
+    voters = set(pq.read_table(membership, columns=["source_row_uid"])["source_row_uid"].to_pylist())
+    missing = voters - present
+    ledger = ds.dataset(UID_LEDGER, format="parquet", exclude_invalid_files=True).to_table(
+        filter=(ds.field("task_id") == task) & ds.field("source_row_uid").isin(sorted(missing)),
+        columns=["source_row_uid", "source_id", "source_record_id", "acquisition_source_row_number", "legacy_cleaned_record_id"],
+    ).to_pylist()
+    if len(ledger) != len(missing) or {row["source_row_uid"] for row in ledger} != missing:
+        raise ValueError("Missing voter rows do not bind uniquely to the permanent UID ledger")
+    details = {row["source_row_uid"]: row for row in ledger}
+    raw_root = ROOT / "data/raw/starling" / task
+    profiles = {profile.source_id: profile for profile in source_profiles(raw_root)}
+    restored, lineage = [], []
+    for source_id in sorted({row["source_id"] for row in ledger}):
+        profile = profiles[source_id]
+        raw_path = Path(profile.source_path)
+        raw_sha256 = _sha256(raw_path)
+        raw = pq.read_table(raw_path, filters=[("source_row_uid", "in", sorted(missing))]).to_pylist()
+        for row in raw:
+            uid = str(row["source_row_uid"])
+            detail = details[uid]
+            position = int(detail["acquisition_source_row_number"])
+            if str(row["extraction_id"]) != str(detail["source_record_id"]):
+                raise ValueError(f"Restored source record ID changed: {uid}")
+            prepared = {**row, "_source_row_number": position,
+                        "_legacy_cleaned_record_id": detail["legacy_cleaned_record_id"]}
+            cleaned = clean_source_rows([prepared], profile, smiles_mapping=None,
+                                        source_sha256=raw_sha256)[0]
+            if cleaned["structure_status"] != "resolved":
+                raise ValueError(f"Restored voter has an unresolved structure: {uid}")
+            seed = {field.name: cleaned.get(field.name, row.get(field.name)) for field in existing.schema}
+            for field in existing.schema:
+                if seed[field.name] is not None and (pa.types.is_string(field.type) or pa.types.is_large_string(field.type)):
+                    seed[field.name] = str(seed[field.name])
+            restored.append(seed)
+            lineage.append(dict(source_row_uid=uid, source_id=source_id, source_row_number=position,
+                                source_record_id=str(row["extraction_id"]), raw_source=str(raw_path.relative_to(ROOT)),
+                                raw_source_sha256=raw_sha256))
+    if {row["source_row_uid"] for row in restored} != missing:
+        raise ValueError("Acquisition sources did not restore every missing voter")
+    additions = pa.Table.from_pylist(restored, schema=existing.schema)
+    result = pa.concat_tables([existing, additions])
+    if len(set(result["source_row_uid"].to_pylist())) != len(result):
+        raise ValueError("Restored source universe contains duplicate physical UIDs")
+    published_root = output_root
+    output_root = output_root.with_name(f".{output_root.name}.building")
+    if output_root.exists():
+        raise FileExistsError(output_root)
+    destination = output_root / task / "records.parquet"
+    destination.parent.mkdir(parents=True)
+    pq.write_table(result, destination, compression="zstd")
+    manifest["tasks"] = {task: {**spec, "path": str(destination.relative_to(output_root)),
+                               "rows": len(result), "sha256": _sha256(destination),
+                               "gold_voter_physical_uid_rows": len(voters),
+                               "gold_voter_rows_restored": len(restored)}}
+    manifest["voter_restoration"] = dict(
+        base_manifest=str((base_root / "manifest.json").relative_to(ROOT)),
+        base_manifest_sha256=_sha256(base_root / "manifest.json"),
+        voter_membership_sha256=_sha256(membership), rows=lineage)
+    (output_root / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+    os.replace(output_root, published_root)
+    return manifest
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
     parser.add_argument("--tasks", nargs="+", choices=tuple(PUBLIC_NAMES), default=list(PUBLIC_NAMES))
+    parser.add_argument("--base-root", type=Path)
+    parser.add_argument("--voter-membership", type=Path)
     args = parser.parse_args(argv)
+    if args.base_root or args.voter_membership:
+        if not args.base_root or not args.voter_membership or len(args.tasks) != 1:
+            parser.error("Restoration requires --base-root, --voter-membership, and one --tasks value")
+        print(json.dumps(restore_voter_rows(args.tasks[0], args.base_root, args.voter_membership, args.output_root), indent=2))
+        return 0
     upstream_bytes = _git_bytes(UPSTREAM_MANIFEST)
     upstream = json.loads(upstream_bytes)
     uid_ledger_manifest_sha256 = _uid_ledger_hash()

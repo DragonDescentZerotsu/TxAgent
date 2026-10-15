@@ -1,0 +1,74 @@
+{
+  "content_id": "2309543d8ff223e6984dab3c6139ddeaf697aac9e4ba7e341f118e0514e78ae0",
+  "evidence_content_id": "29e0430275fdb7bf6453aa7d32906a2cb78a943eee871aef03d6fbbfed5436f9",
+  "evidence_records_sha256": "52abd57bcfcf32b6666abb21501b4a5eac042b54dbec64dea92c08a6ab1e74b7",
+  "schema_version": "ranked_uid_release_validation.v1",
+  "splits": {
+    "test": {
+      "L2": {
+        "content_id": "885a565ad1b82eae4814231145317f5c7ad92e40e794c7c54c86b4fbcd51fa21",
+        "database_sha256": "2ee68974ee74e5a919af5f87de726ff1ceeb056169a745881f9da8292038cd6b",
+        "stored_rows": 65644
+      },
+      "L3": {
+        "content_id": "129876402dba7e616bbe990442b0aa20c7df8b4c0a7b52cc2b3e8a3bd7cd1132",
+        "database_sha256": "3a0bfc7bed8d3937d6039b122cfe2a835ecadd021232575b411db921bfe27e70",
+        "stored_rows": 40392
+      },
+      "L4": {
+        "content_id": "f35b7c3f5068273ab2fcf2f819665e190e4cf5c150b744477533968042528473",
+        "database_sha256": "a362818580d3558fa1500be64895202f81939515674496d58b3a75dd33ffeff2",
+        "stored_rows": 21323
+      },
+      "L5": {
+        "content_id": "c94681844161ba0015e39ce1bafd233e914ca3894097ba05dde1f1cd541bd209",
+        "database_sha256": "7bd3474105254e35ce36e2a7ea5f919db7ce0fe85bf01bacf5b926a3cd94a4d5",
+        "stored_rows": 90274
+      },
+      "L6": {
+        "content_id": "7c1cebbda80c1e93d932c1ad77340b100b8f8780875d2c2ab78aa2f7b10ca9f1",
+        "database_sha256": "b097a1c4d12d5d8f90797e1268dd45b5c9e819ba9d313bafc97a33beb5cdb205",
+        "stored_rows": 53791
+      },
+      "L7": {
+        "content_id": "f528fea5b827fee0b3b8e4427a409c2f94923ff92e02bdafd2ef58afc0a348bd",
+        "database_sha256": "f188526b234438fa49f72b9c1dacc3a0e67ac3e0ebee01fdc66d3abf6e503718",
+        "stored_rows": 92021
+      }
+    },
+    "valid": {
+      "L2": {
+        "content_id": "2e8e6c8519bbed4b0f6ab167b175d5140b83da207b9711dd862ca3f9c1cca42a",
+        "database_sha256": "ca5c2c96784c9c4a31c839726b69cc6fb9087aa67ab010a2151ddcc58cf3935e",
+        "stored_rows": 49296
+      },
+      "L3": {
+        "content_id": "cfab828551152149db80ee7a26dc370eb7cc2473106164298163f4e1b5f10687",
+        "database_sha256": "95ce4ce31f437eb904d837eceaade74d231a33473e6965063024c5d78b629fee",
+        "stored_rows": 26441
+      },
+      "L4": {
+        "content_id": "c7eb8ba030c5680023695f1b27ef0fa6c5c18045fafc963e33f5090527e0008e",
+        "database_sha256": "cb52017119fc811e26d721a15d058b62e43c78fbc3ebb0c88c76220893a7380f",
+        "stored_rows": 14585
+      },
+      "L5": {
+        "content_id": "9aa86e9836b3f4b30b2c556c19e26d669a6e525b7719ee0df28f5ce7519ee00a",
+        "database_sha256": "1451e5e79e9d085afc56bebe086b87c3f39f16ff5dcc5480369e9efe2d52f63f",
+        "stored_rows": 59235
+      },
+      "L6": {
+        "content_id": "faa8012e9441a299a5e373c26ec66710504a78dc3f99d995df6f54b87a640350",
+        "database_sha256": "3a0e232e401c553a773fdaaf979a72b05e019460b18696ca8d2ef57b3484f8b3",
+        "stored_rows": 34659
+      },
+      "L7": {
+        "content_id": "e5a9dc4bc1e43513e1fabbafe43c93abdcfc496bcf2285e780f2d41677269da8",
+        "database_sha256": "b8fd7d4dfb930c00677e2f297ed5e989dcddefadc08f6eeaca3cef8a47fb5fa3",
+        "stored_rows": 58991
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "dili"
+}

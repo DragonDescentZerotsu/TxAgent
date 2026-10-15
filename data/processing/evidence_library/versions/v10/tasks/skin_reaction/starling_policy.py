@@ -764,6 +764,7 @@ POLICY = StarlingTaskPolicy(
         / "data_processing/assay_transfer_measurements_v2/policy.json",
     ),
     source_universe_mapping=level_mapping_path("skin_reaction", "v1"),
+    protected_voter_membership=Path("data/gold_labels/Skin_Reaction/v1/scaffold/voter_membership.parquet"),
     assay_transfer_measurement_policy=(
         Path(__file__).parent
         / "data_processing/assay_transfer_measurements_v2/policy.json"

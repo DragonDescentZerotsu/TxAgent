@@ -35,8 +35,9 @@ def test_sqrt_gated_assay_changes_weak_analog_ranking() -> None:
     assert new[0]["item_id"] == "assay"
 
 
+@pytest.mark.parametrize("task", ["ames", "carcinogens"])
 def test_tdc_v2_requires_selected_ledger_and_projection_manifest(
-    tmp_path: Path, monkeypatch
+    tmp_path: Path, monkeypatch, task
 ) -> None:
     ledger = tmp_path / "central_ledger.parquet"
     weights = tmp_path / "weights.parquet"
@@ -172,7 +173,7 @@ def test_tdc_v2_requires_selected_ledger_and_projection_manifest(
             }
         )
     )
-    extended, _ = tdc_v2_mixed._semantic_ledger("ames", extension=extension)
+    extended, _ = tdc_v2_mixed._semantic_ledger(task, extension=extension)
     assert extended["new", "L3"]["semantic_weight"] == 0.2
     changed = json.loads(projection.read_text())
     changed["status"] = "candidate_unreviewed"

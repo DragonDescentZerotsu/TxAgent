@@ -2,24 +2,14 @@
   "version": "gold_level_mapping_alignment.v1",
   "task": "skin_reaction",
   "gold_release": "v1",
-  "validation_basis": {
-    "basis": "pinned_tianang_l1_contract",
-    "physical_voters": 42435,
-    "status": "pass"
-  },
-  "original": {
-    "basis": "pinned_tianang_l1_contract",
-    "physical_voters": 42435,
-    "status": "pass"
-  },
-  "published": {
-    "basis": "pinned_tianang_l1_contract",
-    "physical_voters": 42435,
-    "status": "pass"
-  },
+  "validation_basis": "pinned replay and reviewed conditioned votes",
+  "physical_voters": 34950,
+  "protected_l1_uids": 42457,
   "reviewed_corrections": {
-    "add": 0,
+    "add": 22,
     "promote": 0
   },
-  "unchanged_l3_plus": true
+  "existing_levels_unchanged": true,
+  "all_physical_voters_at_l1": true,
+  "l1_policy": "preserve prior broader reviewed L1 set and add missing voters"
 }

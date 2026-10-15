@@ -1,0 +1,250 @@
+{
+  "schema_version": "flat_v5_artifact_receipt.v1",
+  "status": "verified",
+  "bundle_id": "flat_v5/tdc_v2/bbb_martins/scaffold_disjoint_parent100_v1",
+  "manifest": "predict/retrieval/assay_reranking/flat_v5_manifests/scaffold_disjoint_parent100_v1/tdc_v2/bbb_martins.json",
+  "manifest_sha256": "b6d98c0c6459cc59f54aab29b46100b6346fc7c4877ffdd6443ea908c1cff271",
+  "verified_at": "2026-10-15T04:43:50.389948+00:00",
+  "artifacts": [
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1/RELEASE_INDEX.json",
+      "sha256": "a2928dc0c38ff08d9097d781cec6f872a2cfcc56791d55a019f8d845076d964d",
+      "size": 2609,
+      "mtime_ns": 1792000563392626684
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1/evidence/VERSION.json",
+      "sha256": "40392abc39b23de5667771336e64e56fafbf32a9e8a404f0d36ae5639ee45eed",
+      "size": 615,
+      "mtime_ns": 1792000563404994583
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1/evidence/records.parquet",
+      "sha256": "3d4d80fcbdcad4ff96740f02612998c53af38758f7b7ceaf447cdb198f754c85",
+      "size": 294422,
+      "mtime_ns": 1790228687281920527
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1/scaffold/test/L1/VERSION.json",
+      "sha256": "c7bfe4e4c540aa7e777b32212c629b89c09d2224d8ce7f7a7723a71174efa048",
+      "size": 66564,
+      "mtime_ns": 1792000563415179211
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1/scaffold/test/L1/rankings.sqlite3",
+      "sha256": "ca002a6a5d31579fdb9d60feacdb9ae63afc2444d62c0683c5c2fbc8ff408f2b",
+      "size": 18104320,
+      "mtime_ns": 1790232227568191146
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1/scaffold/valid/L1/VERSION.json",
+      "sha256": "d963be8bdb3a0cadf19c514fe9d9435b7c8f2b7da028ee42cee41530ad878ade",
+      "size": 34288,
+      "mtime_ns": 1792000563420935641
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1/scaffold/valid/L1/rankings.sqlite3",
+      "sha256": "a53cf2e3d18a8b3afde9c0ed1719b8bd8cb06693453c801ac460b2f711972237",
+      "size": 9760768,
+      "mtime_ns": 1790232225312107541
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1_cards/RELEASE_INDEX.json",
+      "sha256": "571d78bf0c1c450565590de2f64ae62c515715d609239d0f82d59d70c3391571",
+      "size": 1591,
+      "mtime_ns": 1792001834826729529
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1_cards/evidence/VERSION.json",
+      "sha256": "0be52437ee6d004dcb7034d61a9085827a4a67b44a9851f69857e9dc51329bc0",
+      "size": 1014,
+      "mtime_ns": 1792001827034728882
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1_cards/evidence/records.parquet",
+      "sha256": "7eef1176a0a207c712029c98c727b2f013c4a464f945adb59f4f36c56c334341",
+      "size": 484662,
+      "mtime_ns": 1792001827022687684
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1_cards/scaffold/test/L1/VERSION.json",
+      "sha256": "05694602dbf00cb4ceb24d8f5525771cbd8e66817d063c7ecf614b805af6cd75",
+      "size": 77760,
+      "mtime_ns": 1792001834810320234
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1_cards/scaffold/test/L1/rankings.sqlite3",
+      "sha256": "e49337df34fb847f5e55d308dc30ecc9830ba8595326f3baf50ede5cf63a0de3",
+      "size": 21594112,
+      "mtime_ns": 1792001833803036921
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1_cards/scaffold/valid/L1/VERSION.json",
+      "sha256": "b892212cfefd5e30039b513b6ecf06c1d6a2970623e96096dc9ca30a1de64afb",
+      "size": 39589,
+      "mtime_ns": 1792001830382277854
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/bbb_martins/l1_cards/scaffold/valid/L1/rankings.sqlite3",
+      "sha256": "9d9a545da875856e3623626351a7fef3fe8249d536b0ad16a7f330eeb7540c57",
+      "size": 11509760,
+      "mtime_ns": 1792001829839510725
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/RELEASE_INDEX.json",
+      "sha256": "2327418538b147aeb6c30547e25834cb39dd24c514bffc0aef85e03abc4a460b",
+      "size": 3365,
+      "mtime_ns": 1792039299171045029
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/test/L2/VERSION.json",
+      "sha256": "e0bd5d74d070b97a8781598b4d4a772fc22d6edf69a4caec9a67903c58191646",
+      "size": 51408,
+      "mtime_ns": 1792028727186156679
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/test/L2/rankings.sqlite3",
+      "sha256": "d6888f916e768707af5f45a02f89be3fb1be46b803a4d5c4d0fb731e7bea6088",
+      "size": 419463168,
+      "mtime_ns": 1792028666074199989
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/test/L2/score_reuse_conflicts.json",
+      "sha256": "4b2152e36a7040498d6b23254c79f386b6ad8ce4713e511ee5f5b4759fa44896",
+      "size": 149870,
+      "mtime_ns": 1791881896679249176
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/test/L3/VERSION.json",
+      "sha256": "8f1ff4771bbc3565a453a6c48dc9a2994c8fe5af7a01c2813b1756ffd5f5bfaf",
+      "size": 51159,
+      "mtime_ns": 1792028742858215602
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/test/L3/rankings.sqlite3",
+      "sha256": "4f9d3b497072ecf341eb8b091162e07ebee862c4d6eefc0b0f4576357ec22a47",
+      "size": 86073344,
+      "mtime_ns": 1792028737306428470
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/test/L3/score_reuse_conflicts.json",
+      "sha256": "e0eadb70a8036147c2e3953e2554b9dd91f372f751880c8d89eaa2860a5ffb35",
+      "size": 18748,
+      "mtime_ns": 1791881952970352442
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/test/L4/VERSION.json",
+      "sha256": "8b66cbbd97ad7436e5ab07c325a5ec8fa652bd93ac10c891ddf377d3029b5b82",
+      "size": 51443,
+      "mtime_ns": 1792028971308391664
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/test/L4/rankings.sqlite3",
+      "sha256": "8cee3fb82769b51ecdc4f1db04da84eb6787b411d123da0379a6501dc75c5ad8",
+      "size": 472866816,
+      "mtime_ns": 1792028899132017793
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/test/L4/score_reuse_conflicts.json",
+      "sha256": "9b60a6250718ef506ec4769ef78b6fe99eb8e906f9bdda03c992cd5d65747fa0",
+      "size": 554866,
+      "mtime_ns": 1791882128260178304
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/test/L5/VERSION.json",
+      "sha256": "9738956f3ab68844ba3aea305ee42b6ec49c8579ba5bbd887532260f28c1ece4",
+      "size": 50875,
+      "mtime_ns": 1791882184455703969
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/test/L5/rankings.sqlite3",
+      "sha256": "6b7f8c911dd4b04d0a8c4cc42c6bb44aa878571abbe301215413b0722c593846",
+      "size": 308056064,
+      "mtime_ns": 1791882170513940110
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/valid/L2/VERSION.json",
+      "sha256": "36a713419eb0301fecb8996989f335e97470b8e21c9a05663c6fcd712180c169",
+      "size": 27727,
+      "mtime_ns": 1792036622530055082
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/valid/L2/rankings.sqlite3",
+      "sha256": "07b05b4070d0376d241239f17c243914ca58a62f289b9e4e3f3e8ac530c31168",
+      "size": 207892480,
+      "mtime_ns": 1792036591521905993
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/valid/L2/score_reuse_conflicts.json",
+      "sha256": "ffe1932bcd219cfe99fe154607f080c6cb23ad33c0511535f7a414dcf19a14e2",
+      "size": 51579,
+      "mtime_ns": 1791884467377438365
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/valid/L3/VERSION.json",
+      "sha256": "f89cdc302d2641650886fef8c240a69d0dc093bba5538b76ae0e8ba36456932f",
+      "size": 27605,
+      "mtime_ns": 1792036632163299316
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/valid/L3/rankings.sqlite3",
+      "sha256": "8262a6d2552b4a269c1fd5cbdd46d8a1d2b4ed793f53683b63375f0657219e06",
+      "size": 41025536,
+      "mtime_ns": 1792036629587947790
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/valid/L3/score_reuse_conflicts.json",
+      "sha256": "b6ac7d7eb89289763929cf1674d18a9d63461b589e324f729ae3a1f1f9fa988e",
+      "size": 11789,
+      "mtime_ns": 1791884507634109548
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/valid/L4/VERSION.json",
+      "sha256": "12947429e9692deef80e342c8fc337627996658a27e0a669e2e553ded9fc7bd4",
+      "size": 27761,
+      "mtime_ns": 1792036769161064680
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/valid/L4/rankings.sqlite3",
+      "sha256": "4b41639b7d51aedb9c1c7606cd70189d14a5f216511dda8651b35662ddd87f69",
+      "size": 268234752,
+      "mtime_ns": 1792036721954551533
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/valid/L4/score_reuse_conflicts.json",
+      "sha256": "85466bedf347bd3d3749a9f699a84542bb535c3a2e554f03ab31885800cb865e",
+      "size": 133461,
+      "mtime_ns": 1791884637200808078
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/valid/L5/VERSION.json",
+      "sha256": "c904bbd9c8e8d876c423ecef93b088fffe2649c51bb358260c0f24e409c339f8",
+      "size": 27179,
+      "mtime_ns": 1791884667246392454
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/assay_transfer/v24_1/scaffold_disjoint_parent100_v1/bbb_martins/scaffold/valid/L5/rankings.sqlite3",
+      "sha256": "da81fd03d440f332406b4307274136df26f90da4d872eabf22c366bf59985ac7",
+      "size": 115023872,
+      "mtime_ns": 1791884662526228151
+    },
+    {
+      "path": "data/evidence_libraries/bbb_martins/v10_main_universe_v3/retrieval_projection/ranked_evidence_v2/VERSION.json",
+      "sha256": "0481e9ab3dc262243cedc65dd76eb5828f22dc52195e9f586b1eb75665f1eb15",
+      "size": 1812,
+      "mtime_ns": 1789982301830184592
+    },
+    {
+      "path": "data/evidence_libraries/bbb_martins/v10_main_universe_v3/retrieval_projection/ranked_evidence_v2/records.parquet",
+      "sha256": "885206183b06909af58830e52c06443d01ede77144f5bc16f2e4d1a389838cb2",
+      "size": 216274416,
+      "mtime_ns": 1789982301681196231
+    },
+    {
+      "path": "predict/retrieval/assay_reranking/flat_v5_manifests/scaffold_disjoint_parent100_v1/catalog.json",
+      "sha256": "ce4b90519e41bff545cc5a8037ee2d062a81a5c97879b8397dea13e811bd303f",
+      "size": 5956,
+      "mtime_ns": 1792037497232523399
+    }
+  ]
+}

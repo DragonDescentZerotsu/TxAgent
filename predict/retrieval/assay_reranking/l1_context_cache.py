@@ -25,7 +25,6 @@ DATABASE_NAME = "retrieval.sqlite3"
 METHODS = {
     "morgan", "morgan_contrastive", "assay_transfer",
     "assay_transfer_within_morgan",
-    "assay_transfer_contrastive",
 }
 
 
@@ -208,9 +207,7 @@ def _select(
             str(row["external_context_id"]),
         ))
     replacements: list[dict[str, Any]] = []
-    if method in {
-        "morgan_contrastive", "assay_transfer_contrastive"
-    } and min_contrast:
+    if method == "morgan_contrastive" and min_contrast:
         if context_limit < 2 * min_contrast:
             raise ValueError("Contrastive L1 requires K >= 2*M")
         labels = {int(row["gold_label"]) for row in rows}

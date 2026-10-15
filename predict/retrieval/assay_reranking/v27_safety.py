@@ -128,11 +128,13 @@ class SafetyV27PromptRenderer:
             query_fields=_fields(payload, known=False),
         ).strip()
 
-    def prompt_task(self, record: Mapping[str, Any], query_smiles: str) -> runtime.PromptTask:
+    def prompt_task(self, record: Mapping[str, Any], query_smiles: str, *,
+                    scoring_contract_version: str = runtime.SCORING_CONTRACT_VERSION) -> runtime.PromptTask:
         model = MODELS[self.task_id]
         return runtime.build_prompt_task(
             self, record, query_smiles=query_smiles,
             group_id=str(record["progressive_level"]),
             molecule_id=str(record["parent_id"]),
             model=model["model"], model_revision=model["revision"],
+            scoring_contract_version=scoring_contract_version,
         )

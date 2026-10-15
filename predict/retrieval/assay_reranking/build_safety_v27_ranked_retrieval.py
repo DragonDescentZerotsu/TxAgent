@@ -74,7 +74,7 @@ def _configure(
     builder.SOURCE_PARENT_OFFSET = 40 if supplement else 0
     builder.EVIDENCE_RELEASE = RELEASE
     builder.QUERY_BENCHMARK = benchmark
-    builder.LABEL_RELEASE = "v1" if benchmark == "gold" else {"benchmark": "tdc", "version": "v1"}
+    builder.LABEL_RELEASE = "v1" if benchmark == "gold" else {"benchmark": "tdc"}
     builder.TASK_LEVELS = {task: LEVELS[task]}
     builder.SCORING_FAMILY = "safety_v27"
     builder.BASE_RANKING_ROOT = GOLD_BASE if benchmark == "gold" else None
@@ -293,12 +293,14 @@ def main() -> None:
     parser.add_argument("--score-reuse-root", action="append", type=Path, default=[])
     parser.add_argument("--source-parent-universe", type=Path)
     parser.add_argument("--fa3-score-generation", action="store_true")
+    parser.add_argument("--attention-backend", choices=tuple(runtime.SCORING_CONTRACTS))
     parser.add_argument("--source-root", type=Path)
     parser.add_argument("--parent-capacity", type=int, choices=(40, 50, 100), default=100)
     parser.add_argument("--supplement-41-50", action="store_true")
     args = parser.parse_args()
-    if args.fa3_score_generation:
-        runtime.SCORING_CONTRACT_VERSION = runtime.FA3_SCORING_CONTRACT_VERSION
+    if args.fa3_score_generation and args.attention_backend not in (None, "sgl_fa3"):
+        parser.error("--fa3-score-generation conflicts with --attention-backend")
+    args.attention_backend = args.attention_backend or ("sgl_fa3" if args.fa3_score_generation else "flash_attention_2")
     if args.command == "snapshot-partial" and (args.source_root is None or args.parent_capacity != 40):
         parser.error("snapshot-partial requires --source-root and --parent-capacity 40")
     if args.command == "validate-partial" and args.parent_capacity not in (40, 100):
@@ -343,9 +345,9 @@ def main() -> None:
             "prepare-universe": lambda: builder.prepare_shared_parent_universe(
                 args.task, args.subset, output, args.evidence_manifest, args.source_parent_universe
             ),
-            "prepare-level": lambda: builder.prepare_level(args.task, args.subset, args.level, output, args.evidence_manifest),
+            "prepare-level": lambda: builder.prepare_level(args.task, args.subset, args.level, output, args.evidence_manifest, attention_backend=args.attention_backend),
             "tokenize": lambda: builder.pretokenize_level(args.task, args.subset, args.level, output, args.tokenized_root, args.num_shards, args.batch_size, args.tokenize_workers),
-            "score": lambda: builder.score_level(args.task, args.subset, args.level, output, args.device, args.num_shards, args.shard_index, args.batch_size, args.tokenized_root),
+            "score": lambda: builder.score_level(args.task, args.subset, args.level, output, args.device, args.num_shards, args.shard_index, args.batch_size, args.tokenized_root, attention_backend=args.attention_backend),
             "finalize": lambda: builder.finalize_level(args.task, args.subset, args.level, output),
             "write-index": lambda: builder.write_index(args.task, output, args.evidence_manifest),
             "validate": lambda: builder.validate_release(args.task, output, args.evidence_manifest),

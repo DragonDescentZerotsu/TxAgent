@@ -81,7 +81,71 @@ def verify_cached_level_records(cached_path, current_path, membership, levels):
     return dict(levels=sorted(levels), records=tables[0].num_rows, all_fields_identical=True)
 
 
-def load_cache_policy(path, task, subset, reranking, max_level=0):
+def load_cache_policy(path, task, subset, reranking, max_level=0, *, benchmark=None):
+    """Bind ranked UID caches using their declared capabilities and policies."""
+    from .artifact_bundle import cache_task
+
+    path = Path(path).resolve()
+    if benchmark is None:
+        raise ValueError("A retrieval cache set requires an explicit benchmark")
+    spec = cache_task(path, task, benchmark)
+    if reranking not in {'morgan', 'assay-transfer'}:
+        raise ValueError('Ranked UID prediction supports Morgan or assay-transfer ranking')
+    indexes = {role: REPO_ROOT / value for role, value in spec['retrieval'].items()}
+    documents = {role: read_json(index) for role, index in indexes.items()}
+    if documents['L1'].get('neighbor_identity_policy_by_level', {}).get('L1') != 'scaffold_disjoint':
+        raise ValueError('Direct L1 retrieval requires scaffold-disjoint candidates')
+    if spec['benchmark'] == 'tdc' and any(index.get('label_release') != {'benchmark': 'tdc'} for index in documents.values()):
+        raise ValueError('Cache requires the canonical TDC labels')
+    if spec['benchmark'] == 'gold_v1' and any(index.get('gold_release') != 'v1' for index in documents.values()):
+        raise ValueError('Cache requires the selected Gold-v1 labels')
+    for role, index in documents.items():
+        if (index.get('schema_version') != 'ranked_uid_task_release_index.v1'
+                or index.get('status') != 'complete' or index.get('task_id') != task
+                or index.get('pool') != 'all'):
+            raise ValueError(f'{task}: incomplete {role} release index')
+    available = documents['later']['splits'][subset]['levels']
+    last = max_level or max(int(level[1:]) for level in available)
+    if last < 1 or last > max(int(level[1:]) for level in available):
+        raise ValueError(f'{task}: unsupported cache level L{last}')
+    stages, manifests, cache_indexes = {}, {}, {}
+    inputs = {str(path): sha256_file(path)}
+    for level in [f'L{i}' for i in range(1, last + 1)]:
+        role = 'L1' if level == 'L1' else 'later'
+        index, index_path = documents[role], indexes[role]
+        entry = index['splits'][subset]['levels'][level]
+        manifest_path = (index_path.parent / entry['manifest']).resolve()
+        manifest = read_json(manifest_path)
+        if spec['benchmark'] == 'tdc':
+            from data.processing.gold_labels.conditioned_benchmark import tdc_config
+            expected_query = tdc_config(task)['outputs'][f'{subset}_molecule_condition_labels.jsonl']
+            if manifest.get('inputs', {}).get('query_sha256') != expected_query:
+                raise ValueError(f'{task}/{subset}/{level}: cache query cohort differs from canonical TDC')
+        policy = index['neighbor_identity_policy_by_level'][level]
+        if level != 'L1' and spec.get('indirect_identity_policy') not in (None, policy):
+            raise ValueError(f'{task}/{level}: indirect cache policy differs from its named set')
+        if (manifest.get('status') != 'complete' or manifest.get('task_id') != task
+                or manifest.get('subset') != subset or manifest.get('level') != level
+                or manifest.get('neighbor_identity_policy') != policy
+                or policy not in {'parent_disjoint', 'scaffold_disjoint'}
+                or sha256_file(manifest_path) != entry['manifest_sha256']):
+            raise ValueError(f'{task}/{subset}/{level}: cache manifest or disjointness differs from its index')
+        method = 'morgan' if reranking == 'morgan' or manifest.get('model', True) is None else 'assay_transfer'
+        if method == 'assay_transfer' and index.get('query_pure_policy'):
+            declared = index['query_pure_policy']
+            if declared.get('complete_order') != 'assay_transfer' or declared.get('incomplete_order') != 'morgan':
+                raise ValueError('Unsupported declared incomplete-score policy')
+            method = 'assay_transfer_complete_else_morgan'
+        stages[level] = method
+        manifests[level], cache_indexes[level] = str(manifest_path), str(index_path)
+        inputs[str(index_path)] = sha256_file(index_path)
+    return dict(selection_contract='ranked_uid_retrieval.v1', reranking=reranking,
+                stages=stages, cache_indexes=cache_indexes, cache_manifests=manifests,
+                inputs=inputs, all_later_records=False,
+                cache_set=spec['cache_set'], benchmark=spec['benchmark'])
+
+
+def load_legacy_cache_policy(path, task, subset, reranking, max_level=0):
     path = Path(path).resolve()
     document = yaml.safe_load(resolve_legacy_path(path).read_text())
     canonical = document.get("benchmark") == "tdc" and "tasks" in document
@@ -97,7 +161,7 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
         raise ValueError('Cache bundle requires version and caches only')
     if task not in TASKS or reranking not in {
         'morgan', 'morgan-contrastive', 'joint', 'assay-transfer',
-        'assay-transfer-within-morgan', 'assay-transfer-contrastive',
+        'assay-transfer-within-morgan',
         'semantic-lap', 'semantic-weighted',
         'morgan-parent-control', 'morgan-parent-semantic',
         'morgan-parent-llm-semantic'
@@ -105,12 +169,9 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
         raise ValueError('Unsupported task or reranking mode')
     if ((reranking in {'morgan-contrastive', 'assay-transfer-within-morgan'}
          and version not in {6, 9})
-            or (reranking == 'assay-transfer-contrastive'
-                and version not in {6, 9, 19, 20} and not canonical)
             or (version in {6, 9} and reranking not in {
                 'morgan', 'morgan-contrastive', 'assay-transfer',
                 'assay-transfer-within-morgan',
-                'assay-transfer-contrastive'
             })):
         raise ValueError('L1 context cache and contrastive reranking must be selected together')
     last = max_level or TASKS[task][1]
@@ -120,8 +181,6 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
         raise ValueError(f'{task} ends at L{supported_last}')
     stages = {f'L{i}': 'morgan' if reranking == 'morgan' or i == 5 else 'assay_transfer'
               for i in range(1, last + 1)}
-    if reranking == 'assay-transfer-contrastive':
-        stages['L1'] = 'assay_transfer_contrastive'
     if reranking == 'morgan-contrastive':
         stages['L1'] = 'morgan_contrastive'
     if reranking == 'assay-transfer-within-morgan':

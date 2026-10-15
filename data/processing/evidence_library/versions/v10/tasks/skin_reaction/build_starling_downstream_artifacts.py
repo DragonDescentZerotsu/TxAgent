@@ -34,6 +34,8 @@ def get_spec() -> PairBucketBuildSpec:
         build_sidecar=build_sidecar,
         build_transfer_policy=build_pair_bucket_transfer_policy,
         direct_mapping_builder=build_direct_record_mapping,
+        protected_source_row_uids_path=POLICY.protected_voter_membership,
+        reviewed_level_mapping_path=POLICY.source_universe_mapping,
     )
 
 

@@ -1,0 +1,240 @@
+{
+  "schema_version": "flat_v5_artifact_bundle.v1",
+  "status": "complete",
+  "bundle_id": "flat_v5/tdc/carcinogens/scaffold_disjoint_parent100_v1",
+  "task": "carcinogens",
+  "benchmark": "tdc",
+  "organization": "flat",
+  "max_level": null,
+  "cache_config": {
+    "path": "predict/retrieval/assay_reranking/flat_v5_manifests/scaffold_disjoint_parent100_v1/catalog.json",
+    "sha256": "e15f25cc00b317de6e98e41c128b127c38323c1588dfcd8866189bdf9e3c086e"
+  },
+  "artifacts": [
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l1/RELEASE_INDEX.json",
+      "size": 2579,
+      "sha256": "13ba3eb1858b7072fc4f8d137b2ae802d8f26640413b69c1853ed0e5bc5f15d0"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l1/evidence/VERSION.json",
+      "size": 614,
+      "sha256": "c8776797964c0274f47d8b48497c42e98e50972954431beb6af3c115fdf40f22"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l1/evidence/records.parquet",
+      "size": 46822,
+      "sha256": "2027ef9419be4df911143b500fca476ea4276f0646abb3c749ef450ffd34f260"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l1/scaffold/test/L1/VERSION.json",
+      "size": 10835,
+      "sha256": "4866d5fa0380f85357a3e6ccc5a9f479895b2976e07fd36b6f63323f8969ce34"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l1/scaffold/test/L1/rankings.sqlite3",
+      "size": 2617344,
+      "sha256": "72f2c1c6cf5c43041773e1d72ab6ee874b0c63f472dd7d8a60b7e8cbdc665415"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l1/scaffold/valid/L1/VERSION.json",
+      "size": 6384,
+      "sha256": "8f897c704b1ceb284d1219d0adfc34ed476402b75a0d1695beef2eb50648a394"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l1/scaffold/valid/L1/rankings.sqlite3",
+      "size": 1392640,
+      "sha256": "a0348087cfd6ce5b7a91622b70066cadc6f56af3820c04bcffbedf91864c7071"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l1_cards/RELEASE_INDEX.json",
+      "size": 1590,
+      "sha256": "66136b0b10a9ee025e61b1d7115cf0c87cdaa63d2ce8c97c26b862762be258dd"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l1_cards/evidence/VERSION.json",
+      "size": 1013,
+      "sha256": "8a86da54e01a36cf50600c71f3e29902537b2c346326ba00d16bb3d1f308b6a2"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l1_cards/evidence/records.parquet",
+      "size": 77099,
+      "sha256": "a2a5169d6e4125227207dcb740148d809e90b4147dca56b9e94c5401504f5ef5"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l1_cards/scaffold/test/L1/VERSION.json",
+      "size": 11963,
+      "sha256": "1b3d8394652230ce2227ad2a176fdec26b6069b271fbcf02aadb17954a116377"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l1_cards/scaffold/test/L1/rankings.sqlite3",
+      "size": 3313664,
+      "sha256": "e11a87ea771720c2900c7b70310fae3732778022e6dc0780f16ff0b519670f84"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l1_cards/scaffold/valid/L1/VERSION.json",
+      "size": 6693,
+      "sha256": "131be6bb0c3394739359e78e37e26a6c37aaf090b6e035870a59ac4fb9db01b6"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l1_cards/scaffold/valid/L1/rankings.sqlite3",
+      "size": 1736704,
+      "sha256": "632ab7a54fd504a09a5b8fcd65467fed3c587ce8ac6eaff90d62b89ab94e6198"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/RELEASE_INDEX.json",
+      "size": 4861,
+      "sha256": "970bf2d2c8aaeba5cf0f06a517188fec2ebec6a4f6a268d744286767582931ee"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/test/L2/VERSION.json",
+      "size": 10702,
+      "sha256": "aeba8d35fdc9b63a8a5b3013bfd0f1490d8ea61e9a597264b41d1247ad599d0b"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/test/L2/rankings.sqlite3",
+      "size": 16711680,
+      "sha256": "c715b7f4e446c5356d6480ce9abb2572b44a4746454c9fb6493f7f9f35e59797"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/test/L3/VERSION.json",
+      "size": 10724,
+      "sha256": "5bd0a678660c77da4a753d46cc15dfc885cc732fe39663315fd3fb31cbbe1aef"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/test/L3/rankings.sqlite3",
+      "size": 46682112,
+      "sha256": "729058f8585985615e2bbd8e7492cf419a9058cb68a61c4feb357d8ffd88e381"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/test/L4/VERSION.json",
+      "size": 10712,
+      "sha256": "82935d335e3e34f00ad5f71337614694cc6e565652cbdc845e93fe3f85e34400"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/test/L4/rankings.sqlite3",
+      "size": 31154176,
+      "sha256": "9971e00de662e792e4427950a7807c22a2987efcc89854ef4a7256af65a594d2"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/test/L5/VERSION.json",
+      "size": 10716,
+      "sha256": "456d12642520bb8e460df0167af88028250cbec634ee13012de0b5a39d488edf"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/test/L5/rankings.sqlite3",
+      "size": 40161280,
+      "sha256": "bd9fa1e708b45eb198ba6d2d49a6a1257a593af8ba2cdde2e5260cb7708906e9"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/test/L6/VERSION.json",
+      "size": 10660,
+      "sha256": "a3af56eae65c4f2f5b765296f6fdc4c431aa7c055b21f5f446770175c094c245"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/test/L6/rankings.sqlite3",
+      "size": 11304960,
+      "sha256": "307432ac3e1b5fed90deb9e56ffb67fbb930f29c8ec94a75f62c6e540b21e74c"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/test/L7/VERSION.json",
+      "size": 10691,
+      "sha256": "5bb46b8bbf0a6c855696403292996c5dc0ba8f18810daa7989a9234c24e3e20b"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/test/L7/rankings.sqlite3",
+      "size": 30035968,
+      "sha256": "f938bf4d55d3a3599977e00a7fc040431424e56f566b612fec8a98099392dc72"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/test/PARENT_UNIVERSE.json",
+      "size": 637791,
+      "sha256": "239858a12ca2369c239ceb8fe10cd77d341ae2582a392bac17e839ddc21b82ff"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/valid/L2/VERSION.json",
+      "size": 7477,
+      "sha256": "fc34d1280f63cab21fb17c79094482fe82f5f8627964cfa308ccafc325ee0fa7"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/valid/L2/rankings.sqlite3",
+      "size": 9424896,
+      "sha256": "a2ac0af2c633f649b0e16126e4c4802a0d32bbb6402432f972ffe3764b95f40f"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/valid/L3/VERSION.json",
+      "size": 7491,
+      "sha256": "4ba2c51def344b959544f327467376e40151de0e9cdc757e5788a36464a91b14"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/valid/L3/rankings.sqlite3",
+      "size": 28401664,
+      "sha256": "a081f6df802b9e44529b4791c42362d326c724ec1b303480c1736c53b2f952bc"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/valid/L4/VERSION.json",
+      "size": 7489,
+      "sha256": "07c960cf398ef52807316128bea124154b330d3eb31de51a424cb22fbc4e9d28"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/valid/L4/rankings.sqlite3",
+      "size": 18501632,
+      "sha256": "04db9aa5ca0654e4818da2f39764404b809c176547bd27db84d158da55c3af28"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/valid/L5/VERSION.json",
+      "size": 7486,
+      "sha256": "87b814854cc336909a3ab4ba17e6c490aca66f58466775e75774e315263cdaef"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/valid/L5/rankings.sqlite3",
+      "size": 19120128,
+      "sha256": "fe8141237fb6f956e5b554bb3a4f11ef03fc3012047aa6bcd0de2dacf5379389"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/valid/L6/VERSION.json",
+      "size": 7461,
+      "sha256": "023fa4dc19a2c9377796129c1ac8e77f48e400505a77f93e06340a26e990617e"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/valid/L6/rankings.sqlite3",
+      "size": 6868992,
+      "sha256": "d3b494ea90a85c52ac99f249fc7a90191b325851229c480110f042ca11f73d02"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/valid/L7/VERSION.json",
+      "size": 7470,
+      "sha256": "156d13c2899c5719213cdd41c338ad0e58e16116904b73af1989773621816f81"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/valid/L7/rankings.sqlite3",
+      "size": 8327168,
+      "sha256": "7fc27d819d7931d5e6685a14b49568ad09043dce9515f8610be938270fd7873f"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc/carcinogens/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/carcinogens/scaffold/valid/PARENT_UNIVERSE.json",
+      "size": 325435,
+      "sha256": "a78a70c7770a58671f409ed1508fbdce7fb36081328289b5aa1bb1fb768de9d9"
+    },
+    {
+      "path": "data/evidence_libraries/carcinogens/v10_main_universe_v3/retrieval_projection/ranked_evidence_safety_v27_v1/VERSION.json",
+      "size": 1999,
+      "sha256": "1f5c9d5dfd04a69a3d8a07551b8e1ac527be7f0e1f33a4a42624f3332cd1dd55"
+    },
+    {
+      "path": "data/evidence_libraries/carcinogens/v10_main_universe_v3/retrieval_projection/ranked_evidence_safety_v27_v1/records.parquet",
+      "size": 2251113779,
+      "sha256": "4ae4d3de652feb4729d43262a896c28e5e7667c829f0d7a9b67f8f51ac6da8e1"
+    },
+    {
+      "path": "predict/retrieval/assay_reranking/flat_v5_manifests/scaffold_disjoint_parent100_v1/catalog.json",
+      "size": 5913,
+      "sha256": "e15f25cc00b317de6e98e41c128b127c38323c1588dfcd8866189bdf9e3c086e"
+    }
+  ],
+  "missing": [],
+  "cache_set": {
+    "name": "scaffold_disjoint_parent100",
+    "release": "v1"
+  }
+}

@@ -39,7 +39,9 @@ DIRECT_RELEASE_PATH = Path(__file__).with_name("direct_gold_v1_release.json")
 PROFILE_NAME = "v9_direct_gold_top75"
 RANKING_PROFILE_NAME = "v9_direct_gold_morgan100"
 SKIN_GOLD_V1_RANKING_PROFILE = "v9_skin_gold_v1_morgan100_v1"
-SKIN_GOLD_V1_SCAFFOLD_RANKING_PROFILE = "v9_skin_gold_v1_scaffold_morgan100_v1"
+SKIN_GOLD_V1_SCAFFOLD_RANKING_PROFILE = (
+    "flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1"
+)
 TEMPLATE_PROFILE = "v9_context_conditioned"
 QUERY_CONTEXT_POLICY = "copy_gold_condition_context_value_hidden.v9"
 RANKING_SCHEMA_VERSION = "context_conditioned_gold_valid_ranking_cache.v2"
@@ -99,7 +101,7 @@ def ranking_cache_dir(
     if lineage == "v9_scaffold":
         if task_id != "skin_reaction" or pool_size != 100:
             raise ValueError("V9 scaffold successor is defined only for Skin Morgan-100")
-        profile = SKIN_GOLD_V1_SCAFFOLD_RANKING_PROFILE
+        return cache_profile_root(SKIN_GOLD_V1_SCAFFOLD_RANKING_PROFILE) / "scoring" / subset
     elif lineage == "v9":
         profile = (
             SKIN_GOLD_V1_RANKING_PROFILE

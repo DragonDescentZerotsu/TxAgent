@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from predict.llm_io.evidence import evidence_for_llm
+from predict.utils.evidence import evidence_for_llm
 from data.processing.evidence_library.shared.v1.normalization.organization import _llm_example
 from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_source_column_contracts import (
     SOURCE_COLUMN_CONTRACT_VERSION,
