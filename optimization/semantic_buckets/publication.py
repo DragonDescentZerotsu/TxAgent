@@ -151,6 +151,14 @@ def materialize(snapshot_root: Path, decisions_path: Path, output: Path) -> dict
         if sha256_file(Path(entry["path"])) != entry["sha256"]:
             raise ValueError(f"snapshot input changed: {entry['path']}")
     paths = snapshot["inputs"]
+    release = json.loads(Path(paths["release_manifest"]["path"]).read_text())
+    evidence_release = release.get("evidence_library_version")
+    if (
+        release.get("task") != snapshot["task"]
+        or not isinstance(evidence_release, str)
+        or not evidence_release.strip()
+    ):
+        raise ValueError("snapshot release manifest lacks a matching evidence version")
     mapping = pd.read_parquet(paths["semantic_map"]["path"])
     records = pd.read_parquet(paths["record_map"]["path"])
     weights = pd.read_parquet(paths["weights"]["path"])
@@ -218,7 +226,7 @@ def materialize(snapshot_root: Path, decisions_path: Path, output: Path) -> dict
         "version": "task_bucket_refinement_candidate.v1",
         "status": "candidate_unselected_awaiting_calibration",
         "task": snapshot["task"],
-        "evidence_release": snapshot["release"],
+        "evidence_release": evidence_release,
         "snapshot_sha256": sha256_file(snapshot_path),
         "review_manifest_sha256": sha256_file(review_path),
         "decision_sha256": sha256_file(output / "reviewed_decisions.json"),

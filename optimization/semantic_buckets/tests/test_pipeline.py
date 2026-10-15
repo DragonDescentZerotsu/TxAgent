@@ -10,7 +10,8 @@ from optimization.semantic_buckets import (
     inputs,
     bucket_refinement as refinement,
 )
-from optimization.semantic_buckets import execution, bucket_cards
+from optimization.semantic_buckets import execution, bucket_cards, publication
+from predict.utils.json import sha256_file
 
 "Offline construction/refinement checks using complete prepared request flows."
 
@@ -135,13 +136,26 @@ def test_construction_policies_are_isolated_and_resume_without_repeating_request
 def test_refinement_prepares_fresh_audits_and_detects_tampering(tmp_path, monkeypatch):
     dummy = tmp_path / "pinned.txt"
     dummy.write_text("frozen")
-    monkeypatch.setattr(refinement, "_sources", lambda task: {"fixture": dummy})
     families = pd.DataFrame(
         [
             dict(level="L2", source_id="s", semantic_bucket_id=b, record_count=count)
             for b, count in (("a", 2), ("b", 3), ("large", 100))
         ]
     )
+    release = tmp_path / "release.json"
+    release.write_text(json.dumps(dict(task="dili", evidence_library_version="frozen-v1")))
+    mapping = families[["level", "source_id", "semantic_bucket_id"]].assign(
+        atom_id=["atom-a", "atom-b", "atom-large"]
+    )
+    sources = {"fixture": dummy, "release_manifest": release}
+    for name, table in (
+        ("semantic_map", mapping),
+        ("record_map", mapping.assign(source_row_uid=["u-a", "u-b", "u-large"])),
+        ("weights", families[["level", "semantic_bucket_id"]].assign(weight=0.5)),
+    ):
+        sources[name] = tmp_path / f"{name}.parquet"
+        table.to_parquet(sources[name], index=False)
+    monkeypatch.setattr(refinement, "_sources", lambda task: sources.copy())
     groups = {
         row.semantic_bucket_id: {
             "level": "L2",
@@ -207,6 +221,32 @@ def test_refinement_prepares_fresh_audits_and_detects_tampering(tmp_path, monkey
     refinement.prepare_pass2(run)
     assert refinement.run(run, 2)["state"] == "complete_pass2"
     assert refinement.collect(run)["state"] == "complete"
+    snapshot = json.loads((run / "snapshot.json").read_text())
+    assert "release" not in snapshot
+    decisions = tmp_path / "decisions.json"
+    decisions.write_text(json.dumps(dict(
+        task="dili", reviewer="fixture-reviewer", merges=[], splits=[],
+        review_manifest_sha256=sha256_file(run / "review_manifest.json"),
+    )))
+    candidate = tmp_path / "candidate"
+    result = publication.materialize(run, decisions, candidate)
+    assert result["evidence_release"] == "frozen-v1"
+    assert set(pd.read_parquet(candidate / "record_semantic_bucket_map.parquet").source_row_uid) == {
+        "u-a", "u-b", "u-large"
+    }
+    release.write_text(json.dumps(dict(task="dili")))
+    blocked = tmp_path / "blocked-candidate"
+    with pytest.raises(ValueError, match="snapshot input changed"):
+        publication.materialize(run, decisions, blocked)
+    assert not blocked.exists()
+    snapshot["inputs"]["release_manifest"]["sha256"] = sha256_file(release)
+    (run / "snapshot.json").write_text(json.dumps(snapshot))
+    with pytest.raises(ValueError, match="matching evidence version"):
+        publication.materialize(run, decisions, blocked)
+    assert not blocked.exists()
+    release.write_text(json.dumps(dict(task="dili", evidence_library_version="frozen-v1")))
+    snapshot["inputs"]["release_manifest"]["sha256"] = sha256_file(release)
+    (run / "snapshot.json").write_text(json.dumps(snapshot))
     audits = pd.read_csv(run / "large_family_reviews.tsv", sep="\t")
     assert list(audits.semantic_bucket_id) == ["large"]
     db = semantic_storage.review_database(run / "requests.sqlite3")

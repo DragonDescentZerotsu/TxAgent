@@ -97,6 +97,17 @@ def test_full_molecule_cards_budget_and_prediction_hydration(tmp_path, monkeypat
         cache_manifests={level: str(path) for level, path in manifests.items()},
         selection_contract="ranked_uid_retrieval.v1",
     )
+    automatic, _, _ = load_candidates(
+        {"query": "CCO"}, task="bbb_martins", subset="valid", policy=policy,
+        molecule_limit=3, l1_limit=10, cache_pool="all", physical_selection=None,
+    )
+    assert len(automatic["query"]) == 3
+    with pytest.raises(ValueError, match="Preselected UIDs require"):
+        load_candidates(
+            {"query": "CCO"}, task="bbb_martins", subset="valid",
+            policy={**policy, "selection_contract": "ranked_level_retrieval.v2"},
+            physical_selection=selected,
+        )
     molecules, _, audit = load_candidates(
         {"query": "CCO"},
         task="bbb_martins",

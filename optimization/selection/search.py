@@ -196,6 +196,7 @@ def build(
                 semantic_snapshot=semantic_snapshot,
                 dili_score_cache=dili_score_cache,
                 prediction_filter=prediction_filter,
+                cache_bundle=cache_bundle,
             )
         frozen = None
         if direct_manifest:
@@ -222,6 +223,7 @@ def build(
             **{str(p): sha256_file(p) for p in manifests.values()},
             **score_audit.get("pins", {}),
             **audit.get("semantics", {}).get("pinned_inputs", {}),
+            **audit.get("prediction_filter", {}),
         }
         if cache_bundle:
             pins[str(cache_bundle.resolve())] = sha256_file(cache_bundle)

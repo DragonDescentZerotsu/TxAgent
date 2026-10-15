@@ -17,9 +17,9 @@ import yaml
 from optimization.selection.record_scores import load_scores as load_dili_scores
 from predict.retrieval.assay_reranking.build_tdc_score_overlay import (
     BUNDLE,
-    LEVELS,
     _level,
 )
+from data.processing.paths import REPO_ROOT
 from predict.retrieval.assay_reranking.ranked_uid_retrieval import hydrate_uids
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
 from predict.retrieval.selection import assert_disjoint, indexed_manifests
@@ -232,26 +232,36 @@ def _semantic_ledger(
     return (semantics, pins)
 
 
-def prepare_bbb_filter(subset: str, target: Path) -> Path:
+def prepare_bbb_filter(
+    subset: str, target: Path, *, cache_bundle: Path | None = None
+) -> Path:
     from predict.harnesses.branches.flat import _source_semantic_card
 
     "Classify the frozen BBB indirect universe once before profile optimization."
     if subset not in {"valid", "test"} or target.exists():
         raise ValueError("Expected a valid/test split and a new filter directory")
-    entry = yaml.safe_load(BUNDLE.read_text())["caches"]["bbb_martins"]
-    index_path = (BUNDLE.parent / entry["later"]).resolve()
+    cache_bundle = cache_bundle or BUNDLE
+    bundle = yaml.safe_load(cache_bundle.read_text())
+    if bundle.get("benchmark") == "tdc" and "tasks" in bundle:
+        later = bundle["tasks"]["bbb_martins"]["retrieval"]["later"]
+        index_path = (REPO_ROOT / later).resolve()
+    else:
+        later = bundle["caches"]["bbb_martins"]["later"]
+        index_path = (cache_bundle.parent / later).resolve()
     index = json.loads(index_path.read_text())
     evidence = index["evidence"]
     projection = (index_path.parent / evidence["manifest"]).resolve()
     if sha256_file(projection) != evidence["manifest_sha256"]:
         raise ValueError("BBB evidence projection changed")
     inputs = {
-        str(BUNDLE.resolve()): sha256_file(BUNDLE),
+        str(cache_bundle.resolve()): sha256_file(cache_bundle),
         str(index_path): sha256_file(index_path),
         str(projection): evidence["manifest_sha256"],
     }
     uids = set()
-    for level in LEVELS["bbb_martins"]:
+    for level in index["splits"][subset]["levels"]:
+        if level == "L1":
+            continue
         database, _ = _level(index_path, subset, level, inputs)
         with sqlite3.connect(
             f"file:{database.resolve()}?mode=ro&immutable=1", uri=True
@@ -489,6 +499,7 @@ def load_indirect(
     semantic_snapshot: Path | None = None,
     dili_score_cache: Path | None = None,
     prediction_filter: Path | None = None,
+    cache_bundle: Path | None = None,
 ) -> tuple[dict, dict]:
     from predict.retrieval.assay_reranking.ranked_uid_retrieval import (
         load_ranked_universe,
@@ -500,7 +511,7 @@ def load_indirect(
     index = json.loads(release_index.read_text())
     levels = tuple(index["splits"][subset]["levels"])
     levels = tuple((level for level in levels if level != "L1"))
-    ranked, _, audit = load_ranked_universe(
+    ranked, projection, audit = load_ranked_universe(
         release_index, task=task, subset=subset, levels=levels, queries=queries
     )
     manifests = indexed_manifests(release_index, subset, levels)
@@ -517,7 +528,22 @@ def load_indirect(
     if prediction_filter:
         if task != "bbb_martins":
             raise ValueError("prediction-only evidence filtering is BBB-specific")
-        covered, excluded = _bbb_filter(prediction_filter, subset, filter_pins)
+        if cache_bundle is None:
+            raise ValueError("prediction filtering requires the candidate cache bundle")
+        candidate_pins = {
+            str(cache_bundle.resolve()): sha256_file(cache_bundle),
+            str(release_index.resolve()): audit["release_index_sha256"],
+            str(projection.resolve()): audit["evidence_manifest_sha256"],
+        }
+        for level in levels:
+            _level(release_index.resolve(), subset, level, candidate_pins)
+        covered, excluded = _bbb_filter(prediction_filter, subset, candidate_pins)
+        filter_pins = {
+            str(path.resolve()): sha256_file(path)
+            for path in (
+                prediction_filter, prediction_filter.with_name("eligibility.tsv")
+            )
+        }
         if any(
             (
                 str(row["item_id"]) not in covered
