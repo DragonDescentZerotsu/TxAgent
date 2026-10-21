@@ -74,7 +74,7 @@ def test_condition_agnostic_selection_deduplicates_and_prefers_null_label():
     ]
 
 
-def test_conditioned_selection_uses_highest_ranked_duplicate_and_null_queries_stay_null():
+def test_conditioned_selection_uses_frozen_duplicate_and_null_queries_stay_null():
     null = "no_reported_external_condition"
     reference = [
         {"drug": "CCO", "molecule_identity_key": "p1", "condition_group": "fasted"},
@@ -87,11 +87,15 @@ def test_conditioned_selection_uses_highest_ranked_duplicate_and_null_queries_st
     assert select_conditioned_ranked_indices(
         ranked, reference, {"condition_group": "fasted"}, k=2,
         policy="same_condition_then_null",
-    ) == [(1, "same_condition"), (3, "null_fallback")]
+    ) == [(0, "same_condition"), (3, "null_fallback")]
     assert select_conditioned_ranked_indices(
         ranked, reference, {"condition_group": null}, k=3,
         policy="same_condition_then_null",
     ) == [(2, "same_condition"), (3, "same_condition")]
+    assert select_conditioned_ranked_indices(
+        ranked, reference, {"condition_group": null}, k=3,
+        policy="same_condition_then_null_then_all",
+    ) == [(2, "same_condition"), (3, "same_condition"), (4, "all_train_fallback")]
     with pytest.raises(ValueError, match="positive"):
         select_conditioned_ranked_indices(ranked, reference, {}, k=0, policy="same_condition_then_null")
 

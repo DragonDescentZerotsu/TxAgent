@@ -10,6 +10,7 @@ CONDITION_POLICIES = (
     "row_agnostic",
     "all_train_unique_molecules",
     "same_condition_then_null",
+    "same_condition_then_null_then_all",
 )
 
 
@@ -26,29 +27,30 @@ def select_conditioned_ranked_indices(
         raise ValueError(f"Unsupported conditioned KNN policy: {policy}")
     if k <= 0:
         raise ValueError("k must be positive")
+    if policy == "all_train_unique_molecules":
+        groups = [(None, "all_train_unique_molecules")]
+    else:
+        query_group = _condition_group(query)
+        groups = [(query_group, "same_condition")]
+        if query_group != NO_REPORTED_CONDITION:
+            groups.append((NO_REPORTED_CONDITION, "null_fallback"))
+        if policy == "same_condition_then_null_then_all":
+            groups.append((None, "all_train_fallback"))
     selected: list[tuple[int, str]] = []
     selected_keys: set[str] = set()
-    if policy == "all_train_unique_molecules":
-        representative = _canonical_reference_indices(reference)
+    for group, source in groups:
+        representative = {}
+        if group is None:
+            representative = _canonical_reference_indices(reference)
+        else:
+            # Frozen source order resolves duplicate molecule-condition labels;
+            # candidate ranking must not select a different duplicate's label.
+            for index, row in enumerate(reference):
+                if _condition_group(row) == group:
+                    representative.setdefault(_molecule_key(row), index)
         for index in ranked_indices:
             key = _molecule_key(reference[index])
-            if representative[key] != index or key in selected_keys:
-                continue
-            selected.append((index, "all_train_unique_molecules"))
-            selected_keys.add(key)
-            if len(selected) == k:
-                break
-        return selected
-
-    query_group = _condition_group(query)
-    groups = [(query_group, "same_condition")]
-    if query_group != NO_REPORTED_CONDITION:
-        groups.append((NO_REPORTED_CONDITION, "null_fallback"))
-    for group, source in groups:
-        for index in ranked_indices:
-            row = reference[index]
-            key = _molecule_key(row)
-            if _condition_group(row) != group or key in selected_keys:
+            if representative.get(key) != index or key in selected_keys:
                 continue
             selected.append((index, source))
             selected_keys.add(key)
