@@ -1,5 +1,8 @@
 # A small core for many experiments
 
+The [release integration status](release_refactor.md) records the local baseline
+ports, preserved scientific contracts and remaining acceptance work.
+
 Keep the implementation small enough that a reader can follow an experiment
 from its command to its evidence, prompt and result. Put reusable scientific
 behavior in Python. Put the settings for a particular experiment in a Bash
