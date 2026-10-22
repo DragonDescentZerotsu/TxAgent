@@ -22,6 +22,9 @@ from predict.retrieval.policies import (
     standardize_smiles_and_fp,
 )
 from predict.retrieval.features import (
+    candidate_matches_monatomic_query,
+    monatomic_query_element,
+    structural_eligibility_metadata,
     load_retrieval_index,
     retrieval_feature_metadata,
     similarity_bucket_for_index,
@@ -97,6 +100,8 @@ def retrieve_neighbors(
         }
 
     query_identity = normalize_molecule_identity(query_smiles)
+    identity_metadata = policy_metadata(neighbor_identity_policy, source=index.get("source"))
+    identity_metadata["structural_eligibility"] = structural_eligibility_metadata()
     similarities = similarity_vector(
         query_fp,
         canonical_smiles,
@@ -133,7 +138,7 @@ def retrieve_neighbors(
         )
 
     retrieval_policy = {
-        **policy_metadata(neighbor_identity_policy),
+        **identity_metadata,
         "neighbor_selector": selector_metadata(neighbor_selector),
     }
 
@@ -184,7 +189,14 @@ def _top_neighbors_for_group(
         if similarity < min_similarity:
             continue
         molecule = index["molecules"][molecule_index]
-        decision = decide_candidate(query_identity, molecule, neighbor_identity_policy)
+        if not candidate_matches_monatomic_query(
+            monatomic_query_element(query_identity.canonical_smiles),
+            str(molecule.get("canonical_smiles") or ""),
+        ):
+            continue
+        decision = decide_candidate(
+            query_identity, molecule, neighbor_identity_policy, source=index.get("source"),
+        )
         if decision.excluded:
             continue
         evidence_rows = index["evidence_by_molecule_group"].get(

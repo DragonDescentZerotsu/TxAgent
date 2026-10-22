@@ -8,7 +8,6 @@ from predict.retrieval.policies import (
     normalize_molecule_identity,
     source_smiles,
 )
-from predict.retrieval.assay_reranking.build_ranked_uid_retrieval import _records
 
 
 CBD = "C=C(C)[C@@H]1CCC(C)=C[C@H]1c1c(O)cc(CCCCC)cc1O"
@@ -34,20 +33,20 @@ def test_every_multifragment_source_stays_whole(source):
 
 
 @pytest.mark.parametrize("policy", ["parent_disjoint", "scaffold_disjoint"])
-def test_hidden_component_and_its_connectivity_variants_are_excluded(policy):
+def test_exact_component_match_is_retained_without_expanding_to_all_stereoisomers(policy):
     query = normalize_molecule_identity(THC)
     record = {"canonical_smiles": CBD, "source_fields": {"smiles": f"{CBD}.{THC}"},
               "molecular_representation_policy": MOLECULAR_REPRESENTATION_POLICY}
     assert decide_candidate(query, record, policy).excluded
     achiral = Chem.MolToSmiles(Chem.MolFromSmiles(THC), isomericSmiles=False)
-    assert decide_candidate(normalize_molecule_identity(achiral), record, policy).excluded
+    assert not decide_candidate(normalize_molecule_identity(achiral), record, policy).excluded
 
 
-def test_component_scaffolds_and_shared_counterions():
+def test_secondary_scaffolds_and_shared_counterions_do_not_exclude():
     query = normalize_molecule_identity("COc1ccccc1.CCCCC")
     candidate = {"canonical_smiles": "CCc1ccccc1.CCCCCCC"}
     assert not decide_candidate(query, candidate, "parent_disjoint").excluded
-    assert decide_candidate(query, candidate, "scaffold_disjoint").excluded
+    assert not decide_candidate(query, candidate, "scaffold_disjoint").excluded
     query = normalize_molecule_identity("C[NH3+].[Cl-]")
     assert not decide_candidate(query, {"canonical_smiles": "CC[NH3+].[Cl-]"}, "parent_disjoint").excluded
 
@@ -114,7 +113,7 @@ def test_projection_scoring_keeps_source_but_groups_by_effective_structure(tmp_p
     manifest = tmp_path / "VERSION.json"
     manifest.write_text(json.dumps({"records": "records.parquet", "molecular_representation_policy": MOLECULAR_REPRESENTATION_POLICY}))
     monkeypatch.setattr(builder, "REPRESENTATION_POLICY", MOLECULAR_REPRESENTATION_POLICY)
-    records, grouped = _records(manifest)
+    records, grouped = builder._records(manifest)
     assert records["sr_test"]["canonical_smiles"] == source
     assert records["sr_test"]["representation_smiles"] == "CC(=O)O"
     assert grouped == {"L2": {"parent": ["sr_test"]}}

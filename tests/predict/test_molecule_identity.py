@@ -106,3 +106,18 @@ def test_scaffold_policy_metadata_is_a_strict_parent_disjoint_superset():
     scaffold_relations = set(policy_metadata("scaffold_disjoint")["excluded_relations"])
 
     assert scaffold_relations == parent_relations | {"same_scaffold"}
+
+
+@pytest.mark.parametrize("policy", ["parent_disjoint", "scaffold_disjoint"])
+@pytest.mark.parametrize("left,right,excluded", [
+    ("C[C@H](O)C(=O)O", "C[C@@H](O)C(=O)[O-].[Na+]", True),
+    ("CCCCCCCCCCCC.c1ccccc1", "NCCCCCCCCCC.c1ccccc1", False),
+    ("CCCCCCCCCCCC.c1ccccc1", "Cc1ccccc1", False),
+    ("c1ccccc1", "C1CCCCC1", False),
+])
+def test_selected_parent_contract(left, right, excluded, policy):
+    for query, candidate in [(left, right), (right, left)]:
+        decision = decide_candidate(normalize_molecule_identity(query),
+                                    {"canonical_smiles": candidate}, policy)
+        assert decision.excluded is excluded
+    assert policy_metadata(policy)["relation_policy_version"] == policies.RELATION_POLICY_VERSION

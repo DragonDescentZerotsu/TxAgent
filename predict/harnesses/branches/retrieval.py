@@ -46,6 +46,9 @@ from predict.retrieval.policies import (
     policy_metadata,
 )
 from predict.retrieval.features import (
+    candidate_matches_monatomic_query,
+    monatomic_query_element,
+    structural_eligibility_metadata,
     retrieval_feature_metadata,
     similarity_bucket_for_index,
     similarity_vector,
@@ -307,6 +310,8 @@ def _retrieve_branches(
         return _invalid_query(query_smiles)
 
     query_identity = normalize_molecule_identity(query_smiles)
+    identity_metadata = policy_metadata(neighbor_identity_policy, source=index.get("source"))
+    identity_metadata["structural_eligibility"] = structural_eligibility_metadata()
     similarities = similarity_vector(
         query_fp,
         canonical_smiles,
@@ -387,7 +392,7 @@ def _retrieve_branches(
         "source": source_name,
         "resolved_group_mapping": resolved_mapping,
         "retrieval_feature": retrieval_feature_metadata(index),
-        **policy_metadata(neighbor_identity_policy),
+        **identity_metadata,
         "neighbor_selector": selector_metadata(neighbor_selector),
     }
     if reranker is not None:
@@ -407,7 +412,7 @@ def _retrieve_branches(
         "status": "ok",
         "evidence_source": dict(index.get("source") or {}),
         "retrieval_policy": {
-            **policy_metadata(neighbor_identity_policy),
+            **identity_metadata,
             "neighbor_selector": selector_metadata(neighbor_selector),
         },
         "experiment": experiment,
@@ -533,7 +538,14 @@ def _morgan_neighbors(
                 break
             continue
         molecule = index["molecules"][molecule_index]
-        decision = decide_candidate(query_identity, molecule, neighbor_identity_policy)
+        if not candidate_matches_monatomic_query(
+            monatomic_query_element(query_identity.canonical_smiles),
+            str(molecule.get("canonical_smiles") or ""),
+        ):
+            continue
+        decision = decide_candidate(
+            query_identity, molecule, neighbor_identity_policy, source=index.get("source"),
+        )
         if decision.excluded:
             continue
         molecule_id = molecule["molecule_chembl_id"]
@@ -636,7 +648,14 @@ def _assay_transfer_neighbors(
     neighbors = []
     for structural_rank, (similarity, molecule_index) in enumerate(raw_ranked, start=1):
         molecule = index["molecules"][molecule_index]
-        decision = decide_candidate(query_identity, molecule, neighbor_identity_policy)
+        if not candidate_matches_monatomic_query(
+            monatomic_query_element(query_identity.canonical_smiles),
+            str(molecule.get("canonical_smiles") or ""),
+        ):
+            continue
+        decision = decide_candidate(
+            query_identity, molecule, neighbor_identity_policy, source=index.get("source"),
+        )
         if decision.excluded:
             continue
         molecule_id = molecule["molecule_chembl_id"]

@@ -1,7 +1,6 @@
 # A small core for many experiments
 
-The [release integration status](release_refactor.md) records the local baseline
-ports, preserved scientific contracts and remaining acceptance work.
+[发布整合状态（中文）](release_refactor.md)记录本地 baseline 的迁移进度、保留的科学规则和待验收项目。
 
 Keep the implementation small enough that a reader can follow an experiment
 from its command to its evidence, prompt and result. Put reusable scientific
