@@ -80,7 +80,7 @@ def _query(job):
     return row_ids, aux.reshape(-1), neighbors, direct, indices
 
 
-def prepare(data_dir, source_prepared, output, condition_policy, workers):
+def prepare(data_dir, source_prepared, output, condition_policy, workers, *, auxiliary=None):
     """Reuse an audited MiniMol target cache; never use its learned embeddings."""
     global _CONTEXT
     output.mkdir(parents=True, exist_ok=True)
@@ -90,10 +90,13 @@ def prepare(data_dir, source_prepared, output, condition_policy, workers):
     if sha256_file(source_prepared / 'data.pt') != source['data_sha256']:
         raise ValueError("Indirect target cache changed")
     for path, digest in source['inputs'].items():
-        if sha256_file(Path(path)) != digest:
+        relocated = (Path(auxiliary or path) if path == source['auxiliary'] else
+                     data_dir / Path(path).relative_to(source['data_dir']))
+        if sha256_file(relocated) != digest:
             raise ValueError(f"Prepared source input changed: {path}")
     data = torch.load(source_prepared / 'data.pt', map_location='cpu', weights_only=False)
-    splits = {s: read_rows(data_dir / f'{s}.jsonl') for s in ('train', 'valid', 'test')}
+    split_bytes = {s: (data_dir / f'{s}.jsonl').read_bytes() for s in ('train', 'valid', 'test')}
+    splits = {s: [json.loads(line) for line in content.splitlines()] for s, content in split_bytes.items()}
     for split, rows in splits.items():
         packed = data['splits'][split]
         if ([data['smiles'][int(i)] for i in packed['indices']] != [r['drug'] for r in rows]
@@ -158,10 +161,13 @@ def prepare(data_dir, source_prepared, output, condition_policy, workers):
     for split, rs in splits.items():
         offsets[split] = [offset, offset + len(rs)]
         offset += len(rs)
+    (output / 'splits').mkdir()
+    for split, content in split_bytes.items():
+        (output / 'splits' / f'{split}.jsonl').write_bytes(content)
     write_json_atomic(output / 'manifest.json', dict(
-        version='retrieval_forest_features.v1', data_dir=str(data_dir),
+        version='retrieval_forest_features.v2', data_dir='splits',
         source_prepared=str(source_prepared), source_manifest_sha256=sha256_file(source_prepared / 'manifest.json'),
-        inputs={str(data_dir / f'{s}.jsonl'): sha256_file(data_dir / f'{s}.jsonl') for s in splits},
+        inputs={f'splits/{s}.jsonl': sha256_file(output / 'splits' / f'{s}.jsonl') for s in splits},
         files={f'{name}.npy': sha256_file(output / f'{name}.npy') for name in arrays},
         offsets=offsets, buckets=len(starts), features=6 + 2 * len(starts), policies=policies,
         policies_identical=policies_identical, auxiliary_heldout_overlap=0,
@@ -176,17 +182,21 @@ def prepare(data_dir, source_prepared, output, condition_policy, workers):
     _CONTEXT = None
 
 
-def load_features(prepared, policy, feature_set='direct_indirect'):
+def load_features(prepared, policy, feature_set='direct_indirect', *, data_dir=None):
     if feature_set not in ('direct', 'direct_indirect'):
         raise ValueError(f"Unknown feature set: {feature_set}")
     manifest = json.loads((prepared / 'manifest.json').read_text())
+    input_root = prepared if manifest.get('version') == 'retrieval_forest_features.v2' else Path('.')
+    original_data_dir = Path(manifest['data_dir'])
+    data_dir = Path(data_dir) if data_dir is not None else input_root / original_data_dir
     for file, digest in manifest['files'].items():
         if feature_set == 'direct' and file not in ('direct.npy', 'direct_neighbors.npy'):
             continue
         if sha256_file(prepared / file) != digest:
             raise ValueError(f"Feature cache changed: {file}")
     for path, digest in manifest['inputs'].items():
-        if sha256_file(Path(path)) != digest:
+        relocated = data_dir / Path(path).relative_to(original_data_dir)
+        if sha256_file(relocated) != digest:
             raise ValueError(f"Main data changed: {path}")
     direct = np.load(prepared / 'direct.npy', mmap_mode='r')[:, policy]
     if feature_set == 'direct':
@@ -195,5 +205,5 @@ def load_features(prepared, policy, feature_set='direct_indirect'):
         auxiliary = np.load(prepared / 'auxiliary.npy', mmap_mode='r')
         features = np.concatenate((direct, auxiliary), axis=1)
     manifest = dict(manifest, feature_set=feature_set, features=features.shape[1])
-    rows = {s: read_rows(Path(manifest['data_dir']) / f'{s}.jsonl') for s in manifest['offsets']}
+    rows = {s: read_rows(data_dir / f'{s}.jsonl') for s in manifest['offsets']}
     return manifest, {s: features[a:b] for s, (a, b) in manifest['offsets'].items()}, rows

@@ -385,6 +385,46 @@ Batch 支持先提交独立请求，再等待及按 custom ID 回收；保留提
 来自迁入旧功能及连接现有公共客户端，不是重复创建任务或模型专用执行入口。
 Direct-3、独立 prior 生成、完整输入分发与匿名发布审核仍未完成；当前仍不合并 main。
 
+## 第十一批：RASAR 搬移适配与少量真实调用（2026-10-23）
+
+修复 RASAR 搬走目录后仍读取旧主数据/模型路径的问题，继续使用原
+`retrieval_forest {prepare,fit,finalize}` 及 shell recipe，没有新增 runner 或路径框架。
+新特征包将实际使用的三份 split 文件原样保存在 `splits/`，使用 v2 相对路径 manifest；
+旧 v1 包不改写 manifest，通过已有 `--data-dir` 指定新位置并核对原哈希。
+prepare 的 `--auxiliary`（recipe 的 `AUXILIARY`）可定位搬移后的辅助源，同样必须通过
+冻结哈希检查。新模型 receipt 仅记录同目录文件名；旧 receipt 的绝对路径保留原字节，
+运行时从 receipt 所在目录找模型并校验哈希。选参比较只归一化候选文件位置，其他字段
+仍逐项比较；有效的完成结果恢复时不重写预测。
+
+独立目录验收禁止读取原 main 和整合工作目录，同时禁止联网：
+
+- TDC Carcinogens 的 RASAR / RASAR+indirect 共 60 个保存 seed 模型通过恢复与重放，
+  各 28 个 valid、56 个 test；标签、阈值、选参及指标与原结果一致。
+  RASAR 概率最大差 `5.55e-17`，RASAR+indirect 预测字节一致，没有重新训练。
+- 从搬移后的 MiniMol targets / auxiliary / splits 重新准备 280 行特征；四组特征与
+  donor 数组逐元素一致，两种 policy、两种 feature set 均核对。新特征包再次移动后
+  不指定原数据目录也能加载。原来源目录的 120 个模型/结果文件哈希未变。
+- MiniMol prepared 的数据、图缓存和一个真实 seed checkpoint 搬移后通过哈希、
+  输入绑定和 28 条 valid 分数检查；历史 checkpoint 参数中的路径仅作 provenance，
+  没有改写。此项不是新 encoder 推理或独立依赖安装验收。
+- 67 项身份及受影响 ML 测试通过（3 条已有依赖弃用提示）；含新旧布局搬移恢复、
+  重新预测，以及输入/模型变更时拒绝执行。recipe 的参数传递另做无训练检查。
+
+按用户授权增加少量 OpenRouter 真实调用，固定
+`deepseek/deepseek-v4-flash-0731`，保留所选原实验的完整 prompt、生成参数与 token 预算：
+None 的 Skin 样例通过原生输出校验和零调用恢复。Carcinogens Direct+Indirect 样例
+约 49,500 输入 tokens，两次返回均用满原 16,384 输出 tokens，分别没有最终 JSON、
+只留下不完整结果，均被校验拒绝。异步传输返回正常，但该样例的完整输出验收未通过。
+没有为通过 smoke 放宽 schema、缩减证据、增加 token 预算或替换论文结果。
+总计 4 次尝试：1 次旧环境凭据 401、原实验凭据下 3 次模型返回；没有继续追加。
+三次返回的 `usage.cost` 合计约 $0.00720，仅为接口返回费用，不作为独立账单审计。
+
+回执、精确命令、原始回复和临时验收脚本归档见
+`outputs/analysis/release_refactor/20261023_relocation/`；真实模型结果独立保存于
+`outputs/predictions/branches/paper_baseline_v1/openrouter-smoke-20261023-project-key/`。
+完整检索索引分发、其余独立环境安装、Direct-3、独立 prior、结果登记/绘图接齐及匿名
+发布审核继续待验收。真实 Batch endpoint 尚未调用，不能以普通 API smoke 代替。
+
 ## 验证与后续验收
 
 第二批身份规则验证（2026-10-22；与上面的第三批性能核验分开）：
@@ -409,7 +449,7 @@ Joseph 的命名缓存、源字段投影和完整 prompt 仍须单独对齐。
 
 1. ML 的全部报告单元已完成保存模型/特征核验，保留上述数值与重训覆盖边界；
    后续独立环境复现沿用相同配置，不重复新增 task-specific runner。
-2. 已准备 LLM 执行已支持独立搬移与最小环境；继续整理完整检索/ML 输入分发及匿名审核，
+2. 已准备 LLM 执行及 RASAR 输入/模型已支持独立搬移；继续整理完整检索/ML 输入分发及匿名审核，
    不能把小输入包通过当成全库独立复现或公开发布验收。
 3. LLM 候选/预算/冻结 prior、普通 API、Batch 和竞速/重排队路径已接入并离线验收；
    继续做全 cohort 差异审计、匹配 Direct-3 和独立 prior 生成，保留原来源和必要能力。

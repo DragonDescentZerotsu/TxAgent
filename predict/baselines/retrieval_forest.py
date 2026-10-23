@@ -20,7 +20,8 @@ def fit(args):
     if (args.output / 'training.json').exists():
         raise ValueError('Completed candidate exists')
     feature_set = getattr(args, 'feature_set', 'direct_indirect')
-    manifest, features, rows = load_features(args.prepared, args.policy, feature_set)
+    manifest, features, rows = load_features(args.prepared, args.policy, feature_set,
+                                          data_dir=getattr(args, 'data_dir', None))
     started = time.monotonic()
     max_features = args.max_features if args.max_features == 'sqrt' else float(args.max_features)
     scores, members = [], []
@@ -33,7 +34,7 @@ def fit(args):
         model.n_jobs = 1
         path = args.output / f'seed_{seed}.joblib'
         joblib.dump(model, path, compress=0)
-        members.append(dict(seed=seed, path=str(path), sha256=sha256_file(path)))
+        members.append(dict(seed=seed, path=path.name, sha256=sha256_file(path)))
         print(f'Completed seed {seed}', flush=True)
     scores = np.asarray(scores)
     np.save(args.output / 'valid_scores.npy', scores)
@@ -51,7 +52,8 @@ def fit(args):
 
 def finalize(args):
     feature_set = getattr(args, 'feature_set', 'direct_indirect')
-    manifest, features, rows = load_features(args.prepared, args.policy, feature_set)
+    manifest, features, rows = load_features(args.prepared, args.policy, feature_set,
+                                          data_dir=getattr(args, 'data_dir', None))
     candidates = []
     for path in sorted((args.output / 'candidates').glob('*/training.json')):
         receipt = json.loads(path.read_text())
@@ -64,22 +66,29 @@ def finalize(args):
         if sha256_file(score_path) != receipt['valid_scores_sha256']:
             raise ValueError(f'Candidate validation scores changed: {path}')
         for member in receipt['members']:
+            # Candidate models are siblings of their receipt, including legacy runs.
+            member['path'] = str(path.parent / Path(member['path']).name)
             if sha256_file(Path(member['path'])) != member['sha256']:
                 raise ValueError(f'Candidate model changed: {path}')
         scores = np.load(score_path).mean(axis=0)
         loss = float(log_loss([r['Y'] for r in rows['valid']], scores, labels=[0, 1]))
         if not np.isclose(loss, receipt['valid_bce']):
             raise ValueError(f'Candidate validation loss changed: {path}')
-        candidates.append((loss, str(path), receipt, scores))
+        candidates.append((loss, str(path.relative_to(args.output)), receipt, scores))
     if len(candidates) != args.expected_candidates:
         raise ValueError(f'Expected {args.expected_candidates} candidates, found {len(candidates)}')
     loss, path, winner, valid = min(candidates, key=lambda c: (c[0], c[1]))
     threshold, _ = choose_threshold([r['Y'] for r in rows['valid']], valid, 'valid_macro_f1')
-    selection = dict(candidate=path, candidate_sha256=sha256_file(Path(path)),
+    selection = dict(candidate=path, candidate_sha256=sha256_file(args.output / path),
                      validation_bce=loss, threshold=threshold, test_used=False,
                      candidate_validation_bce={p: v for v, p, *_ in candidates})
     if (args.output / 'metrics.json').exists():
         previous = json.loads((args.output / 'selection.json').read_text())
+        # Normalize only candidate locators; all scientific fields still compare exactly.
+        previous['candidate'] = str(Path('candidates') / Path(previous['candidate']).parent.name / 'training.json')
+        previous['candidate_validation_bce'] = {
+            str(Path('candidates') / Path(p).parent.name / 'training.json'): value
+            for p, value in previous['candidate_validation_bce'].items()}
         metrics = json.loads((args.output / 'metrics.json').read_text())
         if (metrics.get('feature_set', 'direct_indirect') == feature_set
                 and previous == selection and all(sha256_file(args.output / f'{s}_predictions.jsonl') == h
@@ -112,8 +121,10 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('phase', choices=['prepare', 'fit', 'finalize'])
     p.add_argument('--prepared', type=Path, required=True)
-    p.add_argument('--data-dir', type=Path)
+    p.add_argument('--data-dir', type=Path,
+                   help='Main splits for prepare, or hash-verified relocated splits for legacy fit/finalize')
     p.add_argument('--source-prepared', type=Path)
+    p.add_argument('--auxiliary', type=Path, help='Hash-verified relocated auxiliary source for prepare')
     p.add_argument('--feature-set', choices=['direct', 'direct_indirect'], default='direct_indirect',
                    help='Model inputs: direct uses only the three label/similarity pairs from the audited cache')
     p.add_argument('--output', type=Path)
@@ -130,7 +141,8 @@ def main():
     if args.phase == 'prepare':
         if not args.data_dir or not args.source_prepared:
             p.error('prepare requires --data-dir and --source-prepared')
-        prepare(args.data_dir, args.source_prepared, args.prepared, args.condition_policy, args.workers)
+        prepare(args.data_dir, args.source_prepared, args.prepared, args.condition_policy, args.workers,
+                auxiliary=args.auxiliary)
     elif args.output is None:
         p.error('fit/finalize requires --output')
     else:

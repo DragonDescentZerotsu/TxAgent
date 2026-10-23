@@ -87,6 +87,16 @@ vectors for the same SMILES. This is useful general reuse, but cannot promise
 bitwise-identical subsequent training. Fresh encoder computation can also
 have small batch/device numerical differences.
 
+For `run_multitask`, move `manifest.json`, `data.pt`, `graphs.pt` and `graphs.json`
+together, then pass the new directory as `--prepared`. Keep the complete
+`aux_<weight>/seed_<seed>/` layout under the relocated `--output`, including
+`best.pt`, `training.json` and `valid_scores.npy`. The loader resolves these
+files from the explicit directories and verifies their hashes and validation
+selection. Historical paths inside checkpoint arguments are provenance; do not
+rewrite checkpoints or prepared manifests to relocate them. Fresh encoder
+execution still needs the MiniMol runtime above. Hash/receipt verification alone
+does not establish a fresh inference or training environment.
+
 ## Historical protocols
 
 `run_train_cv.py` retains the old train-only scaffold-CV/OOF selection workflow.

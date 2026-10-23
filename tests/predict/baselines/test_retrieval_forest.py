@@ -1,5 +1,6 @@
 import argparse
 import json
+import shutil
 
 import numpy as np
 import joblib
@@ -46,7 +47,8 @@ def test_query_label_and_same_parent_variants_cannot_enter_features(monkeypatch)
 
 
 @pytest.mark.parametrize('feature_set', ['direct', 'direct_indirect'])
-def test_rf_selection_and_prediction_reuse(tmp_path, feature_set):
+@pytest.mark.parametrize('portable', [False, True])
+def test_rf_selection_and_prediction_reuse(tmp_path, feature_set, portable):
     prepared=tmp_path/'prepared';prepared.mkdir();data_dir=tmp_path/'data';data_dir.mkdir()
     rng=np.random.default_rng(4);x=rng.normal(size=(36,8)).astype('float32');x[::3,6:]=np.nan
     direct=np.repeat(x[:,:6,None],2,axis=2).transpose(0,2,1)
@@ -57,6 +59,11 @@ def test_rf_selection_and_prediction_reuse(tmp_path, feature_set):
     m=dict(data_dir=str(data_dir),offsets=offsets,features=8,policies=['all','condition'],
            inputs={str(p):sha256_file(p) for p in data_dir.glob('*.jsonl')},
            files={p.name:sha256_file(p) for p in prepared.glob('*.npy')})
+    if portable:
+        shutil.move(data_dir, prepared/'splits')
+        data_dir = prepared/'splits'
+        m.update(version='retrieval_forest_features.v2', data_dir='splits',
+                 inputs={f'splits/{p.name}':sha256_file(p) for p in data_dir.glob('*.jsonl')})
     (prepared/'manifest.json').write_text(json.dumps(m));out=tmp_path/'model'
     if feature_set == 'direct':
         # Direct-only loading must not depend on any indirect values or file.
@@ -70,6 +77,12 @@ def test_rf_selection_and_prediction_reuse(tmp_path, feature_set):
                                 feature_set=feature_set)
         fit(args)
         assert joblib.load(args.output/'seed_1.joblib').n_features_in_ == (6 if feature_set == 'direct' else 8)
+        if not portable:
+            receipt_path = args.output/'training.json'
+            receipt = json.loads(receipt_path.read_text())
+            for member in receipt['members']:
+                member['path'] = str(args.output/member['path'])
+            receipt_path.write_text(json.dumps(receipt))
     args.output=out;args.expected_candidates=2
     finalize(args)
     selection=json.loads((out/'selection.json').read_text())
@@ -78,8 +91,40 @@ def test_rf_selection_and_prediction_reuse(tmp_path, feature_set):
     path=out/'test_predictions.jsonl';before=(sha256_file(path),path.stat().st_mtime_ns)
     finalize(args)
     assert before==(sha256_file(path),path.stat().st_mtime_ns)
+    if not portable:
+        selection['candidate'] = str(out/selection['candidate'])
+        selection['candidate_validation_bce'] = {
+            str(out/p):value for p,value in selection['candidate_validation_bce'].items()}
+        (out/'selection.json').write_text(json.dumps(selection))
+    moved = tmp_path/'relocated'; moved.mkdir()
+    for directory in (prepared, out):
+        shutil.move(directory, moved/directory.name)
+    if not portable:
+        shutil.move(data_dir, moved/'data')
+        args.data_dir = moved/'data'
+    args.prepared = prepared = moved/'prepared'
+    args.output = out = moved/'model'
+    path = out/'test_predictions.jsonl'
+    finalize(args)
+    assert before == (sha256_file(path),path.stat().st_mtime_ns)
+    prediction_bytes = path.read_bytes()
+    for name in ('selection.json','metrics.json','valid_predictions.jsonl','test_predictions.jsonl'):
+        (out/name).unlink()
+    finalize(args)
+    assert path.read_bytes() == prediction_bytes
     if feature_set == 'direct':
         np.save(prepared/'auxiliary.npy',x[:,6:])
         args.feature_set = 'direct_indirect'
         with pytest.raises(ValueError, match='Candidate input mismatch'):
             finalize(args)
+        args.feature_set = 'direct'
+    model_path = out/'candidates'/'1'/'seed_1.joblib'
+    with model_path.open('ab') as stream:
+        stream.write(b'changed')
+    with pytest.raises(ValueError, match='Candidate model changed'):
+        finalize(args)
+    data_dir = prepared/'splits' if portable else moved/'data'
+    with (data_dir/'test.jsonl').open('a') as stream:
+        stream.write('{}\n')
+    with pytest.raises(ValueError, match='Main data changed'):
+        finalize(args)

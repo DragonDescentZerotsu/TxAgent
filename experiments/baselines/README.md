@@ -34,7 +34,21 @@ DATA_DIR=/path/to/splits SOURCE_PREPARED=/path/to/minimol/targets \
 auxiliary preparation. It supplies observed targets, not learned embeddings.
 An existing `PREPARED/manifest.json` skips feature construction; its pinned files
 and inputs are still validated by the shared CLI. A new preparation needs
-`DATA_DIR` and `SOURCE_PREPARED` with resolvable source paths.
+`DATA_DIR` and `SOURCE_PREPARED`; set `AUXILIARY=/new/path/source.parquet` if the
+raw auxiliary source has moved. Its hash must match the frozen target manifest.
+
+New feature caches contain exact split-file copies under `splits/` and use
+manifest-relative paths (`retrieval_forest_features.v2`). Move the entire prepared
+directory to keep it usable. Existing v1 caches remain unchanged: pass `DATA_DIR`
+to the recipe, or `--data-dir` to `fit`/`finalize`, to locate relocated splits;
+all three files must still match their original hashes. Do not rewrite the old
+manifest, since model receipts bind its exact hash.
+
+Move the complete model output directory, including all `candidates/` subdirectories.
+RF models are loaded beside their training receipts and checked against saved
+hashes. New receipts use relative filenames; old absolute filenames are accepted
+as provenance without opening the old locations. Finalize preserves successful
+prediction files on resume and verifies selection and saved prediction hashes.
 
 The recipe runs six candidates (`max_features=sqrt/0.3`, leaf sizes 1/5/20),
 five seeds 1–5 and 100 trees per seed. Valid BCE selects the candidate, ensemble
