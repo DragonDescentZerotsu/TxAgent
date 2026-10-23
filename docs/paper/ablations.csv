@@ -1,0 +1,31 @@
+task,condition,macro_f1
+bbb_martins,Control,0.732966
+bioavailability_ma,Control,0.861340
+skin_reaction,Control,0.618458
+ames,Control,0.774211
+dili,Control,0.680085
+carcinogens,Control,0.658598
+bbb_martins,Assay off,0.717431
+bioavailability_ma,Assay off,0.841545
+skin_reaction,Assay off,0.601194
+ames,Assay off,0.761532
+dili,Assay off,0.653037
+carcinogens,Assay off,0.651552
+bbb_martins,Informativeness off,0.743412
+bioavailability_ma,Informativeness off,0.840194
+skin_reaction,Informativeness off,0.640901
+ames,Informativeness off,0.747116
+dili,Informativeness off,0.680085
+carcinogens,Informativeness off,0.634735
+bbb_martins,Molecular diversity off,0.738020
+bioavailability_ma,Molecular diversity off,0.844116
+skin_reaction,Molecular diversity off,0.648059
+ames,Molecular diversity off,0.747650
+dili,Molecular diversity off,0.643294
+carcinogens,Molecular diversity off,0.645771
+bbb_martins,Evidence + semantic diversity off,0.712252
+bioavailability_ma,Evidence + semantic diversity off,0.860187
+skin_reaction,Evidence + semantic diversity off,0.609363
+ames,Evidence + semantic diversity off,0.761602
+dili,Evidence + semantic diversity off,0.693906
+carcinogens,Evidence + semantic diversity off,0.648174

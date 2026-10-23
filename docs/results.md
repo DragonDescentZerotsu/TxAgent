@@ -38,13 +38,46 @@ entrypoints. The [integration record](release_refactor.md) maps these to the
 original configurations and distinguishes replay, retraining and pending work.
 The [offline LLM verifier](../predict/prompts/README.md#frozen-paper-baseline)
 checks frozen requests and responses through the migrated protocol adapter.
-The original shared exporter and plotter are not yet ported; do not manually
-edit this exported table or treat a model's current defaults as the paper recipe.
+The maintained table exporter below derives the appendices and exact figure values.
+Figure rendering/composition is still pending; do not manually edit the frozen
+score tables or treat a model's current defaults as the paper recipe.
 
 Budget scans, Direct-3 controls and later scaffold-disjoint indirect follow-ups
-remain separate experiments in the preserved source registry. Their full
-artifact distribution and reproduction entries are still pending; this export
-covers the frozen main comparison only and does not replace those experiments.
+remain separate experiments in the preserved source registry. They are outside
+the current manuscript migration scope unless a specific paper item uses them.
+Existing historical sources remain preserved.
+
+## Rebuild paper tables
+
+```bash
+python -m analysis.prediction.paper_results \
+  --source docs/paper \
+  --output outputs/analysis/prediction/paper-tables-review
+```
+
+Use a new output directory. The command verifies source hashes and exports seven
+CSV tables: ML, naive LLM, Ours reported, figure points, figure means, component
+ablations and their means. It performs no inference or training. Missing tasks,
+duplicate cells, mixed ML training pools and modified inputs fail validation.
+[Display rules](paper/display.json) preserve the original group membership and
+backbone bindings; each ML winner and tie is recorded. Full-precision baseline
+and Ours values are unchanged. This is deterministic table derivation, not an
+additional prediction audit, and it does not yet render the manuscript PDFs.
+
+[Component ablations](paper/ablations.csv) contain the 30 task/condition values
+from Joseph's archived `gold_v1_ablation_test_20260925_v3.tsv`. The archive and
+member hashes are pinned in [sources.json](paper/sources.json). Its five means
+round to 0.721, 0.704, 0.714, 0.711 and 0.714, matching the manuscript. The source
+TSV is rounded to six decimals; raw predictions have not been re-audited here.
+Its control was chosen after viewing test results, and the Oral/Ames control
+runs differ from the ablation runs; preserve that descriptive comparison limit.
+The manuscript's sixth, similarity-only value (0.678) numerically matches the
+main naive DeepSeek 50/50 baseline. Its exact ablation protocol binding remains
+unverified, so it is not added as a sixth verified ablation condition.
+
+Main supplies the paper baseline implementations and settings; Joseph supplies
+transfer tools, context optimization, Ours and component ablations. Keep the
+existing Joseph functionality and its source records rather than duplicating it.
 
 ## Existing FINAL collection
 

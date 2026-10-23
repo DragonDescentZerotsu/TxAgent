@@ -98,8 +98,9 @@ The source manifest supplies the setting (None, Direct or Direct+Indirect),
 128-candidate limits, record budgets, selector/seed, split and generation settings.
 `predict/retrieval/paper_baseline.py` partitions L1/L2+ before shared identity
 filtering and preserves the original TDC train-label merge and heldout filter.
-`optimization/selection/record_budget.py` preserves Neighbor-fill, molecule-cap
-and group-balanced ordering; source records are projected through the existing
+`optimization/selection/record_budget.py` preserves the paper's Neighbor-fill
+ordering; historical molecule-cap and group-balanced evidence preparations are rejected.
+The frozen molecule-cap marker in None manifests remains readable only with empty evidence; source records are projected through the existing
 minimal-evidence helper. The frozen query, condition and cached prior are retained.
 The new parent rules apply during candidate filtering before ranking/budget fill;
 DILI/Carcinogens retain their declared scaffold topology. No split is regenerated.

@@ -1,0 +1,192 @@
+{
+  "conditioned": {
+    "curve_settings": {
+      "DeepSeek V4 Flash": [
+        "deepseek_none",
+        "deepseek_direct_fill",
+        "deepseek_both_fill"
+      ],
+      "GPT-6 Luna": [
+        "luna_none",
+        "luna_direct_fill",
+        "luna_both_fill"
+      ],
+      "Gemini 3.8 Flash": [
+        "gemini_none",
+        "gemini_direct_fill",
+        "gemini_both_fill"
+      ]
+    },
+    "reported_curve_backbones": {
+      "Ours (DeepSeek)": "DeepSeek V4 Flash",
+      "Ours (Luna)": "GPT-6 Luna",
+      "Ours (Gemini)": "Gemini 3.8 Flash"
+    },
+    "baseline_settings": [
+      {
+        "method": "mm_direct",
+        "members": [
+          "minimol_head",
+          "finetuned"
+        ],
+        "label": "MM Direct",
+        "pool": "conditioned_train"
+      },
+      {
+        "method": "indirect",
+        "members": [
+          "indirect"
+        ],
+        "label": "MM + Indirect",
+        "pool": "conditioned_train"
+      },
+      {
+        "method": "knn",
+        "members": [
+          "minimol_knn_all",
+          "minimol_knn_condition",
+          "morgan_knn_all",
+          "morgan_knn_condition"
+        ],
+        "label": "KNN",
+        "pool": "conditioned_train"
+      },
+      {
+        "method": "rasar",
+        "members": [
+          "rf_direct",
+          "rf_direct_condition"
+        ],
+        "label": "RASAR",
+        "pool": "conditioned_train"
+      },
+      {
+        "method": "rasar_df",
+        "members": [
+          "rf_indirect",
+          "rf_indirect_condition"
+        ],
+        "label": "RASAR+indirect",
+        "pool": "conditioned_train"
+      }
+    ]
+  },
+  "tdc": {
+    "curve_settings": {
+      "DeepSeek V4 Flash": [
+        "deepseek_none",
+        "deepseek_direct_fill",
+        "deepseek_both_fill"
+      ],
+      "GPT-6 Luna": [
+        "luna_none",
+        "luna_direct_fill",
+        "luna_both_fill"
+      ],
+      "Gemini 3.8 Flash": [
+        "gemini_none",
+        "gemini_direct_fill",
+        "gemini_both_fill"
+      ]
+    },
+    "reported_curve_backbones": {
+      "Ours (DeepSeek)": "DeepSeek V4 Flash",
+      "Ours (Luna)": "GPT-6 Luna",
+      "Ours (Gemini)": "Gemini 3.8 Flash"
+    },
+    "baseline_settings": [
+      {
+        "method": "mm_direct",
+        "members": [
+          "minimol_head",
+          "tdc_only_finetuned"
+        ],
+        "label": "TDC: MM Direct",
+        "pool": "tdc_only"
+      },
+      {
+        "method": "indirect",
+        "members": [
+          "tdc_only_indirect"
+        ],
+        "label": "TDC: MM + Indirect",
+        "pool": "tdc_only"
+      },
+      {
+        "method": "knn",
+        "members": [
+          "minimol_knn_all",
+          "minimol_knn_condition",
+          "morgan_knn_all",
+          "morgan_knn_condition"
+        ],
+        "label": "TDC: KNN",
+        "pool": "tdc_only"
+      },
+      {
+        "method": "rasar",
+        "members": [
+          "rf_direct",
+          "rf_direct_condition"
+        ],
+        "label": "RASAR",
+        "pool": "tdc_only"
+      },
+      {
+        "method": "rasar_df",
+        "members": [
+          "rf_indirect",
+          "rf_indirect_condition"
+        ],
+        "label": "RASAR+indirect",
+        "pool": "tdc_only"
+      },
+      {
+        "method": "mixed_mm_direct",
+        "members": [
+          "D1",
+          "mixed_finetuned"
+        ],
+        "label": "TDC + Starling: MM Direct",
+        "pool": "mixed"
+      },
+      {
+        "method": "mixed_indirect",
+        "members": [
+          "mixed_indirect"
+        ],
+        "label": "TDC + Starling: MM + Indirect",
+        "pool": "mixed"
+      },
+      {
+        "method": "mixed_knn",
+        "members": [
+          "D2",
+          "D3",
+          "D4",
+          "D5"
+        ],
+        "label": "TDC + Starling: KNN",
+        "pool": "mixed"
+      },
+      {
+        "method": "mixed_rasar",
+        "members": [
+          "mixed_rf_direct",
+          "mixed_rf_direct_condition"
+        ],
+        "label": "RASAR",
+        "pool": "mixed"
+      },
+      {
+        "method": "mixed_rasar_df",
+        "members": [
+          "mixed_rf_indirect",
+          "mixed_rf_indirect_condition"
+        ],
+        "label": "RASAR+indirect",
+        "pool": "mixed"
+      }
+    ]
+  }
+}

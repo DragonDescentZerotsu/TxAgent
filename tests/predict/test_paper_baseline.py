@@ -130,8 +130,11 @@ def test_neighbor_fill_exhausts_nearest_parent_and_is_order_invariant():
     reversed_chosen, _ = select_simple_records(records[::-1], budget=50)
     assert chosen == reversed_chosen and {r['molecule_id'] for r in chosen} == {'near'}
     assert len(chosen) == 50 and audit['shortfall'] == 0
-    capped, audit = select_simple_records(records, budget=50, policy='molecule_cap', per_molecule=5)
-    assert len(capped) == 10 and audit['shortfall'] == 40
+    for historical in ('molecule_cap', 'group_balanced'):
+        with pytest.raises(ValueError, match='require neighbor_fill'):
+            select_simple_records(records, budget=50, policy=historical)
+    empty, audit = select_simple_records([], budget=50, policy='molecule_cap')
+    assert empty == [] and audit['per_molecule'] == 5 and audit['shortfall'] == 50
     with pytest.raises(ValueError, match='duplicate'):
         select_simple_records(records + records[:1], budget=50)
 
@@ -314,7 +317,7 @@ def test_retrieval_input_relocation_preserves_contract_and_rejects_changed_files
     old_path = str(tmp_path/'unavailable/test.jsonl') if absolute else 'old/test.jsonl'
     original.update(version='direct_indirect_budgeted.v3', prompt_version='joseph_v5',
         visibility_mode='deployment_visible_prefetched', setting='none', split_scheme='scaffold',
-        direct_identity_policy='scaffold_disjoint', direct_selector='neighbor_fill', direct_budget=50,
+        direct_identity_policy='scaffold_disjoint', direct_selector='molecule_cap' if absolute else 'neighbor_fill', direct_budget=50,
         direct_records_per_molecule=5, selection=dict(budget=50,policy='neighbor_fill',per_molecule=5,seed=42),
         inputs={task: {'input':dict(path=old_path,sha256=sha256_file(cohort))}})
     frozen.update(context_ready=True, manifest_hash=paper.content_hash(original),

@@ -41,6 +41,7 @@ def prepare(source_root, source_batch, target, indices=None, *, input_map=None):
             or original.get('skip_tool_prefetch') or original.get('migration')):
         raise ValueError('requires a completed visible paper baseline source batch')
     if (original['direct_selector'] not in SIMPLE_POLICIES
+            and not (original['setting'] == 'none' and original['direct_selector'] == 'molecule_cap')
             or original['selection']['policy'] not in SIMPLE_POLICIES
             or original['setting'] not in ('none', 'direct', 'direct_indirect')
             or any('direct_knn' in spec for spec in original['inputs'].values())):

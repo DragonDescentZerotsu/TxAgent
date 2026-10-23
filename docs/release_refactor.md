@@ -22,6 +22,10 @@
 每项后续工作先对应论文中的具体内容和既有结果来源，再决定是否接入。Joseph 已有的
 其他功能保持兼容；不为了扩大历史覆盖而新增入口，也不因不在论文中就直接删除它们。
 
+来源分工按用户确认固定：**main 负责论文 ML/naive LLM baselines 的 performance 与
+setting，包括 Direct/Indirect 50/50；Joseph 负责 transfer tool、context optimization、
+Ours 与相关实验/消融。** 后者继续复用 Joseph 实现，不从 main 重造第二套。
+
 | 论文内容 | 必须保留的能力与验收依据 |
 | --- | --- |
 | 主结果图、均值图及完整 naive LLM 附录 | 三种骨干、两个 benchmark、None / Direct / Direct+Indirect；108 个任务分数，保留原 prompt、prior、预算、标签与输出格式 |
@@ -103,7 +107,7 @@ keys 一致，2,700 次条件选择对照一致。覆盖范围为当前六任务
 | 普通 MiniMol head | 各 task 原超参数、25 epochs、seeds 1–5；val BCE 选 checkpoint，ensemble val Macro-F1 选阈值；无 CV、无 train+valid refit | `predict.baselines.minimol.run_bioavailability_ma`；18 cells 保存模型重放通过，3 cells 按原配置重新训练通过 |
 | MiniMol 主任务微调 / indirect | 原主训练池、辅助池及权重候选；checkpoint/权重用 val BCE，阈值用 val Macro-F1；辅助池排除完整 valid/test parent/connectivity union，允许 scaffold 重合 | `predict.baselines.minimol.run_multitask`；21 套来源输入重建一致，36 cells 模型重放标签/F1 一致；完整候选/五种子重训仍未全量执行 |
 | RASAR / RASAR+indirect | 6 / 6+2B 特征；两种邻居策略；六个 RF 候选、seeds 1–5、每 seed 100 trees；val BCE 选参数、val Macro-F1 选阈值 | `predict.baselines.retrieval_forest`；21 套特征重建与 72 cells 重放通过；两批累计 6 cells / 180 seed fits 重训通过 |
-| DeepSeek / Luna / Gemini naive LLM | 原模型、reasoning、prior、prompt；None / Direct 50 / Direct 50 + Indirect 50；两池均 Neighbor-fill；每设置一次 full-flat | 冻结协议、候选准备和普通 API 执行已接入专用模式；仍待全 cohort / 在线复现与 Batch、并行竞速恢复验收，不能用默认 prompt/缓存替代 |
+| DeepSeek / Luna / Gemini naive LLM | 原模型、reasoning、prior、prompt；None / Direct 50 / Direct 50 + Indirect 50；两池均 Neighbor-fill；每设置一次 full-flat | 冻结协议、候选准备、普通 API、Batch 和竞速/恢复已接入；保存请求重放及有限 smoke 见后文，不等于完整新推理或新规则性能复现 |
 | 历史预算扫描、Direct-3 等对照 | 保留原记录；仅当当前论文实际引用时纳入 | Direct-3 LLM 不在当前论文中，不作为迁移或发布前置条件 |
 
 ML 的三种训练池为 conditioned、TDC-only、TDC + Starling。当前统一 ML Appendix 为
@@ -125,7 +129,8 @@ ML 的三种训练池为 conditioned、TDC-only、TDC + Starling。当前统一 
 - Skin indirect 以 `outputs/paper/skin_indirect_level_mapped_20260925/manifest.json`
   为当前替代来源；RASAR direct 六列与原 donor 保持不变。
 - LLM 的当前来源为 registry `naive_llm_baseline`、`gpt6_luna_batch_b50`、
-  `gemini38_flash_api_b50`、`tdc_seed42_neighbor_fill` 及各 budget-scaling 登记。
+  `gemini38_flash_api_b50`、`tdc_seed42_neighbor_fill`，以及主表实际引用的 scaling 中 50/50 单元；
+  不因来源目录叫 scaling 就把它删除，也不因此迁入完整历史扫描。
   用户提供的 Ours 分数保持其来源标注；未解决的预算来源差异不能靠迁移补写。
 
 ## 第三批：普通 head 配置与实际性能核验
@@ -485,6 +490,42 @@ heldout 排除，DILI 仍走已批准的专用身份规则；没有重建或改�
 仍需接齐匹配 Direct-3、独立 prior、共享结果导出/绘图，以及完整数据分发和匿名发布
 审核；第十一批 Direct+Indirect 真实输出预算耗尽的问题保持未通过记录，不因本轮
 离线成功而宣称已解决。main 尚未合并或推送。
+
+## 第十三批：按论文范围收敛与结果导出（2026-10-23）
+
+回查从 Joseph 基础到上轮整合提交的 66 个变更路径，并核对当前论文 108 个 LLM
+单元的实际 manifest。ML、冻结 prompt/native 输出、必要检索、运行恢复和搬移支持
+有对应论文用途；Batch 服务于原 Luna 等实验，不能仅因不是算法就删除。
+12 个当前单元仍用 adapter v1，96 个用 v2，因此保留两种原始字段投影。
+这些检查是迁移范围与配置审计，不宣称完整证明 Joseph 的所有功能都无回归。
+
+明确移除新迁入的 molecule-cap/group-balanced 实际选择分支，保留论文 Neighbor-fill。
+36 个 None 配置保留历史 `molecule_cap` 标记，但输入为空、不会调用该选择算法；
+该空输入的 audit 字段仍兼容。历史 Direct-3、预算扫描、progressive/Joint 不补建入口。
+Neighbor-fill 的 180 组顺序/seed/预算对照与删减前逐项一致；没有改预算、split 或证据。
+
+补齐共用 `python -m analysis.prediction.paper_results`，读取冻结的 compact scores 和
+显式分组配置，生成 198-cell ML、108-cell LLM、72-cell Ours 表、270 个主图数值及
+45 个六任务均值。全部图表点和均值与原绘图 receipt 一致；仍保留逐任务 ML 组内
+最大值再平均、None 不重复、缺任务拒绝及并列方法顺序。它不运行训练或模型，也不
+取代缺失的原始预测审核。迁出的汇总字段保留原精度，原 CSV/JSON 分数未改写。
+
+已从 Joseph `73bddf2e` 的原 Git 分卷归档定位到消融数据。18 个分卷及拼接 SHA-256
+全部通过，流式扫描 303,227 个成员，仅提取消融/同目录说明等 9 个小文件；临时
+1.1 GiB 压缩流已删除，没有展开完整推理目录。保留发布用的 30-cell 消融 CSV 和
+归档/member 哈希；原 scaling 表只作查找记录，不接成新发布功能。
+五个六任务均值对应论文的 0.721 / 0.704 / 0.714 / 0.711 / 0.714。
+源 TSV 是六位小数汇总，尚非原始预测重算；其 README 明确 control 含看过 test 后的
+选择，Oral/Ames 与消融项并非同一次完整运行，差值只能按该来源边界解释。
+
+论文第六行 0.678 与 main 的 naive DeepSeek 50/50 均值 0.678421082524802 数值吻合，
+但未找到把它绑定成同一消融协议的记录，且 Direct 预算描述差异未决；不把数值吻合
+当作完整来源证明，不生成假定的第六套消融结果。Ours/消融继续以 Joseph 产物为依据。
+
+100 项相关测试通过；compact 数据搬到临时目录并使用最小执行环境，七份 CSV
+导出逐字一致。审计与命令保存在 `outputs/analysis/release_refactor/20261023_paper_scope/`。
+本批补的是表格和图表数值导出；论文图形渲染/拼版入口、必要 prior 的独立恢复、
+原始数据/模型分发及匿名发布检查仍需完成，不把它们写成已发布。
 
 ## 验证与后续验收
 

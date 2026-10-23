@@ -56,7 +56,7 @@ release merely because a candidate finished. This guide and the capability READM
 | RASAR | `predict/baselines/retrieval_features.py`, `retrieval_forest.py` | Main/auxiliary labels → shared nearest-neighbor features, validation-selected RF and predictions |
 | Evidence and gold construction | `data/processing/` | Versioned source records and task rules → published data releases |
 | Selection and scoring | `optimization/` | Frozen candidates and objectives → reviewed scores or ordered physical evidence selections |
-| Result analysis | `analysis/`, [result index](results.md) | Saved predictions and source bindings → derived analyses and verified reports |
+| Result analysis | `analysis/`, [result index](results.md) | Saved predictions and source bindings → derived analyses and verified reports; `analysis.prediction.paper_results` exports frozen paper tables and figure values |
 
 [Baseline recipes](../experiments/baselines/README.md) expose the paper settings.
 The [integration record](release_refactor.md) owns the migration status; a mapped

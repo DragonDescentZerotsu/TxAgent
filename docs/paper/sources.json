@@ -12,7 +12,9 @@
   },
   "export_hashes": {
     "baselines.csv": "9f647da6081360f489af246142cdaca86ca7a26b67ec55e8c0dfcfb0f5cb9a8d",
-    "ours_reported.json": "a1615fdbdb60c10522e383a3fe68c13613f26af4384b7d0b44914cbb50f7a7e2"
+    "ours_reported.json": "a1615fdbdb60c10522e383a3fe68c13613f26af4384b7d0b44914cbb50f7a7e2",
+    "display.json": "89d580c9b26f3859391d3f50bd6d565109909b69834781d5604abacf19bf20c8",
+    "ablations.csv": "c16dda3c4a0e7d70d1542568305955b79f713719aa4f37e8ce893ebfaa9e80b6"
   },
   "baseline_cells": {
     "ML": 198,
@@ -82,5 +84,19 @@
     "gemini_scope": "Saved metrics checked; additional source provenance and cost audit remain deferred."
   },
   "artifact_distribution": "Raw predictions, data, models and historical exporter are not included in this compact export.",
-  "migration": "Scores retain their frozen protocols; they are not results of the revised retrieval policy."
+  "migration": "Scores retain their frozen protocols; they are not results of the revised retrieval policy.",
+  "display_source_hashes": {
+    "conditioned/metadata.json": "184093ef032caab32c8715d9e00b93534d0e7aa23025804f9f41b8b5eeec370f",
+    "tdc/metadata.json": "ea33df7d52182dd1892fb6e0b4a0136496bf2026ee176d239c5c2a477aa8a84f"
+  },
+  "ablation_source": {
+    "joseph_commit": "73bddf2eec623d7d19a021968d68bc53c7206962",
+    "archive_sha256": "afcf18506d436171c4185d8d92b8edb00c7babfc29568764f2bb5667104a43a1",
+    "table_member": "final/ablations/gold_v1_ablation_test_20260925_v3.tsv",
+    "table_sha256": "a189e49faf9197a01eaf85aedb1286c0abb147551eb2820834c72946f18f9023",
+    "table_cells": 30,
+    "source_readme_sha256": "d5d312c18f4df3eb504235031f283a1260ec52affb619a33843c57b2c1964d1b",
+    "scope": "Transcribed Joseph summary TSV, not raw-prediction verification. Control chosen after viewing test; Oral/Ames controls use different completed runs, so changes are descriptive, not paired.",
+    "similarity_only_row": "Paper mean 0.678 numerically matches main naive DeepSeek Direct50+Indirect50 (0.678421082524802). Exact ablation protocol/source binding is unverified; retain separately."
+  }
 }

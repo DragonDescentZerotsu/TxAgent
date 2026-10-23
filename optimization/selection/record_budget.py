@@ -1,18 +1,17 @@
 """Deterministic raw-record controls used by the paper baselines."""
-from collections import defaultdict, deque
 import hashlib
 
 VERSION = "budgeted_evidence.v2"
-SIMPLE_POLICIES = ("neighbor_fill", "molecule_cap", "group_balanced")
+SIMPLE_POLICIES = ("neighbor_fill",)
 
 
 def select_simple_records(records, *, budget, policy='neighbor_fill', per_molecule=5, seed=0):
-    """Raw-card controls: no assessed features or quality scores are needed."""
+    """Paper Neighbor-fill; preserve frozen seed/order and audit schema."""
     if budget < 0 or per_molecule < 1:
         raise ValueError('invalid record budget or molecule cap')
     records = list(records)
-    if policy not in SIMPLE_POLICIES:
-        raise ValueError("simple selection requires a simple policy")
+    if policy not in SIMPLE_POLICIES and not (policy == "molecule_cap" and not records):
+        raise ValueError("paper baselines require neighbor_fill")
     if len({r["id"] for r in records}) != len(records):
         raise ValueError("duplicate candidate IDs")
     if any(not r["molecule_id"] or not r["group"] for r in records):
@@ -27,41 +26,17 @@ def select_simple_records(records, *, budget, policy='neighbor_fill', per_molecu
             hashlib.sha256(f"{seed}:{r['id']}".encode()).hexdigest(),
         )
     )
-    pools = defaultdict(deque)
-    for r in ordered:
-        pools[r["group"] if policy == "group_balanced" else "all"].append(r)
-    counts, selected = defaultdict(int), []
-    while pools and len(selected) < budget:
-        for group in sorted(list(pools)):
-            pool = pools[group]
-            # Skip capped molecules within this group's turn, so every nonempty
-            # eligible group contributes once per round, not once per raw offset.
-            while pool:
-                r = pool.popleft()
-                if (
-                    policy != "neighbor_fill"
-                    and counts[r["molecule_id"]] >= per_molecule
-                ):
-                    continue
-                counts[r["molecule_id"]] += 1
-                selected.append(r)
-                break
-            if not pool:
-                del pools[group]
-            if len(selected) == budget:
-                break
+    selected = ordered[:budget]
     return selected, {
         "version": VERSION,
         "policy": policy,
         "budget": budget,
-        "per_molecule": None
-        if policy == "neighbor_fill"
-        else per_molecule,
+        "per_molecule": None if policy == "neighbor_fill" else per_molecule,
         "seed": seed,
         "n_candidates": len(records),
         "n_selected": len(selected),
         "shortfall": budget - len(selected),
-        "n_molecules": len(counts),
+        "n_molecules": len({r["molecule_id"] for r in selected}),
         "n_groups": len({r["group"] for r in selected}),
         "assessment_required": False,
         "selection_trace": [{"record_id": r["id"]} for r in selected],
