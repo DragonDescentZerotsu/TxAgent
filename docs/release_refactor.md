@@ -425,6 +425,38 @@ None 的 Skin 样例通过原生输出校验和零调用恢复。Carcinogens Dir
 完整检索索引分发、其余独立环境安装、Direct-3、独立 prior、结果登记/绘图接齐及匿名
 发布审核继续待验收。真实 Batch endpoint 尚未调用，不能以普通 API smoke 代替。
 
+## 第十二批：完整检索输入搬移（2026-10-23）
+
+发现 TDC 冻结配置使用绝对路径，原 `--source-root` 不能覆盖这些路径。现有
+`--prepare-paper-baseline` 增加可替代 source root 的 `--input-map`，将原 manifest
+中的精确路径字符串映射到新文件。相对目标按映射 JSON 所在目录解析；缺失、多余、
+null/非法映射及哈希不符均拒绝，不偷偷回退到旧文件。原 manifest 不改写，实际读取
+位置保存在新运行的迁移记录中；现有 bundle/执行入口继续复用。
+
+81 项相关测试通过。另在独立代码目录中禁止读取原 main/整合工作目录和禁止联网，
+完成三组完整索引、单 query smoke：conditioned Skin、TDC Skin、TDC DILI。
+每组 Direct/Indirect 都是 50/50；消息、prompt payload、查询/请求/候选池哈希、
+记录 ID、别名及顺序与第七批的已核验准备结果一致。TDC 仍执行原训练标签合并和
+heldout 排除，DILI 仍走已批准的专用身份规则；没有重建或改动 train/valid/test。
+使用的是三个完整冻结索引（合计约 4.1 GiB），不是预先截取的候选子集。Skin 两组
+各约 25/30 秒，DILI 约 354 秒；因此这是少量 query 验收，不是所有任务都能秒级准备。
+
+三组准备结果均经原 bundle 入口导出，随后使映射文件/源 batch 的原位置不可用，
+三个执行包仍独立验证成功。本轮没有推理调用、训练或新性能分数；沿用现有 vllm
+依赖环境，不等于完成了全新安装验收。生产 Python 净增 21 行，没有新增 runner。
+
+`outputs/analysis/release_refactor/20261023_retrieval_relocation/` 保存命令、日志、源码
+快照及回执；小型执行包保存于
+`outputs/predictions/branches/paper_baseline_v1/retrieval-relocation-smoke-20261023/`。
+内部 `input_distribution_plan/` 已列出两 benchmark × 六任务的 12 个映射和 36 个
+去重文件（约 38.2 GiB）。这是分发规划：没有复制全部文件到计划目录，除三组 smoke
+外的哈希仍来自原 manifest，不标成全量内容重新审核。原文献→索引构建和匿名公开
+数据包也不包含在本批验收范围内。实际文件恢复方法见论文 baseline prompt README。
+
+仍需接齐匹配 Direct-3、独立 prior、共享结果导出/绘图，以及完整数据分发和匿名发布
+审核；第十一批 Direct+Indirect 真实输出预算耗尽的问题保持未通过记录，不因本轮
+离线成功而宣称已解决。main 尚未合并或推送。
+
 ## 验证与后续验收
 
 第二批身份规则验证（2026-10-22；与上面的第三批性能核验分开）：
@@ -449,7 +481,7 @@ Joseph 的命名缓存、源字段投影和完整 prompt 仍须单独对齐。
 
 1. ML 的全部报告单元已完成保存模型/特征核验，保留上述数值与重训覆盖边界；
    后续独立环境复现沿用相同配置，不重复新增 task-specific runner。
-2. 已准备 LLM 执行及 RASAR 输入/模型已支持独立搬移；继续整理完整检索/ML 输入分发及匿名审核，
+2. 已准备 LLM、RASAR 及完整冻结检索索引的映射恢复已通过上述抽样搬移验收；继续整理全量分发及匿名审核，
    不能把小输入包通过当成全库独立复现或公开发布验收。
 3. LLM 候选/预算/冻结 prior、普通 API、Batch 和竞速/重排队路径已接入并离线验收；
    继续做全 cohort 差异审计、匹配 Direct-3 和独立 prior 生成，保留原来源和必要能力。

@@ -82,6 +82,10 @@ for commands and verification limits. The same entry point supports
 Preparation retains frozen queries/priors/configuration and applies the approved
 retrieval rules; it does not rebuild train/valid/test splits. A portable execution
 bundle does not include the large indexes needed for a fresh candidate rebuild.
+For moved full indexes or absolute TDC source paths, preparation accepts an
+explicit `--input-map` in place of `--source-root`; its files are checked against
+the frozen hashes. The prompt guide describes the required source-query snapshot
+and mapping format. No repository-wide path aliases or manifest rewrites are needed.
 The same execution command accepts a single OpenRouter Batch provider with an
 explicit journal, or ordinary API retry races and bounded stage requeues.
 See the prompt guide for configuration, recovery and accounting boundaries.

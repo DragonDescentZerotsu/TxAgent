@@ -17,13 +17,20 @@ from predict.utils.response import call_with_json_validation, response_validatio
 REVISION = 'paper_baseline_retrieval.v1'
 
 
-def prepare(source_root, source_batch, target, indices=None):
+def prepare(source_root, source_batch, target, indices=None, *, input_map=None):
     """Use frozen query/prior/config inputs; rebuild all eligible evidence before budgets."""
     from optimization.selection.record_budget import SIMPLE_POLICIES, select_simple_records
     from predict.retrieval.features import load_retrieval_index
     from predict.retrieval.paper_baseline import build_evidence_view, merge_train_labels, retrieve_candidates
 
-    source_root, source_batch, target = map(lambda p: Path(p).resolve(), (source_root, source_batch, target))
+    if (source_root is None) == (input_map is None):
+        raise ValueError('provide exactly one source root or input map')
+    relocated = json.loads(Path(input_map).read_text()) if input_map is not None else None
+    if input_map is not None and (not isinstance(relocated, dict)
+            or any(not isinstance(v, str) or not v for v in relocated.values())):
+        raise ValueError('input map must map frozen path strings to file paths')
+    source_root = Path(input_map).resolve().parent if input_map is not None else Path(source_root).resolve()
+    source_batch, target = Path(source_batch).resolve(), Path(target).resolve()
     if target == source_batch or source_batch in target.parents:
         raise ValueError('preparation requires a separate output root')
     original = json.loads((source_batch / 'experiment_manifest.json').read_text())
@@ -59,7 +66,10 @@ def prepare(source_root, source_batch, target, indices=None):
         if original['benchmark_profile'] and original['setting'] != 'none':
             required += ['train', 'heldout']
         for key in required:
-            path = source_root / spec[key]['path']
+            locator = spec[key]['path']
+            if relocated is not None and locator not in relocated:
+                raise ValueError(f'{task}: missing {key} in input map')
+            path = (source_root / (relocated[locator] if relocated is not None else locator)).resolve()
             if sha256_file(path) != spec[key]['sha256']:
                 raise ValueError(f'{task}: frozen {key} input changed')
             inputs[task][key] = path
@@ -68,6 +78,13 @@ def prepare(source_root, source_batch, target, indices=None):
         if not chosen or len(chosen) != len(set(chosen)) or any(i < 0 or i >= len(cohorts[task]) for i in chosen):
             raise ValueError('invalid or repeated query indices')
         manifest['migration']['query_indices'][task] = chosen
+    if relocated is not None:
+        required_paths = {original['inputs'][task][key]['path'] for task, paths in inputs.items() for key in paths}
+        if set(relocated) != required_paths:
+            raise ValueError('input map contains unused paths')
+        manifest['migration']['retrieval_inputs'] = {task: {key: str(path) for key, path in paths.items()}
+                                                    for task, paths in inputs.items()}
+        manifest['migration']['evaluation_inputs'] = {task: str(paths['input']) for task, paths in inputs.items()}
     if (target/'experiment_manifest.json').exists():
         if json.loads((target/'experiment_manifest.json').read_text()) != manifest:
             raise ValueError('preparation contract changed; use a new output root')
@@ -162,6 +179,8 @@ def run(argv):
     parser.add_argument('--run-paper-baseline', type=Path, metavar='PREPARED_BATCH')
     parser.add_argument('--bundle-paper-baseline', type=Path, metavar='PREPARED_BATCH')
     parser.add_argument('--source-root', type=Path)
+    parser.add_argument('--input-map', type=Path,
+                        help='Preparation-only JSON mapping frozen input paths to relocated files; relative to this JSON')
     parser.add_argument('--run-name')
     parser.add_argument('--query-indices', type=int, nargs='+')
     parser.add_argument('--provider-config', type=Path)
@@ -177,7 +196,7 @@ def run(argv):
         parser.error('retry controls require --run-paper-baseline')
     if args.bundle_paper_baseline:
         if (not args.run_name or Path(args.run_name).name != args.run_name or args.run_name in ('.', '..')
-                or args.source_root or args.query_indices is not None or args.provider_config or args.env_file):
+                or args.source_root or args.input_map or args.query_indices is not None or args.provider_config or args.env_file):
             parser.error('bundling requires a new --run-name and no preparation or provider options')
         manifest = json.loads((args.bundle_paper_baseline/'experiment_manifest.json').read_text())
         if manifest.get('migration', {}).get('version') != REVISION:
@@ -189,13 +208,14 @@ def run(argv):
         print(target)
         return 0
     if args.prepare_paper_baseline:
-        if not args.source_root or not args.run_name or Path(args.run_name).name != args.run_name or args.run_name in ('.', '..'):
-            parser.error('preparation requires --source-root and a single-component --run-name')
+        if (bool(args.source_root) == bool(args.input_map) or not args.run_name
+                or Path(args.run_name).name != args.run_name or args.run_name in ('.', '..')):
+            parser.error('preparation requires one of --source-root/--input-map and a single-component --run-name')
         if args.provider_config or args.env_file:
             parser.error('preparation never constructs a model client')
         target = Path('outputs/predictions/branches')/prompt.BUNDLE/args.run_name
     else:
-        if not args.provider_config or args.source_root or args.run_name or args.query_indices is not None:
+        if not args.provider_config or args.source_root or args.input_map or args.run_name or args.query_indices is not None:
             parser.error('execution requires --provider-config and an already prepared batch')
         target = args.run_paper_baseline
         manifest = json.loads((target/'experiment_manifest.json').read_text())
@@ -205,7 +225,8 @@ def run(argv):
     with (target/'.execution.lock').open('a') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         if args.prepare_paper_baseline:
-            print(json.dumps(prepare(args.source_root, args.prepare_paper_baseline, target, args.query_indices), indent=2))
+            print(json.dumps(prepare(args.source_root, args.prepare_paper_baseline, target, args.query_indices,
+                                     input_map=args.input_map), indent=2))
             return 0
         return execute_batch(target, args.provider_config, args.env_file, args.parallelism,
             retry_race_width=args.retry_race_width, max_stage_requeues=args.max_stage_requeues, retry_delay_s=args.retry_delay_s)

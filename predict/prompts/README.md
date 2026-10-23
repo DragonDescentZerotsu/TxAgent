@@ -63,6 +63,37 @@ predictions for changed requests. The source batch and historical scores remain
 unchanged. Changing a source, prior, implementation or configuration requires a
 new run name; concurrent preparation/execution of one run is rejected.
 
+If the frozen manifest contains absolute paths (as the TDC runs do), relocating
+the repository and changing `--source-root` cannot override those paths. Supply
+`--input-map /path/to/input_paths.json` instead of `--source-root`:
+
+```json
+{
+  "/old/repo/data/test.jsonl": "files/test.jsonl",
+  "/old/repo/data/train.jsonl": "files/train.jsonl",
+  "/old/repo/data/heldout.jsonl": "files/heldout.jsonl",
+  "/old/repo/cache/assay_neighbor_index.pkl": "files/assay_neighbor_index.pkl"
+}
+```
+
+Keys must be the exact path strings in the selected frozen manifest, including
+relative strings where originally recorded. Values locate copied files relative
+to the mapping JSON, or may be absolute. Include exactly the files preparation
+uses: `input`; also `index` for Direct/Direct+Indirect; also `train` and `heldout`
+for TDC evidence settings. Missing, unused or invalid mappings fail; mapped files
+must match the original SHA-256 values. No fallback to old paths is attempted.
+The source manifest is not edited. New preparation metadata records the actual
+locators, while model inputs, generation settings and cohort hashes stay frozen.
+
+Copy the source batch's `experiment_manifest.json` and the selected queries'
+`runs/<task>/query_<index>/{prepared,output,evaluation}.json` as well. Keep explicit
+`--query-indices` when only part of that source batch was copied. Indexes must be
+the complete pinned pickle files, not a subset of already selected neighbors;
+fresh candidate filtering/ranking still runs against the full eligible universe.
+This restores retrieval from a saved index; it does not reconstruct the index
+from raw literature. Use the execution-bundle command below after preparation to
+detach execution from the large indexes and original source locations.
+
 The source manifest supplies the setting (None, Direct or Direct+Indirect),
 128-candidate limits, record budgets, selector/seed, split and generation settings.
 `predict/retrieval/paper_baseline.py` partitions L1/L2+ before shared identity

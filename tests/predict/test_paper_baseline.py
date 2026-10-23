@@ -301,3 +301,51 @@ def test_tdc_train_merge_filters_heldout_before_card_ranking():
     assert merged['tdc_train_audit'] == {'label_cards': 1, 'heldout_parent_excluded_row_ids': ['0']}
     cards = [r['source_record_examples'][0] for groups in merged['evidence_by_molecule_group'].values() for r in groups['TDC.train_label']]
     assert len(cards) == 1 and cards[0]['source_row_ids'] == ['1', '2'] and cards[0]['reported_value'] == '0'
+
+
+@pytest.mark.parametrize('absolute', [False, True])
+def test_retrieval_input_relocation_preserves_contract_and_rejects_changed_files(tmp_path, absolute):
+    from predict.harnesses.branches import paper_baseline as runtime
+    from predict.utils.json import write_json_atomic, sha256_file
+    task = 'bbb_martins'
+    frozen, original, response = example(benchmark=paper.TDC_PROFILE if absolute else '')
+    inputs = tmp_path/'copied'; inputs.mkdir()
+    cohort = inputs/'test.jsonl'; cohort.write_text(json.dumps(dict(drug='CCO', Y=1))+'\n')
+    old_path = str(tmp_path/'unavailable/test.jsonl') if absolute else 'old/test.jsonl'
+    original.update(version='direct_indirect_budgeted.v3', prompt_version='joseph_v5',
+        visibility_mode='deployment_visible_prefetched', setting='none', split_scheme='scaffold',
+        direct_identity_policy='scaffold_disjoint', direct_selector='neighbor_fill', direct_budget=50,
+        direct_records_per_molecule=5, selection=dict(budget=50,policy='neighbor_fill',per_molecule=5,seed=42),
+        inputs={task: {'input':dict(path=old_path,sha256=sha256_file(cohort))}})
+    frozen.update(context_ready=True, manifest_hash=paper.content_hash(original),
+                  query_hash=paper.content_hash(dict(benchmark_profile=original['benchmark_profile'],
+                                                    canonical_smiles='CCO',condition_group='')))
+    source = tmp_path/'source'; query = source/'runs'/task/'query_00000'
+    for path, value in [(source/'experiment_manifest.json',original),(query/'prepared.json',frozen),
+                        (query/'output.json',response),(query/'evaluation.json',{'label':1})]:
+        write_json_atomic(path,value)
+    mapping = inputs/'input_paths.json';write_json_atomic(mapping,{old_path:'test.jsonl'})
+    target = tmp_path/'prepared'
+    runtime.prepare(None,source,target,[0],input_map=mapping)
+    manifest, _ = runtime.validate_batch(target)
+    assert manifest['inputs'] == original['inputs']
+    prepared = json.loads((target/'runs'/task/'query_00000/prepared.json').read_text())
+    assert prepared['messages'] == frozen['messages']
+    portable = tmp_path/'portable'; runtime.bundle(target,portable)
+    source.rename(tmp_path/'removed-source');cohort.rename(inputs/'removed-test.jsonl')
+    runtime.validate_batch(portable)
+    source = tmp_path/'removed-source';cohort = inputs/'removed-test.jsonl'
+    write_json_atomic(mapping,{old_path:cohort.name,'unused':'unused.json'})
+    with pytest.raises(ValueError,match='unused'):
+        runtime.prepare(None,source,tmp_path/'bad',[0],input_map=mapping)
+    write_json_atomic(mapping,{})
+    with pytest.raises(ValueError,match='missing'):
+        runtime.prepare(None,source,tmp_path/'bad',[0],input_map=mapping)
+    write_json_atomic(mapping,None)
+    with pytest.raises(ValueError,match='map frozen path'):
+        runtime.prepare(None,source,tmp_path/'bad',[0],input_map=mapping)
+    write_json_atomic(mapping,{old_path:cohort.name})
+    cohort.write_text('{}\n')
+    with pytest.raises(ValueError,match='input changed'):
+        runtime.prepare(None,source,tmp_path/'bad',[0],input_map=mapping)
+    assert not (tmp_path/'bad').exists()
