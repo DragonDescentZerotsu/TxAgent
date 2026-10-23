@@ -42,6 +42,12 @@ The maintained exporter below derives the appendices, figure values and the thre
 current manuscript PDFs. Do not manually edit frozen score tables or treat a
 model's current defaults as the paper recipe.
 
+Paper baseline priors are frozen model inputs, embedded in each source prepared
+request and included by the portable execution-bundle exporter. Restore those
+inputs rather than regenerating priors with current model/template defaults;
+see the [prior preservation contract](../predict/prompts/README.md#frozen-paper-baseline).
+The compact score export here does not itself contain those execution inputs.
+
 Budget scans, Direct-3 controls and later scaffold-disjoint indirect follow-ups
 remain separate experiments in the preserved source registry. They are outside
 the current manuscript migration scope unless a specific paper item uses them.

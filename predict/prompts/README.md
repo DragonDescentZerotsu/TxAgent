@@ -190,7 +190,27 @@ offline acceptance coverage, not a new paid endpoint-availability check.
 
 Historical matched Direct-3 is outside the current manuscript migration scope.
 The paper's k=3 ML KNN and three-neighbor RASAR remain separate supported capabilities.
-Standalone prior generation remains to be integrated where required for paper reproduction. This mode does not
+The paper baseline reuses frozen priors; it does not regenerate them. Each source
+`prepared.json` already embeds the exact model-visible analysis in
+`prompt_payload.query_prior`. Preparation preserves it, and the portable bundle
+carries both the source snapshot and the new prepared request. The historical
+`query_prior_source` paths are provenance, not files opened during prepared
+execution. None means no retrieved records; it still uses the same cached prior
+as Direct and Direct+Indirect. Do not replace a frozen prior with a fresh model output and describe
+that as the same paper input.
+
+For rebuilding candidates, retain the source manifest, prepared request, output
+and evaluation files listed above, plus the mapped cohort/index inputs. No separate
+historical progressive runtime or single-analysis cache is needed for this path.
+Keep those original cache files for provenance until the source archive has been
+verified and distributed; a working execution bundle alone is not authorization
+to delete them. The local compact prior inventory is an audit artifact, not an
+additional runtime cache format.
+
+Joseph's `six_task_query_priors.py` and `tdc_query_priors.py` remain the existing
+capabilities for generating native/FINAL priors. Their defaults are not substituted
+for main's frozen paper baseline inputs. A fresh baseline prior-generation protocol
+is outside this migration's frozen-result reproduction scope. This mode does not
 replace the default FINAL scheduler or its named-cache protocol. Offline transport
 and recovery tests are not a fresh model-performance replication. Candidate
 rebuilding still requires the original full retrieval inputs; the portable bundle
