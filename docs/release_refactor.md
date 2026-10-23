@@ -74,7 +74,7 @@ keys 一致，2,700 次条件选择对照一致。覆盖范围为当前六任务
 | 普通 MiniMol head | 各 task 原超参数、25 epochs、seeds 1–5；val BCE 选 checkpoint，ensemble val Macro-F1 选阈值；无 CV、无 train+valid refit | `predict.baselines.minimol.run_bioavailability_ma`；18 cells 保存模型重放通过，3 cells 按原配置重新训练通过 |
 | MiniMol 主任务微调 / indirect | 原主训练池、辅助池及权重候选；checkpoint/权重用 val BCE，阈值用 val Macro-F1；辅助池排除完整 valid/test parent/connectivity union，允许 scaffold 重合 | `predict.baselines.minimol.run_multitask`；21 套来源输入重建一致，36 cells 模型重放标签/F1 一致；完整候选/五种子重训仍未全量执行 |
 | RASAR / RASAR+indirect | 6 / 6+2B 特征；两种邻居策略；六个 RF 候选、seeds 1–5、每 seed 100 trees；val BCE 选参数、val Macro-F1 选阈值 | `predict.baselines.retrieval_forest`；21 套特征重建与 72 cells 重放通过；两批累计 6 cells / 180 seed fits 重训通过 |
-| DeepSeek / Luna / Gemini naive LLM | 原模型、reasoning、prior、prompt；None / Direct 50 / Direct 50 + Indirect 50；两池均 Neighbor-fill；每设置一次 full-flat | 本地 family runner 尚未完整接入；不能用 Joseph 默认 prompt/缓存直接替代 |
+| DeepSeek / Luna / Gemini naive LLM | 原模型、reasoning、prior、prompt；None / Direct 50 / Direct 50 + Indirect 50；两池均 Neighbor-fill；每设置一次 full-flat | 冻结输入输出适配层已迁入并提供离线核验；候选准备/实际执行仍待接入，不能用默认 prompt/缓存替代 |
 | 预算扫描、Direct-3 等对照 | 各自记录的预算、候选填充、模型与输入；Direct-3 保留固定 Morgan 三邻居，不套用其他检索过滤 | 复用共享入口，具体配置和结果登记尚待迁入 |
 
 ML 的三种训练池为 conditioned、TDC-only、TDC + Starling。当前统一 ML Appendix 为
@@ -207,6 +207,38 @@ LLM 离线预检覆盖 Gemini 的两套 benchmark、六任务、三 settings，�
 详细回执、源文件映射与临时核验脚本归档于本地
 `outputs/analysis/release_refactor/20261023_docs/`，不新增正式 Python runner。
 
+## 第六批：冻结 LLM 输入输出协议（2026-10-23）
+
+输入输出适配层已迁入 `predict/prompts/paper_baseline.py`，冻结模板和任务定义位于
+`predict/prompts/variants/paper_baseline_v1/`。保留六任务各自的预测字段、置信度、
+支持/反对/决策依据 card IDs、claims、evidence gaps 和 decision summary；TDC Ames、
+Carcinogens 显式保留原专用定义。其他任务共用原定义，不继承当前 FINAL 默认配置。
+
+复用现有模板加载器、原始 JSON 解析和通用 response validation；仅保留原 baseline
+需要的引用校验，未迁入整套 progressive 状态机。字段精确去重函数与原实现 AST 相同，
+原 full-fields 与 adapter v2 均可读取。模板环境在进程内复用，避免逐 query 重编译。
+
+现有入口 `python -m predict.harnesses.branches --verify-paper-baseline BATCH_ROOT`
+提供只读核验，不启动服务、不调用模型、不改写 batch。检查 manifest/request 绑定、
+重渲染、card alias、原始回复解析、输出校验、标签映射及保存的指标。
+运行方法与边界见 [冻结 baseline 协议](../predict/prompts/README.md#frozen-paper-baseline)。
+
+论文主比较中的 DeepSeek、Luna、Gemini **108 个单元、38,457 条请求/响应**全部完成
+离线核验，每个 backbone 各 12,819 条。迁移后的模板从冻结 payload 重渲染，system/user
+逐字一致；原生标签映射、Macro-F1、accuracy 与原汇总一致。另将全部原始回复文本
+重新交给现有共用 JSON 解析器，38,457 条解析结果也与保存的 content 完全相同。
+原始回复解析与全量请求/标签核验分别留有回执，不把这一结果当作新模型推理复现。
+
+780 个合法/错误响应变体的错误列表与旧校验器完全相同；两 benchmark 六任务的
+12 组四次尝试测试中，格式修复请求及校验回执也逐字一致。针对性测试 29 项通过，
+共用解析/校验测试另有 25 项通过；4 项既有恢复流程测试仍因缺少 `duckdb` 在导入时
+失败，不记作通过。本批未安装依赖，也未伪造当前命名缓存的数据。
+
+本地核验回执和临时脚本归档在 `outputs/analysis/release_refactor/20261023_llm/`。
+这是冻结 payload/response 的迁移；从原始候选池重建 records、prior 加载、实际推理
+参数/并发及完整 checkpoint 恢复仍待接入。该 bundle 暂不作为 fresh FINAL 的
+`--prompt` 选项，不能把此处验证描述为完整 LLM runner 已可复现。
+
 ## 验证与后续验收
 
 第二批身份规则验证（2026-10-22；与上面的第三批性能核验分开）：
@@ -232,7 +264,7 @@ Joseph 的命名缓存、源字段投影和完整 prompt 仍须单独对齐。
 1. ML 的全部报告单元已完成保存模型/特征核验，保留上述数值与重训覆盖边界；
    后续独立环境复现沿用相同配置，不重复新增 task-specific runner。
 2. 将历史路径依赖收敛为可分发的数据/配置入口，验证独立环境；现有环境通过不等于可直接发布。
-3. 迁入 LLM 共享流程，核对完整候选池、records 预算、card 去重、prior 与最终请求。
+3. LLM 冻结输入输出适配层已迁入；继续对齐完整候选池、records 预算、prior 加载与实际执行。
    继续保留必要的限流、重试、恢复和历史 replay 能力。
 4. 主比较分数已导出并验证；继续接齐共享导出器、绘图入口和完整实验登记，
    核对匿名发布文件；冻结结果保持原协议。

@@ -1,0 +1,23 @@
+{
+  "version": "paper_baseline_v1",
+  "source_adapter": "joseph_full_flat_v5_adapted.v2",
+  "upstream_prompt_commit": "3c36c2640ada12119f4a74a9bdf8511b0d7b8f6e",
+  "supported_benchmark_profiles": [
+    "",
+    "tdc_scaffold_train_labels.v1"
+  ],
+  "record_rendering": [
+    "full_fields",
+    "exact_duplicate_fields.v1"
+  ],
+  "source_files_sha256": {
+    "tools/chembl_tool/common/flat_prompt_alignment.py": "02d704e07f5f8037091b3dac2fff2af2f509599a34079683b1ff327b2c46b2f6",
+    "tools/chembl_tool/common/reasoning_validation.py": "cdd7c06071c89e50ca01871d2c383a8f3fe1cc74d95ac38c99d31240f3c31376",
+    "tools/chembl_tool/common/progressive_assay_reasoning.py": "0d5c91a6d3ff977a689292e6385cef9b0eba4d09ab0f0958611644989ad7bba7"
+  },
+  "asset_sha256": {
+    "tasks.yaml": "fda5d3298110b38831865cf5f2b11ce5eb82bde034672492780d9fc93e67b5f6",
+    "system.jinja": "de8eb850f3f89d61b85bcb37f5401472469b52443d15701b954a3b2572cdd784",
+    "user.jinja": "c68a84b2ca55738e6618a73e0dc1d6c285efe46743a5e278b73716341c7127b6"
+  }
+}

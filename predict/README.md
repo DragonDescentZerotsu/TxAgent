@@ -8,7 +8,8 @@ The defaults below describe this branch's FINAL workflow. The frozen paper's
 naive LLM baseline used explicit 50/50 Neighbor-fill, a pinned earlier prompt
 adapter and parent-disjoint indirect evidence. Its preparation path is still
 being integrated; selecting today's default cache/prompt does not reproduce it.
-See [paper results and migration limits](../docs/results.md).
+See [paper results and migration limits](../docs/results.md) and the
+[offline baseline request verifier](prompts/README.md#frozen-paper-baseline).
 
 ```bash
 python -m predict.harnesses.branches --help

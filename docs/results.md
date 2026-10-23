@@ -36,6 +36,8 @@ training pools visible when interpreting those summaries.
 [MiniMol guide](../predict/baselines/minimol/README.md) describe maintained ML
 entrypoints. The [integration record](release_refactor.md) maps these to the
 original configurations and distinguishes replay, retraining and pending work.
+The [offline LLM verifier](../predict/prompts/README.md#frozen-paper-baseline)
+checks frozen requests and responses through the migrated protocol adapter.
 The original shared exporter and plotter are not yet ported; do not manually
 edit this exported table or treat a model's current defaults as the paper recipe.
 
