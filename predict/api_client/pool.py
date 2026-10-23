@@ -61,11 +61,11 @@ class ProviderSpec:
     timeout_s: int | None = None
     request_extra_body: Mapping[str, Any] | None = None
     priority: int = 0
+    transport: str = "chat_completions"
+    batch_options: Mapping[str, Any] | None = None
 
     @classmethod
     def from_mapping(cls, row: Mapping[str, Any]) -> "ProviderSpec":
-        if row.get("transport", "chat_completions") != "chat_completions" or row.get("batch_options"):
-            raise ValueError("this provider pool supports chat_completions only; Batch configuration cannot run as ordinary API")
         spec = cls(
             name=str(row.get("name") or "").strip(),
             base_url=str(row.get("base_url") or "").strip().rstrip("/"),
@@ -76,11 +76,17 @@ class ProviderSpec:
             timeout_s=(int(row["timeout_s"]) if row.get("timeout_s") is not None else None),
             request_extra_body=dict(row.get("request_extra_body") or {}),
             priority=int(row.get("priority") or 0),
+            transport=str(row.get("transport", "chat_completions")),
+            batch_options=dict(row.get("batch_options") or {}),
         )
         spec.validate()
         return spec
 
     def validate(self) -> None:
+        if self.transport not in {"chat_completions", "openrouter_batch"}:
+            raise ValueError("unsupported provider transport")
+        if self.batch_options and self.transport != "openrouter_batch":
+            raise ValueError("batch_options require openrouter_batch transport")
         if not self.name:
             raise ValueError("provider name is required")
         if not self.base_url:
@@ -112,6 +118,8 @@ class ProviderSpec:
             "timeout_s": self.timeout_s,
             "request_extra_body": dict(self.request_extra_body or {}),
             "priority": self.priority,
+            **({"transport": self.transport, "batch_options": dict(self.batch_options or {})}
+               if self.transport != "chat_completions" else {}),
         }
 
 
@@ -210,6 +218,11 @@ class ProviderPoolConfig:
             raise ValueError("max_failovers must be non-negative")
         if not 0 < self.latency_ewma_alpha <= 1:
             raise ValueError("latency_ewma_alpha must be in (0, 1]")
+        if any(p.transport == "openrouter_batch" for p in self.providers):
+            if len(self.providers) != 1 or self.max_failovers:
+                raise ValueError("Batch requires one provider and no automatic failover")
+            if self.spend_budget is not None:
+                raise ValueError("Batch cost reconciliation cannot use the synchronous spend ledger")
         if self.spend_budget is not None:
             self.spend_budget.validate()
             for provider in self.providers:
@@ -497,11 +510,16 @@ def build_provider_pool(
     transport_max_retries: int,
     response_format: Mapping[str, Any] | None = None,
     token_limit_parameter: str | None = None,
+    batch_dir: Path | None = None,
 ) -> "OpenAIProviderPool":
     """Build every configured provider through the shared credential loader."""
     from predict.api_client.transport import openai_compatible_client
     from predict.api_client.client import OpenAICompatibleClient
 
+    config.validate()
+    is_batch = any(p.transport == "openrouter_batch" for p in config.providers)
+    if is_batch and (batch_dir is None or transport_max_retries or enable_group_tools or enable_thinking):
+        raise ValueError("Batch requires an explicit journal, prefetched tools and no automatic POST retries")
     if config.spend_budget is not None and transport_max_retries:
         raise ValueError(
             "spend-budgeted provider pools require transport_max_retries=0"
@@ -523,7 +541,13 @@ def build_provider_pool(
             timeout_s=spec.timeout_s or timeout_s,
             max_retries=transport_max_retries,
         )
-        return OpenAICompatibleClient(
+        client_type, transport_options = OpenAICompatibleClient, {}
+        if spec.transport == "openrouter_batch":
+            from predict.api_client.batch import OpenRouterBatchClient
+            client_type = OpenRouterBatchClient
+            transport_options = {"batch_dir": batch_dir, "batch_options": spec.batch_options}
+        return client_type(
+            **transport_options,
             api_key="loaded-by-shared-client",
             base_url=spec.base_url,
             model=spec.model,
@@ -540,6 +564,7 @@ def build_provider_pool(
             response_format=response_format,
             openai_client=transport,
             token_limit_parameter=token_limit_parameter,
+            async_max_connections=spec.max_inflight,
         )
 
     return OpenAIProviderPool(config, client_factory=factory)
@@ -551,6 +576,7 @@ class _ProviderState:
     client: JsonChatClient
     inflight: int = 0
     completed: int = 0
+    cancelled: int = 0
     failures: int = 0
     consecutive_failures: int = 0
     circuit_open_until: float = 0.0
@@ -861,26 +887,7 @@ class OpenAIProviderPool:
                     )
                 else:
                     response = state.client.chat_json(messages, **token_override)
-                controls = dict(state.spec.request_extra_body or {})
-                allowed_models = set(controls.get("allowed_served_models") or [])
-                served_model = str(response.get("model") or "")
-                if allowed_models and served_model not in allowed_models:
-                    raise ValueError(
-                        f"provider {state.spec.name!r} served unexpected model "
-                        f"{served_model!r}"
-                    )
-                expected_provider = controls.get("expected_upstream_provider")
-                if expected_provider and response.get("provider") != expected_provider:
-                    raise ValueError(
-                        f"provider {state.spec.name!r} returned upstream "
-                        f"{response.get('provider')!r}"
-                    )
-                expected_tier = controls.get("expected_service_tier")
-                if expected_tier and response.get("service_tier") != expected_tier:
-                    raise ValueError(
-                        f"provider {state.spec.name!r} returned service tier "
-                        f"{response.get('service_tier')!r}"
-                    )
+                _validate_provider_response(state.spec, response)
             except Exception as exc:  # noqa: BLE001 - provider boundary
                 latency_s = max(0.0, self._clock() - started)
                 budget_error = None
@@ -957,11 +964,70 @@ class OpenAIProviderPool:
             attempts=attempts,
         )
 
+    async def async_chat_json(self, messages):
+        """Use shared routing/capacity with cancellable HTTP, without thread waiters."""
+        if self._spend_ledger is not None or any(s.spec.transport != 'chat_completions' for s in self._states):
+            raise ValueError('retry races require ordinary API providers without synchronous spend accounting')
+        attempts, excluded = [], set()
+        for _ in range(min(len(self._states), self.config.max_failovers + 1)):
+            while (state := self._acquire(excluded, wait=False)) is None:
+                await asyncio.sleep(.05)
+            started = self._clock()
+            execution = dict(provider=state.spec.name, base_url=state.spec.base_url, requested_model=state.spec.model)
+            try:
+                interval = float((state.spec.request_extra_body or {}).get('min_request_interval_ms') or 0) / 1000
+                if interval:
+                    with self._dispatch_lock:
+                        dispatch = max(self._clock(), self._next_dispatch_at.get(state.spec.name, 0))
+                        self._next_dispatch_at[state.spec.name] = dispatch + interval
+                    await asyncio.sleep(max(0, dispatch - self._clock()))
+                started = self._clock()
+                response = await asyncio.wait_for(state.client.async_chat_json(messages),
+                    timeout=state.spec.timeout_s or getattr(state.client, 'timeout_s', None))
+                _validate_provider_response(state.spec, response)
+            except asyncio.CancelledError:
+                with self._condition:
+                    state.inflight -= 1
+                    state.cancelled += 1
+                    self._condition.notify_all()
+                raise
+            except Exception as exc:
+                latency = max(0, self._clock() - started)
+                circuit_failure = _is_transport_or_provider_failure(exc)
+                self._release_failure(state, latency_s=latency, circuit_failure=circuit_failure)
+                attempts.append(dict(execution, status='error', latency_seconds=latency,
+                    error_type=type(exc).__name__, error=str(exc)[:500], circuit_failure=circuit_failure))
+                excluded.add(state.spec.name)
+                continue
+            latency = max(0, self._clock() - started)
+            self._release_success(state, latency_s=latency)
+            execution.update(status='ok', latency_seconds=latency, served_model=str(response.get('model') or ''),
+                request_id=str(response.get('id') or ''), upstream_provider=response.get('provider'))
+            attempts.append(execution)
+            response.update(execution_provider=execution, execution_provider_attempts=attempts)
+            return response
+        raise ProviderPoolExhausted('all attempted providers failed', attempts=attempts)
+
+    async def aclose(self):
+        for state in self._states:
+            await state.client.aclose()
+
+    @property
+    def supports_batch_prefetch(self):
+        return len(self._states) == 1 and self._states[0].spec.transport == "openrouter_batch"
+
+    def prefetch_json(self, messages):
+        if not self.supports_batch_prefetch:
+            raise ValueError("prefetch requires a single Batch provider")
+        self._states[0].client.prefetch_json(messages)
+
     def close(self) -> None:
         """Close transports after all in-flight workers have finished."""
         for state in self._states:
-            transport = getattr(state.client, 'client', None)
-            if transport is not None:
+            close = getattr(state.client, 'close', None)
+            if close is not None:
+                close()
+            elif (transport := getattr(state.client, 'client', None)) is not None:
                 transport.close()
 
     def snapshot(self) -> dict[str, Any]:
@@ -972,6 +1038,7 @@ class OpenAIProviderPool:
                     **state.spec.public_dict(),
                     "inflight": state.inflight,
                     "completed": state.completed,
+                    "cancelled": state.cancelled,
                     "failures": state.failures,
                     "consecutive_failures": state.consecutive_failures,
                     "circuit_open": state.circuit_open_until > now,
@@ -992,7 +1059,7 @@ class OpenAIProviderPool:
             state.inflight -= 1
             self._condition.notify_all()
 
-    def _acquire(self, excluded: set[str]) -> _ProviderState:
+    def _acquire(self, excluded: set[str], *, wait: bool = True) -> _ProviderState | None:
         with self._condition:
             while True:
                 now = self._clock()
@@ -1023,6 +1090,8 @@ class OpenAIProviderPool:
                         "no untried provider remains",
                         attempts=[],
                     )
+                if not wait:
+                    return None
                 reopen_delays = [
                     state.circuit_open_until - now
                     for state in remaining
@@ -1058,6 +1127,29 @@ class OpenAIProviderPool:
             alpha = self.config.latency_ewma_alpha
             state.latency_ewma_s = alpha * latency_s + (1 - alpha) * state.latency_ewma_s
             self._condition.notify_all()
+
+
+def _validate_provider_response(spec, response):
+    controls = dict(spec.request_extra_body or {})
+    allowed_models = set(controls.get("allowed_served_models") or [])
+    served_model = str(response.get("model") or "")
+    if allowed_models and served_model not in allowed_models:
+        raise ValueError(
+            f"provider {spec.name!r} served unexpected model "
+            f"{served_model!r}"
+        )
+    expected_provider = controls.get("expected_upstream_provider")
+    if expected_provider and response.get("provider") != expected_provider:
+        raise ValueError(
+            f"provider {spec.name!r} returned upstream "
+            f"{response.get('provider')!r}"
+        )
+    expected_tier = controls.get("expected_service_tier")
+    if expected_tier and response.get("service_tier") != expected_tier:
+        raise ValueError(
+            f"provider {spec.name!r} returned service tier "
+            f"{response.get('service_tier')!r}"
+        )
 
 
 def _routing_score(state: _ProviderState) -> tuple[float, int, str]:

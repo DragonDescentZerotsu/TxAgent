@@ -37,6 +37,7 @@ class OpenAICompatibleClient:
         response_format: Mapping[str, Any] | None = None,
         openai_client: Any | None = None,
         token_limit_parameter: str | None = None,
+        async_max_connections: int | None = None,
     ):
         if transport_max_retries < 0:
             raise ValueError("transport_max_retries must be non-negative")
@@ -49,6 +50,9 @@ class OpenAICompatibleClient:
             timeout_s=timeout_s,
             max_retries=transport_max_retries,
         )[0]
+        self._async_client = None
+        self.async_max_connections = async_max_connections
+        self.timeout_s = timeout_s
         self.model = model
         self.max_tokens = max_tokens
         self.temperature = temperature
@@ -77,6 +81,9 @@ class OpenAICompatibleClient:
         if reasoning_grammar is not None:
             raise ValueError('reasoning grammar requires tokenized completion')
         response = self._create_completion(messages, max_tokens=max_tokens)
+        return self._json_response(response, messages)
+
+    def _json_response(self, response, messages):
         message = response.choices[0].message
         content = message.content or "{}"
         metadata = (getattr(response, "openrouter_metadata", None)
@@ -99,6 +106,26 @@ class OpenAICompatibleClient:
             "provider": selected[0].get("provider") if len(selected) == 1 else getattr(response, "provider", None),
             "service_tier": getattr(response, "service_tier", None),
         }
+
+    async def async_chat_json(self, messages):
+        from predict.api_client.transport import async_openai_compatible_client
+        if self._async_client is None:
+            self._async_client = async_openai_compatible_client(
+                api_key=self.client.api_key, base_url=str(self.client.base_url),
+                timeout_s=self.timeout_s, max_retries=self.client.max_retries,
+                max_connections=self.async_max_connections)[0]
+        response = await self._async_client.chat.completions.create(**self._completion_kwargs(messages))
+        if not response.choices:
+            raise ValueError('provider returned no completion choices')
+        return self._json_response(response, messages)
+
+    async def aclose(self):
+        if self._async_client is not None:
+            await self._async_client.close()
+        self.close()
+
+    def close(self):
+        self.client.close()
 
     def _tokenized_completion_json(
         self,
@@ -291,7 +318,7 @@ class OpenAICompatibleClient:
             "id": response.id or "",
         }
 
-    def _create_completion(
+    def _completion_kwargs(
         self,
         messages: list[Any],
         *,
@@ -337,6 +364,11 @@ class OpenAICompatibleClient:
             kwargs["tools"] = tools
         if tool_choice is not None:
             kwargs["tool_choice"] = tool_choice
+        return kwargs
+
+    def _create_completion(self, messages, *, tools=None, tool_choice=None, max_tokens=None):
+        kwargs = self._completion_kwargs(messages, tools=tools, tool_choice=tool_choice, max_tokens=max_tokens)
+        token_parameter = "max_completion_tokens" if "max_completion_tokens" in kwargs else "max_tokens"
         try:
             response = self.client.chat.completions.create(**kwargs)
         except Exception as exc:

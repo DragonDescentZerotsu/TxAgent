@@ -275,6 +275,21 @@ def test_batch_execution_freezes_generation_cohort_prior_and_resume(tmp_path, mo
     with pytest.raises(ValueError, match='prior or evaluation'):
         runtime.execute_batch(target, None, None, 1)
     assert len(builds) == expected_builds
+    write_json_atomic(directory/'evaluation.json', {'label': 1})
+    (directory/'output.json').unlink()
+    retried = []
+    def transient(messages):
+        retried.append(messages)
+        if len(retried) == 1:
+            raise pool.ProviderPoolExhausted('temporary failure', attempts=[{'status': 'error'}])
+        return deepcopy(response['llm'])
+    monkeypatch.setattr(pool, 'build_provider_pool', lambda *a, **k: SimpleNamespace(chat_json=transient, close=lambda: None))
+    assert runtime.execute_batch(target, None, None, 1, max_stage_requeues=1) == 0
+    assert retried == [prepared['messages'], prepared['messages']]
+    assert len(list((directory/'stage_requeues').glob('*.json'))) == 1
+    before = (directory/'output.json').read_bytes()
+    assert runtime.execute_batch(target, None, None, 1, max_stage_requeues=1) == 0
+    assert len(retried) == 2 and (directory/'output.json').read_bytes() == before
 
 
 def test_tdc_train_merge_filters_heldout_before_card_ranking():

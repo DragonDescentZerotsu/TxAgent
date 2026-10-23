@@ -12,6 +12,11 @@ from typing import Any
 from data.processing.paths import resolve_legacy_path
 
 
+def canonical_json_bytes(value: Any) -> bytes:
+    """Stable serialization for request hashes and Batch byte limits."""
+    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+
+
 def sha256_file(path: Path) -> str:
     """Return a streaming SHA-256 digest without loading the file at once."""
     digest = hashlib.sha256()

@@ -68,5 +68,7 @@ for commands and verification limits. The same entry point supports
 Preparation retains frozen queries/priors/configuration and applies the approved
 retrieval rules; it does not rebuild train/valid/test splits. A portable execution
 bundle does not include the large indexes needed for a fresh candidate rebuild.
-Batch and parallel retry races remain pending integration. The FINAL defaults are
-not the paper baseline recipe.
+The same execution command accepts a single OpenRouter Batch provider with an
+explicit journal, or ordinary API retry races and bounded stage requeues.
+See the prompt guide for configuration, recovery and accounting boundaries.
+The FINAL defaults are not the paper baseline recipe.

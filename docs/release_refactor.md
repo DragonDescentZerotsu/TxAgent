@@ -339,6 +339,52 @@ RDKit、torch 或 duckdb。两套 benchmark × 六任务的 12 个 Direct50+Indi
 独立 prior 生成和完整原始数据分发仍需继续对齐。原实验入口及冻结结果未删除。
 已重新 fetch 远端，main 为 `0ab66e37`，Joseph 仍为整合基点 `73bddf2e`；本轮未合并或推送。
 
+## 第十批：Batch、可取消竞速与阶段恢复（2026-10-23）
+
+将本地 main 已有的 Batch journal 和 first-valid 竞速实现迁入公共
+`predict/api_client/batch.py` 与 `retry.py`，没有复制旧 family/progressive runner。
+消息参数构造、回复解析和 provider 身份校验由普通 API、Batch 和异步请求共用；
+同一个 `--run-paper-baseline` 入口选择 transport 和执行控制，冻结 prompt、模型、
+reasoning、token budget 与输出 schema 不变。108 套真实原配置的请求字段及数值仍与
+原客户端完全一致，1,200 组预算选择差分仍通过。
+
+Batch 支持先提交独立请求，再等待及按 custom ID 回收；保留提交前落盘、独占锁、
+不确定 POST 禁止自动重提、轮询失败不重提、显式 429 等待重排队和重启恢复。
+修复确认终态失败的请求在重启时反复读出同一失败、无法重新提交的问题；成功兄弟
+请求继续复用。停止本地客户端不取消远端付费任务。当前只接受单个 Batch provider、
+无自动 failover、无同步费用账本；Batch 使用 race width 1。阶段重排队显式配置、默认
+关闭，不能覆盖不确定提交的停止保护。若四次格式修复均失败，重启可能先回放这些
+旧回复，可用 `--max-stage-requeues 1` 允许回放后的新阶段。未知 transport 继续拒绝，
+不静默降级到普通 API。
+
+普通 API 的 `--retry-race-width`、`--max-stage-requeues`、`--retry-delay-s` 已接入。
+默认分别为 1、0、0；首次请求宽度 1，后续失败/格式修复可竞速，通过完整原生校验的
+首个回复获胜。竞速路径使用真正的异步 HTTP 取消，所有落后连接清理后才返回。
+并发仍受公共 provider 和总任务容量约束。显式阶段重排队只处理未成功 query；已完成
+输出保持不变，失败、竞速和阶段恢复记录落在原 query 目录。同步费用账本与竞速组合
+会在调用前拒绝，没有绕过原费用限制。
+
+验收：153 项针对性测试通过，包含迁入的 Batch/竞速测试和新增终态失败恢复检查。
+独立最小环境中，12 组实际准备输入（两 benchmark × 六任务）的 Batch 本地协议模拟
+均通过错误格式修复、checkpoint 恢复及删除本地预测后的 journal 恢复；各两次模拟
+提交，恢复新增提交为 0。另用真实本机 HTTP 验证两组 CLI 的格式修复/503 重排队，
+共 8 次请求、4 条落后连接确认关闭；恢复新增请求为 0。旧目录读取和外网连接均被
+测试守卫禁止，未提交真实付费 Batch，也没有重新产生模型性能结果。
+另用真实准备输入验证四次格式失败后的显式 Batch 阶段重排队：第 5 次模拟提交成功，
+后续 checkpoint/journal 恢复均不再提交。
+
+完整输入清点：当前 12 个任务/benchmark 配置引用 36 个不同文件，均存在；其中
+12 个检索索引共约 38.2 GiB。本轮只做路径与大小清点，hash 沿用原 manifest，未重复
+扫描大文件或重建索引。MiniMol prepared 的 data/graphs 已按相对目录读取；RASAR
+特征的 `inputs/data_dir`、RF 成员路径及部分训练 checkpoint 记录仍需做搬移适配，
+不能批量替换冻结 manifest 中的字符串。完整 ML 输入分发尚未验收。
+
+本地回执、模拟日志、源码与依赖边界记录位于
+`outputs/analysis/release_refactor/20261023_transports/`；命令统一见
+[论文 baseline 模式](../predict/prompts/README.md#frozen-paper-baseline)。代码增加主要
+来自迁入旧功能及连接现有公共客户端，不是重复创建任务或模型专用执行入口。
+Direct-3、独立 prior 生成、完整输入分发与匿名发布审核仍未完成；当前仍不合并 main。
+
 ## 验证与后续验收
 
 第二批身份规则验证（2026-10-22；与上面的第三批性能核验分开）：
@@ -365,8 +411,8 @@ Joseph 的命名缓存、源字段投影和完整 prompt 仍须单独对齐。
    后续独立环境复现沿用相同配置，不重复新增 task-specific runner。
 2. 已准备 LLM 执行已支持独立搬移与最小环境；继续整理完整检索/ML 输入分发及匿名审核，
    不能把小输入包通过当成全库独立复现或公开发布验收。
-3. LLM 候选/预算/冻结 prior 和普通 API 路径已接入；继续做全 cohort 差异审计与在线性能验收，
-   接齐 Batch、并行竞速重试、自动重排队及匹配 Direct-3；保留原来源和必要运行能力。
+3. LLM 候选/预算/冻结 prior、普通 API、Batch 和竞速/重排队路径已接入并离线验收；
+   继续做全 cohort 差异审计、匹配 Direct-3 和独立 prior 生成，保留原来源和必要能力。
 4. 主比较分数已导出并验证；继续接齐共享导出器、绘图入口和完整实验登记，
    核对匿名发布文件；冻结结果保持原协议。
 5. 完整验收后正常合并到 main，保留双方历史；在此之前不强制替换 main。

@@ -124,12 +124,39 @@ output fields. Successful saved outputs are resumed without a model call;
 failed outputs can be retried by rerunning the command. Summary coverage and
 metrics distinguish failed queries. A transport exception aborts the command;
 completed query files remain resumable.
-The provider pool explicitly rejects Batch/unknown transport configurations;
-unsupported transports never silently fall back to ordinary API calls.
+Ordinary API retries are explicit execution controls, separate from the frozen
+scientific inputs. For example, add `--parallelism 128 --retry-race-width 6
+--max-stage-requeues 2 --retry-delay-s 1`. The first call uses width 1; a format
+repair, failed stage or interrupted failed query can use the configured width.
+The first response passing the complete native validator wins; losing HTTP
+requests are cancelled and awaited. Race and requeue receipts stay with the query.
+Defaults are width 1 and zero stage requeues. Successful queries are never rerun.
+Races cannot use the synchronous spend ledger; that combination fails before calls.
 
-This is the ordinary API path for restored paper inputs. Batch submission,
-first-valid parallel retry races, automatic stage requeues, matched Direct-3 and
-standalone prior generation are not yet integrated into this mode. It does not
+OpenRouter Batch uses the same execution command and a provider configuration
+with `max_failovers: 0`, one provider with `transport: "openrouter_batch"`, and
+optional `batch_options` (`max_requests`, `max_bytes`, `flush_seconds`,
+`poll_seconds`, `submit_interval_seconds`). The provider must use
+`https://openrouter.ai/api/v1` and the exact frozen model ID, without `:batch`.
+Generation settings still come from the frozen manifest. Batch requires race
+width 1, no automatic POST retries and no synchronous spend
+ledger. Unsupported transports and mixed/failover Batch pools are rejected.
+Stage requeues remain opt-in and bounded. If all four native-format attempts were
+invalid, a restart can first recover those same replies; an explicit
+`--max-stage-requeues 1` allows another stage after that replay. An uncertain
+submission still stops the journal; requeues never override that protection.
+
+Batch requests are queued before waiting for results. `batch_transport/` holds
+the durable journal: completed responses and in-flight jobs recover without
+resubmission, and confirmed terminal failures can be retried while keeping
+successful siblings. An uncertain POST remains `submitting` and blocks restart
+until reconciled; never delete that journal to force a retry. Stopping the local
+client does not cancel paid remote jobs. Move the entire run, including its
+journal, to resume elsewhere; exporting a fresh input bundle intentionally does
+not copy jobs or predictions. The migrated Batch protocol and retry paths have
+offline acceptance coverage, not a new paid endpoint-availability check.
+
+Matched Direct-3 and standalone prior generation are not yet integrated into this mode. It does not
 replace the default FINAL scheduler or its named-cache protocol. Offline transport
 and recovery tests are not a fresh model-performance replication. Candidate
 rebuilding still requires the original full retrieval inputs; the portable bundle

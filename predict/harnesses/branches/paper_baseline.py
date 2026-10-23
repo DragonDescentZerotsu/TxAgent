@@ -4,13 +4,15 @@ from copy import deepcopy
 import argparse
 import fcntl
 import json
+import math
+import time
 import shutil
 from tempfile import TemporaryDirectory
 from pathlib import Path
 
 from predict.prompts import paper_baseline as prompt
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic, write_jsonl_atomic
-from predict.utils.response import call_with_json_validation, structured_response_is_valid
+from predict.utils.response import call_with_json_validation, response_validation_errors, structured_response_is_valid
 
 REVISION = 'paper_baseline_retrieval.v1'
 
@@ -165,9 +167,14 @@ def run(argv):
     parser.add_argument('--provider-config', type=Path)
     parser.add_argument('--env-file', type=Path)
     parser.add_argument('--parallelism', type=int, default=1)
+    parser.add_argument('--retry-race-width', type=int, default=1)
+    parser.add_argument('--max-stage-requeues', type=int, default=0)
+    parser.add_argument('--retry-delay-s', type=float, default=0)
     args = parser.parse_args(argv)
     if sum(bool(value) for value in (args.prepare_paper_baseline, args.run_paper_baseline, args.bundle_paper_baseline)) != 1:
         parser.error('choose preparation, bundling or execution')
+    if not args.run_paper_baseline and (args.retry_race_width != 1 or args.max_stage_requeues or args.retry_delay_s):
+        parser.error('retry controls require --run-paper-baseline')
     if args.bundle_paper_baseline:
         if (not args.run_name or Path(args.run_name).name != args.run_name or args.run_name in ('.', '..')
                 or args.source_root or args.query_indices is not None or args.provider_config or args.env_file):
@@ -200,7 +207,8 @@ def run(argv):
         if args.prepare_paper_baseline:
             print(json.dumps(prepare(args.source_root, args.prepare_paper_baseline, target, args.query_indices), indent=2))
             return 0
-        return execute_batch(target, args.provider_config, args.env_file, args.parallelism)
+        return execute_batch(target, args.provider_config, args.env_file, args.parallelism,
+            retry_race_width=args.retry_race_width, max_stage_requeues=args.max_stage_requeues, retry_delay_s=args.retry_delay_s)
 
 
 def validate_batch(root):
@@ -296,14 +304,21 @@ def bundle(root, target):
         stage.rename(target)
 
 
-def execute_batch(root, provider_config, env_file, parallelism):
-    """Ordinary API execution only; generation settings are read from the frozen manifest."""
-    from predict.api_client.pool import load_provider_pool_config, build_provider_pool, validate_parallelism
+def execute_batch(root, provider_config, env_file, parallelism, *, retry_race_width=1, max_stage_requeues=0, retry_delay_s=0):
+    """Execute frozen generation settings through the selected transport and bounded recovery."""
+    from predict.api_client.pool import load_provider_pool_config, build_provider_pool, validate_parallelism, ProviderPoolExhausted
     from sklearn.metrics import accuracy_score, f1_score
 
     manifest, queries = validate_batch(root)
     config = load_provider_pool_config(provider_config)
     validate_parallelism(config, parallelism)
+    if not 1 <= retry_race_width <= parallelism or max_stage_requeues < 0 or not math.isfinite(retry_delay_s) or retry_delay_s < 0:
+        raise ValueError('invalid retry width, requeue count or delay')
+    is_batch = config.providers[0].transport == 'openrouter_batch'
+    if is_batch and retry_race_width != 1:
+        raise ValueError('Batch requires retry-race-width 1; paid remote jobs cannot be raced')
+    if retry_race_width > 1 and config.spend_budget is not None:
+        raise ValueError('retry races cannot use the synchronous spend ledger')
     if any(p.model != manifest['model'] or dict(p.request_extra_body or {}) != manifest['request_extra_body'] for p in config.providers):
         raise ValueError('provider model or extra generation parameters differ from the frozen experiment')
     generation = manifest['generation']
@@ -312,13 +327,62 @@ def execute_batch(root, provider_config, env_file, parallelism):
     client = build_provider_pool(config, env_file=env_file, timeout_s=240, max_tokens=manifest['max_tokens'],
         temperature=generation['temperature'], reasoning_effort='' if generation['reasoning_effort'] == 'omitted' else generation['reasoning_effort'],
         enable_thinking=False, tool_service_url='', enable_group_tools=False, max_tool_rounds=0, transport_max_retries=0,
-        token_limit_parameter='max_tokens')
+        token_limit_parameter='max_tokens', batch_dir=root/'batch_transport')
+    race = None
     try:
+        if retry_race_width > 1:
+            from predict.api_client.retry import ParallelRetryClient
+            race = ParallelRetryClient(client, parallelism=parallelism,
+                task_limits={task: parallelism for task in manifest['migration']['query_indices']})
         write_json_atomic(root/'execution_provider.json', config.public_dict())
+        write_json_atomic(root/'execution_options.json', dict(retry_race_width=retry_race_width,
+            max_stage_requeues=max_stage_requeues, retry_delay_s=retry_delay_s, parallelism=parallelism))
+        if is_batch:
+            for _, _, directory in queries:
+                saved = json.loads((directory/'output.json').read_text()) if (directory/'output.json').exists() else {}
+                if saved.get('status') != 'ok':
+                    client.prefetch_json(json.loads((directory/'prepared.json').read_text())['messages'])
+        def run_query(query):
+            task, _, directory = query
+            prepared = json.loads((directory/'prepared.json').read_text())
+            validation = prompt.validation_kwargs(prepared['prompt_payload'], prepared['card_alias_map'])
+            calls = 0
+            retry_pending = (directory/'output.json').exists()
+
+            def call(messages):
+                nonlocal calls
+                calls += 1
+                if race is None:
+                    return client.chat_json(messages)
+                return race.chat_validated(messages, task=task,
+                    width=retry_race_width if calls > 1 or retry_pending else 1,
+                    validate=lambda response: response_validation_errors(response, **validation),
+                    receipt_path=directory/'retry_races'/f'{time.time_ns()}.json')
+
+            for attempt in range(max_stage_requeues + 1):
+                try:
+                    result = execute_query(directory, manifest, call)
+                except ProviderPoolExhausted as exc:
+                    result = dict(status='error', model_called=True, request_hash=prepared['request_hash'],
+                        llm={'execution_provider_attempts': exc.attempts}, card_alias_map=prepared['card_alias_map'])
+                    write_json_atomic(directory/'output.json', result)
+                    if not max_stage_requeues:
+                        raise
+                if result['status'] == 'ok' or attempt == max_stage_requeues:
+                    return result
+                write_json_atomic(directory/'stage_requeues'/f'{time.time_ns()}.json',
+                    dict(attempt=attempt+1, result=result, delay_seconds=retry_delay_s))
+                time.sleep(retry_delay_s)
+
         with ThreadPoolExecutor(max_workers=parallelism) as workers:
-            results = list(workers.map(lambda q: execute_query(q[2], manifest, client.chat_json), queries))
+            try:
+                results = list(workers.map(run_query, queries))
+            except BaseException:
+                if config.providers[0].transport == 'openrouter_batch':
+                    client.close()  # Release local waiters; paid remote jobs remain in the journal.
+                raise
     finally:
-        client.close()
+        race.close() if race is not None else client.close()
     failures = 0
     for task in manifest['migration']['query_indices']:
         rows = []

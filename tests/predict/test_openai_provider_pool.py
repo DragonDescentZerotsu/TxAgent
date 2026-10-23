@@ -50,9 +50,9 @@ def _spec(name, capacity, *, priority=0):
     )
 
 
-@pytest.mark.parametrize("options", [{"transport": "openrouter_batch"}, {"transport": "unknown"}, {"batch_options": {"window": "24h"}}])
+@pytest.mark.parametrize("options", [{"transport": "unknown"}, {"batch_options": {"window": "24h"}}])
 def test_unsupported_batch_transport_cannot_silently_become_ordinary_api(options):
-    with pytest.raises(ValueError, match="chat_completions only"):
+    with pytest.raises(ValueError, match="transport"):
         ProviderSpec.from_mapping({**_spec("test", 1).public_dict(), **options})
 
 

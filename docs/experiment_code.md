@@ -48,6 +48,7 @@ release merely because a candidate finished. This guide and the capability READM
 | Query prediction | `predict/harnesses/branches/` | Frozen query/cache/selection, prompt and prior → requests, resumable predictions and traces |
 | Paper LLM baseline | `predict/harnesses/branches/paper_baseline.py`, `predict/prompts/paper_baseline.py` | Restored paper inputs → new candidate selection, portable prepared-input bundles, frozen query/prior/messages, shared API execution, resumable native predictions and offline verification |
 | Paper record controls | `predict/retrieval/paper_baseline.py`, `optimization/selection/record_budget.py` | Frozen source index / TDC train labels → shared identity filtering and deterministic record-budget selection |
+| Model transport and retries | `predict/api_client/{client,pool,batch,retry}.py` | Shared request/response handling, durable Batch journals and cancellable first-valid retry races; paper execution supplies native validators and bounded stage requeues |
 | Parent/scaffold exclusions | `predict/retrieval/policies.py`, `task_identity.py` | Molecular identities and declared task policy → candidate eligibility; never rewrites benchmark splits |
 | Morgan / embedding KNN | `predict/baselines/structure_knn/run.py`, `minimol/run_embedding_knn.py` | Frozen train reference and query splits → neighbors, scores and decisions |
 | MiniMol head | `predict/baselines/minimol/run_bioavailability_ma.py` | Frozen embeddings and train/valid/test → validation-selected ensemble and predictions for all six tasks |
