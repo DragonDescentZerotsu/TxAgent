@@ -187,7 +187,9 @@ journal, to resume elsewhere; exporting a fresh input bundle intentionally does
 not copy jobs or predictions. The migrated Batch protocol and retry paths have
 offline acceptance coverage, not a new paid endpoint-availability check.
 
-Matched Direct-3 and standalone prior generation are not yet integrated into this mode. It does not
+Historical matched Direct-3 is outside the current manuscript migration scope.
+The paper's k=3 ML KNN and three-neighbor RASAR remain separate supported capabilities.
+Standalone prior generation remains to be integrated where required for paper reproduction. This mode does not
 replace the default FINAL scheduler or its named-cache protocol. Offline transport
 and recovery tests are not a fresh model-performance replication. Candidate
 rebuilding still requires the original full retrieval inputs; the portable bundle

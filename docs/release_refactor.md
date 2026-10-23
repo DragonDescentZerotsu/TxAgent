@@ -7,13 +7,42 @@
 ## 整合原则
 
 - 采用 Joseph 的 `predict/`、`data/processing/`、`optimization/`、`analysis/`
-  组织代码；功能、参数和科学定义以已确认的本地版本为准。
+  组织代码；从 main 迁入的功能、参数和科学定义以已确认的本地版本为准。
+  Joseph 的其他功能保持原行为，仅对双方已明确讨论并批准的功能统一规则。
 - 同一功能只保留一份实现。已有同名函数必须核对行为，不能只改 import 就认定等价。
 - 冻结的 train/valid/test、标签、原始结构、历史预测和分数保持不变。新的检索规则
   使用新的准备结果，不能将旧预测重新标成新规则的结果。
 - 确定性的输入、特征、候选和请求应逐项一致；随机训练或推理再比较合理的性能波动。
   已批准的检索规则修复单独记录预期差异，不以旧预测逐条一致为目标。
 - 结果数值继续从现有登记和汇总来源读取，不在本文另维护一份分数表。
+
+## 发布验收范围（2026-10-23 用户确认）
+
+只要求复现当前论文正文、附录、图表及其必要依赖，不要求迁移或重新验收全部历史实验。
+每项后续工作先对应论文中的具体内容和既有结果来源，再决定是否接入。Joseph 已有的
+其他功能保持兼容；不为了扩大历史覆盖而新增入口，也不因不在论文中就直接删除它们。
+
+| 论文内容 | 必须保留的能力与验收依据 |
+| --- | --- |
+| 主结果图、均值图及完整 naive LLM 附录 | 三种骨干、两个 benchmark、None / Direct / Direct+Indirect；108 个任务分数，保留原 prompt、prior、预算、标签与输出格式 |
+| 完整 ML 附录 | 三种训练池的 198 cells；Morgan/MiniMol KNN、MiniMol head/微调/indirect、RASAR 与 RASAR+indirect，以及各条件策略 |
+| Ours 完整结果与组件消融 | 保留 Joseph 的推理、选择、transfer、informativeness 和 coverage 功能；逐项绑定论文结果来源，不能把用户提供的分数当成原始预测已审核 |
+| 数据与方法附录 | 固定 benchmark/split/标签、所需证据与模型依赖、训练配置和已批准的身份规则；不因代码整理重建或改写冻结实验 |
+| 图表与结果导出 | 继续使用唯一分数来源及共享导出/绘图入口，避免手工维护第二份分数 |
+
+已实查当前论文 `sections/4_setup.tex`、`sections/5_results.tex`、
+`sections/appendix_baselines.tex`、`sections/appendix_llm.tex` 和
+`sections/appendix_ours.tex`，并检查主 LaTeX 文件的附录引用：历史 **Direct-3 LLM**
+对照未被采用，不再列为迁移或发布前置条件。论文中的 **k=3 Morgan/MiniMol KNN**
+和 **RASAR 的三个直接邻居特征**属于另外的 ML 功能，仍在验收范围。
+历史预算扫描、旧 progressive/Joint 等实验也不能仅因存在于旧仓库就自动纳入。
+
+本轮 Direct-3 接入尚未提交，已全部撤回；离线核验进程已停止，新增临时准备目录已
+清理，原历史结果未动、付费调用为零。后文各批次是当时的记录；其中曾列出的
+Direct-3 待办由本范围决定取代。独立 prior 等剩余功能也只接齐论文复现确实需要的部分。
+
+原有待核对项继续保留：论文文字写 Direct 10 个分子，当前实际 baseline 配置为
+Direct 50 条 records。本文不改写论文或冻结配置，也不以迁移完成代替该差异的核对。
 
 ## 第一批：MiniMol 微调、indirect 和 RASAR
 
@@ -75,7 +104,7 @@ keys 一致，2,700 次条件选择对照一致。覆盖范围为当前六任务
 | MiniMol 主任务微调 / indirect | 原主训练池、辅助池及权重候选；checkpoint/权重用 val BCE，阈值用 val Macro-F1；辅助池排除完整 valid/test parent/connectivity union，允许 scaffold 重合 | `predict.baselines.minimol.run_multitask`；21 套来源输入重建一致，36 cells 模型重放标签/F1 一致；完整候选/五种子重训仍未全量执行 |
 | RASAR / RASAR+indirect | 6 / 6+2B 特征；两种邻居策略；六个 RF 候选、seeds 1–5、每 seed 100 trees；val BCE 选参数、val Macro-F1 选阈值 | `predict.baselines.retrieval_forest`；21 套特征重建与 72 cells 重放通过；两批累计 6 cells / 180 seed fits 重训通过 |
 | DeepSeek / Luna / Gemini naive LLM | 原模型、reasoning、prior、prompt；None / Direct 50 / Direct 50 + Indirect 50；两池均 Neighbor-fill；每设置一次 full-flat | 冻结协议、候选准备和普通 API 执行已接入专用模式；仍待全 cohort / 在线复现与 Batch、并行竞速恢复验收，不能用默认 prompt/缓存替代 |
-| 预算扫描、Direct-3 等对照 | 各自记录的预算、候选填充、模型与输入；Direct-3 保留固定 Morgan 三邻居，不套用其他检索过滤 | 复用共享入口，具体配置和结果登记尚待迁入 |
+| 历史预算扫描、Direct-3 等对照 | 保留原记录；仅当当前论文实际引用时纳入 | Direct-3 LLM 不在当前论文中，不作为迁移或发布前置条件 |
 
 ML 的三种训练池为 conditioned、TDC-only、TDC + Starling。当前统一 ML Appendix 为
 198 cells；不得只迁第一批模块后就把其他方法标成完成。
@@ -484,7 +513,7 @@ Joseph 的命名缓存、源字段投影和完整 prompt 仍须单独对齐。
 2. 已准备 LLM、RASAR 及完整冻结检索索引的映射恢复已通过上述抽样搬移验收；继续整理全量分发及匿名审核，
    不能把小输入包通过当成全库独立复现或公开发布验收。
 3. LLM 候选/预算/冻结 prior、普通 API、Batch 和竞速/重排队路径已接入并离线验收；
-   继续做全 cohort 差异审计、匹配 Direct-3 和独立 prior 生成，保留原来源和必要能力。
+   仅对论文采用的设置继续检索差异审计，并接齐必要的独立 prior；Direct-3 LLM 不再迁移。
 4. 主比较分数已导出并验证；继续接齐共享导出器、绘图入口和完整实验登记，
    核对匿名发布文件；冻结结果保持原协议。
 5. 完整验收后正常合并到 main，保留双方历史；在此之前不强制替换 main。
