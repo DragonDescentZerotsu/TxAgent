@@ -38,9 +38,9 @@ entrypoints. The [integration record](release_refactor.md) maps these to the
 original configurations and distinguishes replay, retraining and pending work.
 The [offline LLM verifier](../predict/prompts/README.md#frozen-paper-baseline)
 checks frozen requests and responses through the migrated protocol adapter.
-The maintained table exporter below derives the appendices and exact figure values.
-Figure rendering/composition is still pending; do not manually edit the frozen
-score tables or treat a model's current defaults as the paper recipe.
+The maintained exporter below derives the appendices, figure values and the three
+current manuscript PDFs. Do not manually edit frozen score tables or treat a
+model's current defaults as the paper recipe.
 
 Budget scans, Direct-3 controls and later scaffold-disjoint indirect follow-ups
 remain separate experiments in the preserved source registry. They are outside
@@ -62,7 +62,22 @@ duplicate cells, mixed ML training pools and modified inputs fail validation.
 [Display rules](paper/display.json) preserve the original group membership and
 backbone bindings; each ML winner and tie is recorded. Full-precision baseline
 and Ours values are unchanged. This is deterministic table derivation, not an
-additional prediction audit, and it does not yet render the manuscript PDFs.
+additional prediction audit.
+
+Add `--figures` to the same command to render `main_results_starling.pdf`,
+`main_results_tdc.pdf` and `mean_results.pdf`. Run from the repository root.
+Rendering requires Matplotlib (verified with 3.10.8) and `pdflatex` with the
+`standalone` and `graphicx` packages. CSV-only export requires neither dependency.
+The two benchmark mean panels are retained in `conditioned/` and `tdc/` for
+composition; temporary TeX compilation files are automatically removed.
+The receipt records source/output hashes, renderer/template hashes and the
+Matplotlib version. The original colours, task order, ML pooling and mean
+composition are preserved. All three PDFs match the current manuscript pixel
+for pixel at a 2400-pixel render width in the verified environment; PDF metadata
+and binary hashes may differ. Font/library changes can affect rendering elsewhere.
+The exporter only reads compact saved scores and does not need raw predictions,
+model weights, services or the original checkout. Historical horizontal/combined
+layouts and budget-scan plots are outside this maintained paper figure path.
 
 [Component ablations](paper/ablations.csv) contain the 30 task/condition values
 from Joseph's archived `gold_v1_ablation_test_20260925_v3.tsv`. The archive and

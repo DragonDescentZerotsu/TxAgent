@@ -1,0 +1,19 @@
+\documentclass[border=0pt]{standalone}
+\usepackage{graphicx}
+\begin{document}
+% Fixed 16 x 9 inch source panels: titles, one shared legend row,
+% one centered abbreviation row, then the two chart bodies.
+\vbox{\offinterlineskip
+\hbox{\includegraphics[width=16in,trim=0in 8.1in 0in 0in,clip]{conditioned/baseline_bars_mean.pdf}%
+\includegraphics[width=16in,trim=0in 8.1in 0in 0in,clip]{tdc/baseline_bars_mean.pdf}}
+\vskip .22in
+\hbox to 32in{\hfil
+\includegraphics[scale=1.25,trim=80bp 541bp 441bp 72bp,clip]{tdc/baseline_bars_mean.pdf}%
+\hskip .4in
+\includegraphics[scale=1.25,trim=80bp 505.36bp 47bp 107.64bp,clip]{tdc/baseline_bars_mean.pdf}%
+\hfil}
+\hbox to 32in{\hfil\includegraphics[scale=1.10,trim=74bp 464bp 260bp 148bp,clip]{tdc/baseline_bars_mean.pdf}\hfil}
+\vskip .40in
+\hbox{\includegraphics[width=16in,trim=0in 0in 0in 2.88in,clip]{conditioned/baseline_bars_mean.pdf}%
+\includegraphics[width=16in,trim=0in 0in 0in 2.88in,clip]{tdc/baseline_bars_mean.pdf}}}
+\end{document}

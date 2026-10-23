@@ -13,7 +13,7 @@
   "export_hashes": {
     "baselines.csv": "9f647da6081360f489af246142cdaca86ca7a26b67ec55e8c0dfcfb0f5cb9a8d",
     "ours_reported.json": "a1615fdbdb60c10522e383a3fe68c13613f26af4384b7d0b44914cbb50f7a7e2",
-    "display.json": "89d580c9b26f3859391d3f50bd6d565109909b69834781d5604abacf19bf20c8",
+    "display.json": "eb97f1a4065cf007a032e19fd9f0e1779468f401d21570f8ae116dfc1083b6fc",
     "ablations.csv": "c16dda3c4a0e7d70d1542568305955b79f713719aa4f37e8ce893ebfaa9e80b6"
   },
   "baseline_cells": {

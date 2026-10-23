@@ -30,7 +30,9 @@
           "finetuned"
         ],
         "label": "MM Direct",
-        "pool": "conditioned_train"
+        "pool": "conditioned_train",
+        "tick": "MM\nDirect",
+        "pool_label": "ML baselines"
       },
       {
         "method": "indirect",
@@ -38,7 +40,9 @@
           "indirect"
         ],
         "label": "MM + Indirect",
-        "pool": "conditioned_train"
+        "pool": "conditioned_train",
+        "tick": "MM\n+ Indirect",
+        "pool_label": "ML baselines"
       },
       {
         "method": "knn",
@@ -49,7 +53,9 @@
           "morgan_knn_condition"
         ],
         "label": "KNN",
-        "pool": "conditioned_train"
+        "pool": "conditioned_train",
+        "tick": "KNN",
+        "pool_label": "ML baselines"
       },
       {
         "method": "rasar",
@@ -58,7 +64,9 @@
           "rf_direct_condition"
         ],
         "label": "RASAR",
-        "pool": "conditioned_train"
+        "pool": "conditioned_train",
+        "tick": "RASAR",
+        "pool_label": "ML baselines"
       },
       {
         "method": "rasar_df",
@@ -67,9 +75,20 @@
           "rf_indirect_condition"
         ],
         "label": "RASAR+indirect",
-        "pool": "conditioned_train"
+        "pool": "conditioned_train",
+        "tick": "RASAR\n+indirect",
+        "pool_label": "ML baselines"
       }
-    ]
+    ],
+    "title": "Literature-derived benchmark",
+    "task_labels": {
+      "bbb_martins": "BBB",
+      "bioavailability_ma": "Bioavailability",
+      "skin_reaction": "Skin",
+      "ames": "Ames",
+      "dili": "DILI",
+      "carcinogens": "Carcinogens"
+    }
   },
   "tdc": {
     "curve_settings": {
@@ -102,7 +121,9 @@
           "tdc_only_finetuned"
         ],
         "label": "TDC: MM Direct",
-        "pool": "tdc_only"
+        "pool": "tdc_only",
+        "tick": "MM\nDirect",
+        "pool_label": "ML · TDC train"
       },
       {
         "method": "indirect",
@@ -110,7 +131,9 @@
           "tdc_only_indirect"
         ],
         "label": "TDC: MM + Indirect",
-        "pool": "tdc_only"
+        "pool": "tdc_only",
+        "tick": "MM\n+ Indirect",
+        "pool_label": "ML · TDC train"
       },
       {
         "method": "knn",
@@ -121,7 +144,9 @@
           "morgan_knn_condition"
         ],
         "label": "TDC: KNN",
-        "pool": "tdc_only"
+        "pool": "tdc_only",
+        "tick": "KNN",
+        "pool_label": "ML · TDC train"
       },
       {
         "method": "rasar",
@@ -130,7 +155,9 @@
           "rf_direct_condition"
         ],
         "label": "RASAR",
-        "pool": "tdc_only"
+        "pool": "tdc_only",
+        "tick": "RASAR",
+        "pool_label": "ML · TDC train"
       },
       {
         "method": "rasar_df",
@@ -139,7 +166,9 @@
           "rf_indirect_condition"
         ],
         "label": "RASAR+indirect",
-        "pool": "tdc_only"
+        "pool": "tdc_only",
+        "tick": "RASAR\n+indirect",
+        "pool_label": "ML · TDC train"
       },
       {
         "method": "mixed_mm_direct",
@@ -148,7 +177,9 @@
           "mixed_finetuned"
         ],
         "label": "TDC + Starling: MM Direct",
-        "pool": "mixed"
+        "pool": "mixed",
+        "tick": "MM\nDirect",
+        "pool_label": "ML · TDC + Starling"
       },
       {
         "method": "mixed_indirect",
@@ -156,7 +187,9 @@
           "mixed_indirect"
         ],
         "label": "TDC + Starling: MM + Indirect",
-        "pool": "mixed"
+        "pool": "mixed",
+        "tick": "MM\n+ Indirect",
+        "pool_label": "ML · TDC + Starling"
       },
       {
         "method": "mixed_knn",
@@ -167,7 +200,9 @@
           "D5"
         ],
         "label": "TDC + Starling: KNN",
-        "pool": "mixed"
+        "pool": "mixed",
+        "tick": "KNN",
+        "pool_label": "ML · TDC + Starling"
       },
       {
         "method": "mixed_rasar",
@@ -176,7 +211,9 @@
           "mixed_rf_direct_condition"
         ],
         "label": "RASAR",
-        "pool": "mixed"
+        "pool": "mixed",
+        "tick": "RASAR",
+        "pool_label": "ML · TDC + Starling"
       },
       {
         "method": "mixed_rasar_df",
@@ -185,8 +222,19 @@
           "mixed_rf_indirect_condition"
         ],
         "label": "RASAR+indirect",
-        "pool": "mixed"
+        "pool": "mixed",
+        "tick": "RASAR\n+indirect",
+        "pool_label": "ML · TDC + Starling"
       }
-    ]
+    ],
+    "title": "TDC benchmark",
+    "task_labels": {
+      "bbb_martins": "BBB_Martins",
+      "bioavailability_ma": "Bioavailability_Ma",
+      "skin_reaction": "Skin_Reaction",
+      "ames": "AMES",
+      "dili": "DILI",
+      "carcinogens": "Carcinogens_Lagunin"
+    }
   }
 }

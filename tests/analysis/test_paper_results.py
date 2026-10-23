@@ -53,3 +53,32 @@ def test_rejects_unbound_incomplete_or_misgrouped_results(tmp_path, change):
         (root/'sources.json').write_text(json.dumps(manifest))
     with pytest.raises(ValueError):
         build_tables(root)
+
+
+@pytest.mark.parametrize('benchmark,mean_only', [('conditioned', False), ('tdc', False),
+                                               ('conditioned', True), ('tdc', True)])
+def test_published_panels_plot_all_and_only_exported_scores(benchmark, mean_only):
+    matplotlib = pytest.importorskip('matplotlib')
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    from analysis.prediction.paper_results import _paper_panel
+
+    tables, _ = build_tables(SOURCE)
+    config = json.loads((SOURCE/'display.json').read_text())[benchmark]
+    cohorts = json.loads((SOURCE/'sources.json').read_text())['cohorts'][benchmark]
+    fig = _paper_panel(tables, benchmark, config, cohorts, mean_only=mean_only)
+    try:
+        assert len(fig.axes) == (1 if mean_only else 6)
+        source = tables['figure_means' if mean_only else 'figure_points']
+        for ax, task in zip(fig.axes, ['mean'] if mean_only else cohorts):
+            expected = [float(r['macro_f1']) for r in source if r['benchmark'] == benchmark
+                        and (mean_only or r['task'] == task)]
+            actual = [p.get_y()+p.get_height() for p in ax.patches]
+            assert len(actual) == (20 if benchmark == 'conditioned' else 25)
+            assert sorted(actual) == pytest.approx(sorted(expected), abs=1e-12)
+            if not mean_only:
+                assert ax.get_title(loc='left') == config['task_labels'][task]
+        assert fig.get_size_inches() == pytest.approx([16, 9] if mean_only else [32.5, 18])
+        assert fig.texts[0].get_text() == config['title']
+    finally:
+        plt.close(fig)
