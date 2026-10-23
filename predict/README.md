@@ -4,6 +4,12 @@
 traces for BBB, Oral, Skin, Ames, DILI and Carcinogens. Context selection lives
 in `optimization/`; data publication lives in `data/processing/`.
 
+The defaults below describe this branch's FINAL workflow. The frozen paper's
+naive LLM baseline used explicit 50/50 Neighbor-fill, a pinned earlier prompt
+adapter and parent-disjoint indirect evidence. Its preparation path is still
+being integrated; selecting today's default cache/prompt does not reproduce it.
+See [paper results and migration limits](../docs/results.md).
+
 ```bash
 python -m predict.harnesses.branches --help
 python -m predict.harnesses.branches.matrix --help
@@ -95,7 +101,7 @@ and its missing-score policy. The benchmark does not choose the voting method.
 
 The [conditioned baseline recipe](../experiments/baselines/conditioned.sh) runs
 the shared Morgan KNN, MiniMol KNN and MiniMol head commands. Its
-[settings and output contract](baselines/minimol/README.md#conditioned-baseline-recipe)
+[settings and output contract](baselines/minimol/README.md#paper-baseline-recipe)
 apply to supplied task splits, including Oral; there is no separate Oral runner.
 
 New raw runs: `outputs/predictions/<harness>/<prompt>/<run-name>/<benchmark>/<task>/<split>/<profile>/`.

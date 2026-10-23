@@ -39,8 +39,25 @@ Before retiring an executable, trace its callers and retain useful behavior in
 its capability command. Verify the replacement on a focused fixture, including
 evidence order and identity. Completed experiments and immutable releases stay
 intact. New commands write new run identities; they do not select a new active
-release merely because a candidate finished. Root and owner `AGENTS.md` files
-record these rules.
+release merely because a candidate finished. This guide and the capability READMEs record the public maintenance contract.
+
+## Capability map
+
+| Capability | Maintained owner | Inputs and outputs |
+| --- | --- | --- |
+| Query prediction | `predict/harnesses/branches/` | Frozen query/cache/selection, prompt and prior → requests, resumable predictions and traces |
+| Parent/scaffold exclusions | `predict/retrieval/policies.py`, `task_identity.py` | Molecular identities and declared task policy → candidate eligibility; never rewrites benchmark splits |
+| Morgan / embedding KNN | `predict/baselines/structure_knn/run.py`, `minimol/run_embedding_knn.py` | Frozen train reference and query splits → neighbors, scores and decisions |
+| MiniMol head | `predict/baselines/minimol/run_bioavailability_ma.py` | Frozen embeddings and train/valid/test → validation-selected ensemble and predictions for all six tasks |
+| Encoder / auxiliary training | `predict/baselines/minimol/run_multitask.py` | Main splits and filtered auxiliary targets → graph inputs, checkpoints and ensemble predictions |
+| RASAR | `predict/baselines/retrieval_features.py`, `retrieval_forest.py` | Main/auxiliary labels → shared nearest-neighbor features, validation-selected RF and predictions |
+| Evidence and gold construction | `data/processing/` | Versioned source records and task rules → published data releases |
+| Selection and scoring | `optimization/` | Frozen candidates and objectives → reviewed scores or ordered physical evidence selections |
+| Result analysis | `analysis/`, [result index](results.md) | Saved predictions and source bindings → derived analyses and verified reports |
+
+[Baseline recipes](../experiments/baselines/README.md) expose the paper settings.
+The [integration record](release_refactor.md) owns the migration status; a mapped
+capability is not a claim that all its historical experiments are distributable.
 
 ## Canonical semantic utility scorer
 

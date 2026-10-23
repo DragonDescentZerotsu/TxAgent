@@ -5,7 +5,7 @@ experimental evidence. The supported inference workflow is the FINAL flat
 harness; direct-only inference uses its direct selection variant.
 
 ```bash
-python -m predict.harnesses.branches --organization flat --help
+python -m predict.harnesses.branches --help
 python -m predict.harnesses.branches.matrix --help
 python -m optimization.selection.search --help
 python -m optimization.selection.pool --help
@@ -17,8 +17,8 @@ python -m predict.baselines.minimol.run_bioavailability_ma --help
 `data/processing/` owns gold-label and evidence-library publication.
 `optimization/` owns context selection, offline DILI scoring and reviewed
 semantic grouping. `analysis/` owns independent evidence and prediction studies.
-Deterministic chemistry tools live in `tools/service/`; manuscript fragments and
-paper tables live in `docs/paper/`.
+Deterministic chemistry tools live in `tools/service/`. Paper result sources and
+verification limits are indexed in [docs/results.md](docs/results.md).
 
 Gold/evidence use release manifests and `CURRENT`. TDC uses the single
 `data/gold_labels/TDC/manifest.json` configuration. Prediction/prior templates
@@ -29,8 +29,7 @@ and published data are immutable. See [predict/README.md](predict/README.md),
 
 Retained historical prompts and instruction snapshots live in `archive/`.
 Git retains retired executable workflows and ChEMBL experiment reports.
-[The cleanup inventory](docs/cleanup.md) lists past deletions and relocations;
-[the cleanup log](docs/look/cleanup_candidates.md) records subsequent removals.
+[The cleanup log](docs/look/cleanup_candidates.md) records deletions and relocations.
 
 Semantic code and artifacts live under `optimization/semantic_buckets/` and
 use `optimization.semantic_buckets` imports. Saved metadata uses this canonical
@@ -41,3 +40,6 @@ reusable capability commands in Python, concrete variants in Bash recipes.
 Morgan KNN, MiniMol and RASAR use the shared
 [baseline recipes](experiments/baselines/README.md), with explicit frozen inputs
 and the original validation-selection settings.
+
+The [integration status](docs/release_refactor.md) distinguishes verified paper
+baselines from pending LLM migration and independent-environment checks.

@@ -1,0 +1,86 @@
+{
+  "schema": "paper_result_export.v1",
+  "exported_on": "2026-10-23",
+  "source_registry_sha256": "0b20e7e327d01fe09deb6529161ea77e0809e80d59a72a651bf626a3595c094e",
+  "source_registry_entry": "budgeted_evidence_protocol.llm_vs_standard_baselines",
+  "source_comparison": "llm_vs_standard_baselines_20260924",
+  "source_hashes": {
+    "ml_appendix.csv": "7336791a202e45d665ded9c7375f25b5d06516e6431231e68844191b75a8cb05",
+    "conditioned/all_scores.csv": "a67d4068fa6c73816cf9216327eece766f8c5f4c5a949886450a749fe2ca2f03",
+    "tdc/all_scores.csv": "01794b81c6d3c4773d2c29e2280a9c5a195d8d27bab248128320ce101c365b7a",
+    "ours_reported_results_20260925_three_backbones.json": "a1615fdbdb60c10522e383a3fe68c13613f26af4384b7d0b44914cbb50f7a7e2"
+  },
+  "export_hashes": {
+    "baselines.csv": "9f647da6081360f489af246142cdaca86ca7a26b67ec55e8c0dfcfb0f5cb9a8d",
+    "ours_reported.json": "a1615fdbdb60c10522e383a3fe68c13613f26af4384b7d0b44914cbb50f7a7e2"
+  },
+  "baseline_cells": {
+    "ML": 198,
+    "naive_LLM": 108
+  },
+  "ours_reported_cells": 72,
+  "cohorts": {
+    "conditioned": {
+      "bbb_martins": {
+        "n": 393,
+        "test_sha256": "ba340d019c4f49a4708e93ffc4388771efc8d11dbb3158bf7c06a311cf290088"
+      },
+      "bioavailability_ma": {
+        "n": 269,
+        "test_sha256": "bcd47446f78038c84b58dc3e79e7e658e3d659ca381da22435d5ec321194e248"
+      },
+      "skin_reaction": {
+        "n": 241,
+        "test_sha256": "649c692e492a631bcfff89b154beeb81174e813128cebcc6190bc09b5dc33f11"
+      },
+      "ames": {
+        "n": 274,
+        "test_sha256": "c22ab6808c4c89ba8015987f2e5c0a5b93409f2f155bde123606cb01e86a9d0e"
+      },
+      "dili": {
+        "n": 402,
+        "test_sha256": "e548bcefa7c10c9ee90ae546d0631d2cb47aa7fc227892455563c503b26b5f19"
+      },
+      "carcinogens": {
+        "n": 469,
+        "test_sha256": "b2ec17336315d3deb6c5a210cdff383be9151ee2434406c3a7eff5d633656520"
+      }
+    },
+    "tdc": {
+      "bbb_martins": {
+        "n": 406,
+        "test_sha256": "40d1226f882f903f4a4b4fb9365cf05c90c30eff694730e0de346351874d8388"
+      },
+      "bioavailability_ma": {
+        "n": 128,
+        "test_sha256": "5eb2f3bbc5268c33fb2d958b09362a3dfdb4db75858b595dd2f3b21fe5074457"
+      },
+      "skin_reaction": {
+        "n": 82,
+        "test_sha256": "f63b7190a4ba8632dfc72f2941fcd387f2770fcc5edb6460305149255c1ab106"
+      },
+      "ames": {
+        "n": 1457,
+        "test_sha256": "427bdc74b135204ee8c6f59192aed98570d15eb8dea9a67f6723a58b77ee20ee"
+      },
+      "dili": {
+        "n": 96,
+        "test_sha256": "32315845a9d992a97355d1729f4bfe5e39c7635fda022950be52dfb43d4ca244"
+      },
+      "carcinogens": {
+        "n": 56,
+        "test_sha256": "82a2f3ce63c6f77d520439251da70a4df70dabdfc140a61385ffbae9b0cc1d08"
+      }
+    }
+  },
+  "verification": {
+    "baseline_source_values_unchanged": true,
+    "saved_prediction_metrics_recomputed": 306,
+    "original_predictions_unchanged": true,
+    "new_training_or_inference": false,
+    "ours_scope": "Exact source copy only; raw predictions and budget equivalence not audited.",
+    "gemini_scope": "Saved metrics checked; additional source provenance and cost audit remain deferred."
+  },
+  "artifact_distribution": "Raw predictions, data, models and historical exporter are not included in this compact export.",
+  "migration": "Scores retain their frozen protocols; they are not results of the revised retrieval policy."
+}

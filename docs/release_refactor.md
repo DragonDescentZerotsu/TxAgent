@@ -169,6 +169,44 @@ indirect 的 −0.0010101（约 −0.10 个百分点），分类标签仍不变�
 这些核验使用现有依赖与保存输入；新 RF 配方已在整合目录运行，但完整数据分发、
 全新环境安装与 LLM 流程尚未验收。临时核验脚本收入本地源码 ZIP，不作为正式 runner。
 
+## 第五批：结果入口、文档与 LLM 离线预检（2026-10-23）
+
+[结果入口](results.md)现已包含本地论文主比较与原 FINAL collection 的明确区分。
+`docs/paper/baselines.csv` 从原两套 `all_scores.csv` 导出 306 cells，其中 ML 198、
+naive LLM 108；ML 的训练池和数值逐项与原 `ml_appendix.csv` 对齐。重新读取 294 个
+不同预测文件（报告别名仍保留），306 cells 的 Macro-F1、accuracy 和 ML AUROC 均
+与原汇总一致。没有执行新训练或推理，也没有将新检索规则冒充为这些旧结果的协议。
+
+公开表仅保存预测文件 SHA-256，不包含个人绝对路径；本地核验回执保存原路径映射。
+`docs/paper/sources.json` 绑定原表、导出物、cohort 和来源 registry 的哈希。
+`ours_reported.json` 是原 72 个 Ours 分数来源文件的逐字节副本，保留用户提供及未核验
+预测/预算的说明。未解决的 Direct=10/50 和 Ours 预算来源问题仍为待核对。
+这些文件是冻结主比较的可阅读导出，不是另一个可手改的结果登记中心；原登记仍为
+历史实验权威来源，正式 exporter/plotter、预算扫描与后续 scaffold 实验的分发仍待接入。
+
+文档已补齐能力—入口—输入/输出映射，修正根 README 的废弃 CLI 参数、失效文件链接
+以及预测说明中 MiniMol 章节的失效锚点。9 个 AGENTS.md 已取消 Git 跟踪并按文件名
+全目录忽略；原本存在的工作区文件字节保持不变，稀疏检出未落盘的文件也已本地备份。
+这不删除历史提交中的文件，也不代表整合分支已通过全库匿名审查。
+
+LLM 离线预检覆盖 Gemini 的两套 benchmark、六任务、三 settings，共 36 个 batch。
+每个 batch 固定抽取首/中/末三个 query，共 108 个：
+
+- 原任务合同、manifest 和 request hash 全部匹配；用原 adapter v2 重渲染后，108 个
+  requests 均与冻结消息逐字一致，None/Direct/Direct+Indirect 分别满足 0/0、50/0、50/50。
+- 保持相同的模板输入，改用当前 `final_full_flat` 模板：108 个 user 消息完全一致，
+  108 个 system 消息全部不同。当前模板增加/改变了 reasoning instructions、semantic
+  utility 说明及固定输出要求；不能用默认模板替代原论文 prompt。
+- 原 manifest 采用 direct scaffold-disjoint、indirect parent-disjoint，direct/indirect
+  候选分子数均为 128。当前默认命名缓存为 scaffold-disjoint parent-100，不能直接替代。
+
+这里只验证冻结样本与模板层差异，没有重建完整候选池，没有证明新 harness 全流程
+等价，也没有推论 DeepSeek/Luna 的所有历史请求已验收。下一步在现有 prompt/selection
+入口中显式承载原协议，再比较有序 records、字段去重、prior、最终请求和恢复行为。
+
+详细回执、源文件映射与临时核验脚本归档于本地
+`outputs/analysis/release_refactor/20261023_docs/`，不新增正式 Python runner。
+
 ## 验证与后续验收
 
 第二批身份规则验证（2026-10-22；与上面的第三批性能核验分开）：
@@ -196,5 +234,6 @@ Joseph 的命名缓存、源字段投影和完整 prompt 仍须单独对齐。
 2. 将历史路径依赖收敛为可分发的数据/配置入口，验证独立环境；现有环境通过不等于可直接发布。
 3. 迁入 LLM 共享流程，核对完整候选池、records 预算、card 去重、prior 与最终请求。
    继续保留必要的限流、重试、恢复和历史 replay 能力。
-4. 接齐唯一结果登记、共享导出器和绘图入口，核对匿名发布文件；冻结结果保持原协议。
+4. 主比较分数已导出并验证；继续接齐共享导出器、绘图入口和完整实验登记，
+   核对匿名发布文件；冻结结果保持原协议。
 5. 完整验收后正常合并到 main，保留双方历史；在此之前不强制替换 main。

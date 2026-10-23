@@ -1,4 +1,53 @@
-# Joseph FINAL test results by model
+# Results and reproduction sources
+
+## Frozen paper comparison
+
+[Full-precision baseline results](paper/baselines.csv) contain **306 cells**:
+198 ML cells (66 each for conditioned, TDC-only and TDC + Starling training)
+and 108 naive-LLM cells (three backbones, two benchmarks, six tasks and three
+settings). Filter `family=baseline` for the ML appendix; `training_pool` is empty
+for LLM rows. Each row identifies its original prediction file by SHA-256.
+[Source bindings](paper/sources.json) pin the original tables, exported files and
+benchmark cohort hashes. Raw predictions, model weights and datasets are not
+included in this compact result export; their distribution remains pending.
+
+The export preserves the original numeric fields. All 306 cells were checked
+against saved predictions, recomputing Macro-F1, accuracy and, for ML, AUROC.
+This is a saved-result check, not new training or inference. LLM AUROC remains
+empty because hard decisions are not continuous scores. Current TDC Skin and
+Carcinogens use the seed-42 replacements; the nine corrected Skin auxiliary
+cells and both RASAR variants are included.
+
+[Ours reported scores](paper/ours_reported.json) preserve the supplied 72
+Direct / Direct + Indirect values for the three backbones. None shares the
+corresponding baseline. The file is copied byte-for-byte from the recorded
+source; it does not establish prediction-level verification or matched budgets.
+The manuscript's Direct=10 description versus the naive baseline's Direct=50
+and the missing Ours budget provenance remain unresolved. Additional Gemini
+source-provenance and cost reconciliation remain deferred.
+
+All scores retain their frozen scientific protocols. They are not evaluations
+of the revised retrieval rules in the integration branch. Six-task means are
+unweighted; the paper's grouped ML bars use descriptive within-group test
+maxima, not validation-selected method winners. Keep individual methods and
+training pools visible when interpreting those summaries.
+
+[Baseline recipes](../experiments/baselines/README.md) and the
+[MiniMol guide](../predict/baselines/minimol/README.md) describe maintained ML
+entrypoints. The [integration record](release_refactor.md) maps these to the
+original configurations and distinguishes replay, retraining and pending work.
+The original shared exporter and plotter are not yet ported; do not manually
+edit this exported table or treat a model's current defaults as the paper recipe.
+
+Budget scans, Direct-3 controls and later scaffold-disjoint indirect follow-ups
+remain separate experiments in the preserved source registry. Their full
+artifact distribution and reproduction entries are still pending; this export
+covers the frozen main comparison only and does not replace those experiments.
+
+## Existing FINAL collection
+
+The following tables retain the branch's separately selected FINAL arms and
+caveats. They are not substituted for the paper's user-reported Ours values above.
 
 Synchronize these DeepSeek and Luna tables with the `finalizing` skill whenever a completed result is explicitly promoted. Each value must match a complete FINAL test arm and be documented in its report. A dash means no completed FINAL arm is recorded for that model and selection. Starling means Gold-v1; TDC includes the version pinned by each arm. Preserve older arms for audit and do not silently replace a selected cell with the highest score across prompts or versions.
 

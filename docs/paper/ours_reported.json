@@ -1,0 +1,247 @@
+{
+  "schema": "reported_comparison_curves.v1",
+  "as_of": "2026-09-25",
+  "status": "current_user_reported_results",
+  "metric": "macro_f1",
+  "stage_order": [
+    "none",
+    "direct",
+    "direct_plus_indirect"
+  ],
+  "provenance": "Exact transcription of user-supplied replacement DeepSeek scores and new Luna scores, 2026-09-25. Starling maps to literature-derived/conditioned. No new prediction-level audit or budget/cohort equivalence inferred. Gemini Direct and Direct + Indirect: exact user transcription on 2026-09-25; previous DeepSeek/Luna values retained unchanged.",
+  "supersedes": "outputs/paper/llm_vs_standard_baselines_20260924/ours_reported_results_20260925_two_backbones.json",
+  "curves": {
+    "conditioned": [
+      {
+        "label": "Ours (DeepSeek)",
+        "backbone": "DeepSeek V4 Flash",
+        "benchmark": "Starling",
+        "source": "User-supplied final summary scores. None shares the corresponding backbone baseline; prediction artifacts and experiment versions not supplied with this update.",
+        "scores": {
+          "bbb_martins": [
+            null,
+            0.673178,
+            0.732966
+          ],
+          "bioavailability_ma": [
+            null,
+            0.768091,
+            0.86134
+          ],
+          "skin_reaction": [
+            null,
+            0.59932,
+            0.618458
+          ],
+          "ames": [
+            null,
+            0.708578,
+            0.774211
+          ],
+          "dili": [
+            null,
+            0.639755,
+            0.680085
+          ],
+          "carcinogens": [
+            null,
+            0.532669,
+            0.658598
+          ]
+        }
+      },
+      {
+        "label": "Ours (Luna)",
+        "backbone": "GPT-6 Luna",
+        "benchmark": "Starling",
+        "source": "User-supplied final summary scores. None shares the corresponding backbone baseline; prediction artifacts and experiment versions not supplied with this update.",
+        "scores": {
+          "bbb_martins": [
+            null,
+            0.666929,
+            0.72261
+          ],
+          "bioavailability_ma": [
+            null,
+            0.760093,
+            0.856127
+          ],
+          "skin_reaction": [
+            null,
+            0.559252,
+            0.564175
+          ],
+          "ames": [
+            null,
+            0.66773,
+            0.706003
+          ],
+          "dili": [
+            null,
+            0.621456,
+            0.665266
+          ],
+          "carcinogens": [
+            null,
+            0.48831,
+            0.623776
+          ]
+        }
+      },
+      {
+        "label": "Ours (Gemini)",
+        "backbone": "Gemini 3.8 Flash",
+        "benchmark": "Starling",
+        "source": "User-supplied scores, 2026-09-25. None shared with Gemini baseline; prediction artifacts and experiment versions not supplied for Ours.",
+        "scores": {
+          "bbb_martins": [
+            null,
+            0.718647,
+            0.762556
+          ],
+          "bioavailability_ma": [
+            null,
+            0.863777,
+            0.87448
+          ],
+          "skin_reaction": [
+            null,
+            0.625353,
+            0.638162
+          ],
+          "ames": [
+            null,
+            0.779689,
+            0.800304
+          ],
+          "dili": [
+            null,
+            0.685276,
+            0.716442
+          ],
+          "carcinogens": [
+            null,
+            0.59963,
+            0.624243
+          ]
+        }
+      }
+    ],
+    "tdc": [
+      {
+        "label": "Ours (DeepSeek)",
+        "backbone": "DeepSeek V4 Flash",
+        "benchmark": "TDC",
+        "source": "User-supplied final summary scores. None shares the corresponding backbone baseline; prediction artifacts and experiment versions not supplied with this update.",
+        "scores": {
+          "bbb_martins": [
+            null,
+            0.865673,
+            0.880814
+          ],
+          "bioavailability_ma": [
+            null,
+            0.746709,
+            0.830732
+          ],
+          "skin_reaction": [
+            null,
+            0.634097,
+            0.666875
+          ],
+          "ames": [
+            null,
+            0.782289,
+            0.807934
+          ],
+          "dili": [
+            null,
+            0.819609,
+            0.821346
+          ],
+          "carcinogens": [
+            null,
+            0.817392,
+            0.790611
+          ]
+        }
+      },
+      {
+        "label": "Ours (Luna)",
+        "backbone": "GPT-6 Luna",
+        "benchmark": "TDC",
+        "source": "User-supplied final summary scores. None shares the corresponding backbone baseline; prediction artifacts and experiment versions not supplied with this update.",
+        "scores": {
+          "bbb_martins": [
+            null,
+            0.828823,
+            0.84633
+          ],
+          "bioavailability_ma": [
+            null,
+            0.718372,
+            0.774023
+          ],
+          "skin_reaction": [
+            null,
+            0.700912,
+            0.611005
+          ],
+          "ames": [
+            null,
+            0.787868,
+            0.811343
+          ],
+          "dili": [
+            null,
+            0.79085,
+            0.801545
+          ],
+          "carcinogens": [
+            null,
+            0.841539,
+            0.878261
+          ]
+        }
+      },
+      {
+        "label": "Ours (Gemini)",
+        "backbone": "Gemini 3.8 Flash",
+        "benchmark": "TDC",
+        "source": "User-supplied scores, 2026-09-25. None shared with Gemini baseline; prediction artifacts and experiment versions not supplied for Ours.",
+        "scores": {
+          "bbb_martins": [
+            null,
+            0.827385,
+            0.87427
+          ],
+          "bioavailability_ma": [
+            null,
+            0.817143,
+            0.847619
+          ],
+          "skin_reaction": [
+            null,
+            0.67814,
+            0.695733
+          ],
+          "ames": [
+            null,
+            0.819798,
+            0.826098
+          ],
+          "dili": [
+            null,
+            0.874783,
+            0.874783
+          ],
+          "carcinogens": [
+            null,
+            0.830303,
+            0.773737
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -155,3 +155,6 @@ predict/retrieval/cache/assay_reranking/active/*
 /data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/scoring/test/*
 !/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/scoring/test/VERSION.json
 !/data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/scoring/test/rankings.parquet
+
+# Local agent instructions are not part of the review/release tree.
+AGENTS.md
