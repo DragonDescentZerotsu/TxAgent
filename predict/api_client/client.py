@@ -36,9 +36,13 @@ class OpenAICompatibleClient:
         request_extra_body: Mapping[str, Any] | None = None,
         response_format: Mapping[str, Any] | None = None,
         openai_client: Any | None = None,
+        token_limit_parameter: str | None = None,
     ):
         if transport_max_retries < 0:
             raise ValueError("transport_max_retries must be non-negative")
+        if token_limit_parameter not in (None, 'max_tokens', 'max_completion_tokens'):
+            raise ValueError('unsupported token limit parameter')
+        self.token_limit_parameter = token_limit_parameter
         self.client = openai_client or openai_compatible_client(
             api_key=api_key,
             base_url=base_url.rstrip("/"),
@@ -315,7 +319,7 @@ class OpenAICompatibleClient:
                 self, "response_format", {"type": "json_object"}
             )
         provider_model = self.model.rsplit("/", 1)[-1]
-        token_parameter = (
+        token_parameter = self.token_limit_parameter or (
             "max_completion_tokens"
             if provider_model.startswith(("gpt-5", "gpt-6"))
             else "max_tokens"
@@ -340,7 +344,7 @@ class OpenAICompatibleClient:
                 r"maximum context length of (\d+) tokens.*?(\d+) tokens from the input messages",
                 str(exc),
             )
-            if match:
+            if match and self.token_limit_parameter is None:
                 kwargs[token_parameter] = max(1, int(match.group(1)) - int(match.group(2)))
                 response = self.client.chat.completions.create(**kwargs)
             elif self.enable_thinking and tool_choice is not None and _is_tool_choice_thinking_error(exc):

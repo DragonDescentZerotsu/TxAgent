@@ -4,6 +4,9 @@ def main(argv=None):
     import sys
 
     argv = sys.argv[1:] if argv is None else argv
+    if argv and argv[0] in ('--prepare-paper-baseline', '--run-paper-baseline'):
+        from predict.harnesses.branches.paper_baseline import run
+        return run(argv)
     if argv and argv[0] == "--verify-paper-baseline":
         import argparse
         import json

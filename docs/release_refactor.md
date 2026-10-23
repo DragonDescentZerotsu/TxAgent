@@ -74,7 +74,7 @@ keys 一致，2,700 次条件选择对照一致。覆盖范围为当前六任务
 | 普通 MiniMol head | 各 task 原超参数、25 epochs、seeds 1–5；val BCE 选 checkpoint，ensemble val Macro-F1 选阈值；无 CV、无 train+valid refit | `predict.baselines.minimol.run_bioavailability_ma`；18 cells 保存模型重放通过，3 cells 按原配置重新训练通过 |
 | MiniMol 主任务微调 / indirect | 原主训练池、辅助池及权重候选；checkpoint/权重用 val BCE，阈值用 val Macro-F1；辅助池排除完整 valid/test parent/connectivity union，允许 scaffold 重合 | `predict.baselines.minimol.run_multitask`；21 套来源输入重建一致，36 cells 模型重放标签/F1 一致；完整候选/五种子重训仍未全量执行 |
 | RASAR / RASAR+indirect | 6 / 6+2B 特征；两种邻居策略；六个 RF 候选、seeds 1–5、每 seed 100 trees；val BCE 选参数、val Macro-F1 选阈值 | `predict.baselines.retrieval_forest`；21 套特征重建与 72 cells 重放通过；两批累计 6 cells / 180 seed fits 重训通过 |
-| DeepSeek / Luna / Gemini naive LLM | 原模型、reasoning、prior、prompt；None / Direct 50 / Direct 50 + Indirect 50；两池均 Neighbor-fill；每设置一次 full-flat | 冻结输入输出适配层已迁入并提供离线核验；候选准备/实际执行仍待接入，不能用默认 prompt/缓存替代 |
+| DeepSeek / Luna / Gemini naive LLM | 原模型、reasoning、prior、prompt；None / Direct 50 / Direct 50 + Indirect 50；两池均 Neighbor-fill；每设置一次 full-flat | 冻结协议、候选准备和普通 API 执行已接入专用模式；仍待全 cohort / 在线复现与 Batch、并行竞速恢复验收，不能用默认 prompt/缓存替代 |
 | 预算扫描、Direct-3 等对照 | 各自记录的预算、候选填充、模型与输入；Direct-3 保留固定 Morgan 三邻居，不套用其他检索过滤 | 复用共享入口，具体配置和结果登记尚待迁入 |
 
 ML 的三种训练池为 conditioned、TDC-only、TDC + Starling。当前统一 ML Appendix 为
@@ -239,6 +239,51 @@ Carcinogens 显式保留原专用定义。其他任务共用原定义，不继�
 参数/并发及完整 checkpoint 恢复仍待接入。该 bundle 暂不作为 fresh FINAL 的
 `--prompt` 选项，不能把此处验证描述为完整 LLM runner 已可复现。
 
+## 第七批：候选准备、预算选择与普通 API 执行（2026-10-23）
+
+按用户授权，在现有 `vllm` 环境补装 `duckdb==2.0.0`。随后发现恢复模块导入时提前
+读取 TDC 数据清单；已把读取移到真正执行索引构建时。没有伪造数据，也没有启动工具
+服务。此前被阻塞的 4 项恢复测试全部通过，同一测试文件共 23 项通过。
+
+现有 `predict.harnesses.branches` 入口增加 `--prepare-paper-baseline` 和
+`--run-paper-baseline` 两种显式模式。前者从原 batch 读取冻结的查询、prior 和配置，
+重新从 hash 绑定的完整索引生成候选；后者复用公共 provider pool 和 JSON validator
+执行新准备的请求。没有复制原 family/progressive runner，也不把当前 FINAL 的
+默认缓存、prompt 或 high reasoning 当作论文 baseline。
+
+职责按现有目录组织：
+
+- `predict/retrieval/paper_baseline.py`：原 L1/L2+ 分池、TDC train-label 合并与 heldout
+  排除，随后调用已迁入的公共身份过滤。已批准的盐＋立体构型排除、位置异构体细分和
+  DILI/Carcinogens 原 scaffold 规则均在预算填充之前应用；benchmark split 不重建。
+- `optimization/selection/record_budget.py`：保持原 Neighbor-fill、molecule-cap、
+  group-balanced 的排序、种子和短缺记录；六任务共享一份实现。
+- `predict/prompts/paper_baseline.py`：复用公共 evidence 投影，从原始 cards 重建消息；
+  query、condition、cached prior、任务定义、system/user 和原生输出 schema 保持原协议。
+- `predict/harnesses/branches/paper_baseline.py`：新输出目录、来源预检、准备/执行及恢复；
+  模型、temperature、reasoning effort、token 上限由原 manifest 读取。公共客户端
+  增加显式 token 参数固定选项，保留原 `max_tokens`，超长时报错而非自动缩减预算。
+  当前 FINAL 默认行为不变。改动 prior、cohort、标签或已保存请求绑定会在调用模型前拒绝。
+
+离线验证：从真实 cards 重建的 324 个抽查请求覆盖三模型、两 benchmark、六任务和
+三个设置，payload、引用编号、消息完全相同；从保存候选重新选择 indirect records
+的顺序也全部相同。另有 1,200 组预算选择与原实现逐项一致，108 套原配置生成的 API
+请求的字段及数值与旧客户端完全一致。130 项针对性测试通过，覆盖候选过滤/回填、预算、原生输出、
+四次尝试的格式修复、断点恢复、调用前拒绝不一致输入、provider 和既有身份规则。
+这些检查均没有网络推理，不把已保存模型回复当作新模型结果。
+
+两套 benchmark 的六任务各取首/中/末 query，共 36 个样本从完整冻结索引重新准备；
+Direct/Indirect 各 50 条的有序 IDs 与最终消息全部一致。另用实际 CLI 验证 None 的
+3 个样本，均为 0/0 且消息相同。这只是抽查，不证明新规则对全 cohort 零影响。
+完整索引的实际抽查结果与每条消息差异见本地
+`outputs/analysis/release_refactor/20261023_preparation/`；正式命令和限制统一见
+[论文 baseline 模式](../predict/prompts/README.md#frozen-paper-baseline)。
+
+当前模式支持从恢复的论文输入执行普通 API 推理；仍需接齐旧 Batch 提交、first-valid
+并行竞速重试、自动 stage requeue、匹配 Direct-3 和独立 prior 生成。公开分发的输入包、
+全 cohort 的新检索差异审计和新模型性能复现也尚未完成。原始结果、分数和大 split 未修改，
+不能据抽查相同就声称所有 query 的检索都不变或已完成在线性能复现。
+
 ## 验证与后续验收
 
 第二批身份规则验证（2026-10-22；与上面的第三批性能核验分开）：
@@ -253,9 +298,9 @@ Carcinogens 显式保留原专用定义。其他任务共用原定义，不继�
 - 差分检查及测试回执保存于本地 refactor 归档的 `20261022_identity/`。这些验证没有
   启动工具服务、训练套件或付费模型推理，也不是完整辅助库或性能复现。
 
-尚未通过完整流程验收：现有 flat 流程测试需要当前环境未安装的 `duckdb`；部分
-UID/cache builder 测试在导入时读取本地缺失的 Joseph v10 发布映射文件。
-本轮没有伪造这些发布数据或改变环境来绕过检查。已将纯身份测试的 builder 导入
+尚未通过完整流程验收：`duckdb` 缺失及 4 项恢复测试的导入阻塞已在第七批解决；
+部分 UID/cache builder 测试仍依赖本地缺失的 Joseph v10 发布映射文件。
+没有伪造这些发布数据来绕过检查。已将纯身份测试的 builder 导入
 移至实际需要它的测试内，因此纯身份规则可独立验证；依赖真实发布输入的流程仍待验收。
 Joseph 的命名缓存、源字段投影和完整 prompt 仍须单独对齐。
 
@@ -264,8 +309,8 @@ Joseph 的命名缓存、源字段投影和完整 prompt 仍须单独对齐。
 1. ML 的全部报告单元已完成保存模型/特征核验，保留上述数值与重训覆盖边界；
    后续独立环境复现沿用相同配置，不重复新增 task-specific runner。
 2. 将历史路径依赖收敛为可分发的数据/配置入口，验证独立环境；现有环境通过不等于可直接发布。
-3. LLM 冻结输入输出适配层已迁入；继续对齐完整候选池、records 预算、prior 加载与实际执行。
-   继续保留必要的限流、重试、恢复和历史 replay 能力。
+3. LLM 候选/预算/冻结 prior 和普通 API 路径已接入；继续做全 cohort 差异审计与在线性能验收，
+   接齐 Batch、并行竞速重试、自动重排队及匹配 Direct-3；保留原来源和必要运行能力。
 4. 主比较分数已导出并验证；继续接齐共享导出器、绘图入口和完整实验登记，
    核对匿名发布文件；冻结结果保持原协议。
 5. 完整验收后正常合并到 main，保留双方历史；在此之前不强制替换 main。

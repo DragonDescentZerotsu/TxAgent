@@ -494,6 +494,7 @@ def build_provider_pool(
     enable_thinking: bool,
     transport_max_retries: int,
     response_format: Mapping[str, Any] | None = None,
+    token_limit_parameter: str | None = None,
 ) -> "OpenAIProviderPool":
     """Build every configured provider through the shared credential loader."""
     from predict.api_client.transport import openai_compatible_client
@@ -536,6 +537,7 @@ def build_provider_pool(
             request_extra_body=request_extra_body,
             response_format=response_format,
             openai_client=transport,
+            token_limit_parameter=token_limit_parameter,
         )
 
     return OpenAIProviderPool(config, client_factory=factory)
@@ -953,6 +955,13 @@ class OpenAIProviderPool:
             attempts=attempts,
         )
 
+    def close(self) -> None:
+        """Close transports after all in-flight workers have finished."""
+        for state in self._states:
+            transport = getattr(state.client, 'client', None)
+            if transport is not None:
+                transport.close()
+
     def snapshot(self) -> dict[str, Any]:
         now = self._clock()
         with self._condition:
@@ -1138,10 +1147,7 @@ def async_completion_pool(config: ProviderPoolConfig, *, max_tokens: int = 20_48
 
     async def close() -> None:
         executor.shutdown(wait=True)
-        for state in pool._states:
-            transport = getattr(state.client, "client", None)
-            if transport is not None:
-                transport.close()
+        pool.close()
 
     return SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)),
                            snapshot=adapter.snapshot, close=close)

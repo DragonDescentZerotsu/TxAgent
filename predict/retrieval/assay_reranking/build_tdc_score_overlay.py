@@ -14,8 +14,6 @@ from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
 
 BUNDLE = TDC_MANIFEST
 OUTPUT = REPO_ROOT / "data/caches/assay_reranking/active/flat_v5/tdc"
-LEVELS = {task: tuple(f"L{i}" for i in range(2, spec["max_level"] + 1))
-          for task, spec in tdc_config()["tasks"].items()}
 
 
 def _level(index_path: Path, subset: str, level: str, inputs: dict[str, str]) -> tuple[Path, dict]:
@@ -53,7 +51,7 @@ def build(task: str, output_root: Path = OUTPUT) -> Path:
             output.execute("CREATE TABLE scores(query_id TEXT NOT NULL,level TEXT NOT NULL,item_id TEXT NOT NULL,parent_id TEXT NOT NULL,score REAL NOT NULL,score_key TEXT NOT NULL,PRIMARY KEY(query_id,level,item_id)) WITHOUT ROWID")
             for subset in ("valid", "test"):
                 queries = {str(row["benchmark_row_id"]) for row in read_jsonl(tdc_split_path(task, subset))}
-                for level in ("L1", *LEVELS[task]):
+                for level in (f"L{i}" for i in range(1, spec["max_level"] + 1)):
                     index = REPO_ROOT / spec["retrieval"]["L1" if level == "L1" else "later"]
                     source, manifest = _level(index, subset, level, inputs)
                     unit = "morgan_context_id" if level == "L1" else "item_id"
@@ -74,8 +72,9 @@ def build(task: str, output_root: Path = OUTPUT) -> Path:
 
 
 def main():
+    tasks = list(tdc_config()["tasks"])
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--tasks", nargs="+", choices=tuple(LEVELS), default=list(LEVELS))
+    parser.add_argument("--tasks", nargs="+", choices=tasks, default=tasks)
     parser.add_argument("--output-root", type=Path, default=OUTPUT)
     args = parser.parse_args()
     for task in args.tasks:

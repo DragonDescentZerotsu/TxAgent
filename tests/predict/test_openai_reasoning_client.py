@@ -33,6 +33,7 @@ def _client(*, enable_group_tools=True, max_tool_rounds=1):
     client.max_tool_rounds = max_tool_rounds
     client.reasoning_effort = ""
     client.enable_thinking = False
+    client.token_limit_parameter = None
     return client
 
 
@@ -159,3 +160,26 @@ def test_provider_specific_extra_body_is_forwarded_without_changing_messages():
     client._create_completion([{"role": "user", "content": "analyze"}])
 
     assert captured["extra_body"] == {"reasoning": {"enabled": True}}
+
+
+def test_paper_protocol_pins_token_parameter_and_does_not_shrink_budget():
+    import pytest
+    for model in ('openai/gpt-6-luna', 'deepseek/deepseek-v4-flash-0731', 'google/gemini-3.8-flash'):
+        client = _client()
+        client.model, client.temperature, client.reasoning_effort = model, None, 'medium'
+        client.max_tokens, client.token_limit_parameter = 16384, 'max_tokens'
+        calls = []
+        def create(**kwargs):
+            calls.append(kwargs)
+            return _response('{}')
+        client.client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+        messages = [{'role': 'user', 'content': 'frozen input'}]
+        client._create_completion(messages)
+        assert calls == [dict(model=model, messages=messages, max_tokens=16384,
+                              response_format={'type': 'json_object'}, reasoning_effort='medium')]
+        def fail(**kwargs):
+            calls.append(kwargs)
+            raise RuntimeError('maximum context length of 100 tokens; 90 tokens from the input messages')
+        client.client.chat.completions.create = fail
+        with pytest.raises(RuntimeError): client._create_completion(messages)
+        assert len(calls) == 2 and calls[-1]['max_tokens'] == 16384

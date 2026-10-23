@@ -202,8 +202,8 @@ def validation_kwargs(payload, aliases):
     }
 
 
-def verify_prepared(prepared, manifest, output):
-    """Check a frozen request/response and return its original binary decision."""
+def verify_request(prepared, manifest):
+    """Validate the frozen task, request and selected-record bindings."""
     if prepared.get("version") != "direct_indirect_budgeted.v3" or prepared.get("prompt_version") != "joseph_v5":
         raise ValueError("unsupported paper baseline prepared format")
     payload = prepared["prompt_payload"]
@@ -226,6 +226,13 @@ def verify_prepared(prepared, manifest, output):
             or len(prepared["direct_ids"]) != prepared["n_direct"]
             or len(prepared["indirect_ids"]) != prepared["n_indirect"]):
         raise ValueError("paper baseline record membership changed")
+
+
+def verify_prepared(prepared, manifest, output):
+    """Check a frozen request/response and return its original binary decision."""
+    verify_request(prepared, manifest)
+    payload, aliases = prepared['prompt_payload'], prepared['card_alias_map']
+    spec = profile(payload)
     if output.get("status") != "ok" or output.get("request_hash") != prepared["request_hash"]:
         raise ValueError("paper baseline response binding changed")
     response = output.get("llm", {})
@@ -276,3 +283,42 @@ def verify_batch(root):
         reports.append({"task": task, "queries": len(saved), **values})
     return {"status": "verified", "scope": "frozen requests and saved responses; no new retrieval or inference",
             "manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(), "tasks": reports}
+
+
+def project_records(payload, records):
+    """Rebuild source cards while preserving a frozen query, prior and task contract."""
+    from predict.utils.evidence import minimal_evidence_from_row
+
+    profile(payload)
+    if not payload['query'].get('canonical_smiles'):
+        raise ValueError('paper baseline preparation requires visible query structures')
+    neighbors, alias_map = {}, {}
+    ordered = sorted(records, key=lambda r: (r['kind'] != 'direct', -r['similarity'], r.get('knn_rank', 0), r['id']))
+    for i, record in enumerate(ordered, 1):
+        molecule = record['native_molecule_id']
+        alias = f'C{i:03d}'
+        alias_map[alias] = record['id']
+        neighbor = neighbors.setdefault(molecule, {
+            'molecule': f'neighbor_{len(neighbors)+1}', 'similarity': round(record['similarity'], 2),
+            'records': []})
+        neighbor['canonical_smiles'] = record['canonical_smiles']
+        raw = {k: v for k, v in record['card'].items() if k not in ('evidence_family', 'evidence_family_level')}
+        if record.get('record_smiles'):
+            raw['source_molecule_smiles'] = record['record_smiles']
+        evidence = minimal_evidence_from_row({
+            'evidence_source': record.get('evidence_source', 'Starling'), 'molecule_id': molecule,
+            'canonical_smiles': record.get('record_smiles', record['canonical_smiles']), 'molecule_names': record.get('molecule_names', []),
+            'endpoint_group': record['group'], 'standard_type': raw['endpoint_type'],
+            'standard_value': raw['reported_value'], 'standard_units': raw['reported_units'],
+            'assay_description': raw['support_text'], 'source_record_examples': [raw],
+            'evidence_scope': {'assay_context': [raw['assay_context']], 'species_context': [raw['species_context']],
+                               'qualifying_conditions': [raw['qualifying_conditions']]}})
+        evidence['molecule'] = {'id': neighbor['molecule']}
+        neighbor['records'].append({'card_id': alias, 'evidence_kind': record['kind'], 'evidence': evidence})
+    levels = {r['id']: r['card'].get('evidence_family_level', '') for r in ordered}
+    for neighbor in neighbors.values():
+        for row in neighbor['records']:
+            row['level'] = levels[alias_map[row['card_id']]]
+    payload = deepcopy(payload)
+    payload['neighbors'] = list(neighbors.values())
+    return payload, alias_map

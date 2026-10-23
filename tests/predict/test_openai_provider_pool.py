@@ -587,3 +587,11 @@ def test_endpoint_selection_fails_only_when_none_are_compatible(monkeypatch):
 
     with pytest.raises(ValueError, match="no healthy exact-model provider"):
         provider_pool.select_healthy_providers(config, 1)
+
+
+def test_pool_closes_owned_transports():
+    closed = []
+    pool = OpenAIProviderPool(ProviderPoolConfig(providers=(_spec('a', 1), _spec('b', 1))),
+        client_factory=lambda spec: SimpleNamespace(client=SimpleNamespace(close=lambda: closed.append(spec.name))))
+    pool.close()
+    assert closed == ['a', 'b']

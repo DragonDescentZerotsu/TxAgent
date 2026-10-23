@@ -89,7 +89,7 @@ def test_incompatible_contracts_fail_before_selection(broken):
             policy_metadata(policy, source=source)
 
 
-@pytest.mark.parametrize('path', ['indexed', 'branches', 'reranked'])
+@pytest.mark.parametrize('path', ['indexed', 'branches', 'reranked', 'paper'])
 @pytest.mark.parametrize('query,other,policy,expected', [
     ('C=CCC', 'CC=CC', 'parent_disjoint', 'isomer'),
     ('C=CCC', 'CC=CC', 'scaffold_disjoint', 'isomer'),
@@ -106,6 +106,16 @@ def test_runtime_filters_before_top_k(path, query, other, policy, expected):
     for molecule in index['molecules']:
         molecule.update(candidate(molecule['canonical_smiles']))
     kwargs = dict(top_k_per_group=1, min_similarity=0, neighbor_identity_policy=policy)
+    if path == 'paper':
+        from predict.retrieval.paper_baseline import build_evidence_view, retrieve_candidates
+        for assays in index['evidence_by_molecule_group'].values():
+            for evidence in assays.values():
+                for row in evidence:
+                    row['source_record_examples'] = [{'evidence_family_level': 2, 'evidence_family': 'test'}]
+        pool = retrieve_candidates(query, build_evidence_view(index), split_scheme='scaffold',
+            candidate_molecules=1, min_similarity=0, indirect_identity_policy=policy)
+        assert [r['native_molecule_id'] for r in pool['indirect']] == [expected]
+        return
     if path == 'indexed':
         result = retrieve_neighbors(query, index, **kwargs)
     else:

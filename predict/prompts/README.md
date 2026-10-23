@@ -46,9 +46,56 @@ and metrics. It prints a report and does not modify the batch. This verifies
 saved artifacts; it does not rebuild candidates or independently re-audit gold
 labels, providers or costs.
 
-This bundle is not yet an executable `--prompt` choice for fresh FINAL runs.
-The next integration step must connect the original selection/payload preparation
-and inference settings to the shared runner. Do not substitute the current named
-cache, prior generation, output schema or high-reasoning default for the paper
-configuration. Approved retrieval-policy changes require new prepared inputs;
-old results retain their original protocol.
+Rebuild candidates from a restored paper batch and its hash-bound source inputs:
+
+```bash
+python -m predict.harnesses.branches \
+  --prepare-paper-baseline /path/to/frozen/batch \
+  --source-root /path/to/restored/paper/repository \
+  --run-name paper-baseline-recheck --query-indices 0 10 20
+```
+
+Omit `--query-indices` to prepare the entire source cohort. Preparation makes no
+model or tool-service calls. It writes a new batch under
+`outputs/predictions/branches/paper_baseline_v1/<run-name>/` and reports ordered
+record/request differences in `preparation_comparison.json`. Never reuse old
+predictions for changed requests. The source batch and historical scores remain
+unchanged. Changing a source, prior, implementation or configuration requires a
+new run name; concurrent preparation/execution of one run is rejected.
+
+The source manifest supplies the setting (None, Direct or Direct+Indirect),
+128-candidate limits, record budgets, selector/seed, split and generation settings.
+`predict/retrieval/paper_baseline.py` partitions L1/L2+ before shared identity
+filtering and preserves the original TDC train-label merge and heldout filter.
+`optimization/selection/record_budget.py` preserves Neighbor-fill, molecule-cap
+and group-balanced ordering; source records are projected through the existing
+minimal-evidence helper. The frozen query, condition and cached prior are retained.
+The new parent rules apply during candidate filtering before ranking/budget fill;
+DILI/Carcinogens retain their declared scaffold topology. No split is regenerated.
+
+Execute a prepared batch with the shared provider pool (this calls the model):
+
+```bash
+python -m predict.harnesses.branches \
+  --run-paper-baseline outputs/predictions/branches/paper_baseline_v1/paper-baseline-recheck \
+  --provider-config /path/to/provider.json --parallelism 8
+```
+
+Provider model and extra request parameters must match the frozen manifest.
+Temperature, reasoning effort and token budget come from that manifest. The paper
+protocol explicitly retains `max_tokens` and rejects context overflow rather
+than silently shrinking the budget; current FINAL defaults are unchanged.
+Requests, cohorts, priors and existing responses are checked before dispatch.
+The shared JSON validator supplies up to four total attempts with the original repair messages and native
+output fields. Successful saved outputs are resumed without a model call;
+failed outputs can be retried by rerunning the command. Summary coverage and
+metrics distinguish failed queries. A transport exception aborts the command;
+completed query files remain resumable.
+
+This is the ordinary API path for restored paper inputs. Batch submission,
+first-valid parallel retry races, automatic stage requeues, matched Direct-3 and
+standalone prior generation are not yet integrated into this mode. It does not
+replace the default FINAL scheduler or its named-cache protocol. Offline transport
+and recovery tests are not a fresh model-performance replication. The original
+source inputs are still required; portable packaging and full-cohort validation
+remain release gates.

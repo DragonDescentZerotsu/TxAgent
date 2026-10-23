@@ -1,0 +1,270 @@
+"""Reprepare frozen paper experiments using shared retrieval and model transport."""
+from concurrent.futures import ThreadPoolExecutor
+from copy import deepcopy
+import argparse
+import fcntl
+import json
+from pathlib import Path
+
+from optimization.selection.record_budget import SIMPLE_POLICIES, select_simple_records
+from predict.prompts import paper_baseline as prompt
+from predict.retrieval.features import load_retrieval_index
+from predict.retrieval.paper_baseline import build_evidence_view, merge_train_labels, retrieve_candidates
+from predict.utils.json import read_jsonl, sha256_file, write_json_atomic, write_jsonl_atomic
+from predict.utils.response import call_with_json_validation, structured_response_is_valid
+
+REVISION = 'paper_baseline_retrieval.v1'
+
+
+def prepare(source_root, source_batch, target, indices=None):
+    """Use frozen query/prior/config inputs; rebuild all eligible evidence before budgets."""
+    source_root, source_batch, target = map(lambda p: Path(p).resolve(), (source_root, source_batch, target))
+    if target == source_batch or source_batch in target.parents:
+        raise ValueError('preparation requires a separate output root')
+    original = json.loads((source_batch / 'experiment_manifest.json').read_text())
+    if (original.get('version') != 'direct_indirect_budgeted.v3'
+            or original.get('prompt_version') != 'joseph_v5'
+            or original.get('visibility_mode') != 'deployment_visible_prefetched'
+            or original.get('assessment_required') or original.get('feature_inputs_only')
+            or original.get('skip_tool_prefetch') or original.get('migration')):
+        raise ValueError('requires a completed visible paper baseline source batch')
+    if (original['direct_selector'] not in SIMPLE_POLICIES
+            or original['selection']['policy'] not in SIMPLE_POLICIES
+            or original['setting'] not in ('none', 'direct', 'direct_indirect')
+            or any('direct_knn' in spec for spec in original['inputs'].values())):
+        raise ValueError('unsupported paper baseline selection; matched KNN is a separate protocol')
+    expected_direct = 'scaffold_disjoint' if original['split_scheme'] == 'scaffold' else 'parent_disjoint'
+    if original['direct_identity_policy'] != expected_direct:
+        raise ValueError('source direct identity policy differs from split contract')
+    manifest = deepcopy(original)
+    manifest['migration'] = {'version': REVISION, 'source_manifest_sha256': sha256_file(source_batch/'experiment_manifest.json'),
+        'source_batch': str(source_batch), 'source_root': str(source_root), 'query_indices': {},
+        'scope': 'frozen query/prior/generation; approved retrieval identity refinement; no inherited predictions'}
+    from predict.retrieval import policies, task_identity, retrieve, features
+    from predict.utils import evidence, response
+    from optimization.selection import record_budget
+    from predict.retrieval import paper_baseline
+    manifest['code'] = {str(Path(module.__file__).relative_to(Path(__file__).parents[3])): sha256_file(Path(module.__file__))
+                        for module in (prompt, paper_baseline, policies, task_identity, retrieve, features, evidence, response, record_budget)}
+    manifest['code']['predict/harnesses/branches/paper_baseline.py'] = sha256_file(Path(__file__))
+    inputs, cohorts = {}, {}
+    for task, spec in original['inputs'].items():
+        inputs[task] = {}
+        required = ['input'] + ([] if original['setting'] == 'none' else ['index'])
+        if original['benchmark_profile'] and original['setting'] != 'none':
+            required += ['train', 'heldout']
+        for key in required:
+            path = source_root / spec[key]['path']
+            if sha256_file(path) != spec[key]['sha256']:
+                raise ValueError(f'{task}: frozen {key} input changed')
+            inputs[task][key] = path
+        cohorts[task] = read_jsonl(inputs[task]['input'])
+        chosen = list(range(len(cohorts[task]))) if indices is None else list(indices)
+        if not chosen or len(chosen) != len(set(chosen)) or any(i < 0 or i >= len(cohorts[task]) for i in chosen):
+            raise ValueError('invalid or repeated query indices')
+        manifest['migration']['query_indices'][task] = chosen
+    if (target/'experiment_manifest.json').exists():
+        if json.loads((target/'experiment_manifest.json').read_text()) != manifest:
+            raise ValueError('preparation contract changed; use a new output root')
+    elif target.exists() and any(p.name != '.execution.lock' for p in target.iterdir()):
+        raise ValueError('output root contains unbound artifacts')
+    write_json_atomic(target/'experiment_manifest.json', manifest)
+    reports = []
+    for task, paths in inputs.items():
+        view = None
+        if original['setting'] != 'none':
+            if paths['index'].suffix != '.pkl':
+                raise ValueError('paper Morgan baseline requires its frozen pickle index')
+            index = load_retrieval_index(paths['index'])
+            if original['benchmark_profile']:
+                index = merge_train_labels(index, task, read_jsonl(paths['train']), read_jsonl(paths['heldout']))
+            view = build_evidence_view(index)
+        for i in manifest['migration']['query_indices'][task]:
+            source = source_batch/'runs'/task/f'query_{i:05d}'
+            frozen = json.loads((source/'prepared.json').read_text())
+            prompt.verify_prepared(frozen, original, json.loads((source/'output.json').read_text()))
+            row = cohorts[task][i]
+            query = {'benchmark_profile': original['benchmark_profile'], 'canonical_smiles': row['drug'],
+                     'condition_group': row.get('condition_group', '')}
+            evaluation = json.loads((source/'evaluation.json').read_text())
+            if (frozen['query_hash'] != prompt.content_hash(query) or evaluation['label'] != int(row['Y'])
+                    or frozen['prompt_payload']['task_definition']['task'] != task
+                    or frozen['prompt_payload']['query']['canonical_smiles'] != row['drug']):
+                raise ValueError('frozen query or label binding differs')
+            pool = {'direct': [], 'indirect': []} if view is None else retrieve_candidates(row['drug'], view,
+                split_scheme=original['split_scheme'], candidate_molecules=original['candidate_molecules'],
+                min_similarity=original['min_similarity'], indirect_identity_policy=original['indirect_identity_policy'])
+            direct, direct_audit = select_simple_records(pool['direct'], budget=original['direct_budget'],
+                policy=original['direct_selector'], per_molecule=original['direct_records_per_molecule'],
+                seed=original['selection']['seed'])
+            candidates = pool['indirect'] if original['setting'] == 'direct_indirect' else []
+            selected, audit = select_simple_records(candidates,
+                **{k: original['selection'][k] for k in ('budget', 'policy', 'per_molecule', 'seed')})
+            payload, aliases = prompt.project_records(frozen['prompt_payload'], direct + selected)
+            messages = prompt.render(payload)
+            prepared = {**frozen, 'manifest_hash': prompt.content_hash(manifest), 'messages': messages,
+                'request_hash': prompt.content_hash(messages), 'prompt_payload': payload, 'card_alias_map': aliases,
+                'direct_ids': [r['id'] for r in direct], 'indirect_ids': [r['id'] for r in selected],
+                'candidate_pool_hash': prompt.content_hash(sorted(r['id'] for r in pool['indirect'])),
+                'n_direct': len(direct), 'n_indirect': len(selected)}
+            prompt.verify_request(prepared, manifest)
+            directory = target/'runs'/task/f'query_{i:05d}'
+            if (directory/'prepared.json').exists() and json.loads((directory/'prepared.json').read_text()) != prepared:
+                raise ValueError('prepared evidence or frozen prior changed; use a new output root')
+            comparison = {'task': task, 'index': i, 'messages_equal': messages == frozen['messages'],
+                'direct_ids_equal': prepared['direct_ids'] == frozen['direct_ids'],
+                'indirect_ids_equal': prepared['indirect_ids'] == frozen['indirect_ids'],
+                'n_direct': len(direct), 'n_indirect': len(selected)}
+            write_json_atomic(directory/'selection.json', {'query': query, 'direct': direct, 'selected': selected,
+                'audit': audit, 'direct_audit': direct_audit, 'comparison': comparison})
+            write_json_atomic(directory/'evaluation.json', evaluation)
+            write_json_atomic(directory/'prepared.json', prepared)
+            reports.append(comparison)
+    write_json_atomic(target/'preparation_comparison.json', reports)
+    return reports
+
+
+def execute_query(directory, manifest, call):
+    """Run or resume one bound request using the shared four-attempt validator."""
+    directory = Path(directory)
+    prepared = json.loads((directory/'prepared.json').read_text())
+    prompt.verify_request(prepared, manifest)
+    if not prepared.get('context_ready'):
+        raise ValueError('prepared context is incomplete')
+    output = directory/'output.json'
+    if output.exists():
+        saved = json.loads(output.read_text())
+        if saved.get('request_hash') != prepared['request_hash']:
+            raise ValueError('saved output belongs to a different request')
+        if saved.get('status') == 'ok':
+            prompt.verify_prepared(prepared, manifest, saved)
+            return saved
+    task = prepared['prompt_payload']['task_definition']['task']
+    result = call_with_json_validation(call, prepared['messages'],
+        **prompt.validation_kwargs(prepared['prompt_payload'], prepared['card_alias_map']),
+        branch_name=f'{task} budgeted decision', max_attempts=4)
+    saved = {'status': 'ok' if structured_response_is_valid(result) else 'error', 'model_called': True,
+        'request_hash': prepared['request_hash'], 'llm': result, 'card_alias_map': prepared['card_alias_map']}
+    if saved['status'] == 'ok':
+        prompt.verify_prepared(prepared, manifest, saved)
+    write_json_atomic(output, saved)
+    return saved
+
+
+def run(argv):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--prepare-paper-baseline', type=Path, metavar='SOURCE_BATCH')
+    parser.add_argument('--run-paper-baseline', type=Path, metavar='PREPARED_BATCH')
+    parser.add_argument('--source-root', type=Path)
+    parser.add_argument('--run-name')
+    parser.add_argument('--query-indices', type=int, nargs='+')
+    parser.add_argument('--provider-config', type=Path)
+    parser.add_argument('--env-file', type=Path)
+    parser.add_argument('--parallelism', type=int, default=1)
+    args = parser.parse_args(argv)
+    if bool(args.prepare_paper_baseline) == bool(args.run_paper_baseline):
+        parser.error('choose preparation or execution')
+    if args.prepare_paper_baseline:
+        if not args.source_root or not args.run_name or Path(args.run_name).name != args.run_name or args.run_name in ('.', '..'):
+            parser.error('preparation requires --source-root and a single-component --run-name')
+        if args.provider_config or args.env_file:
+            parser.error('preparation never constructs a model client')
+        target = Path('outputs/predictions/branches')/prompt.BUNDLE/args.run_name
+    else:
+        if not args.provider_config or args.source_root or args.run_name or args.query_indices is not None:
+            parser.error('execution requires --provider-config and an already prepared batch')
+        target = args.run_paper_baseline
+        manifest = json.loads((target/'experiment_manifest.json').read_text())
+        if manifest.get('migration', {}).get('version') != REVISION:
+            raise ValueError('execute only a newly prepared paper-baseline batch')
+    target.mkdir(parents=True, exist_ok=True)
+    with (target/'.execution.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        if args.prepare_paper_baseline:
+            print(json.dumps(prepare(args.source_root, args.prepare_paper_baseline, target, args.query_indices), indent=2))
+            return 0
+        return execute_batch(target, args.provider_config, args.env_file, args.parallelism)
+
+
+def execute_batch(root, provider_config, env_file, parallelism):
+    """Ordinary API execution only; generation settings are read from the frozen manifest."""
+    from predict.api_client.pool import load_provider_pool_config, build_provider_pool, validate_parallelism
+    from sklearn.metrics import accuracy_score, f1_score
+
+    manifest = json.loads((root/'experiment_manifest.json').read_text())
+    if manifest.get('migration', {}).get('version') != REVISION:
+        raise ValueError('execute only a newly prepared paper-baseline batch')
+    source = Path(manifest['migration']['source_batch'])
+    if sha256_file(source/'experiment_manifest.json') != manifest['migration']['source_manifest_sha256']:
+        raise ValueError('frozen source manifest changed')
+    original = json.loads((source/'experiment_manifest.json').read_text())
+    for key in ('model', 'generation', 'max_tokens', 'request_extra_body', 'inputs', 'task_contracts', 'benchmark_profile'):
+        if manifest[key] != original[key]:
+            raise ValueError(f'frozen paper contract changed: {key}')
+    config = load_provider_pool_config(provider_config)
+    validate_parallelism(config, parallelism)
+    if any(p.model != manifest['model'] or dict(p.request_extra_body or {}) != manifest['request_extra_body'] for p in config.providers):
+        raise ValueError('provider model or extra generation parameters differ from the frozen experiment')
+    generation = manifest['generation']
+    if generation['thinking'] != 'provider_default':
+        raise ValueError('unsupported thinking contract')
+    queries = [(task, i, root/'runs'/task/f'query_{i:05d}')
+               for task, indices in manifest['migration']['query_indices'].items() for i in indices]
+    cohorts = {}
+    for task, spec in manifest['inputs'].items():
+        path = Path(manifest['migration']['source_root']) / spec['input']['path']
+        if sha256_file(path) != spec['input']['sha256']:
+            raise ValueError('frozen evaluation cohort changed')
+        cohorts[task] = read_jsonl(path)
+    # Validate every request before constructing a network client or dispatching any call.
+    for task, i, directory in queries:
+        prepared = json.loads((directory/'prepared.json').read_text())
+        prompt.verify_request(prepared, manifest)
+        if prepared['prompt_payload']['task_definition']['task'] != task or not prepared.get('context_ready'):
+            raise ValueError('prepared task or readiness mismatch')
+        row = cohorts[task][i]
+        query = {'benchmark_profile': manifest['benchmark_profile'], 'canonical_smiles': row['drug'],
+                 'condition_group': row.get('condition_group', '')}
+        frozen = json.loads((source/'runs'/task/f'query_{i:05d}'/'prepared.json').read_text())
+        prompt.verify_request(frozen, original)
+        if (prepared['query_hash'] != prompt.content_hash(query)
+                or json.loads((directory/'evaluation.json').read_text())['label'] != int(row['Y'])
+                or {k: v for k, v in prepared['prompt_payload'].items() if k != 'neighbors'}
+                != {k: v for k, v in frozen['prompt_payload'].items() if k != 'neighbors'}):
+            raise ValueError('frozen query, prior or evaluation binding changed')
+        if (directory/'output.json').exists():
+            saved = json.loads((directory/'output.json').read_text())
+            if saved.get('request_hash') != prepared['request_hash']:
+                raise ValueError('saved output belongs to a different request')
+            if saved.get('status') == 'ok':
+                prompt.verify_prepared(prepared, manifest, saved)
+    client = build_provider_pool(config, env_file=env_file, timeout_s=240, max_tokens=manifest['max_tokens'],
+        temperature=generation['temperature'], reasoning_effort='' if generation['reasoning_effort'] == 'omitted' else generation['reasoning_effort'],
+        enable_thinking=False, tool_service_url='', enable_group_tools=False, max_tool_rounds=0, transport_max_retries=0,
+        token_limit_parameter='max_tokens')
+    try:
+        write_json_atomic(root/'execution_provider.json', config.public_dict())
+        with ThreadPoolExecutor(max_workers=parallelism) as workers:
+            results = list(workers.map(lambda q: execute_query(q[2], manifest, client.chat_json), queries))
+    finally:
+        client.close()
+    failures = 0
+    for task in manifest['migration']['query_indices']:
+        rows = []
+        for (query_task, i, directory), result in zip(queries, results, strict=True):
+            if query_task != task:
+                continue
+            prepared = json.loads((directory/'prepared.json').read_text())
+            label = json.loads((directory/'evaluation.json').read_text())['label']
+            prediction = prompt.verify_prepared(prepared, manifest, result) if result['status'] == 'ok' else None
+            rows.append({'index': i, 'label': label, 'pred_label': prediction, 'status': result['status']})
+        successful = [r for r in rows if r['status'] == 'ok']
+        metrics = {'n_total': len(rows), 'n_successful': len(successful), 'n_failed_runs': len(rows)-len(successful)}
+        if successful:
+            labels, predictions = ([r[k] for r in successful] for k in ('label', 'pred_label'))
+            metrics.update(accuracy=accuracy_score(labels, predictions),
+                           macro_f1=f1_score(labels, predictions, labels=[0, 1], average='macro', zero_division=0))
+        failures += metrics['n_failed_runs']
+        write_jsonl_atomic(root/'summary'/task/'predictions.jsonl', rows)
+        write_json_atomic(root/'summary'/task/'metrics.json', metrics)
+    return int(bool(failures))
