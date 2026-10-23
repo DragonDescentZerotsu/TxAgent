@@ -64,6 +64,8 @@ class ProviderSpec:
 
     @classmethod
     def from_mapping(cls, row: Mapping[str, Any]) -> "ProviderSpec":
+        if row.get("transport", "chat_completions") != "chat_completions" or row.get("batch_options"):
+            raise ValueError("this provider pool supports chat_completions only; Batch configuration cannot run as ordinary API")
         spec = cls(
             name=str(row.get("name") or "").strip(),
             base_url=str(row.get("base_url") or "").strip().rstrip("/"),

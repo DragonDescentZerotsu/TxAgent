@@ -81,6 +81,39 @@ python -m predict.harnesses.branches \
   --provider-config /path/to/provider.json --parallelism 8
 ```
 
+To move prepared inputs to another checkout or machine, export a fresh execution
+bundle with the same CLI, without rebuilding retrieval indexes:
+
+```bash
+python -m predict.harnesses.branches \
+  --bundle-paper-baseline outputs/predictions/branches/paper_baseline_v1/paper-baseline-recheck \
+  --run-name paper-baseline-portable
+```
+
+Copy the entire `outputs/predictions/branches/paper_baseline_v1/paper-baseline-portable/`
+directory to the destination. Execution uses its relative source snapshot and
+evaluation files; it does not open the original repository. Original source hashes,
+messages, priors, record order, labels and generation settings remain verified.
+Export requires a new directory and includes only the selected prepared requests,
+selection traces and their validation inputs. It excludes predictions, provider
+configuration, credentials and logs, so its first execution makes new model calls.
+To resume an already running portable batch, move that whole batch directly instead
+of exporting it again. Historical path strings remain in provenance; this command
+does not anonymize a bundle or make it ready for public distribution.
+
+Prepared execution can use a small environment (verified with Python 3.12):
+
+```bash
+python -m venv .venv-paper
+.venv-paper/bin/python -m pip install -r predict/requirements-paper-baseline.txt
+.venv-paper/bin/python -m predict.harnesses.branches \
+  --run-paper-baseline /path/to/paper-baseline-portable \
+  --provider-config /path/to/provider.json --env-file /path/to/provider.env --parallelism 8
+```
+
+These dependencies cover prepared LLM execution, not retrieval rebuilding or ML
+training. The latter still require their documented data and environments.
+
 Provider model and extra request parameters must match the frozen manifest.
 Temperature, reasoning effort and token budget come from that manifest. The paper
 protocol explicitly retains `max_tokens` and rejects context overflow rather
@@ -91,11 +124,14 @@ output fields. Successful saved outputs are resumed without a model call;
 failed outputs can be retried by rerunning the command. Summary coverage and
 metrics distinguish failed queries. A transport exception aborts the command;
 completed query files remain resumable.
+The provider pool explicitly rejects Batch/unknown transport configurations;
+unsupported transports never silently fall back to ordinary API calls.
 
 This is the ordinary API path for restored paper inputs. Batch submission,
 first-valid parallel retry races, automatic stage requeues, matched Direct-3 and
 standalone prior generation are not yet integrated into this mode. It does not
 replace the default FINAL scheduler or its named-cache protocol. Offline transport
-and recovery tests are not a fresh model-performance replication. The original
-source inputs are still required; portable packaging and full-cohort validation
-remain release gates.
+and recovery tests are not a fresh model-performance replication. Candidate
+rebuilding still requires the original full retrieval inputs; the portable bundle
+only makes already prepared execution self-contained. Full data distribution,
+anonymization and full-cohort validation remain release gates.

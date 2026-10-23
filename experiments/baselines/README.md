@@ -52,7 +52,7 @@ Outputs are grouped as `<feature_set>/policy_<index>/`; completed output roots
 are rejected. Resume an interrupted candidate or finalize explicitly through
 `python -m predict.baselines.retrieval_forest`, using its original arguments.
 
-## Frozen LLM input/output verification
+## Frozen LLM baseline
 
 The shared prediction CLI can verify saved paper baseline batches offline:
 
@@ -61,6 +61,12 @@ python -m predict.harnesses.branches --verify-paper-baseline /path/to/frozen/bat
 ```
 
 See the [frozen prompt contract](../../predict/prompts/README.md#frozen-paper-baseline)
-for supported artifacts and verification limits. Fresh Neighbor-fill preparation
-and live inference are still pending integration; the FINAL defaults are not the
-paper baseline recipe.
+for commands and verification limits. The same entry point supports
+`--prepare-paper-baseline` to rebuild Neighbor-fill candidates,
+`--bundle-paper-baseline` to export portable prepared inputs, and
+`--run-paper-baseline` for ordinary API execution and checkpoint recovery.
+Preparation retains frozen queries/priors/configuration and applies the approved
+retrieval rules; it does not rebuild train/valid/test splits. A portable execution
+bundle does not include the large indexes needed for a fresh candidate rebuild.
+Batch and parallel retry races remain pending integration. The FINAL defaults are
+not the paper baseline recipe.

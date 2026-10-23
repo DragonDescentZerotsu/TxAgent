@@ -115,6 +115,8 @@ def test_offline_cli_verifies_saved_batch_without_flat_runtime(tmp_path, capsys)
     assert before == {str(f): f.read_bytes() for f in tmp_path.rglob('*') if f.is_file()}
     with pytest.raises(ValueError, match='newly prepared'):
         main(['--run-paper-baseline', str(tmp_path), '--provider-config', 'unused.json'])
+    with pytest.raises(ValueError, match='newly prepared'):
+        main(['--bundle-paper-baseline', str(tmp_path), '--run-name', 'must-not-exist'])
     assert before == {str(f): f.read_bytes() for f in tmp_path.rglob('*') if f.is_file()}
     (summary/'predictions.jsonl').write_text('')
     with pytest.raises(ValueError, match='empty'): main(['--verify-paper-baseline', str(tmp_path)])
@@ -197,7 +199,8 @@ def test_new_candidate_path_uses_selected_parent_and_keeps_scaffold_policy():
     assert '6' in {r['native_molecule_id'] for r in pool['indirect']}
 
 
-def test_batch_execution_freezes_generation_cohort_prior_and_resume(tmp_path, monkeypatch):
+@pytest.mark.parametrize('portable', [False, True])
+def test_batch_execution_freezes_generation_cohort_prior_and_resume(tmp_path, monkeypatch, portable):
     from predict.harnesses.branches import paper_baseline as runtime
     from predict.api_client import pool
     from predict.utils.json import write_json_atomic, sha256_file
@@ -234,9 +237,31 @@ def test_batch_execution_freezes_generation_cohort_prior_and_resume(tmp_path, mo
     assert builds[0]['token_limit_parameter'] == 'max_tokens' and builds[0]['enable_thinking'] is False
     assert calls == [prepared['messages']] and closed == [True]
     assert paper.verify_batch(target)['tasks'][0]['queries'] == 1
+    if portable:
+        (target/'.env').write_text('DUMMY=not-an-export-input')
+        exported = tmp_path/'portable'
+        runtime.bundle(target, exported)
+        assert not list(exported.rglob('output.json'))
+        assert not list(exported.rglob('.env'))
+        assert not (exported/'execution_provider.json').exists()
+        with pytest.raises(ValueError, match='new, separate'):
+            runtime.bundle(target, exported)
+        # Remove both original locators, then move the whole bundle before execution.
+        source.rename(tmp_path/'unavailable-source')
+        cohort.rename(tmp_path/'unavailable-cohort.jsonl')
+        target = tmp_path/'relocated'
+        exported.rename(target)
+        directory = target/'runs'/task/'query_00000'
+        prepared = json.loads((directory/'prepared.json').read_text())
+        assert prepared['messages'] == frozen['messages']
+        assert runtime.execute_batch(target, None, None, 1) == 0
+        assert len(calls) == 2
+        assert paper.verify_batch(target)['tasks'][0]['queries'] == 1
+    expected_calls = len(calls)
+    expected_builds = len(builds) + 1
     before = (directory/'output.json').read_bytes()
     assert runtime.execute_batch(target, None, None, 1) == 0
-    assert len(calls) == 1 and (directory/'output.json').read_bytes() == before
+    assert len(calls) == expected_calls and (directory/'output.json').read_bytes() == before
     changed = deepcopy(prepared)
     changed['prompt_payload']['query_prior']['reasoning_summary'] = 'silently replaced'
     changed['messages'] = paper.render(changed['prompt_payload'])
@@ -244,12 +269,12 @@ def test_batch_execution_freezes_generation_cohort_prior_and_resume(tmp_path, mo
     write_json_atomic(directory/'prepared.json', changed)
     with pytest.raises(ValueError, match='prior or evaluation'):
         runtime.execute_batch(target, None, None, 1)
-    assert len(builds) == 2
+    assert len(builds) == expected_builds
     write_json_atomic(directory/'prepared.json', prepared)
     write_json_atomic(directory/'evaluation.json', {'label': 0})
     with pytest.raises(ValueError, match='prior or evaluation'):
         runtime.execute_batch(target, None, None, 1)
-    assert len(builds) == 2
+    assert len(builds) == expected_builds
 
 
 def test_tdc_train_merge_filters_heldout_before_card_ranking():

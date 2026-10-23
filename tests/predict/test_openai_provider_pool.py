@@ -50,6 +50,12 @@ def _spec(name, capacity, *, priority=0):
     )
 
 
+@pytest.mark.parametrize("options", [{"transport": "openrouter_batch"}, {"transport": "unknown"}, {"batch_options": {"window": "24h"}}])
+def test_unsupported_batch_transport_cannot_silently_become_ordinary_api(options):
+    with pytest.raises(ValueError, match="chat_completions only"):
+        ProviderSpec.from_mapping({**_spec("test", 1).public_dict(), **options})
+
+
 def test_pool_spaces_request_starts_and_checks_flex_tier():
     starts = []
     class Client:

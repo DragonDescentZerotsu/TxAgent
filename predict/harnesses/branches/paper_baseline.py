@@ -4,12 +4,11 @@ from copy import deepcopy
 import argparse
 import fcntl
 import json
+import shutil
+from tempfile import TemporaryDirectory
 from pathlib import Path
 
-from optimization.selection.record_budget import SIMPLE_POLICIES, select_simple_records
 from predict.prompts import paper_baseline as prompt
-from predict.retrieval.features import load_retrieval_index
-from predict.retrieval.paper_baseline import build_evidence_view, merge_train_labels, retrieve_candidates
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic, write_jsonl_atomic
 from predict.utils.response import call_with_json_validation, structured_response_is_valid
 
@@ -18,6 +17,10 @@ REVISION = 'paper_baseline_retrieval.v1'
 
 def prepare(source_root, source_batch, target, indices=None):
     """Use frozen query/prior/config inputs; rebuild all eligible evidence before budgets."""
+    from optimization.selection.record_budget import SIMPLE_POLICIES, select_simple_records
+    from predict.retrieval.features import load_retrieval_index
+    from predict.retrieval.paper_baseline import build_evidence_view, merge_train_labels, retrieve_candidates
+
     source_root, source_batch, target = map(lambda p: Path(p).resolve(), (source_root, source_batch, target))
     if target == source_batch or source_batch in target.parents:
         raise ValueError('preparation requires a separate output root')
@@ -155,6 +158,7 @@ def run(argv):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--prepare-paper-baseline', type=Path, metavar='SOURCE_BATCH')
     parser.add_argument('--run-paper-baseline', type=Path, metavar='PREPARED_BATCH')
+    parser.add_argument('--bundle-paper-baseline', type=Path, metavar='PREPARED_BATCH')
     parser.add_argument('--source-root', type=Path)
     parser.add_argument('--run-name')
     parser.add_argument('--query-indices', type=int, nargs='+')
@@ -162,8 +166,21 @@ def run(argv):
     parser.add_argument('--env-file', type=Path)
     parser.add_argument('--parallelism', type=int, default=1)
     args = parser.parse_args(argv)
-    if bool(args.prepare_paper_baseline) == bool(args.run_paper_baseline):
-        parser.error('choose preparation or execution')
+    if sum(bool(value) for value in (args.prepare_paper_baseline, args.run_paper_baseline, args.bundle_paper_baseline)) != 1:
+        parser.error('choose preparation, bundling or execution')
+    if args.bundle_paper_baseline:
+        if (not args.run_name or Path(args.run_name).name != args.run_name or args.run_name in ('.', '..')
+                or args.source_root or args.query_indices is not None or args.provider_config or args.env_file):
+            parser.error('bundling requires a new --run-name and no preparation or provider options')
+        manifest = json.loads((args.bundle_paper_baseline/'experiment_manifest.json').read_text())
+        if manifest.get('migration', {}).get('version') != REVISION:
+            raise ValueError('bundle only a newly prepared paper-baseline batch')
+        with (args.bundle_paper_baseline/'.execution.lock').open('a') as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            target = Path('outputs/predictions/branches')/prompt.BUNDLE/args.run_name
+            bundle(args.bundle_paper_baseline, target)
+        print(target)
+        return 0
     if args.prepare_paper_baseline:
         if not args.source_root or not args.run_name or Path(args.run_name).name != args.run_name or args.run_name in ('.', '..'):
             parser.error('preparation requires --source-root and a single-component --run-name')
@@ -186,36 +203,33 @@ def run(argv):
         return execute_batch(target, args.provider_config, args.env_file, args.parallelism)
 
 
-def execute_batch(root, provider_config, env_file, parallelism):
-    """Ordinary API execution only; generation settings are read from the frozen manifest."""
-    from predict.api_client.pool import load_provider_pool_config, build_provider_pool, validate_parallelism
-    from sklearn.metrics import accuracy_score, f1_score
-
+def validate_batch(root):
+    """Validate frozen inputs and checkpoints without constructing a model client."""
     manifest = json.loads((root/'experiment_manifest.json').read_text())
     if manifest.get('migration', {}).get('version') != REVISION:
         raise ValueError('execute only a newly prepared paper-baseline batch')
-    source = Path(manifest['migration']['source_batch'])
+    source = root / manifest['migration']['source_batch']
     if sha256_file(source/'experiment_manifest.json') != manifest['migration']['source_manifest_sha256']:
         raise ValueError('frozen source manifest changed')
     original = json.loads((source/'experiment_manifest.json').read_text())
-    for key in ('model', 'generation', 'max_tokens', 'request_extra_body', 'inputs', 'task_contracts', 'benchmark_profile'):
-        if manifest[key] != original[key]:
+    for key in original:
+        if key != 'code' and manifest.get(key) != original[key]:
             raise ValueError(f'frozen paper contract changed: {key}')
-    config = load_provider_pool_config(provider_config)
-    validate_parallelism(config, parallelism)
-    if any(p.model != manifest['model'] or dict(p.request_extra_body or {}) != manifest['request_extra_body'] for p in config.providers):
-        raise ValueError('provider model or extra generation parameters differ from the frozen experiment')
-    generation = manifest['generation']
-    if generation['thinking'] != 'provider_default':
-        raise ValueError('unsupported thinking contract')
+    if set(manifest['migration']['query_indices']) != set(manifest['inputs']):
+        raise ValueError('prepared task set differs from the frozen inputs')
     queries = [(task, i, root/'runs'/task/f'query_{i:05d}')
                for task, indices in manifest['migration']['query_indices'].items() for i in indices]
     cohorts = {}
     for task, spec in manifest['inputs'].items():
-        path = Path(manifest['migration']['source_root']) / spec['input']['path']
+        path = (root / manifest['migration']['evaluation_inputs'][task] if 'evaluation_inputs' in manifest['migration']
+                else Path(manifest['migration']['source_root']) / spec['input']['path'])
         if sha256_file(path) != spec['input']['sha256']:
             raise ValueError('frozen evaluation cohort changed')
         cohorts[task] = read_jsonl(path)
+        indices = manifest['migration']['query_indices'][task]
+        if (not indices or len(indices) != len(set(indices))
+                or any(type(i) is not int or i < 0 or i >= len(cohorts[task]) for i in indices)):
+            raise ValueError('invalid or repeated query indices')
     # Validate every request before constructing a network client or dispatching any call.
     for task, i, directory in queries:
         prepared = json.loads((directory/'prepared.json').read_text())
@@ -238,6 +252,63 @@ def execute_batch(root, provider_config, env_file, parallelism):
                 raise ValueError('saved output belongs to a different request')
             if saved.get('status') == 'ok':
                 prompt.verify_prepared(prepared, manifest, saved)
+    return manifest, queries
+
+
+def bundle(root, target):
+    """Export a fresh execution batch with its small, hash-bound source inputs."""
+    root, target = Path(root).resolve(), Path(target).resolve()
+    if target.exists() or root in target.parents:
+        raise ValueError('bundle requires a new, separate output directory')
+    manifest, queries = validate_batch(root)
+    migration = manifest['migration']
+    source = root / migration['source_batch']
+    portable = deepcopy(manifest)
+    portable['migration'].update(source_batch='source', evaluation_inputs={
+        task: f'source/inputs/{task}.jsonl' for task in manifest['inputs']})
+    portable['migration'].pop('source_root', None)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with TemporaryDirectory(dir=target.parent, prefix='.paper-bundle-') as staging:
+        stage = Path(staging)/'batch'
+        (stage/'source').mkdir(parents=True)
+        shutil.copyfile(source/'experiment_manifest.json', stage/'source/experiment_manifest.json')
+        for task, spec in manifest['inputs'].items():
+            path = (root / migration['evaluation_inputs'][task] if 'evaluation_inputs' in migration
+                    else Path(migration['source_root']) / spec['input']['path'])
+            destination = stage / portable['migration']['evaluation_inputs'][task]
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(path, destination)
+        write_json_atomic(stage/'experiment_manifest.json', portable)
+        for task, i, directory in queries:
+            relative = Path('runs')/task/f'query_{i:05d}'
+            (stage/relative).mkdir(parents=True)
+            (stage/'source'/relative).mkdir(parents=True)
+            shutil.copyfile(source/relative/'prepared.json', stage/'source'/relative/'prepared.json')
+            for name in ('evaluation.json', 'selection.json'):
+                if (directory/name).exists():
+                    shutil.copyfile(directory/name, stage/relative/name)
+            prepared = json.loads((directory/'prepared.json').read_text())
+            prepared['manifest_hash'] = prompt.content_hash(portable)
+            write_json_atomic(stage/relative/'prepared.json', prepared)
+        if (root/'preparation_comparison.json').exists():
+            shutil.copyfile(root/'preparation_comparison.json', stage/'preparation_comparison.json')
+        validate_batch(stage)
+        stage.rename(target)
+
+
+def execute_batch(root, provider_config, env_file, parallelism):
+    """Ordinary API execution only; generation settings are read from the frozen manifest."""
+    from predict.api_client.pool import load_provider_pool_config, build_provider_pool, validate_parallelism
+    from sklearn.metrics import accuracy_score, f1_score
+
+    manifest, queries = validate_batch(root)
+    config = load_provider_pool_config(provider_config)
+    validate_parallelism(config, parallelism)
+    if any(p.model != manifest['model'] or dict(p.request_extra_body or {}) != manifest['request_extra_body'] for p in config.providers):
+        raise ValueError('provider model or extra generation parameters differ from the frozen experiment')
+    generation = manifest['generation']
+    if generation['thinking'] != 'provider_default':
+        raise ValueError('unsupported thinking contract')
     client = build_provider_pool(config, env_file=env_file, timeout_s=240, max_tokens=manifest['max_tokens'],
         temperature=generation['temperature'], reasoning_effort='' if generation['reasoning_effort'] == 'omitted' else generation['reasoning_effort'],
         enable_thinking=False, tool_service_url='', enable_group_tools=False, max_tool_rounds=0, transport_max_retries=0,

@@ -305,6 +305,40 @@ Direct50 + Indirect50。通过实际 CLI、共享 provider pool 和 SDK 请求�
 本轮确认普通 API 执行链路的基本可用性；全 cohort 检索差异、真实线上性能、Batch
 及独立环境发布验收仍待完成，不据此直接宣布整合已全部完成。
 
+## 第九批：已准备 LLM 输入的独立搬移与环境验收（2026-10-23）
+
+发现并修复：原普通 API 执行仍依赖旧工作目录中的 manifest、查询和 cohort 文件。
+现有 CLI 增加 `--bundle-paper-baseline`，将已准备请求及校验必需的小文件导出为新
+目录，执行时使用包内相对路径。复用同一预检函数，原来源 hash、标签、prior、消息和
+生成配置继续核验；源 manifest 除实现指纹外的原字段均须保持一致。空、重复、负数或
+越界 query indices 被拒绝。打包采用临时目录完成校验后发布，不覆盖已有运行目录。
+
+包仅包含选中的 prepared/evaluation/selection、原请求及原 manifest 快照和 cohort；
+不复制预测、provider 配置、凭据或日志，也不复制大检索索引。导出是一次新的执行输入，
+不是恢复已有预测；恢复应直接搬动原 portable batch。旧路径文字仍作为来源记录保留，
+不能把这种内部复现包直接当作已经匿名审核的公开数据包。
+
+检索依赖改为仅在准备阶段加载。新增最小执行依赖清单
+`predict/requirements-paper-baseline.txt`；在全新 Python 3.12 venv 安装并通过 pip check。
+复制源码至独立目录，用 Python audit hook 禁止读取原 main 和整合工作目录；未安装
+RDKit、torch 或 duckdb。两套 benchmark × 六任务的 12 个 Direct50+Indirect50
+样本均通过真实 CLI、本机 HTTP 回放、格式修复和恢复；25 次受限制的 CLI 进程完成，
+共 24 次本机请求、0 次外部模型调用，恢复新增请求为 0。执行及恢复 14.58 秒；来源
+60 个文件哈希未变。完整包和 smoke 输出合计约 17.5 MiB，而非完整检索数据集。
+
+另修复 provider 配置加载器静默忽略旧 Batch transport 的问题：现在遇到 Batch 或
+未知 transport 明确拒绝，避免意外改成普通 API。最小环境中已验证拒绝发生在客户端
+构建前，并验证本机回放服务关闭后仍能恢复成功结果。134 项针对性回归测试通过。
+文档中“候选准备及普通 API 尚未接入”的过时描述已更新；临时验收脚本只归档，不新增
+独立 runner。复现命令统一见 [论文 baseline 模式](../predict/prompts/README.md#frozen-paper-baseline)。
+
+回执、独立环境依赖版本、测试日志和源码归档位于
+`outputs/analysis/release_refactor/20261023_portability/`。本轮仅完成已准备 LLM 执行的
+独立环境验收，不代表全量检索重建、MiniMol encoder 训练或整个仓库已可独立发布。
+普通 API/恢复已接入；旧 Batch、并行 first-valid 竞速、自动 stage requeue、Direct-3、
+独立 prior 生成和完整原始数据分发仍需继续对齐。原实验入口及冻结结果未删除。
+已重新 fetch 远端，main 为 `0ab66e37`，Joseph 仍为整合基点 `73bddf2e`；本轮未合并或推送。
+
 ## 验证与后续验收
 
 第二批身份规则验证（2026-10-22；与上面的第三批性能核验分开）：
@@ -329,7 +363,8 @@ Joseph 的命名缓存、源字段投影和完整 prompt 仍须单独对齐。
 
 1. ML 的全部报告单元已完成保存模型/特征核验，保留上述数值与重训覆盖边界；
    后续独立环境复现沿用相同配置，不重复新增 task-specific runner。
-2. 将历史路径依赖收敛为可分发的数据/配置入口，验证独立环境；现有环境通过不等于可直接发布。
+2. 已准备 LLM 执行已支持独立搬移与最小环境；继续整理完整检索/ML 输入分发及匿名审核，
+   不能把小输入包通过当成全库独立复现或公开发布验收。
 3. LLM 候选/预算/冻结 prior 和普通 API 路径已接入；继续做全 cohort 差异审计与在线性能验收，
    接齐 Batch、并行竞速重试、自动重排队及匹配 Direct-3；保留原来源和必要运行能力。
 4. 主比较分数已导出并验证；继续接齐共享导出器、绘图入口和完整实验登记，
