@@ -63,6 +63,8 @@ class RunResult:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--unseen-condition-policy", choices=("error", "zero"), default="error",
+                        help="Encode unseen evaluation conditions as zero features, or fail (default).")
     parser.add_argument("--data-dir", type=Path, default=DEFAULT_DATA_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--embedding-cache-dir", type=Path, default=None)
@@ -344,7 +346,7 @@ def main() -> None:
     )
 
     vocabulary = condition_vocabulary(train.conditions) if train.conditions is not None else None
-    if vocabulary is not None and not args.embeddings_only:
+    if vocabulary is not None and not args.embeddings_only and args.unseen_condition_policy == "error":
         for split in (valid, test):
             if split is not None and split.conditions is not None:
                 unknown = sorted(set(split.conditions) - set(vocabulary))
@@ -390,22 +392,23 @@ def main() -> None:
         return
     molecule_embedding_dim = int(split_embeddings["train"].shape[1])
     train_embeddings = append_condition_one_hot(
-        split_embeddings["train"], train.conditions, vocabulary
+        split_embeddings["train"], train.conditions, vocabulary, unseen_policy=args.unseen_condition_policy
     )
     valid_embeddings = (
         append_condition_one_hot(
-            split_embeddings["valid"], valid.conditions, vocabulary
+            split_embeddings["valid"], valid.conditions, vocabulary, unseen_policy=args.unseen_condition_policy
         )
         if valid is not None
         else None
     )
     test_embeddings = append_condition_one_hot(
-        split_embeddings[args.evaluation_split], test.conditions, vocabulary
+        split_embeddings[args.evaluation_split], test.conditions, vocabulary, unseen_policy=args.unseen_condition_policy
     )
     feature_contract = condition_feature_contract(
         field=args.condition_field,
         vocabulary=vocabulary,
         molecule_embedding_dim=molecule_embedding_dim,
+        unseen_policy=args.unseen_condition_policy,
     )
 
     valid_loader = (
@@ -421,6 +424,7 @@ def main() -> None:
 
     best_models: list[nn.Module] = []
     run_results: list[RunResult] = []
+    validation_history: list[dict[str, int | float]] = []
 
     for member_idx in range(args.ensemble_size):
         seed = args.seed + member_idx
@@ -449,6 +453,7 @@ def main() -> None:
                 )
             else:
                 valid_loss = evaluate_loss(model, valid_loader, loss_fn, device)
+                validation_history.append({"seed": seed, "epoch": epoch + 1, "valid_bce": valid_loss})
                 if valid_loss < best_valid_loss:
                     best_epoch = epoch + 1
                     best_valid_loss = valid_loss
@@ -559,6 +564,7 @@ def main() -> None:
             ),
         },
         "members": [asdict(result) for result in run_results],
+        "validation_history": validation_history,
         "valid_metrics": valid_metrics,
         "test_metrics": test_metrics,
         "valid_metrics_fixed_0.5": valid_metrics_fixed,
@@ -572,28 +578,30 @@ def main() -> None:
     metrics_path = args.output_dir / "metrics.json"
     predictions_path = args.output_dir / f"{args.evaluation_split}_predictions.jsonl"
     checkpoint_path = args.output_dir / "best_ensemble.pt"
-    predictions = []
-    for index, (smiles, label, score) in enumerate(
-        zip(test.smiles, test.labels, test_scores, strict=True)
-    ):
-        row = {
-            "query_index": index,
-            **(test.metadata[index] if test.metadata is not None else {}),
-            "drug": smiles, "Y": label, "score": float(score),
-            "prediction": int(score >= threshold),
-        }
-        if args.condition_field is not None and test.conditions is not None:
-            row[args.condition_field] = test.conditions[index]
-        predictions.append(row)
-    condition_field = args.condition_field or "condition_group"
-    if any(condition_field in row for row in predictions):
-        output["condition_metrics"] = condition_metrics(predictions, field=condition_field)
-    with metrics_path.open("w") as f:
-        json.dump(output, f, indent=2)
-        f.write("\n")
-    with predictions_path.open("w") as f:
-        for row in predictions:
-            f.write(json.dumps(row) + "\n")
+    prediction_splits = [(args.evaluation_split, test, test_scores)]
+    if valid is not None:
+        prediction_splits.append(("valid", valid, valid_scores))
+    for split_name, split, scores in prediction_splits:
+        predictions = []
+        for index, (smiles, label, score) in enumerate(zip(split.smiles, split.labels, scores, strict=True)):
+            row = {
+                "query_index": index,
+                **(split.metadata[index] if split.metadata is not None else {}),
+                "drug": smiles, "Y": label, "score": float(score),
+                "prediction": int(score >= threshold),
+            }
+            if args.condition_field is not None and split.conditions is not None:
+                row[args.condition_field] = split.conditions[index]
+            predictions.append(row)
+        condition_field = args.condition_field or "condition_group"
+        if split_name == args.evaluation_split and any(condition_field in row for row in predictions):
+            output["condition_metrics"] = condition_metrics(predictions, field=condition_field)
+        with (args.output_dir / f"{split_name}_predictions.jsonl").open("w") as stream:
+            for row in predictions:
+                stream.write(json.dumps(row) + "\n")
+    with metrics_path.open("w") as stream:
+        json.dump(output, stream, indent=2)
+        stream.write("\n")
     torch.save(
         {
             "model_state_dicts": [model.state_dict() for model in best_models],

@@ -69,11 +69,11 @@ keys 一致，2,700 次条件选择对照一致。覆盖范围为当前六任务
 
 | baseline | 必须保留的配置 | Joseph 框架下的入口与状态 |
 | --- | --- | --- |
-| Morgan KNN | 固定 k=3、阈值 0.5、train reference；all-train/condition-first；原始输入及稳定去重 | `predict.baselines.structure_knn.run` 已存在，共用 selector 已对齐；全量邻居和分数待核 |
-| MiniMol embedding KNN | 同上；冻结 encoder/checkpoint 与相同 embeddings | `predict.baselines.minimol.run_embedding_knn` 已存在；环境与缓存复用待核 |
-| 普通 MiniMol head | 各 task 原超参数、25 epochs、seeds 1–5；val BCE 选 checkpoint，ensemble val Macro-F1 选阈值；无 CV、无 train+valid refit | `predict.baselines.minimol.run_bioavailability_ma` 已存在；外围 CLI/缓存/输出尚有差异 |
+| Morgan KNN | 固定 k=3、阈值 0.5、train reference；all-train/condition-first；原始输入及稳定去重 | `predict.baselines.structure_knn.run`；36 cells 重跑，邻居与预测一致 |
+| MiniMol embedding KNN | 同上；冻结 encoder/checkpoint 与相同 embeddings | `predict.baselines.minimol.run_embedding_knn`；36 cells 使用原缓存重跑，邻居与预测一致 |
+| 普通 MiniMol head | 各 task 原超参数、25 epochs、seeds 1–5；val BCE 选 checkpoint，ensemble val Macro-F1 选阈值；无 CV、无 train+valid refit | `predict.baselines.minimol.run_bioavailability_ma`；18 cells 保存模型重放通过，3 cells 按原配置重新训练通过 |
 | MiniMol 主任务微调 / indirect | 原主训练池、辅助池及权重候选；checkpoint/权重用 val BCE，阈值用 val Macro-F1；辅助池排除完整 valid/test parent/connectivity union，允许 scaffold 重合 | `predict.baselines.minimol.run_multitask` 已迁代码；配置实例与完整训练验收待完成 |
-| RASAR / RASAR+indirect | 6 / 6+2B 特征；两种邻居策略；六个 RF 候选、seeds 1–5、每 seed 100 trees；val BCE 选参数、val Macro-F1 选阈值 | `predict.baselines.retrieval_forest` 已迁代码；三训练池的实际特征、donor 和结果待核 |
+| RASAR / RASAR+indirect | 6 / 6+2B 特征；两种邻居策略；六个 RF 候选、seeds 1–5、每 seed 100 trees；val BCE 选参数、val Macro-F1 选阈值 | `predict.baselines.retrieval_forest`；TDC-only Carcinogens 两套特征/选参/重新训练通过，其余 cells 待核 |
 | DeepSeek / Luna / Gemini naive LLM | 原模型、reasoning、prior、prompt；None / Direct 50 / Direct 50 + Indirect 50；两池均 Neighbor-fill；每设置一次 full-flat | 本地 family runner 尚未完整接入；不能用 Joseph 默认 prompt/缓存直接替代 |
 | 预算扫描、Direct-3 等对照 | 各自记录的预算、候选填充、模型与输入；Direct-3 保留固定 Morgan 三邻居，不套用其他检索过滤 | 复用共享入口，具体配置和结果登记尚待迁入 |
 
@@ -99,14 +99,43 @@ ML 的三种训练池为 conditioned、TDC-only、TDC + Starling。当前统一 
   `gemini38_flash_api_b50`、`tdc_seed42_neighbor_fill` 及各 budget-scaling 登记。
   用户提供的 Ours 分数保持其来源标注；未解决的预算来源差异不能靠迁移补写。
 
-已经确认的配置差异：现有 `experiments/baselines/conditioned.sh` 使用 `--train-all` 和
-固定 0.5 阈值，且提供统一默认 head 参数，不能直接作为我们的论文 head 配置。
-head CLI 尚缺本地 `--unseen-condition-policy`，embedding runtime 的共享盘发现与
-历史缓存定位也尚未完成对齐。这些是下一批需要处理的项目，本轮未默默改变脚本默认值。
+## 第三批：普通 head 配置与实际性能核验
+
+复用 `experiments/baselines/conditioned.sh`，按 `TASK` 选择六任务各自的 head 参数，
+按 `TRAINING_POOL=conditioned|tdc_only|mixed` 选择原条件字段。默认改为上述论文
+val 选 checkpoint/阈值协议；Joseph 的固定 25 epochs、固定 0.5 模式仍可显式用
+`TRAIN_ALL=1` 运行。两种模式都有实际 CLI 回归测试，没有新增正式训练入口。
+
+head 已补齐本地 `--unseen-condition-policy`（默认仍为报错）、逐 epoch 验证 BCE
+和验证集预测输出，同时保留 Joseph 的输入/缓存校验、benchmark 元数据与分条件统计。
+runtime 支持显式 `TXAGENT_MINIMOL_RUNTIME_ROOT`，未设置时仍使用可移植的
+`third_party/minimol`；本轮直接使用已有共享盘依赖，没有安装环境或启动工具服务。
+
+性能核验以当前 198-cell `ml_appendix.csv` 的逐项来源为准，所有新结果写入独立目录
+`outputs/analysis/release_refactor/20261022_ml/`，详细回执与执行命令见该目录中文 README。
+
+| 核验 | 已覆盖范围 | 结果 |
+| --- | --- | --- |
+| KNN 实际 CLI 重跑 | 三训练池、六任务、两种指纹、两种策略，72 cells / 25,992 条 test 预测 | 逐条分数、标签、邻居及相似度完全一致；汇总指标仅有浮点舍入差 |
+| 保存 head 重放 | 三训练池六任务，18 cells；重算 valid/test、阈值和 test 指标 | 逐条分数与标签完全一致；不是 18 cells 全部重新训练 |
+| head 从随机初始化重训 | conditioned Ames、TDC-only Carcinogens、mixed Skin，各 5 seeds × 25 epochs | 15 次训练；test 分数、阈值、Macro-F1/AUROC 完全一致 |
+| RF 准备与重训 | TDC-only Carcinogens，RASAR 与 RASAR+indirect，各 6 候选 × 5 seeds | 特征/donor 数组逐元素一致；60 次训练，选参、标签及指标一致，概率最大差约 5.6×10⁻¹⁷ |
+| MiniMol 新编码 | 共享盘原 checkpoint，8 个真实分子，CPU 离线编码 | 8×512 输出；与原 embedding 最大绝对差约 3.5×10⁻⁶，满足既有容差；未全量重建 embeddings |
+
+严格重训使用原 train/valid/test **分别保存的精确 embedding 副本**。按 SMILES 合并
+复用不同批次缓存会接受容差内的数值差；试跑中约 2.6×10⁻⁶ 的 embedding 差异曾使
+mixed Skin 的一条最终标签变化。恢复逐 split 精确输入后结果完全复现。因此保留通用
+SMILES 复用功能，但不将它描述为逐位复现；精确复现用 `EMBEDDING_CACHE_DIR` 指向
+独立复制并核对过顺序、标签的缓存，不能覆写历史缓存。Ames KNN 的旧 valid 缓存按已有
+valid/test 对调回执映射至当前 test，而非直接依赖旧文件名。
+
+本轮使用现有环境和冻结输入，RF 的旧 prepared manifest 仍含相对旧工作目录的来源，
+通过显式加载整合分支模块完成验证；这不是全新环境下的独立发布验收。另有 42 项受影响
+head、条件编码、indirect、RF 与导入边界测试通过。
 
 ## 验证与后续验收
 
-本轮验证（2026-10-22）：
+第二批身份规则验证（2026-10-22；与上面的第三批性能核验分开）：
 
 - 120 项身份、检索、导入边界与受影响 ML baseline 测试通过；另有 3 条依赖库弃用提示。
   回归测试覆盖普通索引、分支 Morgan 和分支 assay-transfer 三条选择路径，以及枚举
@@ -126,8 +155,9 @@ Joseph 的命名缓存、源字段投影和完整 prompt 仍须单独对齐。
 
 后续顺序：
 
-1. 对齐普通 head 的配置、运行环境和输出，再以原命令参数接入三训练池的共用入口。
-2. 比较 KNN 邻居、RF 特征/donor 和 ML prepared 输入；确认后进行训练与性能核验。
+1. 补齐其余 RF cells、encoder 微调/indirect 的真实 prepared 输入、特征和训练验收；
+   普通 head 配置及 KNN 全部 cells 的核验已完成，不重复扩建 runner。
+2. 将历史路径依赖收敛为可分发的数据/配置入口，验证独立环境；现有环境通过不等于可直接发布。
 3. 迁入 LLM 共享流程，核对完整候选池、records 预算、card 去重、prior 与最终请求。
    继续保留必要的限流、重试、恢复和历史 replay 能力。
 4. 接齐唯一结果登记、共享导出器和绘图入口，核对匿名发布文件；冻结结果保持原协议。

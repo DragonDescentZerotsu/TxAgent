@@ -96,7 +96,8 @@ def test_unseen_condition_fails_before_head_embedding_but_allows_knn_cache_prepa
             runner.main()
 
 
-def test_conditioned_recipe_runs_shared_methods_and_reloads_fixed_epoch_head(tmp_path):
+@pytest.mark.parametrize("train_all", [False, True])
+def test_conditioned_recipe_runs_shared_methods_and_reloads_selected_head(tmp_path, train_all):
     data = tmp_path / "data"
     cache = tmp_path / "cache"
     output = tmp_path / "output"
@@ -115,11 +116,13 @@ def test_conditioned_recipe_runs_shared_methods_and_reloads_fixed_epoch_head(tmp
         for index, (drug, group, scope) in enumerate([("CCCC", "fed", "external"), ("CO", null, "none_reported")])
     ]
     generator = torch.Generator().manual_seed(11)
-    tensors = {"train": torch.randn(4, 8, generator=generator), "test": torch.randn(2, 8, generator=generator)}
-    for name, rows in (("train", train), ("test", evaluation)):
+    tensors = {"train": torch.randn(4, 8, generator=generator), "valid": torch.randn(2, 8, generator=generator), "test": torch.randn(2, 8, generator=generator)}
+    tensors["valid"] = tensors["test"].clone()
+    for name, rows in (("train", train), ("valid", evaluation), ("test", evaluation)):
         (data / f"{name}.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
         torch.save({"smiles": [row["drug"] for row in rows], "labels": [row["Y"] for row in rows], "embeddings": tensors[name]}, cache / f"{name}.pt")
     env = dict(os.environ, DATA_DIR=str(data), OUTPUT_ROOT=str(output), PYTHON_BIN=sys.executable,
+               TASK="bioavailability_ma", TRAIN_ALL=str(int(train_all)),
                REUSE_EMBEDDING_CACHE_DIR=str(cache), DEVICE="cpu", K="2", CUDA_VISIBLE_DEVICES="",
                METHODS="morgan_knn minimol_knn minimol_head", OMP_NUM_THREADS="1", MKL_NUM_THREADS="1")
     command = ["bash", "experiments/baselines/conditioned.sh", "--epochs", "2", "--ensemble-size", "2",
@@ -134,8 +137,13 @@ def test_conditioned_recipe_runs_shared_methods_and_reloads_fixed_epoch_head(tmp
         assert metrics["condition_metrics"]["overall"]["n_total"] == 2
         assert metrics["condition_metrics"]["overall"]["evaluation_coverage"] == 1.0
     metrics = json.loads((output / "minimol_head/metrics.json").read_text())
-    assert metrics["valid_metrics"] is None
-    assert [member["best_epoch"] for member in metrics["members"]] == [2, 2]
+    if train_all:
+        assert metrics["valid_metrics"] is None
+        assert [member["best_epoch"] for member in metrics["members"]] == [2, 2]
+    else:
+        assert metrics["model_selection"]["threshold_strategy"] == "valid_macro_f1"
+        assert len(metrics["validation_history"]) == 4
+        assert len((output / "minimol_head/valid_predictions.jsonl").read_text().splitlines()) == 2
     checkpoint = torch.load(output / "minimol_head/best_ensemble.pt", weights_only=False)
     from predict.baselines.minimol.condition_features import append_condition_one_hot
     from predict.baselines.minimol.head_runtime import TaskHead, predict_scores

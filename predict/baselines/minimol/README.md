@@ -1,128 +1,103 @@
 # MiniMol baselines
 
-This directory has one shared frozen-embedding runtime and two deliberately
-separate experiment lineages.
+## Shared implementation
 
-## Shared runtime
+- `embedding_runtime.py`: frozen MiniMol loading, embedding caches and checkpoint provenance.
+- `head_runtime.py`: shared MLP, training schedule and prediction helpers.
+- `condition_features.py`: train-derived categorical one-hot features.
+- `run_bioavailability_ma.py`: shared head CLI for all six paper tasks.
+- `run_embedding_knn.py`: frozen-embedding cosine KNN; shares the condition selector
+  with Morgan KNN in `predict/baselines/conditioned_knn.py`.
+- `run_multitask.py`: prepare/embed/train/finalize for encoder fine-tuning and
+  indirect auxiliary targets, using `indirect_data.py` and `finetune_runtime.py`.
 
-- `embedding_runtime.py`: MiniMol loading, embedding, cache, and checkpoint
-  provenance.
-- `head_runtime.py`: the shared classification/regression MLP head, loss,
-  corrected epoch-level learning-rate schedule, and prediction helpers.
-- `condition_features.py`: optional train-derived categorical one-hot features.
-  Both the train-only CV selector and final head runner accept
-  `--condition-field`; omitting it preserves the molecule-only 512-dimensional
-  input exactly.
-- `predict/baselines/conditioned_knn.py`: shared unique-molecule condition-first/null-
-  fallback selection used by both Morgan and MiniMol embedding KNN runners.
+The integration status, current result sources and verification boundaries are
+maintained in [发布整合状态](../../../docs/release_refactor.md).
 
-## Conditioned baseline recipe
+## Paper baseline recipe
 
-Use the same commands for supplied task splits, including Oral:
+Run from the repository root with the frozen splits for the selected task/pool:
 
 ```bash
-DATA_DIR=/path/to/splits OUTPUT_ROOT=/path/to/new/run \
+TASK=bioavailability_ma TRAINING_POOL=conditioned \
+  DATA_DIR=/path/to/splits OUTPUT_ROOT=/path/to/new/run \
   bash experiments/baselines/conditioned.sh
 ```
 
-The recipe runs Morgan KNN, MiniMol cosine KNN and the MiniMol head. Set
-`METHODS="morgan_knn minimol_knn"` to select methods, `EVALUATION_SPLIT=valid`
-to evaluate valid, and `K=3` to set the neighbor count. KNN explicitly uses
-`CONDITION_POLICY=same_condition_then_null`: same-condition parents first,
-then previously unselected parents with `no_reported_external_condition`.
-The highest-ranked eligible row represents each parent. Null queries retrieve
-only null rows. Insufficient pools retain the query with an unsupported status;
-metrics report evaluated coverage. A run with no supported queries raises.
-The generic KNN commands retain their `row_agnostic` default; use
-`all_train_unique_molecules` for the existing null-preferred parent comparison.
+`TASK` is required: `bbb_martins`, `bioavailability_ma`, `skin_reaction`,
+`ames`, `dili` or `carcinogens`. It selects the original task-specific head
+configuration. `TRAINING_POOL` selects `condition_group` for `conditioned`,
+no condition features for `tdc_only`, or `model_condition` for `mixed`.
+It does not build or change the supplied splits. The original prepared inputs
+must include the appropriate fields; TDC Skin/Carcinogens use the current
+seed-42 replacements. Explicit `CONDITION_FIELD=` disables one-hot features.
 
-The head explicitly uses `CONDITION_FIELD=condition_group`, a train-derived
-one-hot vocabulary, all train rows, 25 fixed epochs, five members with seeds
-1–5 and threshold 0.5. Evaluation labels do not select epochs or thresholds.
-Unseen evaluation categories fail before embedding. Set `CONDITION_FIELD=` for
-a molecule-only head. CLI arguments after the script override head settings,
-for example `--epochs 10 --ensemble-size 2`. This fixed-epoch recipe is separate
-from the train-only scaffold-CV experiment described below.
+The head trains only on train for 25 epochs, with five seeds 1–5. Each seed's
+checkpoint is selected by valid BCE; the ensemble threshold is selected by
+valid Macro-F1, then applied to test. There is no train+valid refit. The condition
+vocabulary is derived only from train. Unseen evaluation conditions fail by
+default; `--unseen-condition-policy zero` explicitly uses an all-zero condition
+vector without expanding the vocabulary. Head CLI arguments after the script
+override settings, for example `--epochs 10 --ensemble-size 2`.
+
+`TRAIN_ALL=1` retains the separate fixed-epoch, fixed-0.5 recipe without valid
+selection. It still trains on the supplied train rows only; it does not merge
+valid/test into train. This mode and the historical train-only CV experiments
+are not the current paper protocol.
+
+The recipe runs Morgan KNN, MiniMol cosine KNN and the head. Use
+`METHODS="morgan_knn minimol_knn"` to select methods. KNN defaults to k=3 and
+threshold 0.5. `CONDITION_POLICY` defaults to `same_condition_then_null`, or
+`same_condition_then_null_then_all` for conditioned DILI/Carcinogens. Selection
+uses the first source row for each molecule-condition pair, matches the query
+condition first, then fills from null-condition rows; the latter policy also
+fills from remaining parents. Null queries start with the null pool and may
+also use the all-train fallback under the latter policy. Insufficient
+pools retain unsupported queries and report coverage. Use
+`CONDITION_POLICY=all_train_unique_molecules` for the all-train comparison.
+The standalone KNN CLIs retain their `row_agnostic` default.
+
+`EVALUATION_SPLIT=valid` selects validation output; it does not turn validation
+into an unseen test set. Choose a fresh `OUTPUT_ROOT`. Each method writes
+native metrics and predictions under `morgan_knn/`, `minimol_knn/` or
+`minimol_head/`. The head also writes `best_ensemble.pt`, validation predictions
+and per-epoch validation BCE. Predictions retain benchmark/condition metadata,
+and metrics include condition cohorts and coverage.
+
+## Runtime and exact cache reuse
 
 `PYTHON_BIN`, `DEVICE`, `MINIMOL_SOURCE`, `EMBEDDING_CACHE_DIR` and
-`REUSE_EMBEDDING_CACHE_DIR` configure execution and cache reuse. MiniMol
-embeddings are prepared once, reused by both methods, and matched by exact
-SMILES; current labels are retained and conflicting vectors are rejected.
+`REUSE_EMBEDDING_CACHE_DIR` configure execution. A portable MiniMol checkout
+can live at `third_party/minimol`. For an existing archived runtime, set
+`TXAGENT_MINIMOL_RUNTIME_ROOT` to a root containing `runtime_41642328/` and
+`pydeps/`; the shell recipe adds both to `PYTHONPATH`. For direct Python CLI
+use, supply the dependencies in the environment/PYTHONPATH as well. No runtime
+is downloaded or installed by this recipe.
 
-Choose a fresh `OUTPUT_ROOT`. Each method writes native `metrics.json` and
-`<split>_predictions.jsonl` under `morgan_knn/`, `minimol_knn/` or `minimol_head/`;
-the head also writes `best_ensemble.pt`. Predictions preserve condition and
-benchmark/parent IDs. `condition_metrics` reports overall, null, external and
-individual condition cohorts with coverage; the native method metrics remain
-available. Head checkpoints retain the category vocabulary and input shape.
+For exact historical reproduction, copy the original ordered `train.pt`,
+`valid.pt`, `test.pt` to a new cache directory, confirm their SMILES/labels match
+the input files, and pass it as `EMBEDDING_CACHE_DIR`. Preserve any recorded
+split rename mapping (notably conditioned Ames). Do not point a writable run
+at the only historical cache copy.
 
-## Current TxAgent Starling benchmark
+`REUSE_EMBEDDING_CACHE_DIR` instead assembles vectors by exact SMILES, retaining
+current labels and rejecting vectors that conflict beyond the existing
+floating-point tolerance. It can merge slightly different batch-computed
+vectors for the same SMILES. This is useful general reuse, but cannot promise
+bitwise-identical subsequent training. Fresh encoder computation can also
+have small batch/device numerical differences.
 
-- `run_bioavailability_ma.py`: trained MiniMol head for a supplied TxAgent
-  train/valid/test split.
-- `run_train_cv.py`: train-only scaffold CV and epoch/configuration selection.
-- `run_embedding_knn.py`: cosine KNN over frozen MiniMol embeddings.
+## Historical protocols
 
-The conditioned benchmark uses `--condition-field condition_group` for BBB,
-Bioavailability, and Skin. The category vocabulary is frozen from the full
-outer-train split, valid/test values must already exist in that vocabulary, and
-outer valid/test labels are never used for epoch or threshold selection. After
-selecting the epoch by train-only scaffold CV AUROC, the same CV's pooled OOF
-scores determine a macro-F1 decision threshold. ClinTox has no accepted
-condition groups and therefore uses the same runner without this option. Fresh
-valid artifacts and the exact feature/threshold contract are under
-`outputs/baselines/starling_conditioned_valid_v1/<Task>/minimol_train_retest/`.
-
-The paper-facing MiniMol baseline is condition-aware whenever the task has an
-accepted condition taxonomy. Fresh valid macro-F1 is 0.6912 for BBB, 0.5872 for
-Bioavailability, 0.6030 for Skin, and 0.6520 for unconditioned ClinTox. The
-train-only OOF thresholds are respectively 0.6474, 0.6056, 0.6306, and 0.2508.
-For the three conditioned tasks, AUROCs are 0.7845, 0.7367, and 0.6776.
-Bioavailability's earlier apparent 0.4748 regression was caused by evaluating
-the same scores at an uncalibrated threshold of 0.5, not by the condition feature
-or generic runner.
-
-### BBB gold-v4 candidate matched baselines
-
-The isolated `experimental_meaningful_cns_access_v4` /
-`context_conditioned_selected_v3` candidate uses 3,053 train rows and 397
-scaffold-valid rows. Its matched artifacts are under
-`outputs/baselines/starling_conditioned_bbb_gold_v4_valid_v1/BBB_Martins/`;
-the 398-row selected-v1 artifacts above remain historical and were not
-overwritten. All five candidate baselines evaluate all 397 rows:
-
-| method | Macro-F1 | accuracy | AUROC |
-|---|---:|---:|---:|
-| condition-aware MiniMol head | **0.6674** | 0.7053 | 0.7772 |
-| MiniMol KNN same-condition then null | 0.6071 | 0.6952 | 0.6717 |
-| MiniMol KNN all train | 0.5708 | 0.6650 | 0.6536 |
-| Morgan KNN same-condition then null | 0.5958 | 0.7078 | 0.6512 |
-| Morgan KNN all train | 0.6174 | 0.7204 | 0.6603 |
-
-The head reruns the same 5-fold train-only scaffold-CV contract, selects epoch
-3, and freezes the new pooled-OOF macro-F1 threshold at `0.62316`. Outer valid
-and test labels remain excluded from epoch and threshold selection.
-
-The training audit is in
-[`HEAD_TRAINING_DIAGNOSTICS.md`](HEAD_TRAINING_DIAGNOSTICS.md). The historical
-Starling comparison report is preserved in Git and can be read with:
-
-```bash
-git show a209fb4422b5fe62927746f92ac6d04ccb242f11:tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md
-```
-
-The six-condition MiniMol-retrieval sensitivity completed with zero failures:
-
-| task | Starling direct | Starling full-flat |
-|---|---:|---:|
-| BBB | 0.652832 | **0.690073** |
-| Bioavailability | 0.594314 | **0.623542** |
-| Skin | 0.599776 | **0.612770** |
-
-Artifacts are under
-`outputs/paper/molecular_evidence_agent_scaffold_current_latest_valid_gpt_oss_120b_minimol_top5_nothreshold/`.
-This is a valid-only sensitivity and does not replace each task's frozen
-paper-facing retrieval setting.
+`run_train_cv.py` retains the old train-only scaffold-CV/OOF selection workflow.
+Its old validation results, including the BBB gold-v4 candidate comparison,
+are historical and do not replace the current val-selected head results.
+The historical training audit is [HEAD_TRAINING_DIAGNOSTICS.md](HEAD_TRAINING_DIAGNOSTICS.md).
+Original result artifacts remain under `outputs/baselines/starling_conditioned_valid_v1/`
+and `outputs/baselines/starling_conditioned_bbb_gold_v4_valid_v1/`; frozen
+retrieval sensitivities also remain at their original result locations.
+Current figures and scores use the single result registry described in the
+integration document, not duplicated scores in this README.
 
 ## External Starling paper Table 2 reproduction
 

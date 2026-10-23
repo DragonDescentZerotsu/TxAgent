@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib.util
 import hashlib
+import os
 import sys
 from pathlib import Path
 from typing import Any, Sequence
@@ -12,7 +13,10 @@ import numpy as np
 import torch
 
 
-DEFAULT_MINIMOL_SOURCE = Path("third_party/minimol")
+DEFAULT_MINIMOL_SOURCE = (
+    Path(os.environ["TXAGENT_MINIMOL_RUNTIME_ROOT"]) / "runtime_41642328"
+    if os.environ.get("TXAGENT_MINIMOL_RUNTIME_ROOT") else Path("third_party/minimol")
+)
 
 
 def ensure_minimol_import(minimol_source: Path = DEFAULT_MINIMOL_SOURCE) -> None:
