@@ -38,6 +38,6 @@ location; there is no root alias.
 
 Experiment code follows [a small core for many experiments](docs/experiment_code.md):
 reusable capability commands in Python, concrete variants in Bash recipes.
-Conditioned Morgan KNN, MiniMol KNN and MiniMol head experiments share the
-[conditioned baseline recipe](experiments/baselines/conditioned.sh); see
-[its settings and outputs](predict/baselines/minimol/README.md#conditioned-baseline-recipe).
+Morgan KNN, MiniMol and RASAR use the shared
+[baseline recipes](experiments/baselines/README.md), with explicit frozen inputs
+and the original validation-selection settings.

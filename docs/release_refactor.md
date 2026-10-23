@@ -72,8 +72,8 @@ keys 一致，2,700 次条件选择对照一致。覆盖范围为当前六任务
 | Morgan KNN | 固定 k=3、阈值 0.5、train reference；all-train/condition-first；原始输入及稳定去重 | `predict.baselines.structure_knn.run`；36 cells 重跑，邻居与预测一致 |
 | MiniMol embedding KNN | 同上；冻结 encoder/checkpoint 与相同 embeddings | `predict.baselines.minimol.run_embedding_knn`；36 cells 使用原缓存重跑，邻居与预测一致 |
 | 普通 MiniMol head | 各 task 原超参数、25 epochs、seeds 1–5；val BCE 选 checkpoint，ensemble val Macro-F1 选阈值；无 CV、无 train+valid refit | `predict.baselines.minimol.run_bioavailability_ma`；18 cells 保存模型重放通过，3 cells 按原配置重新训练通过 |
-| MiniMol 主任务微调 / indirect | 原主训练池、辅助池及权重候选；checkpoint/权重用 val BCE，阈值用 val Macro-F1；辅助池排除完整 valid/test parent/connectivity union，允许 scaffold 重合 | `predict.baselines.minimol.run_multitask` 已迁代码；配置实例与完整训练验收待完成 |
-| RASAR / RASAR+indirect | 6 / 6+2B 特征；两种邻居策略；六个 RF 候选、seeds 1–5、每 seed 100 trees；val BCE 选参数、val Macro-F1 选阈值 | `predict.baselines.retrieval_forest`；TDC-only Carcinogens 两套特征/选参/重新训练通过，其余 cells 待核 |
+| MiniMol 主任务微调 / indirect | 原主训练池、辅助池及权重候选；checkpoint/权重用 val BCE，阈值用 val Macro-F1；辅助池排除完整 valid/test parent/connectivity union，允许 scaffold 重合 | `predict.baselines.minimol.run_multitask`；21 套来源输入重建一致，36 cells 模型重放标签/F1 一致；完整候选/五种子重训仍未全量执行 |
+| RASAR / RASAR+indirect | 6 / 6+2B 特征；两种邻居策略；六个 RF 候选、seeds 1–5、每 seed 100 trees；val BCE 选参数、val Macro-F1 选阈值 | `predict.baselines.retrieval_forest`；21 套特征重建与 72 cells 重放通过；两批累计 6 cells / 180 seed fits 重训通过 |
 | DeepSeek / Luna / Gemini naive LLM | 原模型、reasoning、prior、prompt；None / Direct 50 / Direct 50 + Indirect 50；两池均 Neighbor-fill；每设置一次 full-flat | 本地 family runner 尚未完整接入；不能用 Joseph 默认 prompt/缓存直接替代 |
 | 预算扫描、Direct-3 等对照 | 各自记录的预算、候选填充、模型与输入；Direct-3 保留固定 Morgan 三邻居，不套用其他检索过滤 | 复用共享入口，具体配置和结果登记尚待迁入 |
 
@@ -133,6 +133,42 @@ valid/test 对调回执映射至当前 test，而非直接依赖旧文件名。
 通过显式加载整合分支模块完成验证；这不是全新环境下的独立发布验收。另有 42 项受影响
 head、条件编码、indirect、RF 与导入边界测试通过。
 
+## 第四批：全部 RF 与 encoder/indirect 核验
+
+核验保存于 `outputs/analysis/release_refactor/20261022_indirect/`。本批新增的 72 个 RF
+和 36 个 encoder/indirect 报告单元，加上第三批的 KNN/head，已覆盖当前 ML Appendix
+全部 **198 cells**。这里的覆盖指来源、准备结果和保存模型重放，不表示全部重新训练。
+
+- 21 套辅助准备结果重新从原 split 与 Parquet 构建：分子顺序、标签、条件张量、
+  bucket、归一化目标和 heldout 排除统计一致。旧 payload 中缺少的 `condition_groups`
+  仅补充输出元数据，训练张量未变。Skin 旧主任务微调/六维 direct 与新版 indirect
+  按各自原来源分别核验，没有用新版辅助池替换旧实验输入。
+- 21 套 RF 特征重新构建，两种 direct 策略、auxiliary 和 donor 索引逐元素一致。
+  72 个报告单元对应 65 个保存结果目录，全部重新执行 finalize：校验各候选与其缓存的
+  valid 分数，重做选参/阈值，使用保存模型重新计算 test；标签、Macro-F1/AUROC 一致。
+- 新增 conditioned Skin、mixed Skin 的 condition-first RASAR/RASAR+indirect，
+  共 4 cells / 120 seed fits 完整重训。使用重建的辅助目标与特征，从整合目录运行；
+  选参、标签及指标一致。复用 Python CLI，仅新增一个固定论文参数的 Bash 配方
+  `experiments/baselines/retrieval_forest.sh`；说明统一在该目录 README。
+- 36 个 MiniMol encoder/indirect 单元均重新执行 finalize：所有候选 checkpoint 和
+  缓存 valid 分数通过校验，辅助权重/阈值不变，重新计算 test。12,996 条报告预测的
+  标签及 Macro-F1 全部不变；其中 8 cells 的 AUROC 有数值差，详见下段。
+- TDC-only Skin 当前 1,735 张图重新生成，13,880 个字段逐项一致。完整单 seed、
+  λ=0.6、25 epochs 的 CPU 对照使用“原代码＋原输入”和“整合代码＋重建输入”，
+  每个 epoch 的主任务损失、辅助损失和 valid BCE 完全一致，选中 checkpoint 的
+  327 个状态张量与验证概率也完全一致；不代替所有任务、所有辅助权重的五种子重训。
+
+**数值差异核算：**原 encoder 套件在 CUDA 上训练，本轮在 CPU 上重放，概率最大差
+为 1.38×10⁻⁶ 以内。8 cells 共 9 对正负样本的并列/排序发生变化，这些样本原分数差
+均不超过 1.2×10⁻⁷；逐对贡献精确解释全部 AUROC 差值。最大为 TDC Carcinogens
+indirect 的 −0.0010101（约 −0.10 个百分点），分类标签仍不变。用原代码在同一 CPU
+环境重放 Oral 和 TDC Carcinogens 的微调/indirect 四个单元，逐条预测与整合代码完全
+相同；五个迁移模块的 32 个函数/类主体也一致，仅局部 import 改路径。保留原始差异
+回执，不把近似一致写成逐位相同，不用本轮分数替换论文冻结分数。
+
+这些核验使用现有依赖与保存输入；新 RF 配方已在整合目录运行，但完整数据分发、
+全新环境安装与 LLM 流程尚未验收。临时核验脚本收入本地源码 ZIP，不作为正式 runner。
+
 ## 验证与后续验收
 
 第二批身份规则验证（2026-10-22；与上面的第三批性能核验分开）：
@@ -155,8 +191,8 @@ Joseph 的命名缓存、源字段投影和完整 prompt 仍须单独对齐。
 
 后续顺序：
 
-1. 补齐其余 RF cells、encoder 微调/indirect 的真实 prepared 输入、特征和训练验收；
-   普通 head 配置及 KNN 全部 cells 的核验已完成，不重复扩建 runner。
+1. ML 的全部报告单元已完成保存模型/特征核验，保留上述数值与重训覆盖边界；
+   后续独立环境复现沿用相同配置，不重复新增 task-specific runner。
 2. 将历史路径依赖收敛为可分发的数据/配置入口，验证独立环境；现有环境通过不等于可直接发布。
 3. 迁入 LLM 共享流程，核对完整候选池、records 预算、card 去重、prior 与最终请求。
    继续保留必要的限流、重试、恢复和历史 replay 能力。
