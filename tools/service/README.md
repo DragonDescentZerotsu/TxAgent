@@ -30,13 +30,15 @@ reuse `identity_blind` plus this service; it should not add another cache or too
 
 ## Production launch on node002
 
+Activate the environment containing the service dependencies before these commands.
+
 ```bash
 env \
   TXAGENT_TOOL_NATIVE_THREADS=1 \
   TXAGENT_TOOL_BATCH_WORKERS=8 \
   TXAGENT_TOOL_CACHE_MEMORY_ENTRIES=5000 \
   TXAGENT_TOOL_CACHE_PATH=/local/tmp/txagent-tool-cache.sqlite3 \
-  /data1/tianang/anaconda3/envs/vllm/bin/python -m uvicorn \
+  python -m uvicorn \
     tools.service.app:app --host 127.0.0.1 --port 8765 --workers 32
 ```
 
@@ -70,8 +72,7 @@ branches must not duplicate this logic.
 ## Verification
 
 ```bash
-/data1/tianang/anaconda3/condabin/conda run -n vllm \
-  python -m pytest -q tests/service tests/predict/test_identity_blind.py
+python -m pytest -q tests/tools/service tests/predict/test_identity_blind.py
 
 curl -fsS http://127.0.0.1:8765/health
 ```

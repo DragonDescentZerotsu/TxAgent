@@ -268,10 +268,8 @@ final arms unchanged; a replacement needs a reviewed successor collection.
    git diff --cached --name-only
    git commit -m "Add approved Joseph final arms and traces"
    git -c fetch.ifMissing=false -c pack.window=0 \
-     -c core.sshCommand='ssh -o BatchMode=yes -o ConnectTimeout=5 -p 443' \
-     push --no-thin ssh://git@ssh.github.com/DragonDescentZerotsu/TxAgent.git HEAD:refs/heads/joseph
-   git -c core.sshCommand='ssh -o BatchMode=yes -o ConnectTimeout=5 -p 443' \
-     ls-remote ssh://git@ssh.github.com/DragonDescentZerotsu/TxAgent.git refs/heads/joseph
+     push --no-thin origin HEAD:refs/heads/joseph
+   git ls-remote origin refs/heads/joseph
    ```
 
    Confirm the remote hash matches `git rev-parse HEAD`. The raw arm directories

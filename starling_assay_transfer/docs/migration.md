@@ -1,6 +1,6 @@
 # Canonical migration
 
-This document describes the canonical migration in the original `/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer` checkout. The TxAgent copy retains the active package, tests and documentation; archives and generated runs referenced here remain in that original checkout.
+This document describes the canonical migration in the original standalone assay-transfer checkout. The TxAgent copy retains the active package, tests and documentation; archives and generated runs referenced here remain in that original checkout.
 
 The historical setup is preserved under the source checkout's `archive/historical-20261013/`. The earlier cleanup archive remains under its `archive/unused-20261013/`. The archive manifests record original locations and preserve symlinks without traversing their external targets. Original code includes uncommitted changes and existing datasets remain scientifically unchanged.
 

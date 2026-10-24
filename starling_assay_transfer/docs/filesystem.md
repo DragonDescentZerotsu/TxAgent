@@ -30,4 +30,4 @@ runs/<run>/record/<task>/           # or context_molecule/<task>/
 
 Augmented context pools contain `pool/indirect/`; Gold-only builds omit it. Full versus representative scope is recorded explicitly. A folder's name alone is not evidence of a complete release.
 
-Historical archives, generated runs and assistant task workspaces remain in the original `/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer` checkout. They are not runtime dependencies or part of this copy. Historical path references inside package provenance and documentation retain their original meaning.
+Historical archives, generated runs and assistant task workspaces remain in the original standalone assay-transfer checkout. They are not runtime dependencies or part of this copy. Historical path references inside package provenance and documentation retain their original meaning.

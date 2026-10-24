@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/../.."
-SCORER_PYTHON=${SCORER_PYTHON:-/vast/projects/myatskar/design-documents/conda_env/openrlhf_tfv4/bin/python}
+SCORER_PYTHON=${SCORER_PYTHON:-python}
 SCORING_ROOT=${SCORING_ROOT:-data/caches/assay_reranking/active/flat_v5/gold_v1/skin_reaction/l1/assay_transfer/v9_0_2/scaffold_disjoint_parent100_v1/scoring}
 GOLD_ROOT=${GOLD_ROOT:-$PWD/data/evidence_libraries/skin_reaction/v10_main_universe_v7/inputs/gold/Skin_Reaction/v1/scaffold}
 phase=${1:-score}

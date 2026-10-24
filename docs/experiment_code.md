@@ -62,6 +62,14 @@ release merely because a candidate finished. This guide and the capability READM
 The [integration record](release_refactor.md) owns the migration status; a mapped
 capability is not a claim that all its historical experiments are distributable.
 
+The local `experiments/retrieval_cache/molecular_policy.sh` and
+`experiments/evidence_library/score_skin_gold_voters.sh` recipes locate this
+checkout from their script paths and default to `python` in the active environment.
+Use `TXAGENT_PYTHON` and `SCORER_PYTHON`, respectively, for an explicit interpreter;
+set `HF_HOME` when reusing an existing model cache. The separate distributed
+stage/collect recipes still describe a historical cluster deployment and require
+further portability review before publication.
+
 ## Canonical semantic utility scorer
 
 `optimization.semantic_buckets.bucket_scoring` is the maintained

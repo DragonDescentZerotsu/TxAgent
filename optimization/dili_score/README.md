@@ -24,18 +24,18 @@ The source lives under `optimization/dili_score/`. TxAgent imports
 
 This installs only `dili_score`; it does not install the experiment framework or
 include datasets in the wheel. For a lightweight checkout that avoids the large
-data files:
+data files, set `TXAGENT_REPOSITORY_URL` to the repository URL you were given:
 
 ```sh
-git clone --depth 1 --filter=blob:none --sparse https://github.com/DragonDescentZerotsu/TxAgent.git
+git clone --depth 1 --filter=blob:none --sparse "$TXAGENT_REPOSITORY_URL" TxAgent
 cd TxAgent
 git sparse-checkout init --cone
 git sparse-checkout set optimization/dili_score
 python -m pip install .
 ```
 
-Repository access is required because TxAgent is private. Use your normal GitHub
-credentials; do not put tokens in scripts. An existing checkout can also build a
+If repository access is restricted, use your normal Git credentials; do not put
+tokens in scripts. An existing checkout can also build a
 small distributable wheel with `python -m pip wheel --no-deps . -w /tmp/dili-score-wheels`.
 
 ```python

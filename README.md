@@ -42,4 +42,6 @@ Morgan KNN, MiniMol and RASAR use the shared
 and the original validation-selection settings.
 
 The [integration status](docs/release_refactor.md) distinguishes verified paper
-baselines from pending LLM migration and independent-environment checks.
+migrations from remaining independent-environment, input-distribution and
+anonymous-publication checks. See the [reproduction inputs](docs/results.md#reproduction-inputs-and-distribution)
+for what each existing restore or execution command requires.

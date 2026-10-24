@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
-cd /vast/projects/myatskar/design-documents/joseph/TxAgent
-PYTHON=${TXAGENT_PYTHON:-/vast/projects/myatskar/design-documents/conda_env/openrlhf_tfv4/bin/python}
+cd "$(dirname "${BASH_SOURCE[0]}")/../.."
+PYTHON=${TXAGENT_PYTHON:-python}
 STUDY=${TXAGENT_STUDY:-outputs/analysis/retrieval_cache/molecular_policy_20261015T195506Z}
-export HF_HOME=${HF_HOME:-/vast/projects/myatskar/design-documents/hf_home}
 export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
 phase=${1:?Use inventory, evidence, prepare, reuse, worksets, tokenize, score, finalize or publish}
 shift

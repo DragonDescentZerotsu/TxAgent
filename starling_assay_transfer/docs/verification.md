@@ -1,7 +1,7 @@
 # Canonical builder verification
 
 This document records historical validation in the original
-`/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer` checkout.
+standalone assay-transfer checkout.
 All `runs/`, `archive/` and `.agent-tasks/` paths below refer to that checkout and
 are not included in this copy. Validation of the TxAgent copy is recorded
 separately in [its validation receipt](../provenance/validation.json).

@@ -100,6 +100,36 @@ Main supplies the paper baseline implementations and settings; Joseph supplies
 transfer tools, context optimization, Ours and component ablations. Keep the
 existing Joseph functionality and its source records rather than duplicating it.
 
+## Reproduction inputs and distribution
+
+The compact result export can rebuild tables and figures by itself. Prediction,
+retrieval and training need the pinned inputs below; this repository is not yet
+a complete anonymous, independently installable reproduction release.
+
+| Purpose | Inputs to retain | Existing restoration/execution path |
+| --- | --- | --- |
+| Paper tables and figures | `docs/paper/` score files and source bindings | `analysis.prediction.paper_results`, optionally `--figures` |
+| Prepared paper LLM execution | Complete portable batch, including source snapshots, embedded priors and evaluation files | `--bundle-paper-baseline` then `--run-paper-baseline`; provider credentials are supplied separately |
+| Fresh paper baseline candidate selection | Original source-query snapshots plus the exact cohort, complete pickle index and TDC train/heldout files | `--prepare-paper-baseline --input-map`; the frozen manifest is not rewritten |
+| Saved ML replay or training | Complete candidate/model directories, receipts, prepared targets/features, exact split embeddings and input splits; MiniMol runtime for fresh encoding | [Baseline recipes](../experiments/baselines/README.md) and [MiniMol relocation guide](../predict/baselines/minimol/README.md#runtime-and-exact-cache-reuse) |
+| Existing FINAL results and traces | The pinned FINAL Git bundle and its manifest/parts | Its [restore instructions](../outputs/paper/assay_transfer_harness/joseph/final/git_bundle/README.md); these are separately selected FINAL arms |
+| Historical ranked retrieval release | All parts and matching cache configuration for the tagged release | [Retrieval release instructions](../data/processing/evidence_library/RETRIEVAL_RELEASE.md); this does not replace the paper baseline pickle inputs or newer named cache releases |
+
+The local retention audit covers 36 paper candidate-preparation files (38.21 GiB,
+all frozen hashes checked), and the 198 ML cells' 191 result directories plus
+42 previously audited target/feature directories (4,236 distinct file paths,
+14.26 GiB). The latter is an existence/size inventory, not a new model replay or
+an exhaustive dependency closure: external split embeddings, auxiliary sources,
+MiniMol runtime/checkpoints and transfer-model releases still need their explicit
+bindings. These sizes are not a final download size. No public data/model bundle
+or new download endpoint was created by this inventory.
+
+Preserve original checkpoint and manifest bytes: saved runs bind their hashes.
+Runtime relocation uses the existing explicit directory/input-map options.
+Historical path strings, package provenance and compressed archives require
+separate anonymity review before distributing them. The portable execution
+exporter is not an anonymizer; do not publish its output without that review.
+
 ## Existing FINAL collection
 
 The following tables retain the branch's separately selected FINAL arms and

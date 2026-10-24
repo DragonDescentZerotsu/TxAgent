@@ -110,9 +110,9 @@ It contained seven regular files totaling 11,685 bytes:
 The training executables were already retired. No maintained prediction,
 optimization, analysis, experiment, molecular-tool, data-processing or test code
 references these configurations or the former NeMo/Tinker training entry points.
-The short recipes still hardcode a former checkout under `/data1/tianang/` and
-old `/local/tianang/` training locations. They have no role in the current
-prediction, retrieval or context-optimization pipeline.
+The short recipes still hardcode a former checkout and old local scratch training
+locations. They have no role in the current prediction, retrieval or
+context-optimization pipeline.
 
 Their remaining purpose was historical documentation of exact training settings.
 Deletion gave up these original configuration files, while preserving the
