@@ -27,7 +27,8 @@ and published data are immutable. See [predict/README.md](predict/README.md),
 [optimization/README.md](optimization/README.md), [finalize.md](docs/finalize.md), and
 [the selected result tables](docs/results.md).
 
-Retained historical prompts and instruction snapshots live in `archive/`.
+Retained historical prompts live in `archive/`; agent instruction snapshots are
+local maintenance files excluded from the release tree.
 Git retains retired executable workflows and ChEMBL experiment reports.
 [The cleanup log](docs/look/cleanup_candidates.md) records deletions and relocations.
 
