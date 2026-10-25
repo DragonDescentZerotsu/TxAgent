@@ -31,7 +31,6 @@ from predict.utils.json import write_json_atomic
 
 
 DEFAULT_LIVE_ROOT = Path("outputs/paper/live")
-DEFAULT_PAGES_REPO = "ssh://git@ssh.github.com:443/jiosephlee/jiosephlee.github.io.git"
 PUBLIC_BRANCH = "live-traces"
 PILOT_SIZE = 3
 RUN_TIMEZONE = ZoneInfo("America/New_York")
@@ -217,7 +216,10 @@ def sanitize(value: Any) -> Any:
 
 
 def request_publish(root: str | Path) -> None:
-    if os.environ.get("TXAGENT_LIVE_PUBLISH", "1") == "0":
+    if (
+        os.environ.get("TXAGENT_LIVE_PUBLISH", "1") == "0"
+        or not os.environ.get("TXAGENT_LIVE_PAGES_REPO", "").strip()
+    ):
         return
     root = Path(root).resolve()
     (root / ".publish-request").touch()
@@ -234,7 +236,9 @@ def request_publish(root: str | Path) -> None:
 def publish_snapshot(root: str | Path) -> None:
     """Push the public projection to the Pages repository data branch."""
     root = Path(root).resolve()
-    remote = os.environ.get("TXAGENT_LIVE_PAGES_REPO", DEFAULT_PAGES_REPO)
+    remote = os.environ.get("TXAGENT_LIVE_PAGES_REPO", "").strip()
+    if not remote:
+        raise ValueError("Set TXAGENT_LIVE_PAGES_REPO before publishing traces")
     remote_id = hashlib.sha256(remote.encode()).hexdigest()[:12]
     cache = Path(tempfile.gettempdir()) / f"txagent-live-pages-{os.getuid()}-{remote_id}"
     if not (cache / ".git").is_dir():

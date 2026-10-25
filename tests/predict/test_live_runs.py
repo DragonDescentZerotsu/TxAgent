@@ -15,6 +15,7 @@ from predict.live import (
     launch_saved,
     promote_run,
     publish_snapshot,
+    request_publish,
     sanitize,
     update_run,
 )
@@ -334,6 +335,28 @@ def test_throughput_run_stays_private_until_promoted(tmp_path, monkeypatch):
     catalog = json.loads((tmp_path / "catalog.json").read_text())
     assert catalog["runs"][0]["run_id"] == run_dir.name
     assert json.loads((run_dir / "run.json").read_text())["visibility"] == "public"
+
+
+@pytest.mark.parametrize("remote", [None, "", "   "])
+def test_publication_requires_an_explicit_destination(tmp_path, monkeypatch, remote):
+    monkeypatch.delenv("TXAGENT_LIVE_PAGES_REPO", raising=False)
+    monkeypatch.setenv("TXAGENT_LIVE_PUBLISH", "1")
+    if remote is not None:
+        monkeypatch.setenv("TXAGENT_LIVE_PAGES_REPO", remote)
+    monkeypatch.setattr(subprocess, "Popen", lambda *a, **k: pytest.fail("unexpected publisher"))
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: pytest.fail("unexpected git command"))
+    request_publish(tmp_path)
+    with pytest.raises(ValueError, match="TXAGENT_LIVE_PAGES_REPO"):
+        publish_snapshot(tmp_path)
+    assert not list(tmp_path.iterdir())
+    workers = []
+    monkeypatch.setenv("TXAGENT_LIVE_PAGES_REPO", str(tmp_path / "pages.git"))
+    monkeypatch.setattr(subprocess, "Popen", lambda command, **kwargs: workers.append(command))
+    request_publish(tmp_path)
+    assert len(workers) == 1 and (tmp_path / ".publish-request").exists()
+    monkeypatch.setenv("TXAGENT_LIVE_PUBLISH", "0")
+    request_publish(tmp_path)
+    assert len(workers) == 1
 
 
 def test_publication_pushes_only_public_projection(tmp_path, monkeypatch):

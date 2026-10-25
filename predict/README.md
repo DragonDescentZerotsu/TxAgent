@@ -11,6 +11,15 @@ uses the shared model client; selecting today's default cache/prompt does not re
 See [paper results and migration limits](../docs/results.md) and the
 [paper preparation, execution and offline verification](prompts/README.md#frozen-paper-baseline).
 
+Live trace publication requires an explicit `TXAGENT_LIVE_PAGES_REPO` Git URL or
+local repository path. Without it, runs keep their local traces and do not start
+a background publisher; an explicit `predict.live publish --once` fails before
+any Git command. With a destination configured, the existing `live-traces`
+data-branch workflow remains available. `TXAGENT_LIVE_PUBLISH=0` disables automatic
+publishing even when a destination is configured. The viewer projection removes
+some machine/transport details; it is not a complete anonymity check and must be
+reviewed before publishing review artifacts.
+
 ```bash
 python -m predict.harnesses.branches --help
 python -m predict.harnesses.branches.matrix --help

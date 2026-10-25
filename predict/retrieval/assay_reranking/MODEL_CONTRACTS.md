@@ -1,7 +1,8 @@
 # Assay-reranker model and prompt contracts
 
-The executable model revisions live in `runtime.py`, `v27_safety.py`, and
-`v27_skin.py`; completed cache `VERSION.json` files pin the selected model,
+The executable model revisions live in `runtime.py`, `v24_1_levels.py`,
+`v25_oral_levels.py`, `v27_safety.py`, and `v27_skin.py`;
+completed cache `VERSION.json` files pin the selected model,
 projection, template, and source hashes. This index groups every active family
 without replacing those immutable receipts. Historical releases stay unchanged.
 
@@ -17,17 +18,25 @@ without replacing those immutable receipts. Historical releases stay unchanged.
 | Ames/DILI/Carcinogens V27 general | Task-specific V27-general datasets; `v27_safety.SafetyV27PromptRenderer`, Starling V10.3 safety visibility and Ames semantic display, plus candidate-context inference query copy | Same V20 training template as Skin successor | One shared top-100 Morgan parent list per query by default; Gold Carcinogens and TDC AMES have separate top-40-prefix successors; levels only partition storage | 384 real prompt comparisons per model |
 | Earlier V9/V10.3/V10.4 direct and V19.1/V21 record modes | Pinned role mappings in `runtime.MODEL_PROFILES` and the corresponding `v9.py`, `v19_1.py`, `v21_bbb.py` builders | Their versioned `prompts/` assets | Their published cache contracts | Historical; not re-audited here |
 
-The seven successor checkpoint identities are:
+The seven successor checkpoints are indexed by their executable definitions;
+model IDs, immutable revisions and dataset bindings are maintained there rather
+than duplicated in this document:
 
-| Role | Model revision | Dataset identity |
-|---|---|---|
-| TDC Ames direct | `jiosephlee/intern-s1-mini-ames-v10-3-tdc-mixed-canonical-best@392dd01912090040cfc0427f9f680d16d47eb27b` | `context-conditioned-molecule-transfer-v10.3-tdc-ames-mixed-canonical-intern@3bd32bf7c6eba916cdcc358425cf61ebb5e6ae7e` |
-| TDC DILI direct | `jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-pinned-dili-xnkoqrux@bb5248609a729ac7dc6d6c9a3cccba1566a3d19e` | `context-conditioned-molecule-transfer-v10.3-tdc-dili-mixed-canonical-intern@401d41b27d87d608ce03a45fed7d43d081229007` |
-| TDC Carcinogens direct | `jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-pinned-carcinogens-2xcwcpul@8be3376cd1d84e46c18b61617f63ad597aeaff52` | `context-conditioned-molecule-transfer-v10.3-tdc-carcinogens-mixed-canonical-intern@c21748b1dcb036082014ac51f3bbcbd20872e5c2` |
-| Ames V27 general | `jiosephlee/intern-s1-mini-assay-transfer-record-level-v27-ames-general-best@e731fd48ebebe95aa621b3500e59f28d4c27b036` | `assay-transfer-record-level-v27-ames-general-intern`; local release manifest SHA `6f2d2a3d80869e4c604d193568e3b9373a75200e9e5a9f9736f0f593e3be2c75` |
-| DILI V27 general | `jiosephlee/intern-s1-mini-assay-transfer-record-level-v27-dili-general-best@e34d922504cc67290ce5289607f54e5d74f6868e` | `assay-transfer-record-level-v27-dili-general-intern`; local release manifest SHA `8bd8cba9c059a441138a093d02d9d94d5298b77203c70fce0cfd204a35e01e1f` |
-| Carcinogens V27 general | `jiosephlee/intern-s1-mini-assay-transfer-record-level-v27-carcinogens-general-best@13a182fbc9f8b2a49c5286514dd5b6110393544b` | `assay-transfer-record-level-v27-carcinogens-general-intern`; local release manifest SHA `408548b285f32523ac190f9d0340c39049a8e8d7af83d895b59775f80478476c` |
-| Skin V27 combined | `jiosephlee/intern-s1-mini-assay-transfer-record-level-v27-skin-reaction-combined-best@398a41ccb38cadd120ee26b989bdbce5cab6c021` | `assay-transfer-record-level-v27-skin-reaction-combined-intern@1fa33cf3a7df7b6bd07a3b959f37502f951fc8ed` |
+| Role | Authoritative definition |
+| --- | --- |
+| TDC Ames / DILI / Carcinogens direct | [`runtime.MODEL_PROFILES`](runtime.py), each task's `direct_tdc_best` role; dataset revisions in the [direct prompt configuration](prompts/direct_l1_task_best_v1/config.json) |
+| Ames / DILI / Carcinogens V27 general | [`v27_safety.MODELS`](v27_safety.py), including source dataset manifest hashes |
+| Skin V27 combined | [`v27_skin.MODEL`](v27_skin.py), including its dataset revision and source hashes |
+
+Frozen cache manifests remain authoritative for completed runs. Do not replace
+an old model revision with the newest role definition. Existing scoring commands
+resolve the exact Hub snapshot with `local_files_only=True`; their cache must
+contain the weights, tokenizer and custom code for that revision. Prediction
+from a complete precomputed score cache is a separate path and does not imply
+that all historical scoring checkpoints must be distributed for the paper.
+A cached configuration alone is not a complete model. Anonymous redistribution
+must bind an accessible artifact to the same weights and dependencies; removing
+an account name or inventing a replacement repository does not accomplish that.
 
 Run `python -m predict.retrieval.assay_reranking.audit_training_prompts --report
 outputs/analysis/assay_reranking/v27_candidate_copy_v1/prompt_audit.json`

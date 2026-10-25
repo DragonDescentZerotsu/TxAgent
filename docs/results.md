@@ -124,6 +124,13 @@ MiniMol runtime/checkpoints and transfer-model releases still need their explici
 bindings. These sizes are not a final download size. No public data/model bundle
 or new download endpoint was created by this inventory.
 
+The preliminary offline transfer-model inventory covers the five registries in
+[model contracts](../predict/retrieval/assay_reranking/MODEL_CONTRACTS.md), including
+historical roles. It is not the paper checkpoint distribution list. A complete
+precomputed score cache and fresh model scoring have different dependencies;
+bind the selected paper run before deciding which checkpoints to package.
+File presence does not establish model loadability or anonymous redistribution.
+
 Preserve original checkpoint and manifest bytes: saved runs bind their hashes.
 Runtime relocation uses the existing explicit directory/input-map options.
 Historical path strings, package provenance and compressed archives require
