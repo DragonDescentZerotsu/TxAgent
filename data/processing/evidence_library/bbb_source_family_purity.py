@@ -35,10 +35,6 @@ INFLUX_GROUP = "Mechanism.influx_transport"
 PURITY_VERSION = "bbb_source_family_purity.v6"
 REVIEW_VERSION = "bbb_near_direct_record_review.v2"
 
-DEFAULT_RECORDS = Path(
-    "/data1/joseph/TxAgent/outputs/chembl_tool/tasks/bbb_martins/"
-    "evidence_library/starling_normalized_v7/03_records/records.parquet"
-)
 DEFAULT_REVIEW_LEDGER = Path(
     "data/artifacts/starling/bbb_martins/source_reviews/source_family_purity_v2/"
     "near_direct_record_review.jsonl"

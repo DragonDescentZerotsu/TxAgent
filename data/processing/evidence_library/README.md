@@ -1,72 +1,37 @@
-# Evidence-library construction code
+# Evidence-library construction
 
-> Historical overview retained for reference. The current construction contract
-> is documented in [`versions/v10/README.md`](versions/v10/README.md).
+The [V10 contract](versions/v10/README.md) documents the current construction
+lineage. A saved experiment's manifests select its exact release; do not replace
+those bindings with today's `CURRENT` or rebuild frozen artifacts during cleanup.
 
-Authoritative construction releases live under `versions/`:
+| Owner | Responsibility |
+| --- | --- |
+| `shared/v1/` | Construction kernel used by V7/V8 |
+| `shared/v2/` | UID-aware construction kernel used by V9/V10 |
+| `versions/vN/` | Release-wide builders and scientific policy integration |
+| `versions/vN/tasks/` | Task-specific source cleaning, policies and reviewed mappings |
+| `versions/vN/prompts/` | That release's construction prompts |
+| `data/evidence_libraries/<task>/<release>/` | Built data and immutable source/validation manifests, separate from code |
 
-- `versions/v7/`: BBB Martins, Bioavailability Ma, and Skin Reaction V7.
-- `versions/v8/`: the successor BBB measurement-resolution and record-pruning
-  implementation, plus Bioavailability, Skin, and Stage 0-1 Ames policies.
+Release contracts: [V7](versions/v7/README.md), [V8](versions/v8/README.md),
+[V9](versions/v9/README.md), [V10](versions/v10/README.md). Import these canonical
+packages directly; no compatibility construction namespace is provided.
 
-Both releases pin the same construction kernel from `shared/v1/`: normalization
-contracts, canonical record construction, pair-bucket policy, deduplication, and
-build runtime. It contains no benchmark publishing, retrieval views, artifact
-packaging, task-specific source cleaning, or completed review workflows.
+`views.py`, `evidence_library.py`, `heldout_index.py`, `compact_artifacts.py` and
+`assay_catalog.py` consume completed libraries across versions.
+`stage_artifact_store.py` packages completed stages.
+[Gold-label construction](../gold_labels/README.md) owns benchmark publishing;
+[semantic buckets](../../../optimization/semantic_buckets/README.md) owns reviewed
+semantic grouping and filtering. Exploratory analyses live in
+`analysis/evidence_library/`, including `record_informativeness.py`.
 
-Release-wide construction modules live directly in `versions/vN/`; there is no
-nested release `shared/` package. Each release owns its task policies, selected
-prompts, scientific mappings, pruning behavior, and task-specific source
-cleaning. Built data is separate under
-`data/evidence_libraries/<task>/<version>/`.
-
-`views.py`, `evidence_library.py`, `heldout_index.py`, `compact_artifacts.py`, and
-`assay_catalog.py` are version-independent consumers of completed libraries.
-Reviewed semantic/readout grouping and filtering live under the repository-top-level
-`optimization/semantic_buckets/` owner;
-exploratory relevance and informativeness workflows remain under
-`analysis/evidence_library/`. `stage_artifact_store.py` packages completed stages.
-Gold-label dataset and conditioned-benchmark construction lives under
-`data/processing/gold_labels/`.
-Compatibility construction namespaces are not provided.
-
-Gold-v1 level mappings are published from the hash-pinned upstream originals,
-with only reviewed L1 voter corrections, by:
+Gold-v1 level mappings are published from hash-pinned originals, with reviewed L1
+voter corrections, through the existing entry point:
 
 ```bash
 python -m data.processing.evidence_library.publish_gold_level_mappings
 ```
 
-`record_informativeness.py` scores accepted V7 Stage-1 rows in
-`(dataset, source_id, PMID, canonical_smiles)` groups. It writes a resumable
-SQLite request ledger and publishes a row-level Parquet sidecar only after exact
-coverage validation.
-
-`relevance_bucket_tournament.py` is the downstream V9 BBB semantic-relevance
-pilot. It builds the frozen pair-bucket map without model calls, then runs a
-resumable 512-bucket GPT tournament and stops for review:
-
-```bash
-python -m analysis.evidence_library.relevance_bucket_tournament build
-python -m analysis.evidence_library.relevance_bucket_tournament pilot
-```
-
-The pilot never starts a full-library run. Its manifest records the actual token
-usage, served model, reversal checks, and whether the preregistered gates passed.
-
-After the V1 gate, `relevance_bucket_diagnostic.py` runs the matched V2 N=10/N=5
-diagnostic without changing or resubmitting V1 requests:
-
-```bash
-python -m analysis.evidence_library.relevance_bucket_diagnostic build
-python -m analysis.evidence_library.relevance_bucket_diagnostic run
-```
-
-`relevance_bucket_pilot.py` runs the subsequent 512-bucket ranking pilot with a
-connected degree-4 graph, matched N=5 candidate orders, and single-comparison
-adjudication only for order disagreements. It does not expose a full-run command.
-
-```bash
-python -m analysis.evidence_library.relevance_bucket_pilot build
-python -m analysis.evidence_library.relevance_bucket_pilot run
-```
+This requires its actual source files. The command is not a replacement for
+restoring a missing frozen mapping. For repository integration and unresolved
+input availability, see the [release status](../../../docs/release_refactor.md).

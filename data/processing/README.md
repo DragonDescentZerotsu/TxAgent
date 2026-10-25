@@ -1,13 +1,10 @@
 # Data processing
 
-Evidence-library construction code is versioned independently from experiment
-runners:
+Construction code is versioned independently from experiment runners. The
+[evidence-library guide](evidence_library/README.md) maps the shared kernels,
+release builders, task policies and prompts. There is no `versions/vN/shared/`
+package; release-wide modules live directly in `versions/vN/`.
 
-- `evidence_library/shared/v1/` contains immutable cross-release code.
-- `evidence_library/versions/vN/shared/` contains release-specific shared code.
-- `evidence_library/versions/vN/tasks/` contains release-specific task policies.
-- `evidence_library/versions/vN/prompts/` contains that release's LLM prompts.
-
-Construction imports must use these canonical packages directly. Reasoning and
-retrieval workflows live under `predict/`; they do not host
-evidence-library construction modules.
+[Gold-label construction](gold_labels/README.md) owns benchmark publishing.
+Reasoning and retrieval execution live under `predict/`; these use the selected
+frozen releases rather than rebuilding data as a side effect of prediction.
