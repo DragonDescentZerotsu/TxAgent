@@ -168,6 +168,17 @@ def test_prediction_resume_restores_pinned_composition(tmp_path, monkeypatch):
     from predict.retrieval.assay_reranking.artifact_bundle import DEFAULT_CACHE_SET, cache_task
     original = json.loads(DEFAULT_CACHE_SET.read_text())
     original.update(name="pinned_fixture", release="v9")
+    index = tmp_path / "RELEASE_INDEX.json"
+    evidence = tmp_path / "bbb_martins/v1/VERSION.json"
+    evidence.parent.mkdir(parents=True)
+    evidence.write_text("{}")
+    index.write_text(json.dumps({"evidence": {"manifest": str(evidence)},
+        "splits": {"valid": {"levels": {"L1": {}, "L2": {}}}}}))
+    original["benchmarks"]["gold_v1"]["bbb_martins"]["retrieval"] = {
+        "L1": str(index), "later": str(index)}
+    queries = tmp_path / "valid_molecule_condition_labels.jsonl"
+    queries.write_text(json.dumps({"benchmark_row_id": "fixture", "drug": "CCO"}) + "\n")
+    monkeypatch.setattr(flat, "split_path", lambda task, subset: queries)
     cache = tmp_path / "pinned.json"
     cache.write_text(json.dumps(original))
     observed = []
