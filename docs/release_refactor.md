@@ -1,752 +1,140 @@
 # 发布整合状态
 
-本文后续统一使用中文。当前整合分支为 `codex/release-refactor`，以 Joseph
-`73bddf2e` 为目录基础，以本地源码快照 `41403cf4` 和已确认的后续修复为功能标准。
-最终展示分支仍为 main；当前尚未合并，也尚未完成整篇论文的复现验收。
+更新：2026-10-25。工作分支 `codex/release-refactor`，目录基于 Joseph `73bddf2e`，
+main 功能来源为快照 `41403cf4` 及已确认的修复。尚未 push 或合并 main，未通过完整发布验收。
 
-## 当前验收清单（2026-10-25）
+本文原位更新当前状态和证据索引，不继续追加逐轮工作日志；已完成待办及时移除，
+验证结论保留范围与证据位置。功能/命令见
+[代码职责](experiment_code.md#capability-map)、[baseline 配方](../experiments/baselines/README.md)、
+[LLM 协议](../predict/prompts/README.md#frozen-paper-baseline)；分数、图表和来源见
+[结果入口](results.md)。这几处各自维护一份事实，本文不复制命令或结果表。
 
-**当前状态以本节为准；后面的批次保留当时的检查记录，不是累积待办清单。**
-Direct-3 LLM 已退出论文迁移范围；冻结 prior 恢复、Batch、竞速重试及 RASAR
-搬移适配已完成各自所述验收，旧批次中的“仍需接入”不再适用。
+## 当前验收清单
 
-| 项目 | 已完成及边界 | 剩余工作 |
+| 项目 | 已完成 | 剩余工作与限制 |
 | --- | --- | --- |
-| main 的论文 baselines | 198 个 ML cells 保存结果/模型核验及有限重训；108 个 LLM cells、38,457 个冻结请求核对；不是全量重新训练/推理 | 补齐可分发的精确输入依赖，在隔离环境做少量复现 |
-| 检索规则 | 已批准的 parent/scaffold 判断接入共用实现；原 split、标签与历史结果不变 | 本轮 9 项 UID/cache builder 检查受缺失的 BBB v10 level mapping 阻塞；Joseph 命名缓存及新规则候选仍须真实发布输入验证，不能用旧分数代表新规则性能 |
-| 论文图表与来源 | 统一导出表格、三张论文 PDF；72 个 Ours 分数保留用户提供属性；五组消融有归档 TSV 绑定 | Direct 10 分子/50 records、Ours 预算及第六组消融的精确协议来源仍待核对 |
-| 复现分发 | LLM 完整候选输入 36 文件哈希通过；ML 结果/准备目录已清点；已有小包搬移 smoke；32 个登记模型版本已做限定本地缓存清点 | 先绑定论文实际使用版本，再闭合精确 embeddings、辅助源、MiniMol runtime/checkpoint、transfer-model 依赖；文件存在不代表加载验收，未发布完整下载包 |
-| 匿名发布 | 机器脚本与 V9 旧缓存默认路径已去除硬编码个人目录；live trace 改为显式配置发布地址；上一批原关键词口径 380 文件、扩展口径 469 文件均只是候选，本批未重跑全量扫描 | 检查模型/数据下载地址、冻结来源及压缩内容；发布副本变化须同步校验绑定；提交作者按用户要求不匿名化 |
+| main 论文 ML | 198 cells 保存结果核验、模型重放和有限重训，详见下表 | 精确 embedding、辅助源、MiniMol runtime/checkpoint 的完整分发及独立环境验收 |
+| main 论文 naive LLM | 108 cells、38,457 份冻结请求/响应核对；普通 API、Batch 模拟、恢复、搬移 smoke | 完整输入匿名分发；真实 Direct+Indirect smoke 尚未成功；未做全量新推理 |
+| 已批准检索规则 | 共用 parent/scaffold 实现、预算前过滤及有限完整索引准备验收 | 全 cohort 候选差异和新规则性能未验收；9 项 UID/cache builder 检查仍缺 BBB v10 映射 |
+| 论文输出及 Joseph 来源 | 表格与三张论文 PDF 已复现；五组消融由归档 TSV 绑定 | Ours 原始运行/预算、第六组消融协议和 Direct 10 分子/50 records 差异仍待核对，详见结果入口 |
+| 复现分发 | LLM 36 文件哈希、ML 保存目录清单及 transfer 模型本地缓存清点完成 | 清单不等于完整分发；先对应论文实际运行，再闭合模型/排序缓存依赖 |
+| 匿名发布 | 已清理直接仓库链接、部分机器路径与默认 trace 发布地址；AGENTS/CLAUDE 不跟踪 | 冻结来源、实名模型地址及归档仍待处理；提交作者按用户要求不匿名化 |
 
-维护入口：[代码职责](experiment_code.md#capability-map)、[结果与来源](results.md)、
-[baseline 配方](../experiments/baselines/README.md)、
-[LLM 冻结协议](../predict/prompts/README.md#frozen-paper-baseline)。结果只维护统一来源，
-本状态页不再复制分数表。
+下一步按选定论文运行追溯模型与缓存，整理匿名分发副本，再在不依赖原 main 或
+`/local` 的环境做少量端到端验收。通过后正常合并 main，保留双方 Git 历史。
 
-下一步按以下顺序推进：
+## 范围与不变项
 
-1. 按引用关系分类处理匿名候选：普通说明/运行配置直接修复，冻结来源保留内部原件，
-   对发布副本记录变换及校验关系；不全局替换历史文件。
-2. 补齐论文复现依赖及恢复说明，复用已有打包/恢复入口；不迁入论文以外的历史套件。
-3. 在不依赖原 main 或 `/local` 的环境做少量端到端 smoke，分别核对旧协议输入一致性
-   与已批准的检索差异。验收通过后正常合并至 main，保留双方历史；不强制覆盖。
+- 只迁移当前论文正文、附录和图表所需能力。main 提供 ML/naive LLM baselines；
+  Joseph 提供 transfer、context optimization、Ours 与消融，保留其其他既有功能。
+- naive LLM 保留三骨干、两 benchmark、六任务的 None / Direct50 / Direct50+Indirect50，
+  两池均 Neighbor-fill。12 cells 用 adapter v1、96 用 v2，均保留原消息和原生输出。
+- Direct-3 **LLM**、完整历史预算扫描和 progressive/Joint 不新增迁移入口；ML 的固定
+  k=3 及 RASAR 三个直接邻居特征继续保留。None 的旧 `molecule_cap` 字段仅为空输入标记。
+- split、标签、原始结构、历史预测/分数不变；新检索输出使用新运行身份。冻结 prior
+  已嵌入执行包，不另建生成器。Joseph FINAL 默认模板不能替代 main 的论文 prompt。
+- 工具服务与 Joint 保持停止；不因复现依赖检查自动下载模型、重建历史实验或全量推理。
 
-## 整合原则
+## Baseline 配置与验收
 
-- 采用 Joseph 的 `predict/`、`data/processing/`、`optimization/`、`analysis/`
-  组织代码；从 main 迁入的功能、参数和科学定义以已确认的本地版本为准。
-  Joseph 的其他功能保持原行为，仅对双方已明确讨论并批准的功能统一规则。
-- 同一功能只保留一份实现。已有同名函数必须核对行为，不能只改 import 就认定等价。
-- 冻结的 train/valid/test、标签、原始结构、历史预测和分数保持不变。新的检索规则
-  使用新的准备结果，不能将旧预测重新标成新规则的结果。
-- 确定性的输入、特征、候选和请求应逐项一致；随机训练或推理再比较合理的性能波动。
-  已批准的检索规则修复单独记录预期差异，不以旧预测逐条一致为目标。
-- 结果数值继续从现有登记和汇总来源读取，不在本文另维护一份分数表。
+三种 ML 训练池为 conditioned、TDC-only、TDC + Starling。下表是既有验收的汇总，
+不是本次重新运行的结果；具体入口和参数只在对应能力文档维护。
 
-## 发布验收范围（2026-10-23 用户确认）
-
-只要求复现当前论文正文、附录、图表及其必要依赖，不要求迁移或重新验收全部历史实验。
-每项后续工作先对应论文中的具体内容和既有结果来源，再决定是否接入。Joseph 已有的
-其他功能保持兼容；不为了扩大历史覆盖而新增入口，也不因不在论文中就直接删除它们。
-
-来源分工按用户确认固定：**main 负责论文 ML/naive LLM baselines 的 performance 与
-setting，包括 Direct/Indirect 50/50；Joseph 负责 transfer tool、context optimization、
-Ours 与相关实验/消融。** 后者继续复用 Joseph 实现，不从 main 重造第二套。
-
-| 论文内容 | 必须保留的能力与验收依据 |
-| --- | --- |
-| 主结果图、均值图及完整 naive LLM 附录 | 三种骨干、两个 benchmark、None / Direct / Direct+Indirect；108 个任务分数，保留原 prompt、prior、预算、标签与输出格式 |
-| 完整 ML 附录 | 三种训练池的 198 cells；Morgan/MiniMol KNN、MiniMol head/微调/indirect、RASAR 与 RASAR+indirect，以及各条件策略 |
-| Ours 完整结果与组件消融 | 保留 Joseph 的推理、选择、transfer、informativeness 和 coverage 功能；逐项绑定论文结果来源，不能把用户提供的分数当成原始预测已审核 |
-| 数据与方法附录 | 固定 benchmark/split/标签、所需证据与模型依赖、训练配置和已批准的身份规则；不因代码整理重建或改写冻结实验 |
-| 图表与结果导出 | 继续使用唯一分数来源及共享导出/绘图入口，避免手工维护第二份分数 |
-
-已实查当前论文 `sections/4_setup.tex`、`sections/5_results.tex`、
-`sections/appendix_baselines.tex`、`sections/appendix_llm.tex` 和
-`sections/appendix_ours.tex`，并检查主 LaTeX 文件的附录引用：历史 **Direct-3 LLM**
-对照未被采用，不再列为迁移或发布前置条件。论文中的 **k=3 Morgan/MiniMol KNN**
-和 **RASAR 的三个直接邻居特征**属于另外的 ML 功能，仍在验收范围。
-历史预算扫描、旧 progressive/Joint 等实验也不能仅因存在于旧仓库就自动纳入。
-
-本轮 Direct-3 接入尚未提交，已全部撤回；离线核验进程已停止，新增临时准备目录已
-清理，原历史结果未动、付费调用为零。后文各批次是当时的记录；其中曾列出的
-Direct-3 待办由本范围决定取代。冻结 prior 的独立恢复已在第十五批验收；不为论文
-复现额外增加一套 prior 生成器。其余功能也只接齐论文实际需要的部分。
-
-原有待核对项继续保留：论文文字写 Direct 10 个分子，当前实际 baseline 配置为
-Direct 50 条 records。本文不改写论文或冻结配置，也不以迁移完成代替该差异的核对。
-
-## 第一批：MiniMol 微调、indirect 和 RASAR
-
-| 能力 | 整合后的唯一实现或入口 |
-| --- | --- |
-| MiniMol 主任务微调与 indirect 联合训练 | `python -m predict.baselines.minimol.run_multitask` |
-| 主任务/辅助目标与 heldout parent 排除 | `predict/baselines/minimol/indirect_data.py` |
-| 可训练 encoder 和图缓存 | `predict/baselines/minimol/finetune_runtime.py` |
-| RASAR 六维 direct 与 6+2B 维 indirect 特征 | `predict/baselines/retrieval_features.py` |
-| RF 训练和验证集选参 | `python -m predict.baselines.retrieval_forest` |
-
-这五个模块的算法主体与源码快照一致，仅迁移 import。共用已有的预测头、指标、
-条件词表、指纹和 JSON 工具；没有新增根目录 `baselines/` 别名、独立模型客户端或绘图器。
-
-共用条件邻居选择已保留本地“源文件中第一条 molecule-condition 记录”的代表规则，
-并支持 `same_condition_then_null_then_all`。这项与 Joseph 原先选择排名最高重复记录
-的行为不同，已明确按本地版本修正。
-
-第一批检查：50 项测试、两个 CLI 帮助命令通过；18,656 个 benchmark 分子的 parent
-keys 一致，2,700 次条件选择对照一致。覆盖范围为当前六任务 conditioned/TDC scaffold
-三路输入，含 Skin/Carcinogens seed-42 替代输入，不包括整个辅助证据库或完整训练。
-
-## 第二批：已确认的身份和检索规则
-
-共用入口为 `predict/retrieval/policies.py`。DILI/Carcinogens 的专用运行时规则收在
-`predict/retrieval/task_identity.py`，由共用判断入口按索引显式声明调用。
-普通索引检索、分支 Morgan 检索和分支 assay-transfer 检索均在选择候选前应用同一逻辑。
-
-| 规则 | 本轮实现 |
-| --- | --- |
-| 盐形式与立体构型同时变化 | 比较选定 parent 的连接结构，仍然排除；版本 `fragment_parent_connectivity.v2` |
-| 多组分 | 保留本地原有精确 parent/component 匹配；不额外比较任意两个非主组分，不扩展到所有非主组分的立体变体或 scaffold |
-| 普通 scaffold-disjoint | 比较选定 parent 的非空 Murcko scaffold，保留键型；无环分子不因空 scaffold 相同而排除 |
-| DILI/Carcinogens parent-disjoint | 只细化旧 ElementGraph＋分子式＋净电荷同组候选；完成的去立体互变异构归一不同可继续接受通用 parent 检查；相同、缺结构或枚举未完成仍排除 |
-| DILI/Carcinogens scaffold-disjoint | 保留原末端剪枝后的环/连接拓扑规则；先排除相同非空 scaffold，不改成普通 Murcko |
-| 单重原子 query | 保留原元素匹配门槛，防止折叠指纹碰撞让无关元素占用检索预算 |
-
-专用规则仅用于声明 `new_task_tautomer_identity.v2` 且 task 为 `dili` 或
-`carcinogens` 的索引；缺失或混用候选身份字段时报错。检索输出同时记录旧分组合同、
-新 parent 细化版本 `complete_stereo_free_tautomer_within_legacy_group.v1` 和结构资格版本。
-没有重写 gold/split 构建器、heldout L1 预排除或已有索引；原来已从 L1 去掉的记录不会
-因运行时细化自动恢复。
-
-**适用边界：**这轮接通的是带本地合同声明的索引运行时。Joseph 的命名 SQLite/UID
-缓存没有因此重建或补回原先被过滤的候选，也尚未证明与本地候选池、预算和 prompt
-一致。不能直接用任意现成 Joseph 缓存宣称完成了论文复现。
-
-## 全部 baseline 的配置对应关系
-
-以下“本地来源”路径均相对于被保留的本地 main 工作目录，仍由
-`tools/chembl_tool/paper_experiments/current_conditioned_results.json` 绑定当前结果。
-它们不是整合分支中已经可用的默认数据路径；缺失时不得转用 Joseph 的 `CURRENT`。
-
-| baseline | 必须保留的配置 | Joseph 框架下的入口与状态 |
+| 能力 | 已验证范围 | 边界 |
 | --- | --- | --- |
-| Morgan KNN | 固定 k=3、阈值 0.5、train reference；all-train/condition-first；原始输入及稳定去重 | `predict.baselines.structure_knn.run`；36 cells 重跑，邻居与预测一致 |
-| MiniMol embedding KNN | 同上；冻结 encoder/checkpoint 与相同 embeddings | `predict.baselines.minimol.run_embedding_knn`；36 cells 使用原缓存重跑，邻居与预测一致 |
-| 普通 MiniMol head | 各 task 原超参数、25 epochs、seeds 1–5；val BCE 选 checkpoint，ensemble val Macro-F1 选阈值；无 CV、无 train+valid refit | `predict.baselines.minimol.run_bioavailability_ma`；18 cells 保存模型重放通过，3 cells 按原配置重新训练通过 |
-| MiniMol 主任务微调 / indirect | 原主训练池、辅助池及权重候选；checkpoint/权重用 val BCE，阈值用 val Macro-F1；辅助池排除完整 valid/test parent/connectivity union，允许 scaffold 重合 | `predict.baselines.minimol.run_multitask`；21 套来源输入重建一致，36 cells 模型重放标签/F1 一致；完整候选/五种子重训仍未全量执行 |
-| RASAR / RASAR+indirect | 6 / 6+2B 特征；两种邻居策略；六个 RF 候选、seeds 1–5、每 seed 100 trees；val BCE 选参数、val Macro-F1 选阈值 | `predict.baselines.retrieval_forest`；21 套特征重建与 72 cells 重放通过；两批累计 6 cells / 180 seed fits 重训通过 |
-| DeepSeek / Luna / Gemini naive LLM | 原模型、reasoning、prior、prompt；None / Direct 50 / Direct 50 + Indirect 50；两池均 Neighbor-fill；每设置一次 full-flat | 冻结协议、候选准备、普通 API、Batch 和竞速/恢复已接入；保存请求重放及有限 smoke 见后文，不等于完整新推理或新规则性能复现 |
-| 历史预算扫描、Direct-3 等对照 | 保留原记录；仅当当前论文实际引用时纳入 | Direct-3 LLM 不在当前论文中，不作为迁移或发布前置条件 |
-
-ML 的三种训练池为 conditioned、TDC-only、TDC + Starling。当前统一 ML Appendix 为
-198 cells；不得只迁第一批模块后就把其他方法标成完成。
-
-配置的权威来源及替代关系：
-
-- 普通 head：`outputs/paper/conditioned_minimol_val_selected_20260921/manifest.json`
-  和 `outputs/paper/tdc_minimol_val_selected_20260919/manifest.json`；按各 cell 的原命令与
-  超参数迁移，不用一套默认 hidden dimension / learning rate 代替所有任务。
-- encoder/indirect：registry `minimol_indirect_assay`、`tdc_minimol_indirect_assay`；
-  TDC 套件的配置在 `outputs/paper/tdc_minimol_indirect_assay_20260922/manifest.json`。
-- RF：`outputs/paper/retrieval_forest_20260922/manifest.json` 与
-  `outputs/paper/retrieval_forest_direct_20260925/manifest.json`；conditioned DILI/Carcinogens
-  使用 `same_condition_then_null_then_all`，其他采用各自已记录策略。
-- TDC Skin/Carcinogens 使用 seed-42 的替代套件；原始查询由
-  `outputs/paper/tdc_seed42_neighbor_fill_20260924/data/benchmark_manifest.json` 绑定。
-  不能直接使用早期 manifest 中的 seed-1 输入；对应 mixed 数据也必须跟随替代套件。
-- Skin indirect 以 `outputs/paper/skin_indirect_level_mapped_20260925/manifest.json`
-  为当前替代来源；RASAR direct 六列与原 donor 保持不变。
-- LLM 的当前来源为 registry `naive_llm_baseline`、`gpt6_luna_batch_b50`、
-  `gemini38_flash_api_b50`、`tdc_seed42_neighbor_fill`，以及主表实际引用的 scaling 中 50/50 单元；
-  不因来源目录叫 scaling 就把它删除，也不因此迁入完整历史扫描。
-  用户提供的 Ours 分数保持其来源标注；未解决的预算来源差异不能靠迁移补写。
-
-## 第三批：普通 head 配置与实际性能核验
-
-复用 `experiments/baselines/conditioned.sh`，按 `TASK` 选择六任务各自的 head 参数，
-按 `TRAINING_POOL=conditioned|tdc_only|mixed` 选择原条件字段。默认改为上述论文
-val 选 checkpoint/阈值协议；Joseph 的固定 25 epochs、固定 0.5 模式仍可显式用
-`TRAIN_ALL=1` 运行。两种模式都有实际 CLI 回归测试，没有新增正式训练入口。
-
-head 已补齐本地 `--unseen-condition-policy`（默认仍为报错）、逐 epoch 验证 BCE
-和验证集预测输出，同时保留 Joseph 的输入/缓存校验、benchmark 元数据与分条件统计。
-runtime 支持显式 `TXAGENT_MINIMOL_RUNTIME_ROOT`，未设置时仍使用可移植的
-`third_party/minimol`；本轮直接使用已有共享盘依赖，没有安装环境或启动工具服务。
-
-性能核验以当前 198-cell `ml_appendix.csv` 的逐项来源为准，所有新结果写入独立目录
-`outputs/analysis/release_refactor/20261022_ml/`，详细回执与执行命令见该目录中文 README。
-
-| 核验 | 已覆盖范围 | 结果 |
-| --- | --- | --- |
-| KNN 实际 CLI 重跑 | 三训练池、六任务、两种指纹、两种策略，72 cells / 25,992 条 test 预测 | 逐条分数、标签、邻居及相似度完全一致；汇总指标仅有浮点舍入差 |
-| 保存 head 重放 | 三训练池六任务，18 cells；重算 valid/test、阈值和 test 指标 | 逐条分数与标签完全一致；不是 18 cells 全部重新训练 |
-| head 从随机初始化重训 | conditioned Ames、TDC-only Carcinogens、mixed Skin，各 5 seeds × 25 epochs | 15 次训练；test 分数、阈值、Macro-F1/AUROC 完全一致 |
-| RF 准备与重训 | TDC-only Carcinogens，RASAR 与 RASAR+indirect，各 6 候选 × 5 seeds | 特征/donor 数组逐元素一致；60 次训练，选参、标签及指标一致，概率最大差约 5.6×10⁻¹⁷ |
-| MiniMol 新编码 | 共享盘原 checkpoint，8 个真实分子，CPU 离线编码 | 8×512 输出；与原 embedding 最大绝对差约 3.5×10⁻⁶，满足既有容差；未全量重建 embeddings |
-
-严格重训使用原 train/valid/test **分别保存的精确 embedding 副本**。按 SMILES 合并
-复用不同批次缓存会接受容差内的数值差；试跑中约 2.6×10⁻⁶ 的 embedding 差异曾使
-mixed Skin 的一条最终标签变化。恢复逐 split 精确输入后结果完全复现。因此保留通用
-SMILES 复用功能，但不将它描述为逐位复现；精确复现用 `EMBEDDING_CACHE_DIR` 指向
-独立复制并核对过顺序、标签的缓存，不能覆写历史缓存。Ames KNN 的旧 valid 缓存按已有
-valid/test 对调回执映射至当前 test，而非直接依赖旧文件名。
-
-本轮使用现有环境和冻结输入，RF 的旧 prepared manifest 仍含相对旧工作目录的来源，
-通过显式加载整合分支模块完成验证；这不是全新环境下的独立发布验收。另有 42 项受影响
-head、条件编码、indirect、RF 与导入边界测试通过。
-
-## 第四批：全部 RF 与 encoder/indirect 核验
-
-核验保存于 `outputs/analysis/release_refactor/20261022_indirect/`。本批新增的 72 个 RF
-和 36 个 encoder/indirect 报告单元，加上第三批的 KNN/head，已覆盖当前 ML Appendix
-全部 **198 cells**。这里的覆盖指来源、准备结果和保存模型重放，不表示全部重新训练。
-
-- 21 套辅助准备结果重新从原 split 与 Parquet 构建：分子顺序、标签、条件张量、
-  bucket、归一化目标和 heldout 排除统计一致。旧 payload 中缺少的 `condition_groups`
-  仅补充输出元数据，训练张量未变。Skin 旧主任务微调/六维 direct 与新版 indirect
-  按各自原来源分别核验，没有用新版辅助池替换旧实验输入。
-- 21 套 RF 特征重新构建，两种 direct 策略、auxiliary 和 donor 索引逐元素一致。
-  72 个报告单元对应 65 个保存结果目录，全部重新执行 finalize：校验各候选与其缓存的
-  valid 分数，重做选参/阈值，使用保存模型重新计算 test；标签、Macro-F1/AUROC 一致。
-- 新增 conditioned Skin、mixed Skin 的 condition-first RASAR/RASAR+indirect，
-  共 4 cells / 120 seed fits 完整重训。使用重建的辅助目标与特征，从整合目录运行；
-  选参、标签及指标一致。复用 Python CLI，仅新增一个固定论文参数的 Bash 配方
-  `experiments/baselines/retrieval_forest.sh`；说明统一在该目录 README。
-- 36 个 MiniMol encoder/indirect 单元均重新执行 finalize：所有候选 checkpoint 和
-  缓存 valid 分数通过校验，辅助权重/阈值不变，重新计算 test。12,996 条报告预测的
-  标签及 Macro-F1 全部不变；其中 8 cells 的 AUROC 有数值差，详见下段。
-- TDC-only Skin 当前 1,735 张图重新生成，13,880 个字段逐项一致。完整单 seed、
-  λ=0.6、25 epochs 的 CPU 对照使用“原代码＋原输入”和“整合代码＋重建输入”，
-  每个 epoch 的主任务损失、辅助损失和 valid BCE 完全一致，选中 checkpoint 的
-  327 个状态张量与验证概率也完全一致；不代替所有任务、所有辅助权重的五种子重训。
-
-**数值差异核算：**原 encoder 套件在 CUDA 上训练，本轮在 CPU 上重放，概率最大差
-为 1.38×10⁻⁶ 以内。8 cells 共 9 对正负样本的并列/排序发生变化，这些样本原分数差
-均不超过 1.2×10⁻⁷；逐对贡献精确解释全部 AUROC 差值。最大为 TDC Carcinogens
-indirect 的 −0.0010101（约 −0.10 个百分点），分类标签仍不变。用原代码在同一 CPU
-环境重放 Oral 和 TDC Carcinogens 的微调/indirect 四个单元，逐条预测与整合代码完全
-相同；五个迁移模块的 32 个函数/类主体也一致，仅局部 import 改路径。保留原始差异
-回执，不把近似一致写成逐位相同，不用本轮分数替换论文冻结分数。
-
-这些核验使用现有依赖与保存输入；新 RF 配方已在整合目录运行，但完整数据分发、
-全新环境安装与 LLM 流程尚未验收。临时核验脚本收入本地源码 ZIP，不作为正式 runner。
-
-## 第五批：结果入口、文档与 LLM 离线预检（2026-10-23）
-
-[结果入口](results.md)现已包含本地论文主比较与原 FINAL collection 的明确区分。
-`docs/paper/baselines.csv` 从原两套 `all_scores.csv` 导出 306 cells，其中 ML 198、
-naive LLM 108；ML 的训练池和数值逐项与原 `ml_appendix.csv` 对齐。重新读取 294 个
-不同预测文件（报告别名仍保留），306 cells 的 Macro-F1、accuracy 和 ML AUROC 均
-与原汇总一致。没有执行新训练或推理，也没有将新检索规则冒充为这些旧结果的协议。
-
-公开表仅保存预测文件 SHA-256，不包含个人绝对路径；本地核验回执保存原路径映射。
-`docs/paper/sources.json` 绑定原表、导出物、cohort 和来源 registry 的哈希。
-`ours_reported.json` 是原 72 个 Ours 分数来源文件的逐字节副本，保留用户提供及未核验
-预测/预算的说明。未解决的 Direct=10/50 和 Ours 预算来源问题仍为待核对。
-这些文件是冻结主比较的可阅读导出，不是另一个可手改的结果登记中心；原登记仍为
-历史实验权威来源，正式 exporter/plotter、预算扫描与后续 scaffold 实验的分发仍待接入。
-
-文档已补齐能力—入口—输入/输出映射，修正根 README 的废弃 CLI 参数、失效文件链接
-以及预测说明中 MiniMol 章节的失效锚点。9 个 AGENTS.md 已取消 Git 跟踪并按文件名
-全目录忽略；原本存在的工作区文件字节保持不变，稀疏检出未落盘的文件也已本地备份。
-这不删除历史提交中的文件，也不代表整合分支已通过全库匿名审查。
-
-LLM 离线预检覆盖 Gemini 的两套 benchmark、六任务、三 settings，共 36 个 batch。
-每个 batch 固定抽取首/中/末三个 query，共 108 个：
-
-- 原任务合同、manifest 和 request hash 全部匹配；用原 adapter v2 重渲染后，108 个
-  requests 均与冻结消息逐字一致，None/Direct/Direct+Indirect 分别满足 0/0、50/0、50/50。
-- 保持相同的模板输入，改用当前 `final_full_flat` 模板：108 个 user 消息完全一致，
-  108 个 system 消息全部不同。当前模板增加/改变了 reasoning instructions、semantic
-  utility 说明及固定输出要求；不能用默认模板替代原论文 prompt。
-- 原 manifest 采用 direct scaffold-disjoint、indirect parent-disjoint，direct/indirect
-  候选分子数均为 128。当前默认命名缓存为 scaffold-disjoint parent-100，不能直接替代。
-
-这里只验证冻结样本与模板层差异，没有重建完整候选池，没有证明新 harness 全流程
-等价，也没有推论 DeepSeek/Luna 的所有历史请求已验收。下一步在现有 prompt/selection
-入口中显式承载原协议，再比较有序 records、字段去重、prior、最终请求和恢复行为。
-
-详细回执、源文件映射与临时核验脚本归档于本地
-`outputs/analysis/release_refactor/20261023_docs/`，不新增正式 Python runner。
-
-## 第六批：冻结 LLM 输入输出协议（2026-10-23）
-
-输入输出适配层已迁入 `predict/prompts/paper_baseline.py`，冻结模板和任务定义位于
-`predict/prompts/variants/paper_baseline_v1/`。保留六任务各自的预测字段、置信度、
-支持/反对/决策依据 card IDs、claims、evidence gaps 和 decision summary；TDC Ames、
-Carcinogens 显式保留原专用定义。其他任务共用原定义，不继承当前 FINAL 默认配置。
-
-复用现有模板加载器、原始 JSON 解析和通用 response validation；仅保留原 baseline
-需要的引用校验，未迁入整套 progressive 状态机。字段精确去重函数与原实现 AST 相同，
-原 full-fields 与 adapter v2 均可读取。模板环境在进程内复用，避免逐 query 重编译。
-
-现有入口 `python -m predict.harnesses.branches --verify-paper-baseline BATCH_ROOT`
-提供只读核验，不启动服务、不调用模型、不改写 batch。检查 manifest/request 绑定、
-重渲染、card alias、原始回复解析、输出校验、标签映射及保存的指标。
-运行方法与边界见 [冻结 baseline 协议](../predict/prompts/README.md#frozen-paper-baseline)。
-
-论文主比较中的 DeepSeek、Luna、Gemini **108 个单元、38,457 条请求/响应**全部完成
-离线核验，每个 backbone 各 12,819 条。迁移后的模板从冻结 payload 重渲染，system/user
-逐字一致；原生标签映射、Macro-F1、accuracy 与原汇总一致。另将全部原始回复文本
-重新交给现有共用 JSON 解析器，38,457 条解析结果也与保存的 content 完全相同。
-原始回复解析与全量请求/标签核验分别留有回执，不把这一结果当作新模型推理复现。
-
-780 个合法/错误响应变体的错误列表与旧校验器完全相同；两 benchmark 六任务的
-12 组四次尝试测试中，格式修复请求及校验回执也逐字一致。针对性测试 29 项通过，
-共用解析/校验测试另有 25 项通过；4 项既有恢复流程测试仍因缺少 `duckdb` 在导入时
-失败，不记作通过。本批未安装依赖，也未伪造当前命名缓存的数据。
-
-本地核验回执和临时脚本归档在 `outputs/analysis/release_refactor/20261023_llm/`。
-这是冻结 payload/response 的迁移；从原始候选池重建 records、prior 加载、实际推理
-参数/并发及完整 checkpoint 恢复仍待接入。该 bundle 暂不作为 fresh FINAL 的
-`--prompt` 选项，不能把此处验证描述为完整 LLM runner 已可复现。
-
-## 第七批：候选准备、预算选择与普通 API 执行（2026-10-23）
-
-按用户授权，在现有 `vllm` 环境补装 `duckdb==2.0.0`。随后发现恢复模块导入时提前
-读取 TDC 数据清单；已把读取移到真正执行索引构建时。没有伪造数据，也没有启动工具
-服务。此前被阻塞的 4 项恢复测试全部通过，同一测试文件共 23 项通过。
-
-现有 `predict.harnesses.branches` 入口增加 `--prepare-paper-baseline` 和
-`--run-paper-baseline` 两种显式模式。前者从原 batch 读取冻结的查询、prior 和配置，
-重新从 hash 绑定的完整索引生成候选；后者复用公共 provider pool 和 JSON validator
-执行新准备的请求。没有复制原 family/progressive runner，也不把当前 FINAL 的
-默认缓存、prompt 或 high reasoning 当作论文 baseline。
-
-职责按现有目录组织：
-
-- `predict/retrieval/paper_baseline.py`：原 L1/L2+ 分池、TDC train-label 合并与 heldout
-  排除，随后调用已迁入的公共身份过滤。已批准的盐＋立体构型排除、位置异构体细分和
-  DILI/Carcinogens 原 scaffold 规则均在预算填充之前应用；benchmark split 不重建。
-- `optimization/selection/record_budget.py`：保持原 Neighbor-fill、molecule-cap、
-  group-balanced 的排序、种子和短缺记录；六任务共享一份实现。
-- `predict/prompts/paper_baseline.py`：复用公共 evidence 投影，从原始 cards 重建消息；
-  query、condition、cached prior、任务定义、system/user 和原生输出 schema 保持原协议。
-- `predict/harnesses/branches/paper_baseline.py`：新输出目录、来源预检、准备/执行及恢复；
-  模型、temperature、reasoning effort、token 上限由原 manifest 读取。公共客户端
-  增加显式 token 参数固定选项，保留原 `max_tokens`，超长时报错而非自动缩减预算。
-  当前 FINAL 默认行为不变。改动 prior、cohort、标签或已保存请求绑定会在调用模型前拒绝。
-
-离线验证：从真实 cards 重建的 324 个抽查请求覆盖三模型、两 benchmark、六任务和
-三个设置，payload、引用编号、消息完全相同；从保存候选重新选择 indirect records
-的顺序也全部相同。另有 1,200 组预算选择与原实现逐项一致，108 套原配置生成的 API
-请求的字段及数值与旧客户端完全一致。130 项针对性测试通过，覆盖候选过滤/回填、预算、原生输出、
-四次尝试的格式修复、断点恢复、调用前拒绝不一致输入、provider 和既有身份规则。
-这些检查均没有网络推理，不把已保存模型回复当作新模型结果。
-
-两套 benchmark 的六任务各取首/中/末 query，共 36 个样本从完整冻结索引重新准备；
-Direct/Indirect 各 50 条的有序 IDs 与最终消息全部一致。另用实际 CLI 验证 None 的
-3 个样本，均为 0/0 且消息相同。这只是抽查，不证明新规则对全 cohort 零影响。
-完整索引的实际抽查结果与每条消息差异见本地
-`outputs/analysis/release_refactor/20261023_preparation/`；正式命令和限制统一见
-[论文 baseline 模式](../predict/prompts/README.md#frozen-paper-baseline)。
-
-当前模式支持从恢复的论文输入执行普通 API 推理；仍需接齐旧 Batch 提交、first-valid
-并行竞速重试、自动 stage requeue、匹配 Direct-3 和独立 prior 生成。公开分发的输入包、
-全 cohort 的新检索差异审计和新模型性能复现也尚未完成。原始结果、分数和大 split 未修改，
-不能据抽查相同就声称所有 query 的检索都不变或已完成在线性能复现。
-
-## 第八批：快速 smoke 验收（2026-10-23）
-
-本轮按用户要求只做小规模验收，没有启动完整实验或重建大索引。使用第七批已经从
-完整索引重建的准备产物，两套 benchmark × 六任务各取首条 query，共 12 条，均为
-Direct50 + Indirect50。通过实际 CLI、共享 provider pool 和 SDK 请求本机 HTTP
-回放端点，初次返回错误格式，随后返回对应的历史原始回复；没有外部模型推理。
-
-- 12 条全部通过：原 system/user 消息及生成参数一致，格式修复后的原生输出与历史
-  回复一致；共 24 次本机 HTTP 请求，执行及恢复用时 27.30 秒。
-- 12 次恢复均新增 0 次请求，prepared/output/summary 字节不变；额外修改一条标签
-  会在请求前被拒绝。60 个受检查的来源文件哈希未变。
-- LLM、身份过滤、provider 与恢复测试 130 项通过（4.97 秒）；MiniMol/RASAR 小型
-  回归 50 项通过（62.01 秒），包含微型 head 训练、checkpoint 重载和已有 recipe
-  的输出检查。后者有 3 条依赖库弃用提示，没有失败。
-
-本地回执、CLI 日志和临时脚本归档位于
-`outputs/analysis/release_refactor/20261023_smoke/`。没有增加正式 runner，也没有修改
-正式实现。验收输出明确属于历史回复回放，不能作为新模型预测或性能提升的证据。
-本轮确认普通 API 执行链路的基本可用性；全 cohort 检索差异、真实线上性能、Batch
-及独立环境发布验收仍待完成，不据此直接宣布整合已全部完成。
-
-## 第九批：已准备 LLM 输入的独立搬移与环境验收（2026-10-23）
-
-发现并修复：原普通 API 执行仍依赖旧工作目录中的 manifest、查询和 cohort 文件。
-现有 CLI 增加 `--bundle-paper-baseline`，将已准备请求及校验必需的小文件导出为新
-目录，执行时使用包内相对路径。复用同一预检函数，原来源 hash、标签、prior、消息和
-生成配置继续核验；源 manifest 除实现指纹外的原字段均须保持一致。空、重复、负数或
-越界 query indices 被拒绝。打包采用临时目录完成校验后发布，不覆盖已有运行目录。
-
-包仅包含选中的 prepared/evaluation/selection、原请求及原 manifest 快照和 cohort；
-不复制预测、provider 配置、凭据或日志，也不复制大检索索引。导出是一次新的执行输入，
-不是恢复已有预测；恢复应直接搬动原 portable batch。旧路径文字仍作为来源记录保留，
-不能把这种内部复现包直接当作已经匿名审核的公开数据包。
-
-检索依赖改为仅在准备阶段加载。新增最小执行依赖清单
-`predict/requirements-paper-baseline.txt`；在全新 Python 3.12 venv 安装并通过 pip check。
-复制源码至独立目录，用 Python audit hook 禁止读取原 main 和整合工作目录；未安装
-RDKit、torch 或 duckdb。两套 benchmark × 六任务的 12 个 Direct50+Indirect50
-样本均通过真实 CLI、本机 HTTP 回放、格式修复和恢复；25 次受限制的 CLI 进程完成，
-共 24 次本机请求、0 次外部模型调用，恢复新增请求为 0。执行及恢复 14.58 秒；来源
-60 个文件哈希未变。完整包和 smoke 输出合计约 17.5 MiB，而非完整检索数据集。
-
-另修复 provider 配置加载器静默忽略旧 Batch transport 的问题：现在遇到 Batch 或
-未知 transport 明确拒绝，避免意外改成普通 API。最小环境中已验证拒绝发生在客户端
-构建前，并验证本机回放服务关闭后仍能恢复成功结果。134 项针对性回归测试通过。
-文档中“候选准备及普通 API 尚未接入”的过时描述已更新；临时验收脚本只归档，不新增
-独立 runner。复现命令统一见 [论文 baseline 模式](../predict/prompts/README.md#frozen-paper-baseline)。
-
-回执、独立环境依赖版本、测试日志和源码归档位于
-`outputs/analysis/release_refactor/20261023_portability/`。本轮仅完成已准备 LLM 执行的
-独立环境验收，不代表全量检索重建、MiniMol encoder 训练或整个仓库已可独立发布。
-普通 API/恢复已接入；旧 Batch、并行 first-valid 竞速、自动 stage requeue、Direct-3、
-独立 prior 生成和完整原始数据分发仍需继续对齐。原实验入口及冻结结果未删除。
-已重新 fetch 远端，main 为 `0ab66e37`，Joseph 仍为整合基点 `73bddf2e`；本轮未合并或推送。
-
-## 第十批：Batch、可取消竞速与阶段恢复（2026-10-23）
-
-将本地 main 已有的 Batch journal 和 first-valid 竞速实现迁入公共
-`predict/api_client/batch.py` 与 `retry.py`，没有复制旧 family/progressive runner。
-消息参数构造、回复解析和 provider 身份校验由普通 API、Batch 和异步请求共用；
-同一个 `--run-paper-baseline` 入口选择 transport 和执行控制，冻结 prompt、模型、
-reasoning、token budget 与输出 schema 不变。108 套真实原配置的请求字段及数值仍与
-原客户端完全一致，1,200 组预算选择差分仍通过。
-
-Batch 支持先提交独立请求，再等待及按 custom ID 回收；保留提交前落盘、独占锁、
-不确定 POST 禁止自动重提、轮询失败不重提、显式 429 等待重排队和重启恢复。
-修复确认终态失败的请求在重启时反复读出同一失败、无法重新提交的问题；成功兄弟
-请求继续复用。停止本地客户端不取消远端付费任务。当前只接受单个 Batch provider、
-无自动 failover、无同步费用账本；Batch 使用 race width 1。阶段重排队显式配置、默认
-关闭，不能覆盖不确定提交的停止保护。若四次格式修复均失败，重启可能先回放这些
-旧回复，可用 `--max-stage-requeues 1` 允许回放后的新阶段。未知 transport 继续拒绝，
-不静默降级到普通 API。
-
-普通 API 的 `--retry-race-width`、`--max-stage-requeues`、`--retry-delay-s` 已接入。
-默认分别为 1、0、0；首次请求宽度 1，后续失败/格式修复可竞速，通过完整原生校验的
-首个回复获胜。竞速路径使用真正的异步 HTTP 取消，所有落后连接清理后才返回。
-并发仍受公共 provider 和总任务容量约束。显式阶段重排队只处理未成功 query；已完成
-输出保持不变，失败、竞速和阶段恢复记录落在原 query 目录。同步费用账本与竞速组合
-会在调用前拒绝，没有绕过原费用限制。
-
-验收：153 项针对性测试通过，包含迁入的 Batch/竞速测试和新增终态失败恢复检查。
-独立最小环境中，12 组实际准备输入（两 benchmark × 六任务）的 Batch 本地协议模拟
-均通过错误格式修复、checkpoint 恢复及删除本地预测后的 journal 恢复；各两次模拟
-提交，恢复新增提交为 0。另用真实本机 HTTP 验证两组 CLI 的格式修复/503 重排队，
-共 8 次请求、4 条落后连接确认关闭；恢复新增请求为 0。旧目录读取和外网连接均被
-测试守卫禁止，未提交真实付费 Batch，也没有重新产生模型性能结果。
-另用真实准备输入验证四次格式失败后的显式 Batch 阶段重排队：第 5 次模拟提交成功，
-后续 checkpoint/journal 恢复均不再提交。
-
-完整输入清点：当前 12 个任务/benchmark 配置引用 36 个不同文件，均存在；其中
-12 个检索索引共约 38.2 GiB。本轮只做路径与大小清点，hash 沿用原 manifest，未重复
-扫描大文件或重建索引。MiniMol prepared 的 data/graphs 已按相对目录读取；RASAR
-特征的 `inputs/data_dir`、RF 成员路径及部分训练 checkpoint 记录仍需做搬移适配，
-不能批量替换冻结 manifest 中的字符串。完整 ML 输入分发尚未验收。
-
-本地回执、模拟日志、源码与依赖边界记录位于
-`outputs/analysis/release_refactor/20261023_transports/`；命令统一见
-[论文 baseline 模式](../predict/prompts/README.md#frozen-paper-baseline)。代码增加主要
-来自迁入旧功能及连接现有公共客户端，不是重复创建任务或模型专用执行入口。
-Direct-3、独立 prior 生成、完整输入分发与匿名发布审核仍未完成；当前仍不合并 main。
-
-## 第十一批：RASAR 搬移适配与少量真实调用（2026-10-23）
-
-修复 RASAR 搬走目录后仍读取旧主数据/模型路径的问题，继续使用原
-`retrieval_forest {prepare,fit,finalize}` 及 shell recipe，没有新增 runner 或路径框架。
-新特征包将实际使用的三份 split 文件原样保存在 `splits/`，使用 v2 相对路径 manifest；
-旧 v1 包不改写 manifest，通过已有 `--data-dir` 指定新位置并核对原哈希。
-prepare 的 `--auxiliary`（recipe 的 `AUXILIARY`）可定位搬移后的辅助源，同样必须通过
-冻结哈希检查。新模型 receipt 仅记录同目录文件名；旧 receipt 的绝对路径保留原字节，
-运行时从 receipt 所在目录找模型并校验哈希。选参比较只归一化候选文件位置，其他字段
-仍逐项比较；有效的完成结果恢复时不重写预测。
-
-独立目录验收禁止读取原 main 和整合工作目录，同时禁止联网：
-
-- TDC Carcinogens 的 RASAR / RASAR+indirect 共 60 个保存 seed 模型通过恢复与重放，
-  各 28 个 valid、56 个 test；标签、阈值、选参及指标与原结果一致。
-  RASAR 概率最大差 `5.55e-17`，RASAR+indirect 预测字节一致，没有重新训练。
-- 从搬移后的 MiniMol targets / auxiliary / splits 重新准备 280 行特征；四组特征与
-  donor 数组逐元素一致，两种 policy、两种 feature set 均核对。新特征包再次移动后
-  不指定原数据目录也能加载。原来源目录的 120 个模型/结果文件哈希未变。
-- MiniMol prepared 的数据、图缓存和一个真实 seed checkpoint 搬移后通过哈希、
-  输入绑定和 28 条 valid 分数检查；历史 checkpoint 参数中的路径仅作 provenance，
-  没有改写。此项不是新 encoder 推理或独立依赖安装验收。
-- 67 项身份及受影响 ML 测试通过（3 条已有依赖弃用提示）；含新旧布局搬移恢复、
-  重新预测，以及输入/模型变更时拒绝执行。recipe 的参数传递另做无训练检查。
-
-按用户授权增加少量 OpenRouter 真实调用，固定
-`deepseek/deepseek-v4-flash-0731`，保留所选原实验的完整 prompt、生成参数与 token 预算：
-None 的 Skin 样例通过原生输出校验和零调用恢复。Carcinogens Direct+Indirect 样例
-约 49,500 输入 tokens，两次返回均用满原 16,384 输出 tokens，分别没有最终 JSON、
-只留下不完整结果，均被校验拒绝。异步传输返回正常，但该样例的完整输出验收未通过。
-没有为通过 smoke 放宽 schema、缩减证据、增加 token 预算或替换论文结果。
-总计 4 次尝试：1 次旧环境凭据 401、原实验凭据下 3 次模型返回；没有继续追加。
-三次返回的 `usage.cost` 合计约 $0.00720，仅为接口返回费用，不作为独立账单审计。
-
-回执、精确命令、原始回复和临时验收脚本归档见
-`outputs/analysis/release_refactor/20261023_relocation/`；真实模型结果独立保存于
-`outputs/predictions/branches/paper_baseline_v1/openrouter-smoke-20261023-project-key/`。
-完整检索索引分发、其余独立环境安装、Direct-3、独立 prior、结果登记/绘图接齐及匿名
-发布审核继续待验收。真实 Batch endpoint 尚未调用，不能以普通 API smoke 代替。
-
-## 第十二批：完整检索输入搬移（2026-10-23）
-
-发现 TDC 冻结配置使用绝对路径，原 `--source-root` 不能覆盖这些路径。现有
-`--prepare-paper-baseline` 增加可替代 source root 的 `--input-map`，将原 manifest
-中的精确路径字符串映射到新文件。相对目标按映射 JSON 所在目录解析；缺失、多余、
-null/非法映射及哈希不符均拒绝，不偷偷回退到旧文件。原 manifest 不改写，实际读取
-位置保存在新运行的迁移记录中；现有 bundle/执行入口继续复用。
-
-81 项相关测试通过。另在独立代码目录中禁止读取原 main/整合工作目录和禁止联网，
-完成三组完整索引、单 query smoke：conditioned Skin、TDC Skin、TDC DILI。
-每组 Direct/Indirect 都是 50/50；消息、prompt payload、查询/请求/候选池哈希、
-记录 ID、别名及顺序与第七批的已核验准备结果一致。TDC 仍执行原训练标签合并和
-heldout 排除，DILI 仍走已批准的专用身份规则；没有重建或改动 train/valid/test。
-使用的是三个完整冻结索引（合计约 4.1 GiB），不是预先截取的候选子集。Skin 两组
-各约 25/30 秒，DILI 约 354 秒；因此这是少量 query 验收，不是所有任务都能秒级准备。
-
-三组准备结果均经原 bundle 入口导出，随后使映射文件/源 batch 的原位置不可用，
-三个执行包仍独立验证成功。本轮没有推理调用、训练或新性能分数；沿用现有 vllm
-依赖环境，不等于完成了全新安装验收。生产 Python 净增 21 行，没有新增 runner。
-
-`outputs/analysis/release_refactor/20261023_retrieval_relocation/` 保存命令、日志、源码
-快照及回执；小型执行包保存于
-`outputs/predictions/branches/paper_baseline_v1/retrieval-relocation-smoke-20261023/`。
-内部 `input_distribution_plan/` 已列出两 benchmark × 六任务的 12 个映射和 36 个
-去重文件（约 38.2 GiB）。这是分发规划：没有复制全部文件到计划目录，除三组 smoke
-外的哈希仍来自原 manifest，不标成全量内容重新审核。原文献→索引构建和匿名公开
-数据包也不包含在本批验收范围内。实际文件恢复方法见论文 baseline prompt README。
-
-仍需接齐匹配 Direct-3、独立 prior、共享结果导出/绘图，以及完整数据分发和匿名发布
-审核；第十一批 Direct+Indirect 真实输出预算耗尽的问题保持未通过记录，不因本轮
-离线成功而宣称已解决。main 尚未合并或推送。
-
-## 第十三批：按论文范围收敛与结果导出（2026-10-23）
-
-回查从 Joseph 基础到上轮整合提交的 66 个变更路径，并核对当前论文 108 个 LLM
-单元的实际 manifest。ML、冻结 prompt/native 输出、必要检索、运行恢复和搬移支持
-有对应论文用途；Batch 服务于原 Luna 等实验，不能仅因不是算法就删除。
-12 个当前单元仍用 adapter v1，96 个用 v2，因此保留两种原始字段投影。
-这些检查是迁移范围与配置审计，不宣称完整证明 Joseph 的所有功能都无回归。
-
-明确移除新迁入的 molecule-cap/group-balanced 实际选择分支，保留论文 Neighbor-fill。
-36 个 None 配置保留历史 `molecule_cap` 标记，但输入为空、不会调用该选择算法；
-该空输入的 audit 字段仍兼容。历史 Direct-3、预算扫描、progressive/Joint 不补建入口。
-Neighbor-fill 的 180 组顺序/seed/预算对照与删减前逐项一致；没有改预算、split 或证据。
-
-补齐共用 `python -m analysis.prediction.paper_results`，读取冻结的 compact scores 和
-显式分组配置，生成 198-cell ML、108-cell LLM、72-cell Ours 表、270 个主图数值及
-45 个六任务均值。全部图表点和均值与原绘图 receipt 一致；仍保留逐任务 ML 组内
-最大值再平均、None 不重复、缺任务拒绝及并列方法顺序。它不运行训练或模型，也不
-取代缺失的原始预测审核。迁出的汇总字段保留原精度，原 CSV/JSON 分数未改写。
-
-已从 Joseph `73bddf2e` 的原 Git 分卷归档定位到消融数据。18 个分卷及拼接 SHA-256
-全部通过，流式扫描 303,227 个成员，仅提取消融/同目录说明等 9 个小文件；临时
-1.1 GiB 压缩流已删除，没有展开完整推理目录。保留发布用的 30-cell 消融 CSV 和
-归档/member 哈希；原 scaling 表只作查找记录，不接成新发布功能。
-五个六任务均值对应论文的 0.721 / 0.704 / 0.714 / 0.711 / 0.714。
-源 TSV 是六位小数汇总，尚非原始预测重算；其 README 明确 control 含看过 test 后的
-选择，Oral/Ames 与消融项并非同一次完整运行，差值只能按该来源边界解释。
-
-论文第六行 0.678 与 main 的 naive DeepSeek 50/50 均值 0.678421082524802 数值吻合，
-但未找到把它绑定成同一消融协议的记录，且 Direct 预算描述差异未决；不把数值吻合
-当作完整来源证明，不生成假定的第六套消融结果。Ours/消融继续以 Joseph 产物为依据。
-
-100 项相关测试通过；compact 数据搬到临时目录并使用最小执行环境，七份 CSV
-导出逐字一致。审计与命令保存在 `outputs/analysis/release_refactor/20261023_paper_scope/`。
-本批补的是表格和图表数值导出；论文图形渲染/拼版入口、必要 prior 的独立恢复、
-原始数据/模型分发及匿名发布检查仍需完成，不把它们写成已发布。
-
-## 第十四批：当前论文图形与均值拼版（2026-10-23）
-
-在既有 `analysis.prediction.paper_results` 增加可选 `--figures`，直接消费已经验证的
-图表点和均值，生成论文当前使用的两张六任务图和一张均值拼图。只迁入原绘图器中
-这些图需要的竖柱样式及原 TeX 均值拼版，不搬入整份历史绘图器、不新增 CLI、
-不重复实现选分或均值计算。新增约 190 行 Python 和 19 行 TeX；这是补齐必要的
-论文输出功能，未引入框架、模型调用或任务专用 runner。
-
-绘图所需标题、任务名称、ML 标签补入原 `display.json` 并重新绑定哈希；原始
-baseline/Ours/消融分数文件字节未变。可选依赖为 Matplotlib 和含 standalone/graphicx
-的 pdflatex；只导出表格仍无需这些依赖。命令、输出名称及依赖见 `docs/results.md`。
-
-验收：10 项表格/面板测试通过，270 个任务柱值、45 个均值与导出表逐项吻合。
-三张输出 PDF 与当前论文 PDF 在 2400 像素宽度下逐像素完全一致；PDF 时间等元数据
-不同，不声称字节相同。均值图沿用原拼版裁切及共享图例；已查看实际生成画面。
-最小 Python 环境和搬移后的 compact 输入仍可生成完全相同的七份 CSV。
-产物及比较记录保存在 `outputs/analysis/release_refactor/20261023_figures/`。
-
-本批不改训练、检索、冻结 LLM 输入输出或 Joseph 的 transfer/context optimization。
-原 main 和论文目录未写入；当前结果仍按历史实验合同展示。必要 prior 独立恢复、
-数据/模型分发及匿名发布检查仍未完成，不能据此称全库已通过发布验收。
-
-## 第十五批：冻结 prior 全量核对与独立恢复（2026-10-23）
-
-已逐条检查论文当前 108 个 LLM 单元的 38,457 份 prepared request，重新渲染消息并
-校验 manifest/request/card 绑定；按原 loader 的结构＋条件匹配规则核对 prior。
-它们对应 4,273 个 query prior：conditioned 2,048、TDC 2,225。每个 query 在三种
-模型和 None / Direct / Direct+Indirect 三种设置下使用相同 prior。其内容与原始
-2,054 个缓存源文件一致，源文件及原输入哈希均通过原加载器校验；conditioned
-另外核验源 manifest，TDC 的原生成 preparation manifest 未在本轮独立追溯。
-这是已保存 prior 投影及请求的来源核对，不是重新生成 prior，也不是原始生成调用
-全文/费用的额外审计。None 不提供检索 records，但仍包含这份单分子 prior。
-
-此前待办中的“独立 prior”需要区分：论文冻结实验的 prior 已嵌入源 prepared.json；
-现有 `--prepare-paper-baseline` 保留它，`--bundle-paper-baseline` 连同来源快照打包。
-因此这条复现路径不需要原 progressive runtime 或单独的历史 single-analysis cache，
-也无需新增生成器。重新调用模型生成 prior 会改变论文输入，不应作为“补齐”默认执行。
-Joseph 的 six-task/TDC 原生 prior 生成入口完整保留，本批未修改其代码或默认合同。
-
-对 36 个真实组合（两 benchmark × 六任务 × 三模型）复用现有 bundle 后搬移，在
-最小 Python 环境中验证，同时用文件访问钩子拒绝读取原 main 及 /local，全部通过。
-已有 38 项相关回归测试通过，包含 prior 被替换后在模型调用前拒绝的检查；付费调用
-和工具服务调用均为零。本批没有新增正式代码入口、运行时缓存格式或模型依赖。
-
-另外，全量核验候选重建所需的 36 个文件，约 38.21 GiB，包含 12 个完整 pickle
-索引：全部存在、没有冲突绑定，SHA-256 均与当前论文 manifest 一致。这不等于已
-完成公开分发或独立机器上的全量检索运行；后续应整理这些输入的分发和匿名性。
-原来源与历史结果未删改；可搬移的输入包仍可能保留身份路径，不能直接视为匿名发布包。
-
-证据保存在 `outputs/analysis/release_refactor/20261023_priors/`：完整逐请求哈希账本、
-4,273-query 压缩 prior 清单、来源校验、搬移回执、36 文件清单及测试日志。36 个
-smoke 输入包已压缩并逐成员核验，避免留下重复散文件；审计脚本归档，不增正式 runner。
-
-## 第十六批：分发清单与首轮匿名/路径清理（2026-10-24）
-
-在上一批 LLM 36 文件清单基础上，按当前已绑定的 198-cell ML Appendix 逐项定位
-保存结果：191 个结果目录、42 个此前已审计的 target/feature 目录，共 4,236 个不同
-文件路径，逻辑大小约 14.26 GiB；所需预测文件全部存在。此项只核对保留范围、
-存在性和体积，不重复声称模型重放，也没有闭合外部精确 embedding、辅助源、
-MiniMol runtime/checkpoint 或 transfer-model 的全部依赖。未复制大目录或上传模型。
-
-`docs/results.md` 新增统一分发对照表，区分 compact 分数、LLM prepared bundle、
-完整候选重建输入、ML 模型/准备结果、Joseph FINAL Git 包及历史 retrieval release。
-已有 FINAL 包和历史 SQLite release 不是 main baseline 的 pickle 输入替代品；
-复用各自恢复入口，不将不同 cohort、缓存版本或科学合同强行装入一个新入口。
-
-匿名检查使用 Git 中常见文本扩展名，覆盖 sparse checkout 外的已跟踪文件。
-明确身份关键词候选由 394 个文件降为 384 个；机器路径候选由 442 降为 436。
-这些是指定关键词命中数，不是确诊泄露数量或完整匿名证明；压缩包、二进制内容、
-其他姓名/域名及 Git 历史未在本次扫描中完整检查，提交作者身份沿用用户要求不匿名化。
-已处理的改动为：
-
-- 包元数据、轻量安装示例和发布命令移除实名仓库地址；发布命令使用配置的 origin。
-- 清理工具服务和迁移说明中的个人机器地址；工具测试示例修正为现有 tests/tools/service。
-- 两个本地维护配方使用脚本所在 checkout 和当前 Python 环境，保留显式解释器覆盖；
-  缓存位置由用户 HF_HOME 或库默认值决定，科学参数和模型内容不变。
-- CLAUDE.md 是指向 AGENTS.md 的符号链接，原文件和目标在本地保留；取消跟踪并
-  加入 gitignore，避免发布指向已忽略文件的链接。全部 AGENTS.md 仍不被 Git 跟踪。
-
-13 个 Bash 命令分支用假执行器逐项比较，传给 Python 的完整参数与原版一致；
-另验证从其他工作目录运行、默认 Python 查找和 Bash 语法。包定义除移除 URLs 外
-解析结果完全相同。本批没有修改 Python 运行代码、prompt、检索规则、split 或冻结结果；
-没有模型调用、远程执行或工具服务启动。
-
-剩余候选主要在数据/来源清单、旧协议名、学校域名、历史集群脚本及压缩归档。
-下一批需按运行依赖与来源绑定逐项区分：可携带字段以相对路径/显式配置修复，冻结
-字段需在发布副本中做有回执的处理并验证消息、UID、数值及所有受影响的哈希。
-不能直接对原历史文件全局替换，也不能把当前整合分支称为匿名发布验收通过。
-
-全部清单、差异和无模型 smoke 回执在
-`outputs/analysis/release_refactor/20261024_release_inputs/`；一次性脚本压缩归档。
-本批仍仅提交本地整合分支，未 push、未替换 main。
-
-## 第十七批：可维护性与状态文档复核（2026-10-25）
-
-检查相对 Joseph 基线新增/修改的 Python 模块、CLI 路由、baseline 配方及公共函数
-调用关系。未发现新增的按任务/模型复制 runner；不同冻结 prompt、ML 训练与
-Joseph FINAL 的科学合同仍需分开承载。结构化比较没有发现这些变更文件中长度
-至少六行、函数体完全相同的重复函数；此检查不等于证明不存在语义重复。
-相对 `73bddf2e`，生产 Python 净增 3,132 行，测试净增 1,551 行；生产增量主要是
-ML 能力（1,010）、模型传输/恢复（566）、harness 接入（462）、检索（383）、冻结
-prompt（324）和论文导出（339）。这是迁入能力的体量统计，不是零膨胀的证明。
-
-发现 Direct-3 撤回后遗留的单调用 `train_label_card` 包装，注释仍声称用于 matched
-KNN。已将卡片构造放回唯一的 TDC 标签合并调用点，移除无用接口；卡片文本、ID、
-来源列表、顺序和指纹保持不变。没有新增模块、CLI、配置层或依赖。
-当前验收清单移到文档开头，替换末尾重复的待办列表，保留各历史批次的验收边界。
-
-六任务 × 正负标签 × 有/无 heldout 的 24 组修改前后差分检查通过，完整卡片、来源
-和指纹相同。相关回归 158 项通过；另 9 项在导入 Joseph builder 时因缺失
-`data/evidence_libraries/bbb_martins/v10/level_mapping/manifest.json` 失败，仍是既有
-发布输入缺失，未用假映射绕过。未进行新训练、付费推理或工具服务调用。
-检查回执及日志在 `outputs/analysis/release_refactor/20261025_maintainability/`。
-
-## 第十八批：集群配方路径与匿名扫描补充（2026-10-25）
-
-四个既有集群配方不再保存个人 checkout、Python、模型缓存路径或过期 Slurm
-作业号。改为当前环境和显式部署变量，缺少必要配置时在执行前报错；保留任务、
-study 默认值、分片、GPU/内存参数、等待/恢复标记和阶段顺序。加权配方的 SSH
-命令按参数引用传递；stage 为新位置建立 staged 目录，collect 的 status 使用
-同一个选定 Python。使用方法和两类远程根目录的区别见
-[代码职责说明](experiment_code.md#capability-map)。没有新增调度框架或 Python runner。
-
-V9 旧排名缓存默认定位到 checkout 旁的 therapeutic-tuning 目录；在原部署目录
-下解析结果与原绝对路径完全一致，搬移继续使用已有 `--reuse-root`/`--no-reuse`。
-除此之外该模块 AST 完全不变，未修改模型、prompt、冻结结果或科学合同。
-
-8 条配方路径、36 次模拟 Python 调用的参数/缓存环境及 rsync 参数与原版一致；
-另有 6 项缺配置拒绝和 4 项默认解释器检查通过，全部 shell 语法通过。验证从其他
-工作目录启动，使用本地假执行器，没有真实 SSH/rsync/Slurm、模型或服务调用。
-
-V9 相关测试最初因稀疏检出缺文件受阻。已从当前 Git 原样展开 18 个文件
-（约 19.67 MiB），逐文件 Git blob ID 一致，不重建 gold/split/cache。复验累计
-28 个不同测试通过，包括 6 套已发布 direct cache 的完整验证；2 项旧 V10.4
-来源验证仍缺外部训练 release manifest。它们不是本轮修改造成的缺失，也不能
-未经论文来源对应就升级为必须迁入的历史实验。第十七批的 BBB v10 映射缺失仍未解决。
-
-同口径 Git 文本扫描从 384 降至 380 个候选文件；加入已发现的实名模型账号与
-另一组个人路径后，扩展口径从 474 降至 469。后者增加来自检查范围扩大，不是
-新增泄露。检查覆盖稀疏检出外的已跟踪常见文本；未覆盖全部姓名、压缩内容、
-二进制及 Git 历史，不能宣称匿名发布通过。模型/数据地址需与精确版本、checkpoint
-分发及冻结来源一起处理，不改成无法下载的虚构地址。
-
-回执、模拟命令、修改前源码与测试日志保存在
-`outputs/analysis/release_refactor/20261025_release_paths/`，一次性检查脚本归档。
-当前仍仅在本地整合分支，未 push 或合并 main。
-
-## 第十九批：显式 trace 发布配置与模型依赖清点（2026-10-25）
-
-移除 live trace 发布器中指向个人 GitHub Pages 仓库的默认地址。未设置非空
-`TXAGENT_LIVE_PAGES_REPO` 时保留本地 trace，不启动后台发布；显式 publish
-命令会在任何 Git 操作前报缺配置。设置目的仓库后沿用原数据分支发布流程，
-`TXAGENT_LIVE_PUBLISH=0` 仍可关闭自动发布。12 项测试通过，包括空配置拒绝、
-后台调度、关闭开关及向本地临时裸仓库发布 public projection；没有实际远端发布。
-该投影只移除部分机器/传输字段，不能替代匿名内容检查。
-
-对现有五个 reranker 注册模块中 32 个不同 model/revision 组合做离线清点：
-在所检查的本地缓存内，16 个具备配置、tokenizer 和权重文件，2 个只有不完整
-snapshot，14 个未找到。按权重索引检查 shard 存在性，并保存小型元数据哈希；
-没有全量权重哈希、模型加载、自定义代码依赖闭合或数据集验收。未找到只表示
-不在已检查的缓存根，不代表远端或其他位置不存在。两项不完整缓存为 Gold
-DILI/Carcinogens direct 的旧登记版本，不能用仅有配置文件声称模型已可恢复。
-
-此清单包含历史角色，**不是论文必须分发的 32 个模型清单**。先由选定论文运行
-绑定具体模型和缓存，再区分读取已有排序分数与重新执行模型评分的依赖。默认
-native catalog 引用的一项 BBB 排序 RELEASE_INDEX 在当前 Git/工作区中未找到，
-因此本轮没有宣布默认排序缓存恢复闭合，也没有拿另一历史版本替代。
-
-`MODEL_CONTRACTS.md` 改为链接已有唯一注册定义和训练配置，消除七个模型版本表
-的重复维护；代码中的精确模型 ID、revision、dataset 绑定及冻结清单原样保留。
-实名 Hub 地址仍需与可分发的相同权重一起处理，不能直接换成虚构匿名下载地址。
-没有新增 runner、模型别名框架或依赖，没有改变 prompt、split、检索规则和分数。
-
-内部清点、脚本、测试日志与回执保存在
-`outputs/analysis/release_refactor/20261025_model_release/`，其中原始身份/路径信息
-不纳入公开 Git。未下载或加载模型，未调用付费推理、工具服务或远端发布；仅在
-本地整合分支提交，尚未 push、合并 main 或通过完整匿名发布验收。
-
-## 历史身份验收证据与数据限制
-
-第二批身份规则验证（2026-10-22；与上面的第三批性能核验分开）：
-
-- 120 项身份、检索、导入边界与受影响 ML baseline 测试通过；另有 3 条依赖库弃用提示。
-  回归测试覆盖普通索引、分支 Morgan 和分支 assay-transfer 三条选择路径，以及枚举
-  未完成、来源结构优先、缺失/混用合同和单原子指纹碰撞。
-- 36 个当前 conditioned/TDC scaffold split 文件与第一批保存的哈希一致；原始输入未改。
-- 5,884 个 DILI/Carcinogens 分子—任务组合的完整旧分组字段与本地实现一致。
-- 3,675 次通用判断和 900 次 DILI/Carcinogens 专用判断与本地确认后的规则一致。
-  通用判断包括固定种子的真实 benchmark 抽样和构造边界案例；专用判断使用构造边界案例。
-- 差分检查及测试回执保存于本地 refactor 归档的 `20261022_identity/`。这些验证没有
-  启动工具服务、训练套件或付费模型推理，也不是完整辅助库或性能复现。
-
-`duckdb` 缺失及 4 项恢复测试的导入阻塞已在第七批解决。依赖 Joseph v10 发布映射
-的 UID/cache builder 流程仍需真实输入验收，不能伪造映射绕过检查，也不能由纯身份
-测试通过推导全流程通过。剩余发布工作统一见文首“当前验收清单”。
+| Morgan / MiniMol embedding KNN | 72 cells / 25,992 条 test 预测；分数、标签、邻居、相似度一致 | 使用冻结 embedding；原固定 k=3、阈值 0.5 |
+| MiniMol head | 18 cells 保存模型重放；3 cells × 5 seeds × 25 epochs 重训一致 | task 原参数、val BCE checkpoint、ensemble val Macro-F1 阈值；Joseph 固定 epoch/0.5 模式仍可显式选择 |
+| MiniMol 微调 / indirect | 21 套准备输入一致；36 cells 重放分类标签/F1 一致；一个真实 seed 的 25 epochs 训练逐步一致 | 不是全候选/全种子重训；CPU/CUDA 数值差见下文 |
+| RASAR / RASAR+indirect | 21 套特征/候选 donor 一致；72 cells 重放；6 cells / 180 seed fits 重训通过 | 保留 6 / 6+2B 特征及 val 选参/阈值；搬移另核验 60 个保存 seed 模型 |
+| naive LLM | 38,457 次冻结消息重渲染、回复解析和标签/指标核对；4,273 个 prior 对应 2,054 个缓存源文件 | 保存输入/输出验收，不是新模型性能；TDC prior 原生成 preparation manifest 未独立追溯 |
+| 执行与搬移 | 12 组 API/Batch 本机模拟、格式修复、零新增请求恢复；36 个 None 组合最小环境搬移；3 个完整索引的单 query 重建 | 完整索引 smoke 为 conditioned Skin、TDC Skin/DILI；Batch 未调用真实远端 |
+
+MiniMol 精确重训必须保留每个 split 的原 embedding 顺序和字节；按 SMILES 复用
+其他批次的近似缓存曾引起一条标签变化。8 个真实分子的重新编码最大误差约
+3.5×10⁻⁶，仅证明容差内一致。Encoder 在 CPU 上重放原 CUDA 模型时，8 cells 的
+AUROC 因近并列样本排序改变；最大差 −0.0010101，分类标签不变。同一 CPU 上原代码
+与迁移代码预测一致；差分回执保留，不用新分数覆盖论文。
+
+真实 OpenRouter 小样本：None Skin 成功且恢复零调用；Carcinogens Direct+Indirect
+两次均耗尽原 16,384 输出 tokens，未通过完整 JSON 校验。未为通过验收调整证据、
+预算或 schema，未继续大量调用。历史回复回放成功不能替代此项在线验收。
+
+### 冻结配置定位
+
+下列路径相对保留的原 main 工作目录，由
+`tools/chembl_tool/paper_experiments/current_conditioned_results.json` 绑定，
+不是整合分支默认输入。缺失时不能改用 Joseph `CURRENT`。
+
+| 内容 | 原始来源 / 当前替代 |
+| --- | --- |
+| Head | `outputs/paper/conditioned_minimol_val_selected_20260921/manifest.json`、`tdc_minimol_val_selected_20260919/manifest.json`（同级目录） |
+| Encoder / indirect | registry `minimol_indirect_assay`、`tdc_minimol_indirect_assay`；TDC manifest 在 `outputs/paper/tdc_minimol_indirect_assay_20260922/` |
+| RF | `outputs/paper/retrieval_forest_20260922/manifest.json`、`retrieval_forest_direct_20260925/manifest.json`（同级目录）；conditioned DILI/Carcinogens 保留 `same_condition_then_null_then_all` |
+| TDC Skin/Carcinogens | `outputs/paper/tdc_seed42_neighbor_fill_20260924/data/benchmark_manifest.json`，替代 seed-1，mixed 输入同步跟随 |
+| Skin auxiliary | `outputs/paper/skin_indirect_level_mapped_20260925/manifest.json`；旧主任务微调/direct 与新版 indirect 分别使用原来源 |
+| LLM | registry `naive_llm_baseline`、`gpt6_luna_batch_b50`、`gemini38_flash_api_b50`、`tdc_seed42_neighbor_fill`，以及主表引用的 scaling 50/50 单元 |
+
+配置由逐 cell 的原 manifest 决定；目录含 scaling 不代表可删除其论文单元，也不意味
+必须迁入整个历史扫描。完整命令与超参数不在状态页再维护一份。
+
+## 检索合同与依赖边界
+
+当前规则统一在[检索合同](../predict/retrieval/assay_reranking/CACHE_LAYOUT.md#current-exclusion-rules)
+维护，该文档已按实际代码修正过时的“比较所有组分 scaffold”描述。
+
+历史差分覆盖 36 个 split 文件哈希、5,884 个专用分子身份、3,675 次通用和 900 次
+专用判断；无 split/标签改写。本次为修正文档复核现有身份/结构表示测试，69 项通过。
+这些运行时规则不会补回旧索引已排除的记录，也不证明 Joseph 命名缓存已按新规则重建。
+
+2026-10-25 的限定本地清点发现：
+
+- 五个 reranker 注册模块共 32 个精确模型版本（含历史角色）：16 个具备权重、配置及
+  tokenizer 文件，2 个 snapshot 不完整，14 个未在检查范围内找到。未加载模型、
+  全量哈希权重或闭合自定义代码依赖；这不是论文必须发布的模型清单。
+- 原样展开 Git 中三份 relocation 映射后，沿现有 resolver 检查默认
+  `scaffold_disjoint_parent100_v2`：12 个 task/benchmark 的 24 个 retrieval index
+  和 6 个 optimizer direct-card index，合计 30 个，在当前 checkout 和 Git 中均未找到。
+  这是默认配置的本地可用性检查，不证明其他机器/归档没有，也不证明论文用了该默认值。
+- BBB v10 `level_mapping/manifest.json` 仍缺，相关 9 项 builder 测试保持阻塞；
+  另外两项旧 V10.4 检查缺外部训练 release manifest，不自动扩展为论文验收任务。
+
+模型评分与读取已算好的排序缓存需要不同依赖，见
+[模型合同](../predict/retrieval/assay_reranking/MODEL_CONTRACTS.md)。先绑定论文运行，
+再选择恢复入口与匿名分发范围；不替换为名字相近的缓存或虚构模型下载地址。
+
+## 可维护性与匿名发布
+
+生产代码按能力共用入口，没有新增按任务/模型复制的 runner。已撤回论文不用的选择
+算法并移除失去用途的单调用包装。2026-10-25 维护审查相对 Joseph 的生产 Python
+净增 3,132 行、测试净增 1,551 行；这是当时的体量快照，不是当前实时统计或零膨胀证明。
+变更模块中未发现至少六行、函数体完全一致的重复函数；不代表不存在语义重复。
+
+匿名清理不全局替换冻结路径/模型 ID。普通文档和部署配置可直接修复；哈希绑定产物
+保留内部原件，发布副本须记录变换与校验。最近的全量常见文本扫描是路径清理批次：
+原关键词 380 个候选文件，扩展实名账号/路径后 469 个；并非确诊泄露数，本次未重扫。
+压缩内容、二进制及其他身份线索仍待核查。live trace 现需显式目的仓库，说明和命令
+只在 [predict README](../predict/README.md) 维护；其 public projection 不保证匿名。
+
+## 验收证据索引
+
+原第 1–19 批完整叙述可用 `git show a2d6c4a1:docs/release_refactor.md` 查看，不再复制
+为另一篇活跃日志。下表指向保留的内部审计目录，非公开下载地址；部分含原路径或
+模型账号，不直接发布。除前两行外，目录均在 `outputs/analysis/release_refactor/` 下。
+测试数属于各次检查，覆盖可能重叠，不相加为全库测试总数。
+
+| 审计目录 | 内容 |
+| --- | --- |
+| 共享盘 `refactor/20261021T014255` | main 源码快照、首批迁移与配置保护 |
+| 共享盘 `refactor/20261022_identity` | split/身份差分与 120 项相关检查 |
+| `20261022_ml` / `20261022_indirect` | 198 ML cells 重放、有限重训、数值差异解释 |
+| `20261023_docs` / `20261023_llm` | 306 cells 来源核算、冻结请求/回复全量核对 |
+| `20261023_preparation` / `20261023_smoke` | 候选/预算差分、API 本机回放与恢复 |
+| `20261023_portability` / `20261023_transports` | 最小环境、Batch/竞速/阶段恢复模拟 |
+| `20261023_relocation` | RASAR 搬移及真实 OpenRouter 成功/失败样例 |
+| `20261023_retrieval_relocation` | 三个完整索引搬移和单 query 准备 |
+| `20261023_paper_scope` / `20261023_figures` | 论文范围收敛、消融归档核对、三 PDF 像素一致 |
+| `20261023_priors` / `20261024_release_inputs` | prior 来源、LLM 36 文件哈希、ML 保留清单 |
+| `20261025_maintainability` | 重复代码审查、158 项通过及 9 项缺输入失败 |
+| `20261025_release_paths` | 配方参数差分、28 项通过、18 个稀疏文件原样恢复及匿名候选扫描 |
+| `20261025_model_release` | 模型限定缓存清点、trace 发布 12 项测试 |
+| `20261025_docs_refresh` | 本次合同/文档去重、默认缓存绑定检查、身份测试与链接核验 |

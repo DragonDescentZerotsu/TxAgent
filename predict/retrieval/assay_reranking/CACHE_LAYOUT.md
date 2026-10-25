@@ -19,14 +19,32 @@ Their measurements are neither split nor assigned to a chosen constituent. Direc
 contexts are never merged by parent. Existing fingerprint settings remain explicit
 in each cache contract (including direct-card chirality).
 
-Disjointness always inspects the full original source, independently of the scorer
-or displayed representative. Parent identity and connectivity overlap exclude a
-candidate under both policies; scaffold-disjoint additionally excludes matching
-nonempty component scaffolds. Recognized coformers are removed only for auxiliary
-component comparisons, with primary parents retained, so shared counterions do not
-create an exclusion by themselves. Full-source parent/component checks remain in
-force. Source structures and normalized/effective representations stay separate.
-Missing source identities block new preparation rather than falling back to parents.
+### Current exclusion rules
+
+`policies.py` applies `fragment_parent_connectivity.v2` to source identities,
+independently of scoring and display. The approved rules are:
+
+| Check | Exclusion behavior |
+| --- | --- |
+| Whole record / selected parent | Exclude identical records, whole-record connectivity variants, equal selected parents and equal selected-parent connectivity; salt and stereo changes combined remain excluded |
+| Multiple components | Retain exact selected-parent-to-component matching in either direction; do not compare arbitrary secondary components with each other or expand their stereo/scaffold matches |
+| Generic scaffold-disjoint | Additionally compare nonempty, non-chiral Murcko scaffolds of the selected parents, preserving bond types; shared empty acyclic scaffolds do not exclude |
+| Declared DILI/Carcinogens parent-disjoint | Refine only legacy ElementGraph + formula + net-charge groups using completed stereo-free tautomer normalization; distinct completed keys proceed to generic parent checks, while equal keys, missing structures or incomplete enumeration remain excluded |
+| Declared DILI/Carcinogens scaffold-disjoint | Keep the original terminal-pruned ring/linker topology gate; do not replace it with generic Murcko |
+
+The task-specific rules live in `../task_identity.py` and require the index's
+`new_task_tautomer_identity.v2` declaration and matching task metadata. Missing or
+mixed contracts fail validation; refinement is recorded as
+`complete_stereo_free_tautomer_within_legacy_group.v1`. Single-heavy-atom queries
+also retain the element eligibility gate before fingerprint ranking.
+Source structures and normalized/effective representations stay separate;
+source-backed preparation rejects missing source identity rather than substituting
+a displayed parent. Mixture measurements remain attached to the complete source.
+
+These runtime rules do not rebuild benchmark splits, restore candidates removed
+by heldout-L1 prefiltering, or regenerate frozen SQLite/UID releases. Existing
+caches retain their own contracts and candidate universes; the integration
+[acceptance status](../../../docs/release_refactor.md) records the validation limits.
 
 `rebuild_policy` prepares immutable all-task successors using the shared builders.
 The recipe is `experiments/retrieval_cache/molecular_policy.sh`. Publication requires
@@ -63,12 +81,15 @@ successor is:
 flat_v5/gold_v1/bbb_martins/l2plus/assay_transfer/v24_1/morgan75
 ```
 
-Active prediction reads the declarative cache set
+Native prediction defaults to the declarative cache set
 `flat_v5_manifests/scaffold_disjoint_parent100_v2/catalog.json`. It binds six
 Gold-v1 tasks and all six canonical TDC tasks. Each task
 binds an immutable L1 index and a scaffold-disjoint L2+ index. Retrieval L1 and
 optimizer direct-card L1 remain distinct bindings. Numeric YAML configurations
 are retained for historical decoding and frozen build provenance.
+The catalog is a binding document, not the payload: its files must be restored
+and verified separately. It does not identify the inputs used by the frozen
+paper baseline adapter or prove which release produced user-reported Ours scores.
 
 `flat_v5_manifests/parent_disjoint_parent100_v1/catalog.json` binds the same
 scaffold-disjoint L1 indexes and the published parent-disjoint L2+ indexes.
