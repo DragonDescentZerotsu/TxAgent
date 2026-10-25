@@ -147,7 +147,14 @@ def merge_train_labels(index, task, train, heldout):
                     retrieval_scaffold_leakage_group=value['scaffold_leakage_group'],
                     retrieval_scaffold_smiles=value['bemis_murcko_scaffold'])
             entries[parent] = (molecule, fp)
-        card = train_label_card(task, row, smiles, item['source_row_ids'])
+        endpoint, positive, negative = LABELS[task]
+        meaning = positive if label else negative
+        card = dict(endpoint_type=endpoint, reported_value=str(label), reported_units='',
+            assay_context='Dataset label; assay-level conditions not provided', species_context='', qualifying_conditions='',
+            evidence_family='TDC.train_label', evidence_family_level=1,
+            support_text=f'TDC {row["tdc_dataset"]} training-set label: {label} ({meaning}). This is a dataset classification; no assay-level conditions are supplied. It is not necessarily independent of other source records.',
+            record_type='dataset_label', evidence_source='TDC', dataset=row['tdc_dataset'], split='train',
+            source_record_id='tdc:' + content_hash([task, smiles, label]), source_row_ids=item['source_row_ids'])
         evidence[parent]['TDC.train_label'].append(dict(canonical_smiles=smiles,
             molecule_chembl_id=parent, assay_chembl_id='TDC.train_label', group_id='TDC.train_label',
             source_record_examples=[card], evidence_source='TDC'))
@@ -163,16 +170,3 @@ def merge_train_labels(index, task, train, heldout):
         'evidence_by_molecule_group': {p: dict(rows) for p, rows in evidence.items()},
         'group_to_molecule_indices': dict(groups), 'tdc_merged': True,
         'tdc_train_audit': {'label_cards': len(labels), 'heldout_parent_excluded_row_ids': excluded}}
-
-
-def train_label_card(task, row, smiles, source_row_ids):
-    """One shared label-card format for merged retrieval and matched KNN."""
-    label = int(row['Y'])
-    endpoint, positive, negative = LABELS[task]
-    meaning = positive if label else negative
-    return dict(endpoint_type=endpoint, reported_value=str(label), reported_units='',
-        assay_context='Dataset label; assay-level conditions not provided', species_context='', qualifying_conditions='',
-        evidence_family='TDC.train_label', evidence_family_level=1,
-        support_text=f'TDC {row["tdc_dataset"]} training-set label: {label} ({meaning}). This is a dataset classification; no assay-level conditions are supplied. It is not necessarily independent of other source records.',
-        record_type='dataset_label', evidence_source='TDC', dataset=row['tdc_dataset'], split='train',
-        source_record_id='tdc:' + content_hash([task, smiles, label]), source_row_ids=source_row_ids)

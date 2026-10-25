@@ -62,6 +62,15 @@ release merely because a candidate finished. This guide and the capability READM
 The [integration record](release_refactor.md) owns the migration status; a mapped
 capability is not a claim that all its historical experiments are distributable.
 
+The paper baseline adapter retains main's frozen messages, native labels and
+prepared/output format. Joseph FINAL retains its own prompt and execution
+contract. The two paths share provider transport, response validation and
+molecular identity filtering; substituting FINAL templates or checkpoints would
+change the paper experiment. The paper-specific modules do not introduce another
+SDK client, task-specific runner or prior generator. They support the manuscript's
+None / Direct50 / Direct50+Indirect50 settings; matched Direct-3 LLM is not a
+maintained migration target.
+
 The local `experiments/retrieval_cache/molecular_policy.sh` and
 `experiments/evidence_library/score_skin_gold_voters.sh` recipes locate this
 checkout from their script paths and default to `python` in the active environment.
