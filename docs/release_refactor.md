@@ -15,7 +15,7 @@ main 功能来源为快照 `41403cf4` 及已确认的修复。尚未 push 或合
 | --- | --- | --- |
 | main 论文 ML | 198 cells 保存结果核验、模型重放和有限重训，详见下表 | 精确 embedding、辅助源、MiniMol runtime/checkpoint 的完整分发及独立环境验收 |
 | main 论文 naive LLM | 108 cells、38,457 份冻结请求/响应核对；普通 API、Batch 模拟、恢复、搬移 smoke | 完整输入匿名分发；真实 Direct+Indirect smoke 尚未成功；未做全量新推理 |
-| 已批准检索规则 | 共用 parent/scaffold 实现、预算前过滤及有限完整索引准备验收 | 全 cohort 候选差异和新规则性能未验收；9 项 UID/cache builder 检查仍缺 BBB v10 映射 |
+| 已批准检索规则 | 共用 parent/scaffold 实现、预算前过滤及有限完整索引准备验收 | 全 cohort 候选差异和新规则性能未验收；BBB v10 映射已在 PARCC 定位但无读取权限，9 项 builder 检查仍阻塞 |
 | 论文输出及 Joseph 来源 | 表格与三张论文 PDF 已复现；五组消融由归档 TSV 绑定 | Ours 原始运行/预算、第六组消融协议和 Direct 10 分子/50 records 差异仍待核对，详见结果入口 |
 | 复现分发 | LLM 36 文件哈希、ML 保存目录清单及 transfer 模型本地缓存清点完成 | 清单不等于完整分发；先对应论文实际运行，再闭合模型/排序缓存依赖 |
 | 匿名发布 | 已清理直接仓库链接、部分机器路径与默认 trace 发布地址；AGENTS/CLAUDE 不跟踪 | 冻结来源、实名模型地址及归档仍待处理；提交作者按用户要求不匿名化 |
@@ -86,7 +86,7 @@ AUROC 因近并列样本排序改变；最大差 −0.0010101，分类标签不�
 专用判断；无 split/标签改写。本次为修正文档复核现有身份/结构表示测试，69 项通过。
 这些运行时规则不会补回旧索引已排除的记录，也不证明 Joseph 命名缓存已按新规则重建。
 
-2026-10-25 的限定本地清点发现：
+2026-10-25 的本地清点与 PARCC 只读核对：
 
 - 五个 reranker 注册模块共 32 个精确模型版本（含历史角色）：16 个具备权重、配置及
   tokenizer 文件，2 个 snapshot 不完整，14 个未在检查范围内找到。未加载模型、
@@ -94,9 +94,16 @@ AUROC 因近并列样本排序改变；最大差 −0.0010101，分类标签不�
 - 原样展开 Git 中三份 relocation 映射后，沿现有 resolver 检查默认
   `scaffold_disjoint_parent100_v2`：12 个 task/benchmark 的 24 个 retrieval index
   和 6 个 optimizer direct-card index，合计 30 个，在当前 checkout 和 Git 中均未找到。
-  这是默认配置的本地可用性检查，不证明其他机器/归档没有，也不证明论文用了该默认值。
-- BBB v10 `level_mapping/manifest.json` 仍缺，相关 9 项 builder 测试保持阻塞；
-  另外两项旧 V10.4 检查缺外部训练 release manifest，不自动扩展为论文验收任务。
+  PARCC 的源仓库 HEAD 为 `73bddf2e`，catalog 与本地 SHA-256 相同：11 个 Gold 索引
+  可读，6 个 TDC 索引确认存在但不可读，其余 13 个因目录权限无法确认文件状态。
+  可读索引引用的 75 处下级清单（73 个不同路径）均受权限阻塞，未验证完整缓存。
+- BBB v10 `level_mapping/manifest.json` 已在 PARCC 确认存在（2,919 bytes，权限 0600），
+  当前账号无法读取，因此尚未恢复本地或重跑相关 9 项 builder 测试。需目录所有者
+  对所需路径开放遍历/读取权限，再核对清单哈希和 payload。没有修改远端文件/权限。
+  另两项旧 V10.4 检查缺外部训练 release manifest，不自动扩展为论文验收任务。
+
+上述是 Joseph 默认路径的可用性核对，不证明论文用了该默认值，也不影响已经核对的
+main baseline 输入。PARCC 源目录和逐项权限清单保存在内部回执，不重复写入公开说明。
 
 模型评分与读取已算好的排序缓存需要不同依赖，见
 [模型合同](../predict/retrieval/assay_reranking/MODEL_CONTRACTS.md)。先绑定论文运行，
@@ -137,4 +144,5 @@ AUROC 因近并列样本排序改变；最大差 −0.0010101，分类标签不�
 | `20261025_maintainability` | 重复代码审查、158 项通过及 9 项缺输入失败 |
 | `20261025_release_paths` | 配方参数差分、28 项通过、18 个稀疏文件原样恢复及匿名候选扫描 |
 | `20261025_model_release` | 模型限定缓存清点、trace 发布 12 项测试 |
-| `20261025_docs_refresh` | 本次合同/文档去重、默认缓存绑定检查、身份测试与链接核验 |
+| `20261025_docs_refresh` | 合同/文档去重、默认缓存绑定检查、身份测试与链接核验 |
+| `20261025_parcc_inputs` | PARCC 同版 catalog、索引/下级清单及 BBB 映射的存在性与权限检查 |
