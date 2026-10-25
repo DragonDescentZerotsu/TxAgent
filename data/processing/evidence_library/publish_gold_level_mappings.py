@@ -1,4 +1,4 @@
-"""Publish Tianang's UID-level mappings beside every active gold release."""
+"""Publish upstream UID-level mappings beside every active gold release."""
 
 from __future__ import annotations
 

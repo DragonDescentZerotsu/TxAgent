@@ -66,13 +66,14 @@ reviewed source decisions; the overlay writes the resulting `group_id` and
 preserves its original value and reassignment reason. The exporter uses the
 family catalog to map that group to `family_key` and `level`.
 
-Pinned upstream code:
+Pinned upstream code at commit `00800a5b890440ac52e4e7689c4a157d0ff2a365`
+(paths refer to that snapshot; inspect with `git show <commit>:<path>`):
 
-- [Overlay assignment and audit](https://github.com/DragonDescentZerotsu/TxAgent/blob/00800a5b890440ac52e4e7689c4a157d0ff2a365/tools/chembl_tool/paper_experiments/build_conditioned_source_family_purity.py#L129): classifier invocation at line 139; `group_id` replacement at line 256.
-- [BBB classifier](https://github.com/DragonDescentZerotsu/TxAgent/blob/00800a5b890440ac52e4e7689c4a157d0ff2a365/tools/chembl_tool/tasks/bbb_martins/source_family_purity.py#L500): explicit predictions and accepted voter membership precede near-direct/mechanism routing.
-- [Oral classifier](https://github.com/DragonDescentZerotsu/TxAgent/blob/00800a5b890440ac52e4e7689c4a157d0ff2a365/tools/chembl_tool/tasks/bioavailability_ma/source_family_purity.py#L116).
-- [Skin classifier](https://github.com/DragonDescentZerotsu/TxAgent/blob/00800a5b890440ac52e4e7689c4a157d0ff2a365/tools/chembl_tool/tasks/skin_reaction/source_family_purity.py#L174).
-- [Exporter](https://github.com/DragonDescentZerotsu/TxAgent/blob/00800a5b890440ac52e4e7689c4a157d0ff2a365/tools/chembl_tool/paper_experiments/export_current_starling_level_records.py#L138): catalog mapping at line 138; overlay filtering and export at line 186.
+- Overlay assignment and audit: `tools/chembl_tool/paper_experiments/build_conditioned_source_family_purity.py` (line 129): classifier invocation at line 139; `group_id` replacement at line 256.
+- BBB classifier: `tools/chembl_tool/tasks/bbb_martins/source_family_purity.py` (line 500): explicit predictions and accepted voter membership precede near-direct/mechanism routing.
+- Oral classifier: `tools/chembl_tool/tasks/bioavailability_ma/source_family_purity.py` (line 116).
+- Skin classifier: `tools/chembl_tool/tasks/skin_reaction/source_family_purity.py` (line 174).
+- Exporter: `tools/chembl_tool/paper_experiments/export_current_starling_level_records.py` (line 138): catalog mapping at line 138; overlay filtering and export at line 186.
 
 ## How to use the reference
 
@@ -102,13 +103,13 @@ upstream decisions as universally correct or change benchmark labels.
 If the pinned commit is absent from a fresh clone, fetch main first:
 
 ```bash
-git fetch ssh://git@ssh.github.com:443/DragonDescentZerotsu/TxAgent.git main
+git fetch origin main
 python -m data.processing.evidence_library.build_source_uid_levels
-python -m tests.chembl_tool.common.test_source_uid_levels
+python -m pytest tests/data/evidence_library/test_source_uid_levels.py
 ```
 
 The builder verifies imported tables, frozen archive parts, canonical records,
 and all UID-ledger partitions. It fails on missing joins, ambiguous keys, row
 number mismatches, and conflicting UID assignments. `manifest.json` records
-input/output hashes and coverage. Validation used `/usr/bin/python` 3.12.3 on
-`epyc-4-10`, pandas 3.0.2, PyArrow 24.0.0, and zstandard 0.22.0.
+input/output hashes and coverage. Validation used Python 3.12.3, pandas 3.0.2,
+PyArrow 24.0.0, and zstandard 0.22.0.

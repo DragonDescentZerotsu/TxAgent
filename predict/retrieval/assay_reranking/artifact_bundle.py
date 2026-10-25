@@ -18,6 +18,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tarfile
 import tempfile
 from typing import Any
@@ -585,7 +586,7 @@ def _zstd_binary() -> str:
     executable = shutil.which("zstd")
     if executable:
         return executable
-    fallback = Path("/data1/joseph/miniconda3/bin/zstd")
+    fallback = Path(sys.prefix) / "bin" / "zstd"
     if fallback.is_file():
         return str(fallback)
     raise FileNotFoundError("zstd executable not found")

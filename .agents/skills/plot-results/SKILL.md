@@ -68,7 +68,7 @@ finite values, panel denominators, bounds, and axis limits before drawing.
 3. Keep `points.csv` at the plotter's six-column contract. Keep full cohort size
    in `n`; record observed coverage, schema-invalid counts, status, and source in
    `points.tsv`.
-4. Include Tianang's completed Neighbor-fill, Molecule-cap, Group-balanced, and
+4. Include the completed baseline Neighbor-fill, Molecule-cap, Group-balanced, and
    five ML baselines from the commit-pinned portable validation table. Add Ours
    Direct from the completed `full_flat_context_v5` L1 results and Ours Indirect
    from the requested optimized snapshot.
@@ -83,7 +83,7 @@ finite values, panel denominators, bounds, and axis limits before drawing.
 
 - Mark incomplete optimized results as provisional and show per-task observed
   coverage. Different completed-query subsets are not matched comparisons.
-- Tianang's published LLM runs are identity-visible 50+50
+- The published baseline LLM runs are identity-visible 50+50
   `budgeted_reasoning.v1`; Ours is identity-blind and uses different prompts and
   evidence budgets. State that the comparison is descriptive.
 - The shared published None point is not prompt-matched to Ours. Do not describe

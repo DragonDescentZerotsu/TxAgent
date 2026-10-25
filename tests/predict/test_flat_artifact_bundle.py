@@ -215,6 +215,34 @@ def test_archive_round_trip_restores_relative_payloads(tmp_path: Path) -> None:
     assert (restored / "data/cache/bbb/RELEASE_INDEX.json").is_file()
 
 
+@pytest.mark.parametrize("store", ["stages", "bundle"])
+def test_zstd_uses_path_or_active_environment(tmp_path, monkeypatch, store):
+    from data.processing.evidence_library import stage_artifact_store
+    from predict.retrieval.assay_reranking import artifact_bundle
+
+    module = stage_artifact_store if store == "stages" else artifact_bundle
+    calls = []
+    monkeypatch.setattr(module.subprocess, "run", lambda argv, **kw: calls.append(argv))
+
+    def executable():
+        if store == "bundle":
+            return module._zstd_binary()
+        module._zstd("--version")
+        return calls[-1][0]
+
+    monkeypatch.setattr(module.sys, "prefix", str(tmp_path))
+    monkeypatch.setattr(module.shutil, "which", lambda name: "/installed/bin/zstd")
+    assert executable() == "/installed/bin/zstd"
+    monkeypatch.setattr(module.shutil, "which", lambda name: None)
+    binary = tmp_path / "bin" / "zstd"
+    binary.parent.mkdir()
+    binary.touch()
+    assert executable() == str(binary)
+    binary.unlink()
+    with pytest.raises(FileNotFoundError, match="zstd executable not found"):
+        executable()
+
+
 def test_named_bundle_accepts_exact_snapshot_and_rejects_changed_binding(tmp_path: Path) -> None:
     repo, old_config = _fixture_repo(tmp_path)
     catalog = old_config.with_name('catalog.json')

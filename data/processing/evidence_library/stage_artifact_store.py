@@ -6,6 +6,7 @@ import hashlib
 import json
 import shutil
 import subprocess
+import sys
 import tarfile
 import tempfile
 from dataclasses import dataclass
@@ -300,7 +301,7 @@ def _sha256(path: Path) -> str:
 def _zstd(*arguments: str) -> None:
     executable = shutil.which("zstd")
     if executable is None:
-        fallback = Path("/data1/joseph/miniconda3/bin/zstd")
+        fallback = Path(sys.prefix) / "bin" / "zstd"
         executable = str(fallback) if fallback.exists() else ""
     if not executable:
         raise FileNotFoundError("zstd executable not found")
