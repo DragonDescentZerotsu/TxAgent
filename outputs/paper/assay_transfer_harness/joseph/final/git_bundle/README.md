@@ -11,6 +11,9 @@ source also contains identity clues. Preserve these original bytes for hash
 verification. A separately reviewed publication copy must identify its changes
 and preserve model messages, predictions, labels, and scores. Moving a path does
 not authorize replacing its recorded source hash with a hash of different data.
+In a publication copy, file inventories must distinguish the frozen original's
+digest from the copy's digest. Historical source and prompt-assembly fingerprints
+retain their original meaning; do not replace every matching hash globally.
 The [release status](../../../../../../docs/release_refactor.md#可维护性与匿名发布)
 tracks the remaining checks; an internal path-conversion draft is not a
 replacement for this archive or a resume-ready bundle.
