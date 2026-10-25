@@ -16,7 +16,7 @@ Direct-3 LLM 已退出论文迁移范围；冻结 prior 恢复、Batch、竞速�
 | 检索规则 | 已批准的 parent/scaffold 判断接入共用实现；原 split、标签与历史结果不变 | 本轮 9 项 UID/cache builder 检查受缺失的 BBB v10 level mapping 阻塞；Joseph 命名缓存及新规则候选仍须真实发布输入验证，不能用旧分数代表新规则性能 |
 | 论文图表与来源 | 统一导出表格、三张论文 PDF；72 个 Ours 分数保留用户提供属性；五组消融有归档 TSV 绑定 | Direct 10 分子/50 records、Ours 预算及第六组消融的精确协议来源仍待核对 |
 | 复现分发 | LLM 完整候选输入 36 文件哈希通过；ML 结果/准备目录已清点；已有小包搬移 smoke | 闭合精确 embeddings、辅助源、MiniMol runtime/checkpoint、transfer-model 依赖；未发布完整下载包 |
-| 匿名发布 | 首轮普通文本清理已完成；上轮扫描的 384 个身份关键词候选文件待分类，不是 384 个已确认泄露 | 检查运行配置、冻结来源及压缩内容；发布副本变化须同步校验绑定；提交作者按用户要求不匿名化 |
+| 匿名发布 | 机器脚本与 V9 旧缓存默认路径已去除硬编码个人目录；原关键词口径剩 380 文件，扩展实名模型账号/路径后为 469 文件，均只是候选 | 检查模型/数据下载地址、冻结来源及压缩内容；发布副本变化须同步校验绑定；提交作者按用户要求不匿名化 |
 
 维护入口：[代码职责](experiment_code.md#capability-map)、[结果与来源](results.md)、
 [baseline 配方](../experiments/baselines/README.md)、
@@ -668,6 +668,39 @@ KNN。已将卡片构造放回唯一的 TDC 标签合并调用点，移除无用
 `data/evidence_libraries/bbb_martins/v10/level_mapping/manifest.json` 失败，仍是既有
 发布输入缺失，未用假映射绕过。未进行新训练、付费推理或工具服务调用。
 检查回执及日志在 `outputs/analysis/release_refactor/20261025_maintainability/`。
+
+## 第十八批：集群配方路径与匿名扫描补充（2026-10-25）
+
+四个既有集群配方不再保存个人 checkout、Python、模型缓存路径或过期 Slurm
+作业号。改为当前环境和显式部署变量，缺少必要配置时在执行前报错；保留任务、
+study 默认值、分片、GPU/内存参数、等待/恢复标记和阶段顺序。加权配方的 SSH
+命令按参数引用传递；stage 为新位置建立 staged 目录，collect 的 status 使用
+同一个选定 Python。使用方法和两类远程根目录的区别见
+[代码职责说明](experiment_code.md#capability-map)。没有新增调度框架或 Python runner。
+
+V9 旧排名缓存默认定位到 checkout 旁的 therapeutic-tuning 目录；在原部署目录
+下解析结果与原绝对路径完全一致，搬移继续使用已有 `--reuse-root`/`--no-reuse`。
+除此之外该模块 AST 完全不变，未修改模型、prompt、冻结结果或科学合同。
+
+8 条配方路径、36 次模拟 Python 调用的参数/缓存环境及 rsync 参数与原版一致；
+另有 6 项缺配置拒绝和 4 项默认解释器检查通过，全部 shell 语法通过。验证从其他
+工作目录启动，使用本地假执行器，没有真实 SSH/rsync/Slurm、模型或服务调用。
+
+V9 相关测试最初因稀疏检出缺文件受阻。已从当前 Git 原样展开 18 个文件
+（约 19.67 MiB），逐文件 Git blob ID 一致，不重建 gold/split/cache。复验累计
+28 个不同测试通过，包括 6 套已发布 direct cache 的完整验证；2 项旧 V10.4
+来源验证仍缺外部训练 release manifest。它们不是本轮修改造成的缺失，也不能
+未经论文来源对应就升级为必须迁入的历史实验。第十七批的 BBB v10 映射缺失仍未解决。
+
+同口径 Git 文本扫描从 384 降至 380 个候选文件；加入已发现的实名模型账号与
+另一组个人路径后，扩展口径从 474 降至 469。后者增加来自检查范围扩大，不是
+新增泄露。检查覆盖稀疏检出外的已跟踪常见文本；未覆盖全部姓名、压缩内容、
+二进制及 Git 历史，不能宣称匿名发布通过。模型/数据地址需与精确版本、checkpoint
+分发及冻结来源一起处理，不改成无法下载的虚构地址。
+
+回执、模拟命令、修改前源码与测试日志保存在
+`outputs/analysis/release_refactor/20261025_release_paths/`，一次性检查脚本归档。
+当前仍仅在本地整合分支，未 push 或合并 main。
 
 ## 历史身份验收证据与数据限制
 

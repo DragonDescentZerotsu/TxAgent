@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TXAGENT_REMOTE=/data1/joseph/txagent_scaffold_disjoint_parent100_20261013T084030Z
-TXAGENT_RUN=outputs/analysis/retrieval_cache/scaffold_disjoint_parent100_20261013T084030Z
-TXAGENT_PYTHON=/data1/joseph/miniconda3/envs/openrlhf/bin/python
+TXAGENT_REMOTE=${TXAGENT_REMOTE:?Set TXAGENT_REMOTE to the remote staging root}
+TXAGENT_RUN=${TXAGENT_RUN:-outputs/analysis/retrieval_cache/scaffold_disjoint_parent100_20261013T084030Z}
+TXAGENT_PYTHON=${TXAGENT_PYTHON:-python}
 cd "$TXAGENT_REMOTE/TxAgent"
-export HF_HOME="$TXAGENT_REMOTE/hf_home"
+export HF_HOME=${HF_HOME:-"$TXAGENT_REMOTE/hf_home"}
 export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1
+mkdir -p "$TXAGENT_REMOTE/logs" "$TXAGENT_REMOTE/staged"
 if [[ -f "$TXAGENT_REMOTE/logs/scoring.exit" ]]; then
     mv "$TXAGENT_REMOTE/logs/scoring.exit" "$TXAGENT_REMOTE/logs/scoring.exit.$(date -u +%Y%m%dT%H%M%SZ)"
 fi

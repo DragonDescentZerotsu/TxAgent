@@ -48,9 +48,9 @@ RANKING_SCHEMA_VERSION = "context_conditioned_gold_valid_ranking_cache.v2"
 DIRECT_LINEAGES = (
     "v9", "v9_scaffold", "v10_3", "v10_3_best", "v10_3_best_parent", "v10_4",
 )
-OLD_RANKING_ROOT = Path(
-    "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/results/"
-    "starling_benchmark/2026-08-31/context_conditioned_v1_gold_valid_top75_direct"
+OLD_RANKING_ROOT = REPO_ROOT.parent / (
+    "therapeutic-tuning/results/starling_benchmark/2026-08-31/"
+    "context_conditioned_v1_gold_valid_top75_direct"
 )
 GOLD_TASK_NAMES = {
     "bbb_martins": "BBB_Martins",

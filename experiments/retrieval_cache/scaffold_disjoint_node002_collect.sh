@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cd /vast/projects/myatskar/design-documents/joseph/TxAgent
+cd "$(dirname "${BASH_SOURCE[0]}")/../.."
 TXAGENT_REPO=$PWD
-TXAGENT_RUN=outputs/analysis/retrieval_cache/scaffold_disjoint_parent100_20261013T084030Z
-TXAGENT_REMOTE=/data1/joseph/txagent_scaffold_disjoint_parent100_20261013T084030Z
-TXAGENT_PYTHON=/vast/projects/myatskar/design-documents/conda_env/openrlhf_tfv4/bin/python
+TXAGENT_RUN=${TXAGENT_RUN:-outputs/analysis/retrieval_cache/scaffold_disjoint_parent100_20261013T084030Z}
+TXAGENT_REMOTE=${TXAGENT_REMOTE:?Set TXAGENT_REMOTE to the remote staging root}
+TXAGENT_REMOTE_HOST=${TXAGENT_REMOTE_HOST:-node002}
+TXAGENT_PYTHON=${TXAGENT_PYTHON:-python}
+mkdir -p "$TXAGENT_RUN/logs"
 trap 'printf "%s\n" "$?" > "$TXAGENT_RUN/logs/node002_collect.exit"' EXIT
 
-while ! ssh -n -o BatchMode=yes node002 "test -f '$TXAGENT_REMOTE/staged/all.scores-complete'"; do
-    if ssh -n -o BatchMode=yes node002 "test -f '$TXAGENT_REMOTE/logs/scoring.exit'"; then
+while ! ssh -n -o BatchMode=yes "$TXAGENT_REMOTE_HOST" "test -f '$TXAGENT_REMOTE/staged/all.scores-complete'"; do
+    if ssh -n -o BatchMode=yes "$TXAGENT_REMOTE_HOST" "test -f '$TXAGENT_REMOTE/logs/scoring.exit'"; then
         printf 'Remote scoring exited before completion; inspect scoring.log\n' >&2
         exit 1
     fi
@@ -17,7 +19,7 @@ while ! ssh -n -o BatchMode=yes node002 "test -f '$TXAGENT_REMOTE/staged/all.sco
 done
 rsync -a --partial-dir=.rsync-partial --prune-empty-dirs \
     --include='*/' --include='*.jsonl' --exclude='*' -e 'ssh -o BatchMode=yes' \
-    "node002:$TXAGENT_REMOTE/TxAgent/data/caches/assay_reranking/active/flat_v5/" \
+    "$TXAGENT_REMOTE_HOST:$TXAGENT_REMOTE/TxAgent/data/caches/assay_reranking/active/flat_v5/" \
     "$TXAGENT_REPO/data/caches/assay_reranking/active/flat_v5/"
 
 TXAGENT_FROZEN=$(mktemp -d /tmp/txagent-scaffold-finalize.XXXXXX)
@@ -35,5 +37,5 @@ mkdir -p "$TXAGENT_FROZEN/$TXAGENT_RUN"
 cp "$TXAGENT_RUN/run.py" "$TXAGENT_RUN/manifest.json" "$TXAGENT_FROZEN/$TXAGENT_RUN/"
 "$TXAGENT_PYTHON" "$TXAGENT_FROZEN/$TXAGENT_RUN/run.py" finalize --subset both
 "$TXAGENT_PYTHON" "$TXAGENT_FROZEN/$TXAGENT_RUN/run.py" publish --publication-root "$TXAGENT_REPO"
-python "$TXAGENT_RUN/status.py"
+"$TXAGENT_PYTHON" "$TXAGENT_RUN/status.py"
 touch "$TXAGENT_RUN/cache_build.complete"

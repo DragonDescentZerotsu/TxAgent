@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
-cd /vast/projects/myatskar/design-documents/joseph/TxAgent
-PYTHON=${TXAGENT_PYTHON:-/vast/projects/myatskar/design-documents/conda_env/openrlhf_tfv4/bin/python}
+cd "$(dirname "${BASH_SOURCE[0]}")/../.."
+PYTHON=${TXAGENT_PYTHON:-python}
 STUDY=${TXAGENT_STUDY:-outputs/analysis/retrieval_cache/molecular_policy_20261015T195506Z}
-REMOTE=/data1/joseph/txagent_molecular_policy_20261015T195506Z/TxAgent
-REMOTE_PYTHON=/data1/joseph/miniconda3/envs/openrlhf/bin/python
-export HF_HOME=/vast/projects/myatskar/design-documents/hf_home
 export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
 MODULE=predict.retrieval.assay_reranking.rebuild_policy
 role=${1:?Use prepare TASK [existing preparation PID], collect TASK, node002, dgx018 or dgx009}
@@ -39,14 +36,18 @@ if [[ "$role" == prepare || "$role" == collect ]]; then
 fi
 
 case "$role" in
-    node002) shards=(0 1 2 3 4 5 6 7); devices=0,1,2,3,4,5,6,7 ;;
-    dgx018) shards=(8 9 10 11); allocation=8994724; fraction=0.17; devices=0 ;;
-    dgx009) shards=(12 13 14 15); allocation=8997395; fraction=0.6; devices=0 ;;
+    node002)
+        REMOTE=${TXAGENT_REMOTE:?Set TXAGENT_REMOTE to the remote checkout}
+        REMOTE_PYTHON=${TXAGENT_REMOTE_PYTHON:-python}
+        REMOTE_HOST=${TXAGENT_REMOTE_HOST:-node002}
+        shards=(0 1 2 3 4 5 6 7); devices=0,1,2,3,4,5,6,7 ;;
+    dgx018) shards=(8 9 10 11); allocation=${TXAGENT_ALLOCATION:?Set TXAGENT_ALLOCATION}; fraction=0.17; devices=0 ;;
+    dgx009) shards=(12 13 14 15); allocation=${TXAGENT_ALLOCATION:?Set TXAGENT_ALLOCATION}; fraction=0.6; devices=0 ;;
     *) exit 2 ;;
 esac
 if [[ -n ${TXAGENT_PREVIOUS_PID:-} ]]; then
     if [[ "$role" == node002 ]]; then
-        while ssh -o BatchMode=yes node002 "kill -0 $TXAGENT_PREVIOUS_PID 2>/dev/null"; do sleep 5; done
+        while ssh -o BatchMode=yes "$REMOTE_HOST" "kill -0 $TXAGENT_PREVIOUS_PID 2>/dev/null"; do sleep 5; done
     else
         while kill -0 "$TXAGENT_PREVIOUS_PID" 2>/dev/null; do sleep 5; done
     fi
@@ -66,13 +67,17 @@ while ((${#tasks[@]})); do
         date -u +'%FT%TZ' > "$workset/dispatch/$role.started"
         if [[ "$role" == node002 ]]; then
             rg --files --hidden --no-ignore "$workset" | rg '/(study.json|VERSION.json|prompts.parquet)$' > "$workset/dispatch/node002_inputs.txt"
-            rsync -a --files-from="$workset/dispatch/node002_inputs.txt" ./ "node002:$REMOTE/"
-            ssh -o BatchMode=yes node002 "cd $REMOTE && HF_HOME=/data1/joseph/txagent_scaffold_disjoint_parent100_20261013T084030Z/hf_home OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 $REMOTE_PYTHON -m $MODULE score --study $workset ${args[*]} --gpu-memory-fraction 0.6"
+            rsync -a --files-from="$workset/dispatch/node002_inputs.txt" ./ "$REMOTE_HOST:$REMOTE/"
+            remote_env=(OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1)
+            if [[ -n ${TXAGENT_REMOTE_HF_HOME:-} ]]; then remote_env+=("HF_HOME=$TXAGENT_REMOTE_HF_HOME"); fi
+            printf -v command '%q ' bash -c 'cd "$1" && shift && exec "$@"' bash "$REMOTE" \
+                env "${remote_env[@]}" "$REMOTE_PYTHON" -m "$MODULE" score --study "$workset" "${args[@]}" --gpu-memory-fraction 0.6
+            ssh -o BatchMode=yes "$REMOTE_HOST" "$command"
             rsync -a --include='*/' --include='*.jsonl' --exclude='*' \
-                "node002:$REMOTE/$workset/$task/scaffold/test/" "$workset/$task/scaffold/test/"
+                "$REMOTE_HOST:$REMOTE/$workset/$task/scaffold/test/" "$workset/$task/scaffold/test/"
         else
             srun --jobid="$allocation" --overlap --exact -N1 -n1 -c4 --mem=32G \
-                env HF_HOME="$HF_HOME" OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 \
+                env OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 \
                 "$PYTHON" -m "$MODULE" score --study "$workset" "${args[@]}" --gpu-memory-fraction "$fraction"
         fi
         date -u +'%FT%TZ' > "$workset/dispatch/$role.done"

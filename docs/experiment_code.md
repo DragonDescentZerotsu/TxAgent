@@ -75,9 +75,31 @@ The local `experiments/retrieval_cache/molecular_policy.sh` and
 `experiments/evidence_library/score_skin_gold_voters.sh` recipes locate this
 checkout from their script paths and default to `python` in the active environment.
 Use `TXAGENT_PYTHON` and `SCORER_PYTHON`, respectively, for an explicit interpreter;
-set `HF_HOME` when reusing an existing model cache. The separate distributed
-stage/collect recipes still describe a historical cluster deployment and require
-further portability review before publication.
+set `HF_HOME` when reusing an existing model cache.
+
+The distributed recipes under `experiments/retrieval_cache/` retain their pinned
+historical studies and scoring parameters. They are existing cache-maintenance
+workflows, not additional paper baseline experiments. Machine locations are
+supplied by the operator:
+
+| Recipe | Required deployment settings | Optional settings |
+| --- | --- | --- |
+| `molecular_policy_weighted.sh prepare/collect TASK` | Original study inputs and dispatch receipts | `TXAGENT_STUDY` (repository-relative), `TXAGENT_PYTHON` (default `python`), exported `HF_HOME` |
+| `molecular_policy_weighted.sh node002` | `TXAGENT_REMOTE`: absolute remote **checkout** path | `TXAGENT_REMOTE_HOST` (default `node002`), `TXAGENT_REMOTE_PYTHON` (default `python`), `TXAGENT_REMOTE_HF_HOME`; remote cache otherwise uses its own environment/default |
+| `molecular_policy_weighted.sh dgx018/dgx009` | `TXAGENT_ALLOCATION`: current Slurm allocation ID | Local Python/cache settings above; original shard ranges and memory fractions stay fixed |
+| `scaffold_disjoint_node002_{stage,score,collect}.sh` | `TXAGENT_REMOTE`: absolute **staging root**, containing `TxAgent/`; original run manifest, staging table and frozen scorer archive | `TXAGENT_RUN` (repository-relative), `TXAGENT_PYTHON`, `TXAGENT_REMOTE_HOST` for stage/collect; score uses exported `HF_HOME` or `<staging root>/hf_home` |
+
+Set the same staging root for all three scaffold scripts; run `score` on the
+remote machine. The weighted recipe's remote path includes the checkout itself,
+whereas the scaffold trio appends `TxAgent/`. Local scripts locate the repository
+from their own paths. Explicit interpreter/cache settings can reproduce the old
+deployment without committing personal paths. These scripts still require their
+frozen study inputs; the path cleanup does not regenerate or publish a cache.
+
+V9 direct-cache reuse defaults to the historical `therapeutic-tuning/results/`
+tree beside this checkout. Use its existing `--reuse-root` / `--old-root` option
+after relocation, or `--no-reuse` for a new build without inherited scores.
+Reuse still requires the exact input, prompt and model bindings.
 
 ## Canonical semantic utility scorer
 
