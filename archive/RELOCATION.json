@@ -2,30 +2,9 @@
   "schema_version": "txagent_asset_relocation.v1",
   "assets": [
     {
-      "original": "data/legacy/clintox/code/task/AGENTS.md",
-      "path": "archive/instructions/data/legacy/clintox/code/task/INSTRUCTIONS.md",
-      "sha256": "8b186e2c26adb4b73d670f7039e0b1f8c5810ea9cdc4e38be9bebf111ef9b47a",
-      "legacy_alias": false,
-      "kind": "instruction_snapshot"
-    },
-    {
-      "original": "data/raw/starling/AGENTS.md",
-      "path": "archive/instructions/data/raw/starling/INSTRUCTIONS.md",
-      "sha256": "48d7a00af94cbd7e76a37667319cd3360653ac8c478e4c1fcc9a8b5fe79e25e9",
-      "legacy_alias": false,
-      "kind": "instruction_snapshot"
-    },
-    {
       "original": "predict/PROGRESSIVE_PREDICTION_RUNBOOK.md",
       "path": "archive/progressive/PROGRESSIVE_PREDICTION_RUNBOOK.md",
       "sha256": "59b364e706f45bd9e9750e2d71aeb8061b82ff5e572905b2d98ecdaff262275f"
-    },
-    {
-      "original": "predict/harnesses/AGENTS.md",
-      "path": "archive/instructions/predict/harnesses/INSTRUCTIONS.md",
-      "sha256": "0d6dc960355339527b39a484f7f75d1aa0a13c67bc4c75c2aaae6090bdb5434b",
-      "legacy_alias": false,
-      "kind": "instruction_snapshot"
     },
     {
       "original": "predict/harnesses/branches/prompts/final_full_flat_tdc_carc_direct_priority_v1/levels/L1.yaml",
@@ -2493,13 +2472,6 @@
       "sha256": "2fa1c316726a1aea867eba3e3c2c2a5f80bf9310a4461f8e12695938a0105fa3"
     },
     {
-      "original": "tools/chembl_tool/activity_transfer_benchmark/AGENTS.md",
-      "path": "archive/instructions/tools/chembl_tool/activity_transfer_benchmark/INSTRUCTIONS.md",
-      "sha256": "cb924d8600b15de6cedb9fc179e982f918d1c2df0aba375af3d0fc6be7507d46",
-      "legacy_alias": false,
-      "kind": "instruction_snapshot"
-    },
-    {
       "original": "tools/chembl_tool/common/contextual_unit_policy.json",
       "path": "data/processing/evidence_library/contextual_unit_policy.json",
       "sha256": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef"
@@ -2508,62 +2480,6 @@
       "original": "tools/chembl_tool/common/qualifier_vocabulary_policy.json",
       "path": "data/processing/evidence_library/qualifier_vocabulary_policy.json",
       "sha256": "2fc703772177ad9c4d64c0ab6de63ba72620a529432215dfb1cecc57f40cb839"
-    },
-    {
-      "original": "tools/chembl_tool/paper_experiments/AGENTS.md",
-      "path": "archive/instructions/tools/chembl_tool/paper_experiments/INSTRUCTIONS.md",
-      "sha256": "5dd698f05354b5795303d08de830dcc59db1034a5ddff297ec50176f64166b9c",
-      "legacy_alias": false,
-      "kind": "instruction_snapshot"
-    },
-    {
-      "original": "tools/chembl_tool/tasks/AGENTS.md",
-      "path": "archive/instructions/tools/chembl_tool/tasks/INSTRUCTIONS.md",
-      "sha256": "dc6546d9cf6176497e3d63ce65bbaeaf30bc58fae89b960bb993d53ae53a3516",
-      "legacy_alias": false,
-      "kind": "instruction_snapshot"
-    },
-    {
-      "original": "tools/chembl_tool/tasks/bbb_martins/AGENTS.md",
-      "path": "archive/instructions/tools/chembl_tool/tasks/bbb_martins/INSTRUCTIONS.md",
-      "sha256": "1d41847a9431750069087c4df02576a07e08cbc046405fafdbf7eea4aae3cef1",
-      "legacy_alias": false,
-      "kind": "instruction_snapshot"
-    },
-    {
-      "original": "tools/chembl_tool/tasks/bioavailability_ma/AGENTS.md",
-      "path": "archive/instructions/tools/chembl_tool/tasks/bioavailability_ma/INSTRUCTIONS.md",
-      "sha256": "42879b904aabc3b9a922be9113d9ed2d17450313f34b2cc3fde05d1199cf76ee",
-      "legacy_alias": false,
-      "kind": "instruction_snapshot"
-    },
-    {
-      "original": "tools/chembl_tool/tasks/dili/AGENTS.md",
-      "path": "archive/instructions/tools/chembl_tool/tasks/dili/INSTRUCTIONS.md",
-      "sha256": "9050575461f1aea1389bce047a0123665e54c0e2023f6e10cde2973c5080a346",
-      "legacy_alias": false,
-      "kind": "instruction_snapshot"
-    },
-    {
-      "original": "tools/chembl_tool/tasks/skin_reaction/AGENTS.md",
-      "path": "archive/instructions/tools/chembl_tool/tasks/skin_reaction/INSTRUCTIONS.md",
-      "sha256": "30388046bb936a472c8690b4693d54ac9982eccd0cdacccc5fb4926bc7d78284",
-      "legacy_alias": false,
-      "kind": "instruction_snapshot"
-    },
-    {
-      "original": "tools/chembl_tool/utils/BBB_Martins/AGENTS.md",
-      "path": "archive/instructions/tools/chembl_tool/utils/BBB_Martins/INSTRUCTIONS.md",
-      "sha256": "901e77bbc0226dd48a4cfaf98c1a3fed1c44660a4a57bcf1a50c50e04a0b22d2",
-      "legacy_alias": false,
-      "kind": "instruction_snapshot"
-    },
-    {
-      "original": "tools/trace_viewer/AGENTS.md",
-      "path": "archive/instructions/tools/trace_viewer/INSTRUCTIONS.md",
-      "sha256": "3589cc8cc7270f424278e52cce24b024a936f1b299bf02b8683e9b7bc194aa2d",
-      "legacy_alias": false,
-      "kind": "instruction_snapshot"
     }
   ]
 }

@@ -161,3 +161,6 @@ AGENTS.md
 
 # Local assistant context can contain private machine paths.
 CLAUDE.md
+
+# Renamed historical agent instructions remain local, too.
+/archive/instructions/

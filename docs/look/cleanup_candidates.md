@@ -147,10 +147,9 @@ empty directories. Four files are under
 | `ONE_PASS_REASONING.md` | Ownership and execution lifecycle of the removed one-pass materializers, audits, evaluators and training commands. |
 | `BACKEND_PARITY.md` | Shared training settings and implementation rules for the removed Tinker/NeMo comparison. |
 
-The fifth is the former subsystem instruction snapshot:
-`archive/instructions/tools/chembl_tool/paper_experiments/rl_lora/INSTRUCTIONS.md`.
-It repeats the old training boundaries, backend rules and experiment contracts.
-It is ordinary archived documentation, not an active AGENTS.md.
+The fifth was a subsystem instruction snapshot repeating the old training
+boundaries, backend rules and experiment contracts. Instruction snapshots are
+local maintenance context and are excluded from the release tree.
 
 The empty directories are `patches/`, `runtime/` and `scripts/` beneath the
 archived RL folder. Their implementations were removed previously.

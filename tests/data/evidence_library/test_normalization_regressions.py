@@ -7,8 +7,7 @@ the reasoning behind it.
 Unlike `units_golden.json`, this corpus is **hand-written and never machine-regenerated**.
 There is deliberately no `--write` flag. A failure here means either a real regression or a
 decision that must be re-validated by hand -- never an expectation to be overwritten to get
-back to green. See the "Normalization regression corpus" section of
-`archive/instructions/tools/chembl_tool/tasks/INSTRUCTIONS.md`.
+back to green.
 
 To add a case: reproduce the defect from a built `01_cleaned` stage, take the real
 `measurement_text` / `unit_text` verbatim (never an invented string), confirm the corrected

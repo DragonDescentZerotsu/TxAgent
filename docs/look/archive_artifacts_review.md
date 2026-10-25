@@ -2,7 +2,11 @@
 
 Inspected 2026-10-14 on `login01` in the authoritative TxAgent checkout. The inventory below records the pre-deletion state. Subsequently removed `archive/workspace_history/` (six files, 1,581,894,738 bytes) and, after verifying Git preservation, `archive/chembl_tool/` (56 files, 1,801,784 bytes, three links) plus its `tools/chembl_tool` alias. Three uncommitted README versions are preserved in `docs/look/chembl_tool_readmes/`. Also removed root `artifacts/` after approval: 11 Git-preserved files totaling 172,117,189 bytes and four links. Verified the V10 inputs and linked datasets remain intact. Prompt bundles and instruction snapshots remain unchanged. Details are in `cleanup_candidates.md`, Groups 12, 13 and 15.
 
-The root `artifacts/` cleanup is complete; its descriptions below are historical inspection findings. Do not delete all of `archive/` on the assumption that it is already saved in Git: the relocated directory is untracked, some exact file contents have no demonstrated Git coverage, and linked prompt bundles still support historical rendering.
+The inventories and Git-coverage findings below describe the inspection date,
+not the current release tree. During release preparation, the 12 instruction
+snapshots were preserved locally, removed from Git tracking and excluded from
+the public relocation index. Their bytes were verified against that index before
+removal. This does not retire the archived prompt bundles used for replay.
 
 ## Inventory
 
