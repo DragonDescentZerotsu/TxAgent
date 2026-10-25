@@ -324,7 +324,16 @@ def read_run(run_dir: Path, *, batch=None) -> dict:
     legacy = run_dir / "manifest.json"
     if record.get("schema_version") not in SCHEMAS and legacy.exists():
         result.update(json.loads(legacy.read_text()))
-    result.update(record.get("query_overrides", {}).get(str(index), {}))
+    override = record.get("query_overrides", {}).get(str(index), {})
+    result.update(override)
+    if "artifacts" in override:
+        result["artifacts"] = dict(override["artifacts"])
+        for role, entry in result["artifacts"].items():
+            inherited = record.get("artifacts", {}).get(role) or {}
+            # A query's unchanged input identity keeps the batch's local snapshot.
+            if (isinstance(inherited, dict) and inherited.get("local_format")
+                    and {k: v for k, v in inherited.items() if k != "local_format"} == entry):
+                result["artifacts"][role] = dict(entry, local_format=inherited["local_format"])
     for role in result.get("artifacts", {}):
         location = resolve_artifact(result, role, parent)
         if location is not None:

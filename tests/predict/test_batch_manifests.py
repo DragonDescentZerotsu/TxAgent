@@ -85,6 +85,31 @@ def test_new_writer_uses_one_manifest(tmp_path):
     assert not (tmp_path / 'runs').exists()
 
 
+@pytest.mark.parametrize("query_version", ["v1", "v2"])
+def test_query_override_keeps_local_snapshot_only_for_same_identity(tmp_path, query_version):
+    from copy import deepcopy
+    from predict.harnesses.branches.manifests import resolve_artifact
+
+    batch = tmp_path / "relocated"
+    local_input = batch / "inputs/input_jsonl.jsonl"
+    local_input.parent.mkdir(parents=True)
+    local_input.write_text('{"benchmark_row_id": "q0"}\n')
+    identity = {"name": "test", "kind": "benchmark", "task": "Ames",
+                "version": "v1", "partition": "scaffold"}
+    query_identity = dict(identity, version=query_version)
+    record = {"queries": {"0": "q0"},
+              "artifacts": {"input_jsonl": dict(identity, local_format=".jsonl")},
+              "query_overrides": {"0": {"artifacts": {"input_jsonl": query_identity}}}}
+    before = deepcopy(record)
+    query = read_run(batch / "runs/00000", batch=record)
+    expected = local_input if query_version == "v1" else resolve_artifact(
+        {"artifacts": {"input_jsonl": query_identity}}, "input_jsonl", batch)
+    assert Path(query["input_jsonl"]) == expected
+    assert resolve_artifact(query, "input_jsonl", batch) == expected
+    assert ("local_format" in query["artifacts"]["input_jsonl"]) == (query_version == "v1")
+    assert record == before
+
+
 def test_resume_rejects_changed_scientific_settings_and_query_membership(tmp_path):
     path = tmp_path / "manifest.json"
     records = [(0, {"benchmark_row_id": "q"})]

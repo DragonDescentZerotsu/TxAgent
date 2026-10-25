@@ -126,9 +126,23 @@ def test_unknown_nested_run_prevents_parent_relocation(saved_run):
 
 def test_named_matrix_keeps_equal_profiles_distinct_across_tasks(tmp_path):
     from predict.harnesses.branches import matrix
+    from predict.retrieval.assay_reranking.artifact_bundle import DEFAULT_CACHE_SET
+    catalog = json.loads(DEFAULT_CACHE_SET.read_text())
+    queries = tmp_path / 'queries.jsonl'
+    queries.write_text('{"benchmark_row_id": "q0", "drug": "CCO"}\n')
     names = []
     for task in ('ames', 'dili'):
-        args = matrix._selection_args(task, tmp_path, limit=0)
+        evidence = tmp_path / task / 'v1/VERSION.json'
+        evidence.parent.mkdir(parents=True)
+        evidence.write_text('{}')
+        index = tmp_path / task / 'RELEASE_INDEX.json'
+        index.write_text(json.dumps({'evidence': {'manifest': str(evidence)},
+            'splits': {'valid': {'levels': {'L1': {}}}}}))
+        catalog['benchmarks']['gold_v1'][task]['retrieval'] = {'L1': str(index), 'later': str(index)}
+        cache = tmp_path / 'catalog.json'
+        cache.write_text(json.dumps(catalog))
+        args = matrix._selection_args(task, tmp_path, limit=0,
+                                      input_jsonl=queries, assay_transfer_cache=cache)
         args.batch_id, args.run_name, args.query_prior = 'default', 'shared-study', 'none'
         command = matrix._batch_command(args, tmp_path/'retrieval', base_url='http://localhost:1', api_key_env='EMPTY')
         names.append(command.experiment_name)
