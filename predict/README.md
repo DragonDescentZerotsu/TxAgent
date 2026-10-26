@@ -155,6 +155,11 @@ manual/frozen panels containing them fail before inference. New prepared BBB
 batches record `bbb_prediction_only_excluded_l2plus.v2`; older unmarked prepared
 batches require a fresh run identity. Explicit saved-request replay retains its
 original request contract. Frozen L1 cards and other tasks retain their policies.
+For a private LiteLLM gateway, set `LITELLM_BASE_URL` to its endpoint; the
+shared transport infers the gateway provider from that configured host. The live
+trace viewer defaults to a sibling `traces-data/` directory; use its `data` query
+parameter when serving traces elsewhere.
+
 SDK construction is centralized in `api_client/transport.py`; `api_client/pool.py`
 owns provider routing and capacity.
 

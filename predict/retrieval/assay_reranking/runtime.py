@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import os
 import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
@@ -581,15 +582,31 @@ def probability_from_logits(logit_a: float, logit_b: float) -> float:
 
 
 def resolve_model_snapshot(
-    model: str, revision: str, *, local_files_only: bool = False
+    model: str, revision: str, *, local_files_only: bool = False, repo_type: str = "model"
 ) -> str:
-    """Download or resolve exactly one immutable Hugging Face revision."""
+    """Resolve a pinned Hub revision or a verified local publication artifact."""
     from huggingface_hub import HfApi, snapshot_download
 
     immutable = require_immutable_revision(revision)
+    if model.startswith("local-artifacts/"):
+        from data.processing.paths import REPO_ROOT
+
+        name = model.removeprefix("local-artifacts/")
+        if Path(name).name != name or name in {"", ".", ".."}:
+            raise ValueError(f"Invalid local artifact name: {name!r}")
+        root = Path(os.environ.get("TXAGENT_ARTIFACT_ROOT", REPO_ROOT / "data/external"))
+        snapshot = (root.expanduser() / repo_type / name / immutable).resolve()
+        manifest = json.loads((snapshot / "artifact.json").read_text())
+        if manifest.get("revision") != immutable or not manifest.get("files"):
+            raise ValueError(f"Invalid local artifact manifest: {snapshot}")
+        for filename, expected in manifest["files"].items():
+            path = (snapshot / filename).resolve()
+            if not path.is_relative_to(snapshot) or file_sha256(path) != expected:
+                raise ValueError(f"Local artifact content mismatch: {filename}")
+        return str(snapshot)
     if not local_files_only:
         observed = require_immutable_revision(
-            HfApi().model_info(model, revision=immutable).sha
+            HfApi().repo_info(model, revision=immutable, repo_type=repo_type).sha
         )
         if observed != immutable:
             raise ValueError(
@@ -597,6 +614,7 @@ def resolve_model_snapshot(
             )
     return snapshot_download(
         repo_id=model,
+        repo_type=repo_type,
         revision=immutable,
         local_files_only=local_files_only,
     )

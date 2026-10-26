@@ -26,7 +26,7 @@ from predict.utils.json import read_jsonl, sha256_file
 from . import three_pools
 from .build_cache_matched_v3 import L5_RELEASES
 from .ranked_retrieval import FIXED_POOL, POOLS, SCHEMA_VERSION
-from .runtime import cache_profile_root
+from .runtime import cache_profile_root, resolve_model_snapshot
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -262,9 +262,8 @@ def _source_fields(task: str) -> tuple[dict[str, list[str]], set[str]]:
 def _accepted_buckets(task: str) -> dict[str, set[str]]:
     accepted: dict[str, set[str]] = defaultdict(set)
     for level, profile in three_pools.MODULES[task].MODELS.items():
-        from huggingface_hub import snapshot_download
 
-        root = Path(snapshot_download(
+        root = Path(resolve_model_snapshot(
             profile["dataset"], repo_type="dataset", revision=profile["dataset_revision"],
             local_files_only=True,
         ))

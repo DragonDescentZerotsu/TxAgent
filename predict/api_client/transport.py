@@ -97,7 +97,8 @@ def provider_from_base_url(base_url: str) -> Provider:
     host = (urlsplit(base_url).hostname or "").casefold().rstrip(".")
     if host == "openrouter.ai" or host.endswith(".openrouter.ai"):
         return "openrouter"
-    if host == "litellm.parcc.upenn.edu":
+    gateway = (urlsplit(os.environ.get("LITELLM_BASE_URL", "")).hostname or "").casefold().rstrip(".")
+    if gateway and host == gateway:
         return "parcc"
     if host == "api.openai.com":
         return "openai"

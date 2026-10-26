@@ -558,3 +558,37 @@ def test_luna_relevance_filter_keeps_top_quarter_buckets_and_all_their_records()
         "input_records": 9,
         "selected_records": 3,
     }
+
+
+@pytest.mark.parametrize("repo_type", ["model", "dataset"])
+def test_local_publication_artifact_is_pinned_and_never_downloaded(tmp_path, monkeypatch, repo_type):
+    from predict.retrieval.assay_reranking import runtime
+    import huggingface_hub
+
+    revision = "a" * 40
+    snapshot = tmp_path / repo_type / "fixture" / revision
+    snapshot.mkdir(parents=True)
+    payload = snapshot / "config.json"
+    payload.write_text('{"fixture": true}')
+    manifest = {"revision": revision, "files": {"config.json": runtime.file_sha256(payload)}}
+    (snapshot / "artifact.json").write_text(json.dumps(manifest))
+    monkeypatch.setenv("TXAGENT_ARTIFACT_ROOT", str(tmp_path))
+    monkeypatch.setattr(huggingface_hub, "snapshot_download", lambda **kwargs: pytest.fail("network used"))
+    assert runtime.resolve_model_snapshot("local-artifacts/fixture", revision, repo_type=repo_type) == str(snapshot)
+    payload.write_text("changed")
+    with pytest.raises(ValueError, match="content mismatch"):
+        runtime.resolve_model_snapshot("local-artifacts/fixture", revision, repo_type=repo_type)
+    with pytest.raises(FileNotFoundError):
+        runtime.resolve_model_snapshot("local-artifacts/fixture", "b" * 40, repo_type=repo_type)
+    with pytest.raises(ValueError, match="Invalid local artifact name"):
+        runtime.resolve_model_snapshot("local-artifacts/../fixture", revision, repo_type=repo_type)
+
+
+def test_hub_snapshot_retains_exact_revision_and_offline_flag(monkeypatch):
+    from predict.retrieval.assay_reranking import runtime
+    import huggingface_hub
+
+    calls = []
+    monkeypatch.setattr(huggingface_hub, "snapshot_download", lambda **kwargs: calls.append(kwargs) or "snapshot")
+    assert runtime.resolve_model_snapshot("public/model", "a" * 40, local_files_only=True) == "snapshot"
+    assert calls == [{"repo_id": "public/model", "revision": "a" * 40, "repo_type": "model", "local_files_only": True}]

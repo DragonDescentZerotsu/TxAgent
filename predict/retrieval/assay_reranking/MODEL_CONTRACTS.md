@@ -38,6 +38,16 @@ A cached configuration alone is not a complete model. Anonymous redistribution
 must bind an accessible artifact to the same weights and dependencies; removing
 an account name or inventing a replacement repository does not accomplish that.
 
+Anonymous review snapshots use `local-artifacts/<name>` for author-owned model
+and dataset repositories. These are local artifact identifiers, not Hub URLs.
+Set `TXAGENT_ARTIFACT_ROOT` (default: repository `data/external/`) and place each
+revision at `<root>/<model|dataset>/<name>/<40-character revision>/`. Its
+`artifact.json` contains `revision` and a `files` mapping from relative filenames
+to SHA-256 digests. The shared resolver checks the revision and listed bytes,
+rejects paths outside the snapshot, and never falls back to a remote download
+for a local identifier. Supply the original weights, tokenizer, code and dataset
+files; an identifier or manifest alone does not distribute those dependencies.
+
 Run `python -m predict.retrieval.assay_reranking.audit_training_prompts --report
 outputs/analysis/assay_reranking/v27_candidate_copy_v1/prompt_audit.json`
 before scoring. It checks sampled published prompts byte-for-byte and separately

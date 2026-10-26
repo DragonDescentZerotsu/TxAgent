@@ -28,7 +28,7 @@
 </div></main>
 <script>
 const qs=new URLSearchParams(location.search);
-const DATA=(qs.get('data')||'https://raw.githubusercontent.com/jiosephlee/jiosephlee.github.io/live-traces/traces-data').replace(/\/$/,'');
+const DATA=(qs.get('data')||'./traces-data').replace(/\/$/,'');
 const $=id=>document.getElementById(id), els={dataset:$('dataset'),method:$('method'),run:$('run'),refresh:$('refresh'),status:$('status'),reviewControls:$('reviewControls'),primary:$('primary'),direction:$('direction'),identity:$('identity'),knowledge:$('knowledge'),samplesTitle:$('samplesTitle'),samples:$('samples'),detail:$('detail')};
 let catalog=[],current=null,selected='';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

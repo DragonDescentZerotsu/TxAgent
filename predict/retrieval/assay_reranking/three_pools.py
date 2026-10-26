@@ -112,12 +112,11 @@ class Renderer:
 
 
 def load_source(task, *, current_release=False):
-    from huggingface_hub import snapshot_download
 
     m = MODULES[task]
     accepted, files = {}, {}
     for level, profile in m.MODELS.items():
-        root = Path(snapshot_download(profile["dataset"], repo_type="dataset",
+        root = Path(runtime.resolve_model_snapshot(profile["dataset"], repo_type="dataset",
                                       revision=profile["dataset_revision"], local_files_only=True))
         release = json.loads((root / "manifest.json").read_text())
         for name in ("records", "source_contract", "uid_levels", "gold_validation", "gold_test"):
@@ -210,7 +209,6 @@ def load_source(task, *, current_release=False):
 
 def audit_models(task, records):
     """Compare actual released examples with their training and copied renderers."""
-    from huggingface_hub import snapshot_download
     from transformers import AutoTokenizer
     sys.path.insert(0, str(TRAINING_ROOT))
     from assay_transfer.record_level.v20 import hf as training
@@ -219,7 +217,7 @@ def audit_models(task, records):
     m, renderer = MODULES[task], Renderer(task)
     report = {}
     for level, model in m.MODELS.items():
-        root = Path(snapshot_download(model["dataset"], repo_type="dataset", revision=model["dataset_revision"], local_files_only=True))
+        root = Path(runtime.resolve_model_snapshot(model["dataset"], repo_type="dataset", revision=model["dataset_revision"], local_files_only=True))
         manifest = json.loads((root / "manifest.json").read_text())
         for name in ("records", "source_contract", "uid_levels", "gold_validation", "gold_test"):
             item = manifest["source_snapshot"][name]

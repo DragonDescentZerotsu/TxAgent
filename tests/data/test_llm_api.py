@@ -13,6 +13,13 @@ from predict.api_client.transport import (
 )
 
 
+@pytest.fixture(autouse=True)
+def isolated_provider_credentials(monkeypatch):
+    for names in llm_api.PROVIDER_CREDENTIALS.values():
+        for name in names:
+            monkeypatch.delenv(name, raising=False)
+
+
 def test_dotenv_provider_aliases_are_loaded_without_mutating_environment(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -40,9 +47,10 @@ def test_openrouter_refuses_an_openai_key(tmp_path: Path) -> None:
         )
 
 
-def test_provider_is_inferred_from_known_endpoint() -> None:
+def test_provider_is_inferred_from_known_endpoint(monkeypatch) -> None:
+    monkeypatch.setenv("LITELLM_BASE_URL", "https://gateway.example.org/v1")
     assert provider_from_base_url("https://openrouter.ai/api/v1") == "openrouter"
-    assert provider_from_base_url("https://litellm.parcc.upenn.edu/v1") == "parcc"
+    assert provider_from_base_url("https://gateway.example.org/v1") == "parcc"
     assert provider_from_base_url("https://api.openai.com/v1") == "openai"
     assert provider_from_base_url("https://api.deepseek.com") == "deepseek"
     assert provider_from_base_url("http://127.0.0.1:8000/v1") == "local"

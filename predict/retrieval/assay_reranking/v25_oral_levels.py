@@ -225,13 +225,12 @@ def _write_json(path: Path, payload: Mapping[str, Any]) -> None:
 
 
 def _dataset_inputs(levels: Sequence[str] = LEVELS) -> tuple[dict[str, set[str]], dict[str, Path]]:
-    from huggingface_hub import snapshot_download
 
     accepted, files = {}, {}
     for level in levels:
         profile = MODELS[level]
-        root = Path(snapshot_download(
-            repo_id=profile["dataset"], repo_type="dataset",
+        root = Path(resolve_model_snapshot(
+            model=profile["dataset"], repo_type="dataset",
             revision=profile["dataset_revision"], local_files_only=True,
         ))
         calibration = root / "calibration.json"
