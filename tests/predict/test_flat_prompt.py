@@ -1297,3 +1297,40 @@ def test_retired_assay_contrastive_execution_requires_frozen_request_replay(caps
             '--flat-reranking', 'assay-transfer-contrastive',
         ])
     assert 'contrastive selection is retired' in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("version", ["v1", "v2"])
+@pytest.mark.parametrize("mode", ["raw", "motif", "coarse"])
+def test_molecule_description_relocation_preserves_data_and_hash_guard(tmp_path, monkeypatch, version, mode):
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+
+    root = tmp_path / "moved cache"
+    root.mkdir()
+    filename, _ = flat.MOLECULE_DESCRIPTION_ARTIFACTS[version]
+    column = flat.MOLECULE_DESCRIPTION_COLUMNS[mode]
+    path = root / filename
+    pq.write_table(pa.Table.from_pylist([
+        {"canonical_smiles": "CC", column: "  saved description  ", "error": ""},
+        {"canonical_smiles": "CO", column: "bad description", "error": "failed"},
+        {"canonical_smiles": "CN", column: "  ", "error": ""},
+    ]), path)
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    monkeypatch.setitem(flat.MOLECULE_DESCRIPTION_ARTIFACTS, version, (filename, digest))
+    monkeypatch.setenv("TXAGENT_MOLECULE_DESCRIPTION_ROOT", str(root))
+    monkeypatch.chdir(tmp_path)
+    values, receipt = flat._load_molecule_descriptions(mode, version)
+    assert values == {"CC": "saved description"}
+    assert receipt == {"mode": mode, "cache_version": version, "column": column,
+                       "path": str(path), "sha256": digest, "row_count": 3}
+    monkeypatch.delenv("TXAGENT_MOLECULE_DESCRIPTION_ROOT")
+    monkeypatch.setattr(flat, "REPO_ROOT", tmp_path)
+    default_root = tmp_path / "data/caches/molecule_descriptions"
+    default_root.mkdir(parents=True)
+    moved = default_root / filename
+    path.rename(moved)
+    assert flat._load_molecule_descriptions(mode, version)[0] == values
+    moved.write_bytes(moved.read_bytes() + b"changed")
+    with pytest.raises(ValueError, match="cache hash mismatch"):
+        flat._load_molecule_descriptions(mode, version)
+    assert flat._load_molecule_descriptions("none", version) == ({}, {"mode": "none"})

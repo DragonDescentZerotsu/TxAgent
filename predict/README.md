@@ -158,6 +158,17 @@ original request contract. Frozen L1 cards and other tasks retain their policies
 SDK construction is centralized in `api_client/transport.py`; `api_client/pool.py`
 owns provider routing and capacity.
 
+### Optional molecule descriptions
+
+Optional molecule descriptions (`--molecule-description-mode raw|motif|coarse`) read
+`canonical_smiles_quotient.parquet` (v1) or `canonical_smiles_quotient_v2.parquet` (v2)
+from `data/caches/molecule_descriptions/` under the checkout. Set
+`TXAGENT_MOLECULE_DESCRIPTION_ROOT` to the directory containing those exact frozen
+files when using shared storage. Moving files preserves their pinned SHA-256 checks;
+missing or changed files fail before inference. The default `none` needs neither file.
+These external files are not included in the repository; older installations must
+set this variable to their existing directory or copy the files to the default location.
+
 ## Saved prediction metadata
 
 `manifest.json` is one batch contract (`prediction_batch.v2`), shared by its query runs. It records the model and prompt versions, effective selection parameters, named input releases, ordered query UIDs, and any genuine per-query scientific overrides. Read it with `predict.harnesses.branches.manifests.read_record`; read an effective query contract with `read_run`. Query folders contain retrieval, requests, responses, predictions and `stage_resume.json`, with no copied query manifest. Actual served model/provider stays in the response and trace.

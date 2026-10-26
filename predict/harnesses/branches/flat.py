@@ -6,6 +6,7 @@ import argparse
 import csv
 import hashlib
 import json
+import os
 import re
 import sqlite3
 import sys
@@ -15,6 +16,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Callable, Mapping
 
+from data.processing.paths import REPO_ROOT
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 from predict.prompts import ROOT as PROMPT_ROOT, bundle_directory, flat_task_profiles, template_environment
 import yaml
@@ -275,11 +277,11 @@ def default_query_prior_root(prompt_version: str, benchmark: str, subset: str) -
 
 MOLECULE_DESCRIPTION_ARTIFACTS = {
     "v1": (
-        Path("/vast/projects/myatskar/design-documents/canonical_smiles_quotient.parquet"),
+        Path("canonical_smiles_quotient.parquet"),
         "abd6f6d31ee74d854fd42330e816516c39a5ca63c67df56965cc8ec44468f183",
     ),
     "v2": (
-        Path("/vast/projects/myatskar/design-documents/canonical_smiles_quotient_v2.parquet"),
+        Path("canonical_smiles_quotient_v2.parquet"),
         "3e1ca4ece0f137b492c4d6c60713cf9771fbab7871a11b4c6c126df674b0abb7",
     ),
 }
@@ -2602,7 +2604,8 @@ def _load_molecule_descriptions(mode: str, version: str) -> tuple[dict[str, str]
 
     column = MOLECULE_DESCRIPTION_COLUMNS[mode]
     path, expected_sha256 = MOLECULE_DESCRIPTION_ARTIFACTS[version]
-    path = path.resolve()
+    root = Path(os.environ.get("TXAGENT_MOLECULE_DESCRIPTION_ROOT", REPO_ROOT / "data/caches/molecule_descriptions"))
+    path = (root.expanduser() / path).resolve()
     if sha256_file(path) != expected_sha256:
         raise ValueError(f"Molecule description cache hash mismatch: {path}")
     table = pq.read_table(path, columns=["canonical_smiles", column, "error"])
