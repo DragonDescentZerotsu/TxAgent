@@ -59,7 +59,7 @@ INDIRECT_MORGAN_SEMANTIC_V2_CACHE_BUNDLE = Path(__file__).with_name(
 INDIRECT_MORGAN_SEMANTIC_V3_CACHE_BUNDLE = Path(__file__).with_name(
     'indirect_morgan_semantic_l2_l4_v3.yaml'
 )
-DEFAULT_GOLD_CONTEXT_MAPPING = Path(__file__).resolve().parents[3] / 'outputs/paper/assay_transfer_harness/joseph/bbb_remaining49_rebuild_20260908/mapping_manifest.json'
+DEFAULT_GOLD_CONTEXT_MAPPING = Path(__file__).resolve().parents[3] / 'outputs/paper/assay_transfer_harness/evidence/bbb_remaining49_rebuild_20260908/mapping_manifest.json'
 
 
 def split_path(task, subset):

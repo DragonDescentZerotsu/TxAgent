@@ -1,6 +1,6 @@
 {
-  "previous_gold_sha256": "3bf18175111fead0f1be7a4860c35449dd00e1ea3d833aee6c647d68b1b9946c",
-  "revised_gold_sha256": "034eb2feca84e377104342fa22b06170d5a8f5d7347a3a4aac32ba1a4048386a",
+  "previous_gold_sha256": "76919373641e8806d7ef63b858a110df5e763fbc396a86399592d4c0c2e56eaf",
+  "revised_gold_sha256": "97957b9b861821020ec87e3295f65f5437d88b8ca3b9c8a4159c8eb12baf1416",
   "reviewed_cases": 500,
   "unchanged_answer_cases": 450,
   "changed_answer_cases": 50,

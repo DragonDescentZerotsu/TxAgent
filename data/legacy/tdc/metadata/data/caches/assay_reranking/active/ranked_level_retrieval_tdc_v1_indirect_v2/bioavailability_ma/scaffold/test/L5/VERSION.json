@@ -540,7 +540,7 @@
   },
   "score_reuse_sources": [
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v1",
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v1",
       "release_index_sha256": "486084388fc55504f8513f51d6ae506d39119a939aad23182c423b257c757c0d"
     }
   ],

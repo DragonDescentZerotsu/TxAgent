@@ -11,9 +11,9 @@
   "identity_normalizer_version": "rdkit_fragment_parent.v2",
   "inputs": {
     "evidence_manifest_sha256": "1f5c9d5dfd04a69a3d8a07551b8e1ac527be7f0e1f33a4a42624f3332cd1dd55",
-    "query_identity_manifest_sha256": "518766820cce10442fe0ca1af0868a83f03fdb90ddd2e474449c8a9f1a36fe80",
+    "query_identity_manifest_sha256": "533d5dbdb2818f7c5a76824f9c379fa902b8052c666417c54e81f17de3f85430",
     "query_sha256": "b07bb865a5b259de4d219a83f3d42684ab2f45a181d1143cc685775ec157415f",
-    "shared_parent_universe_sha256": "a78a70c7770a58671f409ed1508fbdce7fb36081328289b5aa1bb1fb768de9d9"
+    "shared_parent_universe_sha256": "21550930f5e5322e2398c87a7cd11bab745126717332788b19bd8d1c98631d98"
   },
   "label_release": {
     "benchmark": "tdc",
@@ -21,9 +21,9 @@
   },
   "level": "L6",
   "model": {
-    "dataset": "jiosephlee/assay-transfer-record-level-v27-carcinogens-general-intern",
+    "dataset": "local-artifacts/assay-transfer-record-level-v27-carcinogens-general-intern",
     "dataset_manifest_sha256": "408548b285f32523ac190f9d0340c39049a8e8d7af83d895b59775f80478476c",
-    "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v27-carcinogens-general-best",
+    "model": "local-artifacts/intern-s1-mini-assay-transfer-record-level-v27-carcinogens-general-best",
     "revision": "13a182fbc9f8b2a49c5286514dd5b6110393544b"
   },
   "neighbor_identity_policy": "scaffold_disjoint",
@@ -154,40 +154,40 @@
   },
   "score_reuse_sources": [
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/gold_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_partial_snapshot_v1",
+      "path": "data/caches/assay_reranking/active/flat_v5/gold_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_partial_snapshot_v1",
       "prompts_sha256": null,
       "score_files": {},
       "stage_manifest_sha256": "67e540ba6aa2c202f7e33aab83013e2aeb9fd61c4eb326488377b53911187fdb"
     },
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/gold_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_partial_snapshot_v1",
+      "path": "data/caches/assay_reranking/active/flat_v5/gold_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_partial_snapshot_v1",
       "prompts_sha256": null,
       "score_files": {},
       "stage_manifest_sha256": "655be88c7b490f7d8928b88beb9332d2a62b7880a4091d1f4a00a35605e09cc2"
     },
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2",
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2",
       "prompts_sha256": null,
       "score_files": {},
       "stage_manifest_sha256": "eddf5fe5ea5d218e0ac92a10fd2f2b1155ae6687a30e9dd6d359c5f5f0d44fc7"
     },
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2",
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2",
       "prompts_sha256": null,
       "score_files": {},
       "stage_manifest_sha256": "7e7054142476ac95905b6aa0ce2e911d41dfdc1ebb911270138f2b2e49951272"
     },
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v2/carcinogens/l2plus/query_pure/reused_v1/original",
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/carcinogens/l2plus/query_pure/reused_v1/original",
       "prompts_sha256": null,
       "score_files": {},
-      "stage_manifest_sha256": "518766820cce10442fe0ca1af0868a83f03fdb90ddd2e474449c8a9f1a36fe80"
+      "stage_manifest_sha256": "533d5dbdb2818f7c5a76824f9c379fa902b8052c666417c54e81f17de3f85430"
     },
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v2/carcinogens/l2plus/query_pure/reused_v1/original",
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/carcinogens/l2plus/query_pure/reused_v1/original",
       "prompts_sha256": null,
       "score_files": {},
-      "stage_manifest_sha256": "2a97f6eb3ff860305a509b89a66596b798c8007fc7b62a0dd34c19fcd5ec2206"
+      "stage_manifest_sha256": "c1d025f015e81cbf353f04309e69791d962d6cb9785384ed883f0a6ca7a0c2fc"
     }
   ],
   "scoring_contract_version": "assay_transfer_chat_first_divergent_token_bf16_backbone_fp32_head.v2",

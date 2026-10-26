@@ -104,7 +104,7 @@
         "result_status"
       ]
     },
-    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/ames/prompts/measurement_resolution_v2.jinja",
+    "template_path": "data/processing/evidence_library/versions/v10/tasks/ames/prompts/measurement_resolution_v2.jinja",
     "template_sha256": "da2c2a9873b5f44ea3cc892e55d72ed0e80f80028bd15fa4dd92dcce15dc44a6"
   },
   "rejected_rows": 0,

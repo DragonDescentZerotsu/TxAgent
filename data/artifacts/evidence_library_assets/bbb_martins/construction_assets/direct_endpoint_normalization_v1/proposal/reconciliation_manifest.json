@@ -1,19 +1,19 @@
 {
   "artifacts": {
     "cleaned_raw_aliases": {
-      "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/proposal/cleaned_raw_aliases.parquet",
+      "path": "data/external/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/proposal/cleaned_raw_aliases.parquet",
       "sha256": "1999fe58d3dea2e9aca917dbf45d3abf619d7039a42d297a671fd41dba73b8b8"
     },
     "cross_cluster_label_merges": {
-      "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/proposal/cross_cluster_label_merges.json",
+      "path": "data/external/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/proposal/cross_cluster_label_merges.json",
       "sha256": "99edb6ba66cefbf27f381872931878d56d990ab5bfba39b86233a250285d73d7"
     },
     "proposal": {
-      "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/proposal/proposed_endpoint_mapping.json",
-      "sha256": "dccace52917d2c01740988f4ed5bb0b50d75b11d90ffa1d00c306f43510e7b77"
+      "path": "data/external/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/proposal/proposed_endpoint_mapping.json",
+      "sha256": "4f815b621263425478184a4a354983d7901508e2da50fe5d3b78c6b405f1e65b"
     },
     "unresolved_near_duplicate_labels": {
-      "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/proposal/unresolved_near_duplicate_labels.json",
+      "path": "data/external/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/proposal/unresolved_near_duplicate_labels.json",
       "sha256": "05776b3b2d5b849a9b789b62d38fb2f77172351f9f2e0994b020fc11db59f8b2"
     }
   },

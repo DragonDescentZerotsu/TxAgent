@@ -14,7 +14,7 @@ from data.processing.paths import resolve_legacy_path
 ROOT = Path(__file__).resolve().parents[3]
 PREDICTION_ROOT = ROOT / "outputs/predictions"
 SCHEMA = "prediction_batch.v2"
-FINAL_SCHEMA = "joseph_final_arm.v3"
+FINAL_SCHEMA = "evidence_final_arm.v3"
 SCHEMAS = {SCHEMA, FINAL_SCHEMA, "prediction_selection.v2"}
 RUNTIME = {
     "paths", "indices", "n_items", "n_queries", "query_index", "run_id", "run_name",

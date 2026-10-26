@@ -6,7 +6,7 @@
     "raw_assignments": 22798
   },
   "input": {
-    "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/provenance/cluster_assignments.parquet",
+    "path": "data/external/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/provenance/cluster_assignments.parquet",
     "sha256": "965a21959193254d049a25fd146c3a730130e61cd723102566b92f4e6b510baf"
   },
   "manifest_version": "bbb_martins_direct_endpoint_subagent_reconciliation.v1",

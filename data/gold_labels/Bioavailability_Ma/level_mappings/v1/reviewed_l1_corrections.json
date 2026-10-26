@@ -7,7 +7,7 @@
     "family_key": "direct_oral_bioavailability",
     "level": 1
   },
-  "policy": "Only the listed Gold-v1 physical voter UIDs may differ from the byte-exact Tianang/main mapping.",
+  "policy": "Only the listed Gold-v1 physical voter UIDs may differ from the byte-exact Baseline/main mapping.",
   "corrections": [
     {
       "source_row_uid": "sr_077070da9fe34408b35dfc76687773bb",

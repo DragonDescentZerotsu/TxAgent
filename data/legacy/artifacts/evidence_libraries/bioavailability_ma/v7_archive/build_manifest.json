@@ -22,7 +22,7 @@
   ],
   "contextual_unit_policy": {
     "matching": "exact_all_declared_fields_fail_closed",
-    "path": "/data1/joseph/TxAgent/tools/chembl_tool/common/contextual_unit_policy.json",
+    "path": "data/external/TxAgent/tools/chembl_tool/common/contextual_unit_policy.json",
     "policy_version": "contextual_canonical_unit_policy.v1",
     "rule_ids": [
       "bioavailability_ma.fa.caco2_flux.pg_ng.v1",
@@ -128,7 +128,7 @@
       "data/processed_starling/Bioavailability_Ma/random/train_molecule_labels.jsonl": "0078dbbd561f2c5d80e736fe8b109eb2ae87fbcc41781ceff8a2401efec37a1a",
       "data/processed_starling/Bioavailability_Ma/scaffold/heldout_molecule_labels.jsonl": "de8684d3b7db9b78a0c262e009d44cd7d2013fc3963339339e3fa0c65d3d0860",
       "data/processed_starling/Bioavailability_Ma/scaffold/train_molecule_labels.jsonl": "13b7456a99d74c3ff17a8e0cec375789f65477f7e349e90811d8f231e18a338f",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "dc3b280d321c01499b121f184fe33f4f5d4dc906708769416780845f05cac2b3",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "feb3f7f7bdf8fd51a581b58d714c61fef37a378a85a875464f5bbf0ec260df05",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/records.parquet": "b3c1bb6870c0c83b9134f658e8a08324b1221a409d9c47ec42d6b5a640364b60"
     },
     "outputs": {
@@ -1801,7 +1801,7 @@
   "normalization_domain_rules_version": "bioavailability_normalization_domains.v4",
   "pipeline_layout_version": "bioavailability_ma.normalized_v7_layout.v2",
   "qualifier_vocabulary": {
-    "path": "/data1/joseph/TxAgent/tools/chembl_tool/common/qualifier_vocabulary_policy.json",
+    "path": "data/external/TxAgent/tools/chembl_tool/common/qualifier_vocabulary_policy.json",
     "policy_version": "qualifier_vocabulary.v1",
     "schema_version": "qualifier_vocabulary.schema.v1",
     "scoping": "shared_plus_declared_task_fail_closed",
@@ -1983,11 +1983,11 @@
     },
     "implementation_sha256": "242e9bbf0c39c50e2140b56eab7d4d0cc6bbdd53b027e96ae78af7b34cb8bc2c",
     "inputs": {
-      "/data1/joseph/TxAgent/tools/chembl_tool/common/contextual_unit_policy.json": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef",
-      "/data1/joseph/TxAgent/tools/chembl_tool/common/qualifier_vocabulary_policy.json": "da303ef8e39cd6efcb2f5863e3fd12feb63072f81af943c5beb740a6d5c07305",
-      "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/globally_reconciled_auxiliary_value_mapping.json": "a0929ef4cf48717b0968f78a9a726b6a198cda3233334593b5dba67c59f17304",
-      "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/reference_semantics_v2/reference_semantics.parquet": "844ab9969de2db0d8fefa3acfd9259a4d4d9e8790a472d06e830d55b56c2d695",
-      "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/source_value_cleaning_v1/reviewed_repairs.jsonl": "c238c3a881f1fd14592312fb7da9457923143cbd36b940df357de5d940dd93b2",
+      "data/external/TxAgent/tools/chembl_tool/common/contextual_unit_policy.json": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef",
+      "data/external/TxAgent/tools/chembl_tool/common/qualifier_vocabulary_policy.json": "da303ef8e39cd6efcb2f5863e3fd12feb63072f81af943c5beb740a6d5c07305",
+      "data/external/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/globally_reconciled_auxiliary_value_mapping.json": "a0929ef4cf48717b0968f78a9a726b6a198cda3233334593b5dba67c59f17304",
+      "data/external/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/reference_semantics_v2/reference_semantics.parquet": "844ab9969de2db0d8fefa3acfd9259a4d4d9e8790a472d06e830d55b56c2d695",
+      "data/external/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/source_value_cleaning_v1/reviewed_repairs.jsonl": "c238c3a881f1fd14592312fb7da9457923143cbd36b940df357de5d940dd93b2",
       "data/starling_data/_shared/final_smiles_mapping_v2.parquet": "98ae43b6d9c61b77f0a95e4dce681010694b163a02e7a313667592d985496a0b",
       "data/starling_data/bioavailability_ma/Direct_HF/records.parquet": "430267dad8645f6e8ee140e98f24e318c197435cb72ae3b318ebab65ef929d1d",
       "data/starling_data/bioavailability_ma/Fa/extractions.parquet": "38d92bb9cd252e772319072ebc6816864bebf247e4376bd86aae1cb104339f84",
@@ -1999,16 +1999,16 @@
     },
     "outputs": {
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/endpoint_inventory.json": "107d7c8874dfbd0d607de26814ed5ec86379e6b0498811e9d8eea36fa42dcc36",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/manifest.json": "dcb14863d4ab5e85e01e84beb8f0329430e91d7367f7d77e606e53279272a6fa",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/manifest.json": "51d43b3d9415fc30ee2735480b35cd0e93b2010ba38efa0827a2983d01d701c6",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/records.parquet": "510b2a5e496718a94fec13456c8a80b677bb7a2f86a7bc1c882a82b399e883f5",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/source_inventory.json": "904a584475b08c533afd650a52f449e3230a07a1c97c43d607e04ad7531f7414",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/source_inventory.json": "a840c356bd287f09a63dba519d13963fe9db81408b8f0776c68c6b19a4e83873",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/source_value_cleaning_audit.parquet": "4d3b10909b82711bd134b2025d12c086d247b165155963f9a45219c67245021a",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "dc3b280d321c01499b121f184fe33f4f5d4dc906708769416780845f05cac2b3",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "feb3f7f7bdf8fd51a581b58d714c61fef37a378a85a875464f5bbf0ec260df05",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/endpoint_registry.json": "cec7b06833d381072211992c041f1d2fffd9cbc1b04e9aaa2ede1bfff3a6b6b3",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/manifest.json": "2169917705481aec450efdaf3186acb23a798bf3b9b4c9861702436443012bae",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/manifest.json": "4ab45a987fc537821fbdcfa77e8009de0323865d8489bc21d450913396f5e524",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/record_validity_policy.json": "c41f0aa4f3a16724443b73c172ee4364066238a1c2da4a7a07ab04b7d908f541",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet": "c4f6a0f558fbd819f6645873a7537e5900dd24bc8cd86cfc6ecd0eebad756f22",
-      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/reference_semantics_manifest.json": "3825b271dd7e41b209310c17741fc08e17f26cb5a1bc73aa3b2bb352aa0dd092",
+      "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/reference_semantics_manifest.json": "0e8d70eb07f6b8c0c962d94a2bb6a8298ac3f88668f4d6ef8f74fed5afb6e75d",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/source_contract.json": "ac1145ae4da626d75c1aab29374b4cf951fe540a571a56d2df65c6ac1c80a7bb",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/duplicates.parquet": "fc43485f3dd1c89cf0b47adef403fe47767ae17eb5fb84abb93837d40bc332a1",
       "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/03_records/exclusions.parquet": "98c3d6480ae9d2a7244cb69307ec60e10fc75a5819b58c10557e882dc8e84958",
@@ -2020,7 +2020,7 @@
       "allow_missing_reference_semantics": false,
       "allow_unpinned_smiles_mapping": false,
       "auxiliary_mapping": {
-        "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/globally_reconciled_auxiliary_value_mapping.json",
+        "path": "data/external/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/globally_reconciled_auxiliary_value_mapping.json",
         "sha256": "a0929ef4cf48717b0968f78a9a726b6a198cda3233334593b5dba67c59f17304"
       },
       "benchmark_split_root": "data/processed_starling/Bioavailability_Ma",
@@ -2033,7 +2033,7 @@
       "max_record_examples": 6,
       "max_rows_per_source": 0,
       "reference_semantics_mapping": {
-        "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/reference_semantics_v2/reference_semantics.parquet",
+        "path": "data/external/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/reference_semantics_v2/reference_semantics.parquet",
         "sha256": "844ab9969de2db0d8fefa3acfd9259a4d4d9e8790a472d06e830d55b56c2d695"
       },
       "smiles_mapping": {
@@ -2043,7 +2043,7 @@
       "starling_data_dir": "data/starling_data/bioavailability_ma",
       "strict_endpoint_inventory": true,
       "v65_eligible_records": {
-        "path": "/data1/joseph/starling_assay_transfer/datasets/eligible/assay_transfer_soft_evidence_v6_5/records.parquet",
+        "path": "data/external/starling_assay_transfer/datasets/eligible/assay_transfer_soft_evidence_v6_5/records.parquet",
         "sha256": "ae58b7d29a6b6c53afd73b214e5f226910619497360e394e6afd2bb54531565f"
       },
       "v65_reconciliation": false
@@ -3497,7 +3497,7 @@
         "all_required_repairs_applied": true,
         "n_applied": 1,
         "n_declared": 1,
-        "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/source_value_cleaning_v1/reviewed_repairs.jsonl",
+        "path": "data/external/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/source_value_cleaning_v1/reviewed_repairs.jsonl",
         "sha256": "c238c3a881f1fd14592312fb7da9457923143cbd36b940df357de5d940dd93b2",
         "unapplied_repair_ids": []
       },

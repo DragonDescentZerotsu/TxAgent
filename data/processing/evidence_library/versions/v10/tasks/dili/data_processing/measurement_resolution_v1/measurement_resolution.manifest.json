@@ -49,7 +49,7 @@
     "model_structural_retry": 1453
   },
   "base_mapping": null,
-  "cleaned_records_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/dili/v10/01_cleaned/records.parquet",
+  "cleaned_records_path": "data/evidence_libraries/dili/v10/01_cleaned/records.parquet",
   "cleaned_records_sha256": "19f37826dc53bde935e852f1698f3dbfeabc65181e599fa20c2c481fc1d7b72c",
   "credential_counts": {
     "": 478469
@@ -62,7 +62,7 @@
     "rows": 478469
   },
   "endpoint_profile": {
-    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/dili/v10/01_cleaned/endpoint_unit_profile.json",
+    "path": "data/evidence_libraries/dili/v10/01_cleaned/endpoint_unit_profile.json",
     "sha256": "4f11b032bcbfc20d2eba7a03bac059c62f9f5b912f3e6019dbcc7435918812ec",
     "version": "starling_endpoint_unit_profile.v2"
   },
@@ -79,7 +79,7 @@
   "inference_model_counts": {
     "deepseek-ai/DeepSeek-V4-Flash-0731": 478469
   },
-  "mapping_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/dili/data_processing/measurement_resolution_v1/measurement_resolution.parquet",
+  "mapping_path": "data/processing/evidence_library/versions/v10/tasks/dili/data_processing/measurement_resolution_v1/measurement_resolution.parquet",
   "mapping_rows": 478469,
   "mapping_sha256": "d8d979c6415b4385a64e3346da00a64b91b7e0a001d779782dd1e43e27d3c1af",
   "mapping_version": "dili_measurement_resolution.v1",

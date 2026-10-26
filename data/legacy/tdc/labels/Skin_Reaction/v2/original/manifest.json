@@ -11,21 +11,21 @@
   "source_files": [
     {
       "split": "train",
-      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/Skin_Reaction/train.csv",
+      "source_path": "data/external/therapeutic-tuning/data/raw/original/Skin_Reaction/train.csv",
       "path": "data/raw/tdc/Skin_Reaction/v2/train.csv",
       "sha256": "0d81868c2ae3a208ab707949aad7c917c129b6a0eefd1917b4b759d0ffd28711",
       "rows": 282
     },
     {
       "split": "valid",
-      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/Skin_Reaction/val.csv",
+      "source_path": "data/external/therapeutic-tuning/data/raw/original/Skin_Reaction/val.csv",
       "path": "data/raw/tdc/Skin_Reaction/v2/valid.csv",
       "sha256": "399adf6bc4a32d81601270e7f96bdf9e4f325c98da98b322b82720c3d283edf0",
       "rows": 40
     },
     {
       "split": "test",
-      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/Skin_Reaction/test.csv",
+      "source_path": "data/external/therapeutic-tuning/data/raw/original/Skin_Reaction/test.csv",
       "path": "data/raw/tdc/Skin_Reaction/v2/test.csv",
       "sha256": "4ffe2b22a696989fc8d77d9a65ae0a44b4da616827f2b30c82458e9cf87054e1",
       "rows": 82
@@ -56,5 +56,5 @@
     "test.jsonl": "5d6fb3b209125b3cc03c63e465e4682ee4917ff16891f2f2fdfec39e257fbf2e",
     "heldout_molecule_condition_labels.jsonl": "42ad6564ed5c4a975101dc0a60a9de295d3591a16eea225d702d988f9988722d"
   },
-  "summary_sha256": "8b37a4dc267c51b0d89e4901efa09de4329288f268216f14ba6d705522167cd4"
+  "summary_sha256": "a6cd20ea772ed719d230dd7d203c276f4cc19b1fc25671de4acb15d7fbfbfb07"
 }

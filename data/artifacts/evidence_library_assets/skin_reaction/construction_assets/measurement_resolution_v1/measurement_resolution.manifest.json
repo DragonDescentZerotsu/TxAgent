@@ -32,7 +32,7 @@
       "skin_exposure": "fa95ff11324ccd6f32fabac1fec26efd46c4bb1a882c469495b0971fdfa085b4"
     },
     "task_instructions_sha256": "48fe44ba83282128c741c6acbbcf7279030277c343c2b7ddf4883be6e2fa8992",
-    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/measurement_resolution_templates/measurement_resolution_v5.jinja",
+    "template_path": "tools/chembl_tool/tasks/bbb_martins/measurement_resolution_templates/measurement_resolution_v5.jinja",
     "template_sha256": "0c3d5db5dec30456d578371186fbc2c96bdca9ec3076fc038ac67c0ebd498b47"
   },
   "rejected_rows": 0,

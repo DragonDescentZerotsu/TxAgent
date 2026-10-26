@@ -1,7 +1,7 @@
 {
   "approval": {
     "approved_at": "2026-08-04T14:17:53Z",
-    "approved_by": "joseph",
+    "approved_by": "evidence",
     "human_approved": true
   },
   "mapping": {
@@ -22763,7 +22763,7 @@
     "local_mapping_sha256": "bc76937eb6ef9a13e0cbba098dbb83b608807bd7f2904a2c3cfdce0d2fba6b80",
     "local_mapping_version": "bbb_martins_direct_endpoint.local_proposal.v1",
     "primary_review_sha256": "12cab88331548e8c1cb9add6cdd2d17f542a12aadb703a07c6b736a112d13779",
-    "provisional_manifest_sha256": "ce3513267234685297c6163f8074f3a5c29be6babece60e3ed549bb8da3beef6",
+    "provisional_manifest_sha256": "810c48ec043272cb4b0735f2b66e24d4931c6223056803df89bc9283549956c3",
     "reconciliation_version": "bbb_martins_direct_endpoint_subagent_reconciliation.v1",
     "review_history_manifests": [
       {
@@ -22779,7 +22779,7 @@
         "status": "superseded_by_targeted_adjudication_remediation"
       }
     ],
-    "review_packet_manifest_sha256": "e7243ad110b9172744e2a6622e2610b8c3ab4fa85f16bb35ed2012a7a5bde986",
+    "review_packet_manifest_sha256": "2402b7a82073779267176edc479c4705eeaad0e109662718606172e44c7684e1",
     "targeted_catalog_manifest_sha256": "34d6fc1c6e7c0ce177b25c3578bf1afc9bed8ac5115d3eedf9e43acf81100f9d"
   },
   "source": {

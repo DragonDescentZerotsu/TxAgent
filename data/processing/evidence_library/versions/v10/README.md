@@ -223,7 +223,7 @@ and joint require either rescoring five changed vote-percentage contexts or the
 explicit `--allow-frozen-l1-vote-scores` approximation accepted by the user.
 Scoring caches were not rebuilt. Gold, the mapper, and `CURRENT` remain unchanged. Verification receipts
 and the mapping are under
-`outputs/paper/assay_transfer_harness/joseph/bbb_remaining49_rebuild_20260908/`.
+`outputs/paper/assay_transfer_harness/evidence/bbb_remaining49_rebuild_20260908/`.
 The preceding local V10 is preserved under
 `data/legacy/artifacts/evidence_libraries/v10_before_bbb_remaining49_20260908/`.
 
@@ -252,7 +252,7 @@ set. All 4,754 training source references resolve, including the alternate
 `starling-labs/BBB:row:` ID prefix; none are missing or unmapped in this BBB audit.
 Gold files, mapper, `CURRENT`, scoring caches and checkpoints remain unchanged.
 Results and the partial mapping are under
-`outputs/paper/assay_transfer_harness/joseph/bbb_l1_context_compatibility_20260908/`.
+`outputs/paper/assay_transfer_harness/evidence/bbb_l1_context_compatibility_20260908/`.
 
 ## Historical first deferral: BBB row 32568
 
@@ -277,7 +277,7 @@ The prior V10 is preserved under
 The pending BBB three-pool cache manifests now point to that identical archived
 input at their original hashes; scores, assignments and model identities were
 not changed. The verification and remaining L1 coverage gaps are recorded in
-`outputs/paper/assay_transfer_harness/joseph/bbb_32568_smiles_reversion_20260908/`.
+`outputs/paper/assay_transfer_harness/evidence/bbb_32568_smiles_reversion_20260908/`.
 
 ## Historical level-mapping compatibility rebuild (superseded)
 
@@ -296,7 +296,7 @@ caches remain unchanged. Rebuilt libraries are verified in staging before replac
 
 The verified local replacement has 498,507 BBB and 435,372 oral Stage-3 rows,
 with zero unmapped UIDs. `CURRENT` stayed BBB V9 and oral V10. Receipts are in
-`outputs/paper/assay_transfer_harness/joseph/v10_level_mapping_compatibility_rebuild_20260908/`.
+`outputs/paper/assay_transfer_harness/evidence/v10_level_mapping_compatibility_rebuild_20260908/`.
 
 ## Historical Oral V10 construction before the compatibility rebuild
 

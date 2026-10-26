@@ -14,7 +14,7 @@ from urllib.parse import urlsplit
 import httpx
 from openai import AsyncOpenAI, DefaultAsyncHttpxClient, DefaultHttpxClient, OpenAI
 
-Provider = Literal["openai", "openrouter", "deepseek", "parcc", "local"]
+Provider = Literal["openai", "openrouter", "deepseek", "gateway", "local"]
 DEFAULT_ENV_FILE = (
     Path(__file__).resolve().parents[3] / "therapeutic-tuning/distillation/.env"
 )
@@ -26,7 +26,7 @@ PROVIDER_CREDENTIALS = {
         "OPENROUTER_API_KEY",
     ),
     "deepseek": ("DEEPSEEK_API_KEY",),
-    "parcc": ("LITE_LLM_KEY",),
+    "gateway": ("LITE_LLM_KEY",),
     "local": (),
 }
 
@@ -99,7 +99,7 @@ def provider_from_base_url(base_url: str) -> Provider:
         return "openrouter"
     gateway = (urlsplit(os.environ.get("LITELLM_BASE_URL", "")).hostname or "").casefold().rstrip(".")
     if gateway and host == gateway:
-        return "parcc"
+        return "gateway"
     if host == "api.openai.com":
         return "openai"
     if host == "api.deepseek.com":

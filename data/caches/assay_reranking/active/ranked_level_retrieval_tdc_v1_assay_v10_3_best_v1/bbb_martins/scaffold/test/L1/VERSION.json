@@ -3,14 +3,14 @@
   "assay_transfer_status": "complete",
   "backbone_dtype": "bfloat16",
   "base_database_sha256": "26bd9baa1ebdd2cb1aade88581c285de6fe82f3cacda9cb5385c09a2691370da",
-  "base_manifest_sha256": "c2990a2acf52dc62c673b6c7b84dfa77c89327ca5516ced6fef7f57e637b1b27",
+  "base_manifest_sha256": "33ee7823a01157eb57a8cdd894bd1677406d7265e66dfbaad83e0a0b7f76211a",
   "base_profile": "ranked_level_retrieval_tdc_v1",
   "capacity": 100,
   "content_id": "754901284f43b6984dac49739597a9c2d4a11d425c266dc0743ae76543816132",
   "database": "rankings.sqlite3",
   "database_sha256": "da509d195be88c30b9e25efe3fa8e8bdbbd17c3eccd11cc5af3daf61b774f340",
   "inputs": {
-    "evidence_manifest_sha256": "69a16a01cb8f2560f5ffe6bccc534355fce14ce471486605e32c8fa62fa60f24",
+    "evidence_manifest_sha256": "1cfe48c8d4a8c628dfb7072163f6c6807f8819787830212fcc55d7d8690ee0e3",
     "query_sha256": "a7adf92c14353833bf0d5e199256c5d0e83cb1c7bc5e9d08dd14263cab431e21",
     "train_sha256": "8d01b36fde9e18e9d0bf11da5ac73b73441dbf886337b10619a6ff2eb9651e53"
   },
@@ -22,7 +22,7 @@
   "logit_extraction_dtype": "float32",
   "model": {
     "checkpoint_step": 120,
-    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-bbb-martins-best",
+    "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-bbb-martins-best",
     "prompt_profile": "v10_3",
     "revision": "7678f7a1c43932f7612cfd49a8f4872d6e2f4cab"
   },
@@ -35,7 +35,7 @@
   "parent_capacity": 100,
   "pool": "fixed",
   "prompt_assets": {
-    "projection_sha256": "e33a149fc9228e546a1f304d4b9a1ddcebd8a0c763402b45b0f0f3e2bdf3051a",
+    "projection_sha256": "727707bc60b7f6429038f62f4838267f6a15b7e1fb96b171cf676dbfdc1cf448",
     "template_sha256": "33e48f919237a6aeaff28f4c77c6dd9635e54bf859c990af4ad0323952ab05f1"
   },
   "query_count": 530,
@@ -2694,13 +2694,13 @@
   "ranking_rows_sha256": "ee8cedc80df2db2d3fd812d843fa9ad674a62bfa33d94558f1e1c3b2eb54fd76",
   "reference_provenance": {
     "benchmark_summary": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/BBB_Martins/v1/scaffold/summary.json",
+      "path": "data/gold_labels/BBB_Martins/v1/scaffold/summary.json",
       "sha256": "16b723633dc71aa7125ee0ed59bec33b8540ca974c573c10dab02a3c85fd0b3b"
     },
     "candidate_source": "official_conditioned_gold_train_contexts",
     "gold_release": "v1",
     "label_adapter": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark.py",
+      "path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark.py",
       "sha256": "7e904230d3fc37584289bcbd50c473e1a2c438d8598c391b6b922fb66a92f453"
     },
     "label_contract": "bbb_experimental_meaningful_cns_access_gold.v2",

@@ -6,7 +6,7 @@
   "records_sha256": "cbc8c2186d998b8f4cbb0801259ef3a1401578b06ab5682a26f3ea031d1eca12",
   "schema_version": "ranked_evidence_projection.v1",
   "source_identity": "tdc_source_record_id",
-  "source_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/TDC/DILI/v1/scaffold/train_molecule_condition_labels.jsonl",
+  "source_path": "data/gold_labels/TDC/DILI/v1/scaffold/train_molecule_condition_labels.jsonl",
   "status": "complete",
   "task_id": "dili"
 }

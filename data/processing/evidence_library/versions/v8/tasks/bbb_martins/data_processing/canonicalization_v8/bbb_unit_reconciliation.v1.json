@@ -7,7 +7,7 @@
       "source_exact_units": 2613
     },
     "measurement_resolution": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v8/tasks/bbb_martins/data_processing/measurement_resolution_v15/measurement_resolution.parquet",
+      "path": "data/processing/evidence_library/versions/v8/tasks/bbb_martins/data_processing/measurement_resolution_v15/measurement_resolution.parquet",
       "sha256": "c27b1316fc0a0c1312b5db7852e95d65338aa3041bf1d8ff266b9d301352a87c"
     },
     "review": {
@@ -7868,7 +7868,7 @@
         "‰ID/g"
       ],
       "global_version": "observed_source_units.v1",
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v8/unit_vocabulary.v1.json",
+      "path": "data/processing/evidence_library/versions/v8/unit_vocabulary.v1.json",
       "sha256": "01c874f4d20b595e00e919b0ee33080544876fe3de2a6534710beabe3431f14e"
     },
     "value_transform": "identity"

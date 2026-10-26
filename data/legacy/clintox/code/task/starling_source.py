@@ -19,9 +19,9 @@ from tools.chembl_tool.common.starling.normalization.cleaning import (
 )
 
 
-ARCHIVE_SHA256 = "bf6da36bf2ac347d4763e5c3a234292c7f5c04576cccc4b75f6a4741246ac4ea"
+ARCHIVE_SHA256 = "f6cf18f12ebb992a54aa4687911888a6ae3222307587eea6587c7501c18c10a6"
 SOURCE_RELEASE = "clintox_send_v2"
-DEFAULT_ARCHIVE = Path("/vast/projects/myatskar/lab/shared_docs/clintox_send_v2.tar.gz")
+DEFAULT_ARCHIVE = Path("data/external/clintox_send_v2.tar.gz")
 DEFAULT_DATA_ROOT = Path("data/starling_data/clintox/send_v2")
 HUMAN_CLINICAL_SOURCE_ID = "human_clinical_toxicity"
 # Historical name retained for callers that use it only as a source identifier.

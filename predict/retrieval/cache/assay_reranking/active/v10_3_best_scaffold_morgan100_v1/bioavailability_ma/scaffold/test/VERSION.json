@@ -7,14 +7,14 @@
     "n_train_parents": 1708,
     "n_train_rows": 1958,
     "neighbor_identity_policy": "scaffold_disjoint",
-    "train": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/Bioavailability_Ma/v1/scaffold/train_molecule_condition_labels.jsonl",
+    "train": "data/gold_labels/Bioavailability_Ma/v1/scaffold/train_molecule_condition_labels.jsonl",
     "train_sha256": "61d061b82ec80a6094527543bee6a7e540271a0f9d24ab7484d1439e53bfa097",
-    "valid": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/Bioavailability_Ma/v1/scaffold/test_molecule_condition_labels.jsonl",
+    "valid": "data/gold_labels/Bioavailability_Ma/v1/scaffold/test_molecule_condition_labels.jsonl",
     "valid_sha256": "3e0b83798135f8d26f13b650a97238c966ff219bf329e39d595cbd2d79f7f52e"
   },
   "model": {
     "checkpoint_step": 160,
-    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-0-2-bioavailability-ma-BEST",
+    "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-0-2-bioavailability-ma-BEST",
     "prompt_profile": "v10_3_0_2",
     "revision": "29cc74f02df160b1f153edb700da66d1c30ef4ed"
   },
@@ -28,7 +28,7 @@
   "n_to_score": 31090,
   "prompt_assets": {
     "prompt.jinja": "33e48f919237a6aeaff28f4c77c6dd9635e54bf859c990af4ad0323952ab05f1",
-    "prompt_config.json": "e33a149fc9228e546a1f304d4b9a1ddcebd8a0c763402b45b0f0f3e2bdf3051a"
+    "prompt_config.json": "727707bc60b7f6429038f62f4838267f6a15b7e1fb96b171cf676dbfdc1cf448"
   },
   "query_record_ids": [
     "BIOCTX2_050BD16BA05661B636EC",
@@ -305,13 +305,13 @@
   "rankings_sha256": "8dac1dda398223bfd70953c80c7aedde9da9a2ab4b9abbd9bf8ed39c32edf8db",
   "reference_provenance": {
     "benchmark_summary": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/Bioavailability_Ma/v1/scaffold/summary.json",
+      "path": "data/gold_labels/Bioavailability_Ma/v1/scaffold/summary.json",
       "sha256": "9475a90b648f692359f62dec888f3c79a294841e4e5e438056c9ebab7ac2dbae"
     },
     "candidate_source": "official_conditioned_gold_train_contexts",
     "gold_release": "v1",
     "label_adapter": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/starling_benchmark.py",
+      "path": "data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/starling_benchmark.py",
       "sha256": "40e07831fab0142164a59c1ab492772b9adce37a2952ddf9ed006b28d1f85e4a"
     },
     "label_contract": "bioavailability_canonical_direct.v2",
@@ -325,7 +325,7 @@
     },
     "upstream_prompt_sha256": "33e48f919237a6aeaff28f4c77c6dd9635e54bf859c990af4ad0323952ab05f1",
     "upstream_release_manifest": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer/assay_transfer/context_conditioned/artifacts/v10/hf/v10_3_0_2/Bioavailability_Ma/mixed_continuous/manifest.json",
+      "path": "data/external/starling_assay_transfer/assay_transfer/context_conditioned/artifacts/v10/hf/v10_3_0_2/Bioavailability_Ma/mixed_continuous/manifest.json",
       "sha256": "929ffedf44b1dbf1663b940614fc7fa2ffd5550d922b7f2705b87a340411f144"
     }
   },

@@ -56,15 +56,15 @@
       "sha256": "a829118cf7178874e79cc30beb0594a1a24ad71977dab2746b54dc956906266d"
     },
     "candidate_artifact": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/ames/data_processing/measurement_resolution_v2/measurement_candidates.parquet",
+      "path": "data/processing/evidence_library/versions/v10/tasks/ames/data_processing/measurement_resolution_v2/measurement_candidates.parquet",
       "sha256": "0647b175944400ac9e0522b1472323e0310e47fb7f8da990c37ebdb6b9a4c404"
     },
     "candidate_manifest": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/ames/data_processing/measurement_resolution_v2/measurement_candidates.manifest.json",
-      "sha256": "ac5cde0a6724eaa536f52afdd9ce09b4626f3a2062e86394e3e1110affa8c0fe"
+      "path": "data/processing/evidence_library/versions/v10/tasks/ames/data_processing/measurement_resolution_v2/measurement_candidates.manifest.json",
+      "sha256": "15800819fbad1c393ffc85ea8ae84138fe09ef221faa24cd85e5c8925054bf7d"
     },
     "compiler_contract": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/ames/starling_candidate_resolution.py",
+      "path": "data/processing/evidence_library/versions/v10/tasks/ames/starling_candidate_resolution.py",
       "sha256": "9fbe79e786ee886427fd24080bd040ab008174ca48ffaf9c0707fff4dc380209"
     },
     "final_labels": {
@@ -72,7 +72,7 @@
       "sha256": "a127db9bd7fdc49cdd8225688e272c5de52e4c7f030c74897740bb3fc80f03d2"
     },
     "generator": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/ames/starling_measurement_candidates.py",
+      "path": "data/processing/evidence_library/versions/v10/tasks/ames/starling_measurement_candidates.py",
       "sha256": "01bd80588a7628df5efd0df796df1fb785636ff273ecd0d056125eae8e2f46ff"
     },
     "label_manifest": {
@@ -104,15 +104,15 @@
       "sha256": "3ac3f71d1072dd0a0eee3ca8c3cd2a9fc1df039d30734f191b09048b32ba18bf"
     },
     "source_fields": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/ames/starling_measurement_resolution.py",
+      "path": "data/processing/evidence_library/versions/v10/tasks/ames/starling_measurement_resolution.py",
       "sha256": "78be43587a326c86bfd14d23ad9e9346f263a1d01f579c5ac1c8ec650a563973"
     },
     "stage1_records": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/ames/v10/01_cleaned/records.parquet",
+      "path": "data/evidence_libraries/ames/v10/01_cleaned/records.parquet",
       "sha256": "e93d82ae6798dad59de13ce8e9f4296a98bd65b47229aafde0359f69a9a49581"
     },
     "writer": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/ames/data_processing/build_measurement_candidates.py",
+      "path": "data/processing/evidence_library/versions/v10/tasks/ames/data_processing/build_measurement_candidates.py",
       "sha256": "6a6450b77ee68b3268d216d1ff3709c4e2f5add176f48146ef4d3434d80b5a5f"
     }
   },

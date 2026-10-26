@@ -294,7 +294,7 @@ def test_matrix_builds_l1_uid_context_command(tmp_path: Path) -> None:
     assert args.batch_id == "bbb_martins__k10_w15_m2"
     assert args.max_level == 1
     assert command[command.index("--flat-prompt-version") + 1] == (
-        "joseph_flat_context_v4_v1"
+        "evidence_flat_context_v4_v1"
     )
     assert command[command.index("--flat-reranking") + 1] == (
         "assay-transfer"
@@ -330,7 +330,7 @@ def test_replay_subset_uses_query_uids_and_frozen_retrievals(tmp_path: Path) -> 
     input_jsonl.write_text('{"drug":"C","benchmark_row_id":"q0"}\n{"drug":"N","benchmark_row_id":"q1"}\n', encoding="utf-8")
     prompt_version = flat_matrix.flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION
     manifest = {
-        "harness_version": flat_matrix.flat.JOSEPH_PROMPT_HARNESSES[prompt_version],
+        "harness_version": flat_matrix.flat.EVIDENCE_PROMPT_HARNESSES[prompt_version],
         "bbb_evidence_policy": EVIDENCE_POLICY,
         "prompt_version": prompt_version,
         "task": "bbb_martins",
@@ -399,7 +399,7 @@ def recovery(tmp_path, monkeypatch):
     for root in (source,requested):
         path=root/'runs/cache_matched_retrieval_idx00002/retrieval.json';path.parent.mkdir(parents=True);path.write_text(json.dumps(retrieval))
     run=source.parent/'runs/previous_idx00002';run.mkdir(parents=True)
-    request={'schema_version':'joseph_flat_context_request.v1','messages':[{'role':'user','content':'same'}],'message_char_count':4}
+    request={'schema_version':'evidence_flat_context_request.v1','messages':[{'role':'user','content':'same'}],'message_char_count':4}
     (run/'request.json').write_text(json.dumps(request))
     monkeypatch.setattr(flat_matrix.flat,'_preselected_query_indices',lambda *a,**kw:[0,1,2])
     monkeypatch.setattr(flat_matrix.flat,'_materialize_cache_matched_retrievals',lambda *a:(requested,read_record(requested/'manifest.json')))

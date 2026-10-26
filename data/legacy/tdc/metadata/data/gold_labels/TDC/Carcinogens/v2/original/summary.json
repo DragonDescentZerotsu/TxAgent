@@ -11,21 +11,21 @@
   "source_files": [
     {
       "split": "train",
-      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/Carcinogens_Lagunin/train.csv",
+      "source_path": "data/external/therapeutic-tuning/data/raw/original/Carcinogens_Lagunin/train.csv",
       "path": "data/raw/tdc/Carcinogens/v2/train.csv",
       "sha256": "d6a328e6d6bc476bc26900413027e905b4643dd5894ed3061cf176e8df9f8b58",
       "rows": 196
     },
     {
       "split": "valid",
-      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/Carcinogens_Lagunin/val.csv",
+      "source_path": "data/external/therapeutic-tuning/data/raw/original/Carcinogens_Lagunin/val.csv",
       "path": "data/raw/tdc/Carcinogens/v2/valid.csv",
       "sha256": "43aa01238a8321d56f5a927958210dba3f390abd425f2c315c862c5fe391cb35",
       "rows": 28
     },
     {
       "split": "test",
-      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/Carcinogens_Lagunin/test.csv",
+      "source_path": "data/external/therapeutic-tuning/data/raw/original/Carcinogens_Lagunin/test.csv",
       "path": "data/raw/tdc/Carcinogens/v2/test.csv",
       "sha256": "b5b180aafe7a3bdf4af7e772e0dd4366a1d718eed8c2104e2ab426ea8101f539",
       "rows": 56

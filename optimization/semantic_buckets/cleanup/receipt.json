@@ -1,7 +1,7 @@
 {
   "status": "removed",
   "time_utc": "2026-10-14T16:26:53.708646+00:00",
-  "scope": "/vast/projects/myatskar/design-documents/joseph/TxAgent/optimization/semantic_buckets",
+  "scope": "optimization/semantic_buckets",
   "file_count": 2021,
   "bytes": 35932425213,
   "inventory_sha256": "7985233666bdf36021cdcc229fccfefcbf7574785b16945f6fcb6d440c640798",

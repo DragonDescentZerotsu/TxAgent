@@ -4,7 +4,7 @@
   "evidence": {
     "content_id": "a6e5880be371d9c4fd1758475fbfca33ef57d112b88b349a0d120140c5968787",
     "manifest": "evidence/VERSION.json",
-    "manifest_sha256": "d329d0b579fd08312133ad1bd15bce21f99b6e92815f3d4848d96fd7640b3f79",
+    "manifest_sha256": "d63eb09b1ac1443f3f3d17791132687e6f81e903a51acbf73ac9ce719ea02f34",
     "record_count": 1421
   },
   "label_release": {
@@ -14,7 +14,7 @@
   "levels_independent": true,
   "model": {
     "checkpoint_step": 130,
-    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-bbb-martins-best",
+    "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-bbb-martins-best",
     "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
     "revision": "42cb4afa224c102898d75fe4ad48e166254952b5"
   },
@@ -63,7 +63,7 @@
         "L1": {
           "content_id": "2c2c57883463e0aefa835efa4f6a048085e9cc1293e7a2dec7618786ec669292",
           "manifest": "scaffold/test/L1/VERSION.json",
-          "manifest_sha256": "fdf37b5202ee420d50ada10e929f830df876198a7ad6f780a021c11da4d0695b"
+          "manifest_sha256": "7036e0ba10b792b852fb5f8aa68cc4a8c995f1358d72b9620db96ba78cdb28ec"
         }
       }
     },
@@ -72,7 +72,7 @@
         "L1": {
           "content_id": "28b87f66f2de3737a04c693893bca012bfba54186832a48ba8794274ded8469a",
           "manifest": "scaffold/valid/L1/VERSION.json",
-          "manifest_sha256": "1aca470b24a20620838faca04ba96c8b623c95142d10578c2f6067ca08a87a04"
+          "manifest_sha256": "01cb144cf4adf680f3d46751ea23d70b51a610951605c4423c59579970369251"
         }
       }
     }

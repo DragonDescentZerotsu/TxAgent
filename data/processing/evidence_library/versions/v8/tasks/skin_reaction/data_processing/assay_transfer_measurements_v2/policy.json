@@ -149473,7 +149473,7 @@
         "same_endpoint_unit": 4469,
         "same_unit": 1061
       },
-      "reference_mapping_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/reference_semantics_v3/reference_semantics.parquet",
+      "reference_mapping_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/reference_semantics_v3/reference_semantics.parquet",
       "reference_mapping_sha256": "ef75c8b57391aa22dfbdffad17a0fa430943b86bfa70a2d01641269b5f693171"
     },
     "review_scope": "all finite continuous valid Stage-03 pretransform rows",

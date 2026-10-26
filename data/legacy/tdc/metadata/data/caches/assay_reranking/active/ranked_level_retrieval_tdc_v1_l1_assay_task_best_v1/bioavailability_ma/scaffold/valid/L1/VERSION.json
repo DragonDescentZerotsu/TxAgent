@@ -3,14 +3,14 @@
   "assay_transfer_status": "complete",
   "backbone_dtype": "bfloat16",
   "base_database_sha256": "f7f72d405830908f126d0698dcf2f6547853339c0907230731cfeb68343d5e2a",
-  "base_manifest_sha256": "1abdcc0328b46e33b65884d7ff62280c07f7abdc40cbd0de3fbd7c4a8e6209fc",
+  "base_manifest_sha256": "51be0ec4de6080e6e3645f9506a234bb7d8dcb939ce71d495ac28e7e75bbcb92",
   "base_profile": "ranked_level_retrieval_tdc_v1",
   "capacity": 100,
   "content_id": "d6cf914732a31373e09eda37349a2c75f4d0eb481ba1dba587ffaa028b7352b7",
   "database": "rankings.sqlite3",
   "database_sha256": "b71a0d563bdb5d35e5cc0b033e2bbaf66427e27a188abdfe3e4627cc6cb35390",
   "inputs": {
-    "evidence_manifest_sha256": "cb757afa1215c9fd28a8e21c1569e8cc78f77520482f9983a5b0fc981e2ae0f9",
+    "evidence_manifest_sha256": "317e9047caef94797edc97427cf101d851f9ca0a5357ecc1d9aac64b0de991ed",
     "query_sha256": "13471f87625d0e15c8acae9055810f87df9f066185d9f57bb0b6bf0e2bf99467",
     "train_sha256": "7997d9a19a3060a84f084e4ae0ec5f2cc8cb2b7578d0ed2d3f38cabec5753571"
   },
@@ -22,7 +22,7 @@
   "logit_extraction_dtype": "float32",
   "model": {
     "checkpoint_step": 80,
-    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-v2-hp-bioavailability-ma-best",
+    "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-v2-hp-bioavailability-ma-best",
     "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
     "revision": "a1cb6960e9ea4b18c69a87cf10bb7ef695192208"
   },
@@ -368,7 +368,7 @@
     "dataset_revision": "9db99d12536f5dbb3d906ab90e5acff1b036405c",
     "model": {
       "checkpoint_step": 80,
-      "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-v2-hp-bioavailability-ma-best",
+      "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-v2-hp-bioavailability-ma-best",
       "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
       "revision": "a1cb6960e9ea4b18c69a87cf10bb7ef695192208"
     },

@@ -8,11 +8,11 @@
   "inputs": {
     "candidate_sources": [
       {
-        "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/BBB_Martins/v1/scaffold/train_molecule_condition_labels.jsonl",
+        "path": "data/gold_labels/BBB_Martins/v1/scaffold/train_molecule_condition_labels.jsonl",
         "sha256": "3c48be5749f31bba627e5727e032dff5c77132c81405b0f8f2c943c3c124b9c2"
       },
       {
-        "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/TDC/BBB_Martins/v1/scaffold/train_molecule_condition_labels.jsonl",
+        "path": "data/gold_labels/TDC/BBB_Martins/v1/scaffold/train_molecule_condition_labels.jsonl",
         "sha256": "8d01b36fde9e18e9d0bf11da5ac73b73441dbf886337b10619a6ff2eb9651e53"
       }
     ],
@@ -30,7 +30,7 @@
   "logit_extraction_dtype": "float32",
   "model": {
     "checkpoint_step": 120,
-    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-bbb-martins-best",
+    "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-bbb-martins-best",
     "prompt_profile": "v10_3",
     "revision": "7678f7a1c43932f7612cfd49a8f4872d6e2f4cab"
   },
@@ -2693,13 +2693,13 @@
   "ranking_rows_sha256": "1c0878175403acb8b0115edaa5c5fe388959da118e08c307ebe144c56108621d",
   "reference_provenance": {
     "benchmark_summary": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/BBB_Martins/v1/scaffold/summary.json",
+      "path": "data/gold_labels/BBB_Martins/v1/scaffold/summary.json",
       "sha256": "16b723633dc71aa7125ee0ed59bec33b8540ca974c573c10dab02a3c85fd0b3b"
     },
     "candidate_source": "official_conditioned_gold_train_contexts",
     "gold_release": "v1",
     "label_adapter": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark.py",
+      "path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark.py",
       "sha256": "7e904230d3fc37584289bcbd50c473e1a2c438d8598c391b6b922fb66a92f453"
     },
     "label_contract": "bbb_experimental_meaningful_cns_access_gold.v2",

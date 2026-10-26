@@ -95,7 +95,7 @@
   "label_catalog_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_v2/label_catalog.parquet",
   "label_catalog_sha256": "4cdc3ac99a19f32889eb763d18b16256e73329e0d95cb31c2e7f4d951a08a160",
   "packet_manifest_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_v2/review_packets/manifest.json",
-  "packet_manifest_sha256": "33107c221bc34289b1b552530115bd346a65958477da817f945e44452f8d309d",
+  "packet_manifest_sha256": "3b150819b8bcbb4dfd21b1504f2d453e4ee6da1cf6393870baf05b76a397161b",
   "packet_sha256": {
     "sensitization_aop__global_context__packet_0001.json": "f10191b23abd947f009b2a3cf3f262a2b61682bc0b8605f0b9b470f133f4dc64",
     "sensitization_aop__global_context__packet_0002.json": "4f2614e3eea6b981bb18ffadd948ee8af42681eb1e2ae047c483a7ef852d41eb",

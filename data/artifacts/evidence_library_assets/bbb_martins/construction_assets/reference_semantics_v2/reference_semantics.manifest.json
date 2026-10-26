@@ -25,7 +25,7 @@
   "generation_version": "reference_semantics_generation.v2",
   "input_path": "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet",
   "input_sha256": "82aaf680134faf43bbb51e8b301d1fe4e294f55b4a598dc98829cc7b80c2944c",
-  "mapping_path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/reference_semantics_v2/reference_semantics.parquet",
+  "mapping_path": "data/external/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/reference_semantics_v2/reference_semantics.parquet",
   "mapping_rows": 57564,
   "mapping_sha256": "431a8a962c8595f2098474a82fb17fe8ee40964d42ec161d5825be80a3f95bef",
   "prompt_sha256": "5ba13a477366556e5b0133f30bfdfc023a4d7def52a5596e78e89d681df11668",

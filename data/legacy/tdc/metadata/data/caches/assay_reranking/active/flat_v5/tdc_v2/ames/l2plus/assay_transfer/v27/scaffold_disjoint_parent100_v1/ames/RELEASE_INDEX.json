@@ -32,27 +32,27 @@
         "L2": {
           "content_id": "317ad86cc89d7b8a12ffdf0a6e8a2528002d9ce162fe87163da9e63595216471",
           "manifest": "scaffold/test/L2/VERSION.json",
-          "manifest_sha256": "c670b172323487138278a94a347a71d6e0cc921a2cf6b7496c2edeb2923dc818"
+          "manifest_sha256": "0d697bd75e27f4bbeceba4cbe0403f8c16bd35ee2b6b8836e97405bc9feef53e"
         },
         "L3": {
           "content_id": "2f895fc8f0570256cfdc5cb3e7db005dddbc2b195eeb169e17fa0a82ff295a18",
           "manifest": "scaffold/test/L3/VERSION.json",
-          "manifest_sha256": "b1c5eb110acb88ff96afd0286188b7caa93858c3679ce31aab793bb9fe01a5ff"
+          "manifest_sha256": "dc85aae66eaa05b6f6cc68b6446d3b759cdecff9d84b18f1323feb6288f6d417"
         },
         "L4": {
           "content_id": "458f9a5a4888e46e53f8fb28d5099baf487bdf9249497d8b1381762170cfb02f",
           "manifest": "scaffold/test/L4/VERSION.json",
-          "manifest_sha256": "ca6e7983d8506c898db574f667b19117c36c39ba1d3697e20b1b9afa320565b5"
+          "manifest_sha256": "29324bb98616180f2a208abb18988d6efe64073cd570479438bdffa8b3a3dcf3"
         },
         "L5": {
           "content_id": "52fe4c8e6a5c0fc107bfa9d4f6a33bdc024590b95ab2272b73f7fe7c1506eb4d",
           "manifest": "scaffold/test/L5/VERSION.json",
-          "manifest_sha256": "49fc9a51ff327b0b47cfd05a9ec348917fffaffc923acda41edb7cf595005998"
+          "manifest_sha256": "f442baf852b12c280c961fb9c046339230c6cde8d5f051ca75bb3c3d5acb9320"
         }
       },
       "parent_universe": {
         "file": "scaffold/test/PARENT_UNIVERSE.json",
-        "sha256": "dad8317e0c0f0dd945af53f3fa9ab898c7392ffa9e85c663006a9c25e7c2b93b"
+        "sha256": "8e764939511221edca380c13a3aaaeff1c4ace81c434171e1573fe0641ba266d"
       }
     },
     "valid": {
@@ -60,27 +60,27 @@
         "L2": {
           "content_id": "a5b51212001444707fe9c3df03cc5c964e99b5d4ce7202fdd274905019255dda",
           "manifest": "scaffold/valid/L2/VERSION.json",
-          "manifest_sha256": "d716e3e99cbaf954f07942f1ffb664b571faa02560cd4ab2c477888a27bc4ce6"
+          "manifest_sha256": "b9da03bfba90aa9e6ae6cef0b26fe5cddea8c2d4dab90c612e74968dac11c025"
         },
         "L3": {
           "content_id": "b4cb1a4da6a1a84eae82afb929a6760be01ad7a256e494dbdd7e93a5ecf67e22",
           "manifest": "scaffold/valid/L3/VERSION.json",
-          "manifest_sha256": "03fe58f350bc04590cd2daeba2784e40eaa7c3e8261085f9d172f186b51e33ac"
+          "manifest_sha256": "1bbe8e63bc884a08fb02ebb5ed2b44b2146f240df0434f32948f887e0b3524ec"
         },
         "L4": {
           "content_id": "06c0cd69680eb7e7a3ca618ae0b5f07c8cefed128b921ef6baaeae6908c1d1ac",
           "manifest": "scaffold/valid/L4/VERSION.json",
-          "manifest_sha256": "97431fe46366d4959a808b8b59876129a7cacd20dc3bbd003c2422b4e0342a6a"
+          "manifest_sha256": "2476824314c7141ef4eb8e0901d87e05c3eed08c53062addf8a74abc73c5054e"
         },
         "L5": {
           "content_id": "b879caef9df092280f0dd0f00bf3ed53d90059971dbdf536ade9a368542220e7",
           "manifest": "scaffold/valid/L5/VERSION.json",
-          "manifest_sha256": "72894f12c51451e800fdc48a06d1cc62891fb3b7f16fd8f97f7245678782baa2"
+          "manifest_sha256": "954da5487083bf66ec90085f51fbcb56f0a8fd3b1eaef8fbdd59823847adb5e5"
         }
       },
       "parent_universe": {
         "file": "scaffold/valid/PARENT_UNIVERSE.json",
-        "sha256": "1f2de5278c1436ef72da1b9ed126382bb2a08bc7faa79feb7bb8d57b1855fca6"
+        "sha256": "5d385749345f7bf4b6515cd2e23d25a3c5839ed53917efe28cdeb8d066bcdcbf"
       }
     }
   },

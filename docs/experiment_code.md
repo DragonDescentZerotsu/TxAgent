@@ -63,7 +63,7 @@ The [integration record](release_refactor.md) owns the migration status; a mappe
 capability is not a claim that all its historical experiments are distributable.
 
 The paper baseline adapter retains main's frozen messages, native labels and
-prepared/output format. Joseph FINAL retains its own prompt and execution
+prepared/output format. Evidence FINAL retains its own prompt and execution
 contract. The two paths share provider transport, response validation and
 molecular identity filtering; substituting FINAL templates or checkpoints would
 change the paper experiment. The paper-specific modules do not introduce another

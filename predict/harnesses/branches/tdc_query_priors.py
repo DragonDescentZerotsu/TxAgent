@@ -52,15 +52,15 @@ PROFILES = {
 }
 EXISTING_TDC_PRIORS = (
     Path(
-        "outputs/paper/assay_transfer_harness/joseph/query_priors/"
+        "outputs/paper/assay_transfer_harness/evidence/query_priors/"
         "tdc_v1_deepseek_v4_flash_0731_high_20260920_1055/overlays"
     ),
     Path(
-        "outputs/paper/assay_transfer_harness/joseph/query_priors/"
+        "outputs/paper/assay_transfer_harness/evidence/query_priors/"
         "tdc_v1_valid_skin_upstream_v1_20260922_r3/overlays"
     ),
-    Path("outputs/paper/assay_transfer_harness/joseph/query_priors/tdc_safety_valid_upstream_20260923_v1"),
-    Path("outputs/paper/assay_transfer_harness/joseph/query_priors/tdc_safety_test_upstream_20260923_v1"),
+    Path("outputs/paper/assay_transfer_harness/evidence/query_priors/tdc_safety_valid_upstream_20260923_v1"),
+    Path("outputs/paper/assay_transfer_harness/evidence/query_priors/tdc_safety_test_upstream_20260923_v1"),
 )
 
 

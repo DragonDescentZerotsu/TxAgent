@@ -90,13 +90,16 @@
     "tdc/metadata.json": "ea33df7d52182dd1892fb6e0b4a0136496bf2026ee176d239c5c2a477aa8a84f"
   },
   "ablation_source": {
-    "joseph_commit": "73bddf2eec623d7d19a021968d68bc53c7206962",
-    "archive_sha256": "afcf18506d436171c4185d8d92b8edb00c7babfc29568764f2bb5667104a43a1",
+    "evidence_commit": "73bddf2eec623d7d19a021968d68bc53c7206962",
+    "archive_sha256": "7aeabd85efc9ab7a560c833aa84b9ee240f4649c52b0df6e386204ec64c29122",
     "table_member": "final/ablations/gold_v1_ablation_test_20260925_v3.tsv",
     "table_sha256": "a189e49faf9197a01eaf85aedb1286c0abb147551eb2820834c72946f18f9023",
     "table_cells": 30,
-    "source_readme_sha256": "d5d312c18f4df3eb504235031f283a1260ec52affb619a33843c57b2c1964d1b",
-    "scope": "Transcribed Joseph summary TSV, not raw-prediction verification. Control chosen after viewing test; Oral/Ames controls use different completed runs, so changes are descriptive, not paired.",
-    "similarity_only_row": "Paper mean 0.678 numerically matches main naive DeepSeek Direct50+Indirect50 (0.678421082524802). Exact ablation protocol/source binding is unverified; retain separately."
+    "source_readme_sha256": "52d98e27ba2f604e10c06d9e6d5cfc93f40a942d50846ec99b9b210f4ec0437f",
+    "scope": "Transcribed reported summary TSV, not raw-prediction verification. Control chosen after viewing test; Oral/Ames controls use different completed runs, so changes are descriptive, not paired.",
+    "similarity_only_row": "Paper mean 0.678 numerically matches main naive DeepSeek Direct50+Indirect50 (0.678421082524802). Exact ablation protocol/source binding is unverified; retain separately.",
+    "original_archive_sha256": "afcf18506d436171c4185d8d92b8edb00c7babfc29568764f2bb5667104a43a1",
+    "original_source_readme_sha256": "d5d312c18f4df3eb504235031f283a1260ec52affb619a33843c57b2c1964d1b",
+    "source_readme_member": "final/ablations/README.md"
   }
 }

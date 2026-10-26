@@ -90,7 +90,7 @@ def convert_batch(batch: Path, *, apply=False, run_uid=None, source_uids=None) -
         queries = [query for query in pool.map(_query, query_paths) if query is not None]
     is_overlay = original.get("schema_version") == "branch_query_prior_overlay.v1"
     if not (is_overlay or "batch_id" in original or "harness_version" in original
-            or original.get("schema_version", "").startswith("joseph_final_arm")
+            or original.get("schema_version", "").startswith("evidence_final_arm")
             or any("query_index" in query[2] or "benchmark_row_id" in query[2] for query in queries)):
         return {"batch": str(batch), "status": "not_prediction", "deleted_queries": 0}
     schema = FINAL_SCHEMA if "/final/" in str(batch) else SCHEMA
@@ -302,7 +302,7 @@ def refresh_indexes(batches, inventory=None):
         if result != original:
             write_json_atomic(path, result)
             changed += 1
-    final = ROOT / "outputs/paper/assay_transfer_harness/joseph/final"
+    final = ROOT / "outputs/paper/assay_transfer_harness/evidence/final"
     tables = list(final.glob("*.tsv"))
     tables.extend(batch / "files.tsv" for batch in batches if batch.is_relative_to(final))
     tables.extend(batch / "query_provenance.tsv" for batch in batches if batch.is_relative_to(final))
@@ -669,7 +669,7 @@ def main(argv=None):
     if args.relocate_runs:
         if args.apply and args.classifications and args.report.exists():
             parser.error("Generate a new dry-run report with --classifications before applying it")
-        roots = args.roots if args.roots != [ROOT / "outputs", ROOT / "archive"] else [ROOT / "outputs/paper/assay_transfer_harness/joseph"]
+        roots = args.roots if args.roots != [ROOT / "outputs", ROOT / "archive"] else [ROOT / "outputs/paper/assay_transfer_harness/evidence"]
         classifications = json.loads(args.classifications.read_text()) if args.classifications else {}
         plan = (json.loads(args.report.read_text()) if args.apply and args.report.exists()
                 else plan_output_relocations(roots, args.output_root, classifications))

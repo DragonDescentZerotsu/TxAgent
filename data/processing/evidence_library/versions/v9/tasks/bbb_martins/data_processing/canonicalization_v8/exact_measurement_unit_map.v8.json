@@ -73359,12 +73359,12 @@
   "v8_contract": {
     "value_transform": "identity",
     "scale_representation": "distinct_unit_identity",
-    "source": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/canonicalization_v7/exact_measurement_unit_map.v2.json",
+    "source": "tools/chembl_tool/tasks/bbb_martins/data_processing/canonicalization_v7/exact_measurement_unit_map.v2.json",
     "minimal_unit_review": {
       "rule_id": "v8_minimal_unit_review_200.v1",
       "sample_size": 200,
       "sample_seed": 20260831,
-      "review_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/canonicalization_v8/minimal_unit_review_200.jsonl",
+      "review_path": "tools/chembl_tool/tasks/bbb_martins/data_processing/canonicalization_v8/minimal_unit_review_200.jsonl",
       "approved_endpoint_unit_keys": 43
     }
   }

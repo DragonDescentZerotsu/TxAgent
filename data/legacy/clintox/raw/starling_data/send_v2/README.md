@@ -2,7 +2,7 @@
 
 This directory is the active immutable seven-source ClinTox delivery.
 
-Archive SHA-256: `bf6da36bf2ac347d4763e5c3a234292c7f5c04576cccc4b75f6a4741246ac4ea`.
+Archive SHA-256: `f6cf18f12ebb992a54aa4687911888a6ae3222307587eea6587c7501c18c10a6`.
 
 | source | rows | RDKit-valid | RDKit-invalid |
 |---|---:|---:|---:|

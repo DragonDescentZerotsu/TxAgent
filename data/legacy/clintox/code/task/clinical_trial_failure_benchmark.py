@@ -37,9 +37,9 @@ SEND_V2_HUMAN_PATH = Path(
 )
 
 SOURCE_SHA256 = {
-    "aacttox.csv.gz": "c132ee41f78b44f72c243643fc9e6676feaa6ff44e0178daaa0570525ec9489f",
-    "sweetfda_approved_processed.csv.gz": "d79a9f6e7911241086ebcff50dcb4c86b547fb8005d1e19ce1f4617ed0cfafcb",
-    "clintox.csv.gz": "2ee7050a830fe9ae7a8218e6577fa6f54284947034ff904b6d8204e993a297cc",
+    "aacttox.csv.gz": "7345a305ab46cd0ccceaa0d6c373890c8c8265c4489271ca0be040cf322b3fa2",
+    "sweetfda_approved_processed.csv.gz": "5efe4b9360de3afa3306e805b76e6c8f2cab660cc94f1b19735da80c6567d7e3",
+    "clintox.csv.gz": "31861c6522994563e3006041ef4dbda61a21f70ec1eff98bab6cdbbed1b1ea38",
 }
 SEND_V2_HUMAN_SHA256 = (
     "e09d712cc87a12c0e72195b5050c8b82bc5e4908b84bd38f43a4a00753f4b157"

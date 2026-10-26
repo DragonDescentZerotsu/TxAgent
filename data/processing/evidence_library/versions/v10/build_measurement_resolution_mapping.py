@@ -2243,7 +2243,7 @@ def _add_api_arguments(parser: argparse.ArgumentParser) -> None:
         help="override the provider's standard credential variable name",
     )
     parser.add_argument(
-        "--provider", choices=("openai", "openrouter", "parcc", "local"), default=None
+        "--provider", choices=("openai", "openrouter", "gateway", "local"), default=None
     )
     parser.add_argument("--env-file", type=Path, default=DEFAULT_ENV_FILE)
     parser.add_argument(

@@ -7,13 +7,13 @@
     "n_train_parents": 1911,
     "n_train_rows": 1941,
     "neighbor_identity_policy": "scaffold_disjoint",
-    "train": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/skin_reaction/v10_main_universe_v7/inputs/gold/Skin_Reaction/v1/scaffold/train_molecule_condition_labels.jsonl",
+    "train": "data/evidence_libraries/skin_reaction/v10_main_universe_v7/inputs/gold/Skin_Reaction/v1/scaffold/train_molecule_condition_labels.jsonl",
     "train_sha256": "ab03f36d38f46667c97e7824f3544149439fbb8196f1f4c109105c3829e94275",
-    "valid": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/skin_reaction/v10_main_universe_v7/inputs/gold/Skin_Reaction/v1/scaffold/test_molecule_condition_labels.jsonl",
+    "valid": "data/evidence_libraries/skin_reaction/v10_main_universe_v7/inputs/gold/Skin_Reaction/v1/scaffold/test_molecule_condition_labels.jsonl",
     "valid_sha256": "c073e195589817f99843e1a3f008d40b15c711a9c1df9dae7aba6eb6e27c751f"
   },
   "model": {
-    "model": "jiosephlee/assay-transfer-tool-soft-v9.0.2-skin-reaction-mixed-continuous",
+    "model": "local-artifacts/assay-transfer-tool-soft-v9.0.2-skin-reaction-mixed-continuous",
     "prompt_profile": "v9",
     "revision": "e4e894af28151760d2041275c5ecf136971c3925"
   },
@@ -27,7 +27,7 @@
   "n_to_score": 93,
   "prompt_assets": {
     "prompt.jinja": "33e48f919237a6aeaff28f4c77c6dd9635e54bf859c990af4ad0323952ab05f1",
-    "prompt_config.json": "e33a149fc9228e546a1f304d4b9a1ddcebd8a0c763402b45b0f0f3e2bdf3051a"
+    "prompt_config.json": "727707bc60b7f6429038f62f4838267f6a15b7e1fb96b171cf676dbfdc1cf448"
   },
   "query_record_ids": [
     "NULL_00B801BD9B31C1C86323",

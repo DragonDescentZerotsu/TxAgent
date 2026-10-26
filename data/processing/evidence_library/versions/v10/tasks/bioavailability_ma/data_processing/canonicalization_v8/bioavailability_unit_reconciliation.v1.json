@@ -62506,9 +62506,9 @@
       "measurement_resolution": "data/artifacts/evidence_library_assets/bioavailability_ma/v10_percentage_delta/single_measurement_repair/measurement_resolution.parquet",
       "unit_vocabulary": "data/processing/evidence_library/versions/v10/unit_vocabulary.v1.json"
     },
-    "review_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/data_processing/canonicalization_v8/bioavailability_unit_review.v1.jsonl",
+    "review_path": "data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/data_processing/canonicalization_v8/bioavailability_unit_review.v1.jsonl",
     "review_sha256": "7f65a21fd50887cdce33b2bc7bf184d6566a03687a16856a963a0bb4789cb5e0",
-    "review_manifest_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/data_processing/canonicalization_v8/bioavailability_unit_review.v1.manifest.json",
+    "review_manifest_path": "data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/data_processing/canonicalization_v8/bioavailability_unit_review.v1.manifest.json",
     "review_manifest_sha256": "7f2f2bf87622daac2a7f9dbf758eaa9a6efc142167751e9c383c733751c3a110",
     "counts": {
       "combined_units": 5207,

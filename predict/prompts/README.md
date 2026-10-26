@@ -207,7 +207,7 @@ verified and distributed; a working execution bundle alone is not authorization
 to delete them. The local compact prior inventory is an audit artifact, not an
 additional runtime cache format.
 
-Joseph's `six_task_query_priors.py` and `tdc_query_priors.py` remain the existing
+Evidence's `six_task_query_priors.py` and `tdc_query_priors.py` remain the existing
 capabilities for generating native/FINAL priors. Their defaults are not substituted
 for main's frozen paper baseline inputs. A fresh baseline prior-generation protocol
 is outside this migration's frozen-result reproduction scope. This mode does not

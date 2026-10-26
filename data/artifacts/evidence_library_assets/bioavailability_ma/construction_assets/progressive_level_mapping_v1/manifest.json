@@ -20,8 +20,8 @@
   "direct_mapping_votes_outside_l1": 0,
   "family_policy_version": "bioavailability_source_family_purity.legacy_record_supported_v2_vote_pure.v1",
   "inputs": {
-    "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/artifacts/starling/bioavailability_ma/canonical_sources/canonical_direct_v2/direct_claims.parquet": "d6c2dc9e5e91a6e1e9c159fcda20c2ebda73595f26b27533b500c209f1631140",
-    "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/artifacts/starling/bioavailability_ma/canonical_sources/canonical_direct_v2/direct_source_rows.parquet": "43422caea9a7ef2916aafc30ec6bb5ef99de24c526ed32c2a053fd9dce5a6b03",
+    "data/artifacts/starling/bioavailability_ma/canonical_sources/canonical_direct_v2/direct_claims.parquet": "d6c2dc9e5e91a6e1e9c159fcda20c2ebda73595f26b27533b500c209f1631140",
+    "data/artifacts/starling/bioavailability_ma/canonical_sources/canonical_direct_v2/direct_source_rows.parquet": "43422caea9a7ef2916aafc30ec6bb5ef99de24c526ed32c2a053fd9dce5a6b03",
     "data/artifacts/starling/bioavailability_ma/source_reviews/context_conditioned_review_v2/proposal_audit.jsonl": "c099cfbcc5ce98ee159a459263296dda2c2013acfc8f25ec2c3b5575ff309348",
     "data/evidence_libraries/bioavailability_ma/v7/03_pair_buckets/records.parquet": "38670ad186f68997a9e8b8d0a4ecce7efd0ba406d128e6a87b689656274418f6",
     "data/gold_labels/Bioavailability_Ma/v1/scaffold/source_condition_review.jsonl": "29e1206015e07b146043a00198ed294975732241fe32f7365c9f6ebeecf62242"

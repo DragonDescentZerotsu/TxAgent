@@ -42,7 +42,7 @@ fell from 294 lines in two commands to 156 lines in one shared command.
 ## Prediction manifests and migration
 
 Prediction settings live once per batch (`prediction_batch.v2`) or FINAL arm
-(`joseph_final_arm.v3`). Shared records retain named benchmark/evidence/map/weight
+(`evidence_final_arm.v3`). Shared records retain named benchmark/evidence/map/weight
 versions, effective selection parameters, model and prompt settings, ordered
 query UIDs, and sparse genuine scientific overrides. Query events remain in
 `stage_resume.json`; repeated checkpoint configuration is stored once in the

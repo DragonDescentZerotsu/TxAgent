@@ -64,7 +64,7 @@ SPECIES_PROMPT_VERSION = "starling_skin_embedding_bucket_mapping.v4"
 MIXED_PROMPT_VERSION = "starling_skin_embedding_bucket_mapping.mixed.v3_v4"
 LEDGER_VERSION = "starling_skin_auxiliary_token_ledger.v1"
 PROMPT_REGISTRY_PATH = PROMPT_ROOT / "auxiliary_canonicalization/skin_reaction.json"
-DISTILLATION_API_PATH = Path("/data1/joseph/therapeutic-tuning/distillation/api.py")
+DISTILLATION_API_PATH = Path("data/external/therapeutic-tuning/distillation/api.py")
 DEFAULT_WORK_DIR = Path(__file__).with_name("species_context_v3")
 RESPONSE_VALIDATION_VERSION = "skin_species_literal_support_gate.v1"
 INCREMENTAL_ARTIFACT_VERSION = "skin_auxiliary.incremental_delta_candidate.v1"
@@ -1904,7 +1904,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--base-url")
     parser.add_argument(
-        "--provider", choices=("openai", "openrouter", "deepseek", "parcc", "local")
+        "--provider", choices=("openai", "openrouter", "deepseek", "gateway", "local")
     )
     parser.add_argument("--env-file")
     parser.add_argument(

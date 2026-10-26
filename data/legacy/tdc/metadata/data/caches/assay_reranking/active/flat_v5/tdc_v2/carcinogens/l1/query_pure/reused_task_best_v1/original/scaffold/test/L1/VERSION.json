@@ -5,7 +5,7 @@
   "database": "rankings.sqlite3",
   "database_sha256": "72f2c1c6cf5c43041773e1d72ab6ee874b0c63f472dd7d8a60b7e8cbdc665415",
   "inputs": {
-    "evidence_manifest_sha256": "d4f7b5873097d6c1c82339a9af45f36a32cb840c4f8c3b82c14e9daf35af91ee",
+    "evidence_manifest_sha256": "2862fb26684672361fe2545544a81701bcd313e08bce2ca189373cfc7c63a163",
     "query_sha256": "19d5bb3c4df60ebf968afe46fb341925a618a6c780e708bb35429152ead46b7f",
     "train_sha256": "017b7fba6308edeeb637155aef57921e0588982ec32ec7a7f6935405e5a5c636",
     "training_parents": 195
@@ -16,7 +16,7 @@
   },
   "level": "L1",
   "model": {
-    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-pinned-carcinogens-2xcwcpul",
+    "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-pinned-carcinogens-2xcwcpul",
     "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
     "revision": "8be3376cd1d84e46c18b61617f63ad597aeaff52"
   },

@@ -13,9 +13,9 @@
   },
   "level": "L6",
   "model": {
-    "dataset": "jiosephlee/assay-transfer-record-level-v25-bioavailability-ma-l6-intern",
+    "dataset": "local-artifacts/assay-transfer-record-level-v25-bioavailability-ma-l6-intern",
     "dataset_revision": "7df75e575fb60c297f02b4b21c75b470ae1ec261",
-    "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v25-bioavailability-ma-l6-best",
+    "model": "local-artifacts/intern-s1-mini-assay-transfer-record-level-v25-bioavailability-ma-l6-best",
     "revision": "6c5f76d6afafd0517c7630e8fc374915d4c2b98a"
   },
   "neighbor_identity_policy": "parent_disjoint",
@@ -544,7 +544,7 @@
   },
   "score_reuse_sources": [
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v1",
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v1",
       "release_index_sha256": "486084388fc55504f8513f51d6ae506d39119a939aad23182c423b257c757c0d"
     }
   ],

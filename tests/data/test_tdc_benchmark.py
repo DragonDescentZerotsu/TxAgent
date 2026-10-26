@@ -150,7 +150,7 @@ def test_ames_source_manifest_names_the_supplied_workspace_source() -> None:
     path = Path("data/raw/tdc/Ames/v1/source_manifest.json")
     manifest = json.loads(path.read_text())
     supplied = Path(
-        "/vast/projects/myatskar/design-documents/joseph/"
+        "data/external/"
         "therapeutic-tuning/data/raw/original/AMES"
     )
     assert Path(manifest["source_location"]) == supplied

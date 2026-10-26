@@ -10,7 +10,7 @@
   "review_completion": {
     "reviewer_id": "codex-dili-v1",
     "reviewed_packets": 83,
-    "source_manifest_sha256": "6e2842082a968f398207c175089d2441a51087637490054f8c25ac871021d014"
+    "source_manifest_sha256": "0d6d8f09bfd5b320d204057fb50e846863cfe63aa8d3e37ec38d889f4f547807"
   },
   "validations": {
     "mapping_hash_matches_reviewed_consolidation": true,

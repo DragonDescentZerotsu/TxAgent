@@ -532,7 +532,7 @@
     }
   ],
   "policy": {
-    "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_policy.json",
+    "path": "data/external/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_policy.json",
     "sha256": "c0ae487055daf0ea521d530c30b33ef29a2152788f61992604cb389eec8ab017"
   },
   "validations": {

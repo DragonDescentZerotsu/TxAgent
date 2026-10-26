@@ -7,14 +7,14 @@
     "model_structural_retry": 17
   },
   "base_mapping": null,
-  "cleaned_records_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/bbb_martins/v8/01_cleaned/records.parquet",
+  "cleaned_records_path": "data/evidence_libraries/bbb_martins/v8/01_cleaned/records.parquet",
   "cleaned_records_sha256": "0e807b7db73108ec621eb545475937605648990e2023d0b8b83e223b0b2e5512",
   "delta_inference": {
     "model": "gpt-5.4-mini",
     "rows": 159
   },
   "endpoint_profile": {
-    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/bbb_martins/v8/01_cleaned/endpoint_unit_profile.json",
+    "path": "data/evidence_libraries/bbb_martins/v8/01_cleaned/endpoint_unit_profile.json",
     "sha256": "b7da2f055c977e845ed1cea67ee90c94f5ccbf606a172b1483100892d7986d69",
     "version": "starling_endpoint_unit_profile.v2"
   },
@@ -61,10 +61,10 @@
         "unit_field": "metric_units"
       }
     },
-    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v8/prompts/measurement_resolution/bbb_v19.jinja",
+    "template_path": "data/processing/evidence_library/versions/v8/prompts/measurement_resolution/bbb_v19.jinja",
     "template_sha256": "7a2af02e95f592197ebb5e6e576825c44b169a43cae9a25a31bb5adf045750df",
     "unit_vocabulary": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v8/unit_vocabulary.v1.json",
+      "path": "data/processing/evidence_library/versions/v8/unit_vocabulary.v1.json",
       "sha256": "01c874f4d20b595e00e919b0ee33080544876fe3de2a6534710beabe3431f14e",
       "units": 12721,
       "version": "observed_source_units.v1"

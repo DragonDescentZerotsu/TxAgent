@@ -99,7 +99,7 @@ V21_CONFIG = {
     "gold_task": "BBB_Martins",
     "levels": ("L1", "L2", "L3", "L4", "L5"),
     "candidate_contract": "v21_l1_morgan_top75_plus_frozen_v19_l2_l5_scaffold_disjoint.v1",
-    "training_dataset": "jiosephlee/assay-transfer-record-level-v21-bbb-martins-mixed-intern",
+    "training_dataset": "local-artifacts/assay-transfer-record-level-v21-bbb-martins-mixed-intern",
     "training_dataset_revision": "bafd9607ef05aefb0dee525b60e3e36ef480e597",
     "l1_training_domain_audit": {
         "total": 8536,

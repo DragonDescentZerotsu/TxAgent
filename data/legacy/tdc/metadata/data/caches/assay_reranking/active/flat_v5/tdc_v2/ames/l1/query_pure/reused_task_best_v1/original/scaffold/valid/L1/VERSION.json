@@ -5,7 +5,7 @@
   "database": "rankings.sqlite3",
   "database_sha256": "4b2ed4da7bbfee72a69d0bbe0f37bc54f8b009af42298ca52543ba2e86f36666",
   "inputs": {
-    "evidence_manifest_sha256": "31d01a7866e5f2741270be4080de1404ee8a087067a961965b1eea6f87c03443",
+    "evidence_manifest_sha256": "b69ef733ff124c10dc248ac0977771c4c07edc83b8e282a512fe926000c09f41",
     "query_sha256": "b10dd08a69f09dec8e7f99b786dd534ec84faf9c91dac653b74d32192e7a5f52",
     "train_sha256": "629f909d39eff7ad46d7f61da741cf1cf873848428bda13d660c3fbf294a4b6f",
     "training_parents": 5077
@@ -16,7 +16,7 @@
   },
   "level": "L1",
   "model": {
-    "model": "jiosephlee/intern-s1-mini-ames-v10-3-tdc-mixed-canonical-best",
+    "model": "local-artifacts/intern-s1-mini-ames-v10-3-tdc-mixed-canonical-best",
     "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
     "revision": "392dd01912090040cfc0427f9f680d16d47eb27b"
   },

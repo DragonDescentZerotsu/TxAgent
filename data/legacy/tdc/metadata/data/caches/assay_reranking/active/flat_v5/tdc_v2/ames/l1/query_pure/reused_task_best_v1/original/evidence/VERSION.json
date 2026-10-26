@@ -6,7 +6,7 @@
   "records_sha256": "667b8d564e8c195b8de8bc51632eb0e9223fa23b1cd92cfbc01401dbc7dab301",
   "schema_version": "ranked_evidence_projection.v1",
   "source_identity": "tdc_v2_source_row_uid",
-  "source_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/TDC/Ames/v2/original/train_molecule_condition_labels.jsonl",
+  "source_path": "data/gold_labels/TDC/Ames/v2/original/train_molecule_condition_labels.jsonl",
   "status": "complete",
   "task_id": "ames"
 }

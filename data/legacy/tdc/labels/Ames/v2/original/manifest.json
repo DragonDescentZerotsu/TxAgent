@@ -11,21 +11,21 @@
   "source_files": [
     {
       "split": "train",
-      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/AMES/train.csv",
+      "source_path": "data/external/therapeutic-tuning/data/raw/original/AMES/train.csv",
       "path": "data/raw/tdc/Ames/v2/train.csv",
       "sha256": "f467268ea5460913870897110e04225309dc699b6499b8c91dbdad0342d7e298",
       "rows": 5094
     },
     {
       "split": "valid",
-      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/AMES/val.csv",
+      "source_path": "data/external/therapeutic-tuning/data/raw/original/AMES/val.csv",
       "path": "data/raw/tdc/Ames/v2/valid.csv",
       "sha256": "35d5364efcde763f13fc9426322ffc0ff1e98eb1e91c5d275d69dd29d49d0784",
       "rows": 727
     },
     {
       "split": "test",
-      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/AMES/test.csv",
+      "source_path": "data/external/therapeutic-tuning/data/raw/original/AMES/test.csv",
       "path": "data/raw/tdc/Ames/v2/test.csv",
       "sha256": "d87e29ad1f188d6ee4fcdd5c3c3aa4ba15e4fec657553353d0d951ad8df02d3f",
       "rows": 1457
@@ -56,5 +56,5 @@
     "test.jsonl": "14b028d7c7d09bcd3ada92d9877de989a93722df6a2d5340c360aa489fa69033",
     "heldout_molecule_condition_labels.jsonl": "0cfc12efd270fc5aa74135632847f37cce4c13bd20636e991b01b851e4a7fad9"
   },
-  "summary_sha256": "e54169437886eec9f826f2a785896a69862203edbd45e33a4c961d0df1c6cef3"
+  "summary_sha256": "27c88fd1649bdd4b673792ab40d67280d11781ca75429909e6d9dbab9860ddca"
 }

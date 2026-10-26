@@ -7,37 +7,37 @@
     {
       "name": "AACT201603_pipe_delimited.tar.gz",
       "size": 54223289,
-      "sha256": "db0f974ff1218ff9741595c47bb2e78e66167d0d3cc5d9ecb3877feec0498394",
+      "sha256": "8a3588c2948c768ecf9e4188265b75966fb073b2d4c4b8e86142abe79e7548cd",
       "role": "supporting AACT database snapshot"
     },
     {
       "name": "aacttox.csv.gz",
       "size": 2268,
-      "sha256": "c132ee41f78b44f72c243643fc9e6676feaa6ff44e0178daaa0570525ec9489f",
+      "sha256": "7345a305ab46cd0ccceaa0d6c373890c8c8265c4489271ca0be040cf322b3fa2",
       "role": "positive clinical-trial-toxicity-failure source"
     },
     {
       "name": "aacttox_phase_multiclass.csv.gz",
       "size": 2381,
-      "sha256": "d34317bce8011e54de1ba83c46d8fcdf10eb8c9572267053585e516c88dd4af2",
+      "sha256": "5942fad0007ef123b58695bfe140e42faa16aece92675114b862a790871c4ca7",
       "role": "supporting phase provenance"
     },
     {
       "name": "smiles_cache.csv.gz",
       "size": 3200,
-      "sha256": "8d6f174ef7e44864ff17ae26c8681b69346bc1f6c5feefb19c56c138ebe28a7b",
+      "sha256": "244b8a31338a61a227cd1b33d338ac9c88aef9da3cbb09da171151d68fc3547f",
       "role": "supporting AACT molecule mapping"
     },
     {
       "name": "sweetfda_approved_processed.csv.gz",
       "size": 18750,
-      "sha256": "d79a9f6e7911241086ebcff50dcb4c86b547fb8005d1e19ce1f4617ed0cfafcb",
+      "sha256": "5efe4b9360de3afa3306e805b76e6c8f2cab660cc94f1b19735da80c6567d7e3",
       "role": "FDA-approved negative comparator source"
     },
     {
       "name": "clintox.csv.gz",
       "size": 19889,
-      "sha256": "2ee7050a830fe9ae7a8218e6577fa6f54284947034ff904b6d8204e993a297cc",
+      "sha256": "31861c6522994563e3006041ef4dbda61a21f70ec1eff98bab6cdbbed1b1ea38",
       "role": "joined reference used for reconciliation only"
     },
     {

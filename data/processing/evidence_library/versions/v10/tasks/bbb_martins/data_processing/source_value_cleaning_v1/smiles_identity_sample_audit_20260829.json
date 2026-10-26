@@ -11,7 +11,7 @@
   },
   "audit_date": "2026-08-29",
   "hostname": "dgx001",
-  "repository_root": "/vast/projects/myatskar/design-documents/joseph/TxAgent",
+  "repository_root": ".",
   "rich_candidates": [
     {
       "candidate_ledger_version": "bbb_martins_smiles_identity_candidates.v1",
@@ -4295,7 +4295,7 @@
         "unique_excluded_rows": 106
       },
       "earlier_bbb_100_audit": {
-        "discovery_source": "/tmp/jojolee-codex-dgx001/sessions/2026/08/28/rollout-2026-08-28T15-50-57-01a049ec-dead-7ef0-a2e2-8172770a5556.jsonl",
+        "discovery_source": "/tmp/artifact-owner-codex-dgx001/sessions/2026/08/28/rollout-2026-08-28T15-50-57-01a049ec-dead-7ef0-a2e2-8172770a5556.jsonl",
         "one_based_row_list_sha256": "2fe01d18d19d0420da13062bf29beec7b1b35827711d873466f1542b0483a956",
         "one_based_source_row_numbers": [
           4519,

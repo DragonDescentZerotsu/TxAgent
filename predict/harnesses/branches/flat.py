@@ -62,10 +62,10 @@ DEFAULT_PROVIDER_CONFIG = (
     / "deepseek_v4_flash_0731_openrouter_auto_128_high.json"
 )
 
-TIANANG_PROMPT_VERSION = "tianang_flat_v1"
-JOSEPH_V1_PROMPT_VERSION = "joseph_flat_v1"
-JOSEPH_PROMPT_VERSION = "joseph_flat_v2"
-CONTEXT_V4_PROMPT_VERSION = "joseph_flat_context_v4_v1"
+BASELINE_PROMPT_VERSION = "baseline_flat_v1"
+EVIDENCE_V1_PROMPT_VERSION = "evidence_flat_v1"
+EVIDENCE_PROMPT_VERSION = "evidence_flat_v2"
+CONTEXT_V4_PROMPT_VERSION = "evidence_flat_context_v4_v1"
 CONTEXT_V5_PROMPT_VERSION = "full_flat_context_v5"
 CONTEXT_V6_PROMPT_VERSION = "full_flat_context_v6_oral_high_low"
 CONTEXT_V7_PROMPT_VERSION = "full_flat_context_v7_oral_final_only"
@@ -110,9 +110,9 @@ CONTEXT_NUMBERED_PROMPT_VERSIONS = {
     *CONTEXT_CLAIMS_PROMPT_VERSIONS,
     CONTEXT_V7_PROMPT_VERSION,
 }
-JOSEPH_PROMPT_VERSIONS = (
-    JOSEPH_V1_PROMPT_VERSION,
-    JOSEPH_PROMPT_VERSION,
+EVIDENCE_PROMPT_VERSIONS = (
+    EVIDENCE_V1_PROMPT_VERSION,
+    EVIDENCE_PROMPT_VERSION,
     CONTEXT_V4_PROMPT_VERSION,
     CONTEXT_V5_PROMPT_VERSION,
     CONTEXT_V6_PROMPT_VERSION,
@@ -133,10 +133,10 @@ JOSEPH_PROMPT_VERSIONS = (
     FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
 )
 # Backward-compatible default for direct prompt-library callers. The public
-# The unified branches CLI selects Joseph flat behavior below.
-PROMPT_VERSION = TIANANG_PROMPT_VERSION
+# The unified branches CLI selects Evidence flat behavior below.
+PROMPT_VERSION = BASELINE_PROMPT_VERSION
 PUBLIC_HARNESS_VERSION = "final-full-flat"
-CONTEXT_V4_HARNESS_VERSION = "joseph-flat-context-v4-v1"
+CONTEXT_V4_HARNESS_VERSION = "evidence-flat-context-v4-v1"
 CONTEXT_V5_HARNESS_VERSION = "full-flat-context-v5"
 CONTEXT_V6_HARNESS_VERSION = "full-flat-context-v6-oral-high-low"
 CONTEXT_V7_HARNESS_VERSION = "full-flat-context-v7-oral-final-only"
@@ -155,8 +155,8 @@ FINAL_FULL_FLAT_HARNESS_VERSION = "final-full-flat"
 FINAL_FULL_FLAT_TDC_CARC_HARNESS_VERSION = "final-full-flat-tdc-carc-direct-priority-v1"
 FINAL_FULL_FLAT_TDC_CARC_STRONG_HARNESS_VERSION = "final-full-flat-tdc-carc-strong-direct-v1"
 FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_HARNESS_VERSION = "final-full-flat-tdc-carc-direct-positive-gate-v1"
-JOSEPH_V1_HARNESS_VERSION = "joseph-flat-v1"
-LEGACY_HARNESS_VERSION = "tianang-flat-v1"
+EVIDENCE_V1_HARNESS_VERSION = "evidence-flat-v1"
+LEGACY_HARNESS_VERSION = "baseline-flat-v1"
 
 
 def require_current_cache_bundle(path: Path) -> None:
@@ -166,9 +166,9 @@ def require_current_cache_bundle(path: Path) -> None:
         raise ValueError("Use a named retrieval cache set with --retrieval-cache; numbered configurations require historical replay")
 
 
-JOSEPH_HARNESS_PROMPTS = {
-    JOSEPH_V1_HARNESS_VERSION: JOSEPH_V1_PROMPT_VERSION,
-    "joseph-flat-v2": JOSEPH_PROMPT_VERSION,
+EVIDENCE_HARNESS_PROMPTS = {
+    EVIDENCE_V1_HARNESS_VERSION: EVIDENCE_V1_PROMPT_VERSION,
+    "evidence-flat-v2": EVIDENCE_PROMPT_VERSION,
     CONTEXT_V4_HARNESS_VERSION: CONTEXT_V4_PROMPT_VERSION,
     CONTEXT_V5_HARNESS_VERSION: CONTEXT_V5_PROMPT_VERSION,
     CONTEXT_V6_HARNESS_VERSION: CONTEXT_V6_PROMPT_VERSION,
@@ -189,11 +189,11 @@ JOSEPH_HARNESS_PROMPTS = {
     FINAL_FULL_FLAT_TDC_CARC_STRONG_HARNESS_VERSION: FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION,
     FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_HARNESS_VERSION: FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
 }
-JOSEPH_PROMPT_HARNESSES = {
-    prompt: harness for harness, prompt in JOSEPH_HARNESS_PROMPTS.items()
+EVIDENCE_PROMPT_HARNESSES = {
+    prompt: harness for harness, prompt in EVIDENCE_HARNESS_PROMPTS.items()
 }
 ACTIVE_HARNESS_PROMPTS = {
-    harness: prompt for harness, prompt in JOSEPH_HARNESS_PROMPTS.items()
+    harness: prompt for harness, prompt in EVIDENCE_HARNESS_PROMPTS.items()
     if prompt in {
         FINAL_FULL_FLAT_PROMPT_VERSION,
         FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION,
@@ -220,8 +220,8 @@ CONTEXT_V4_VARIANTS = (
     "assay-transfer-within-morgan",
 )
 CONTEXT_V4_LAYOUTS = ("global", "level-grouped")
-CONTEXT_V4_SELECTION_CONTRACT = "joseph_flat_context_retrieval.v1"
-CONTEXT_V5_SELECTION_CONTRACT = "joseph_flat_context_retrieval.v2"
+CONTEXT_V4_SELECTION_CONTRACT = "evidence_flat_context_retrieval.v1"
+CONTEXT_V5_SELECTION_CONTRACT = "evidence_flat_context_retrieval.v2"
 PRESELECTED_UID_SCHEMA = "flat_preselected_uids.v1"
 PRESELECTED_MIXED_SCHEMA = "gold_mixed_selection.v1"
 TDC_V2_MIXED_SCHEMA = "tdc_mixed_selection"
@@ -242,7 +242,7 @@ DEFAULT_QUERY_PRIOR_ROOT = Path(
     "runs_deployment_visible_parent_disjoint"
 )
 QUERY_PRIOR_CURRENT = Path(
-    "outputs/paper/assay_transfer_harness/joseph/query_priors/CURRENT.json"
+    "outputs/paper/assay_transfer_harness/evidence/query_priors/CURRENT.json"
 )
 
 
@@ -291,9 +291,9 @@ MOLECULE_DESCRIPTION_COLUMNS = {
     "coarse": "description_coarse",
 }
 PROMPT_VARIANTS = {
-    TIANANG_PROMPT_VERSION: (MORGAN_VARIANT, ASSAY_TRANSFER_VARIANT),
-    JOSEPH_V1_PROMPT_VERSION: VARIANTS,
-    JOSEPH_PROMPT_VERSION: VARIANTS,
+    BASELINE_PROMPT_VERSION: (MORGAN_VARIANT, ASSAY_TRANSFER_VARIANT),
+    EVIDENCE_V1_PROMPT_VERSION: VARIANTS,
+    EVIDENCE_PROMPT_VERSION: VARIANTS,
     CONTEXT_V4_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
     CONTEXT_V5_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
     CONTEXT_V6_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
@@ -428,7 +428,7 @@ FLAT_V2_CARD_FIELDS = (
 
 
 def _source_semantic_prompt(version: str) -> bool:
-    return version in {JOSEPH_PROMPT_VERSION, *CONTEXT_PROMPT_VERSIONS}
+    return version in {EVIDENCE_PROMPT_VERSION, *CONTEXT_PROMPT_VERSIONS}
 FLAT_V2_MOLECULE_SCORE_FIELDS = (
     "morgan_similarity",
     "transfer_likelihood",
@@ -523,7 +523,7 @@ def flat_prompt_variant(
     flat_reranking: str = "",
 ) -> str:
     """Resolve the prompt mode from the legacy or cache-matched CLI."""
-    if prompt_version in JOSEPH_PROMPT_VERSIONS:
+    if prompt_version in EVIDENCE_PROMPT_VERSIONS:
         if flat_reranking not in PROMPT_VARIANTS[prompt_version]:
             raise ValueError(
                 f"{prompt_version} does not support reranking {flat_reranking!r}"
@@ -534,7 +534,7 @@ def flat_prompt_variant(
     if retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY:
         return ASSAY_TRANSFER_VARIANT
     raise ValueError(
-        "tianang_flat_v1 requires morgan_fingerprint or assay_transfer_tool retrieval"
+        "baseline_flat_v1 requires morgan_fingerprint or assay_transfer_tool retrieval"
     )
 
 
@@ -553,7 +553,7 @@ def apply_flat_group_prompt(
     output = deepcopy(dict(payload))
     group = output.get("group") or {}
     if group.get("group_id") != "Flat.all_evidence":
-        raise ValueError("tianang_flat_v1 requires the Flat.all_evidence group")
+        raise ValueError("baseline_flat_v1 requires the Flat.all_evidence group")
 
     variant = flat_prompt_variant(
         retrieval_strategy,
@@ -576,10 +576,10 @@ def apply_flat_group_prompt(
                 if isinstance(selected, list)
                 else [str(selected)]
             )
-    if prompt_version == JOSEPH_PROMPT_VERSION:
+    if prompt_version == EVIDENCE_PROMPT_VERSION:
         if output.get("prompt_transport"):
             raise ValueError(
-                "joseph_flat_v2 refuses prompt transport truncation; "
+                "evidence_flat_v2 refuses prompt transport truncation; "
                 "all selected semantic fields must remain visible"
             )
         output = {
@@ -589,9 +589,9 @@ def apply_flat_group_prompt(
             "instructions": instructions,
             "required_json_schema": deepcopy(contract["required_json_schema"]),
         }
-    elif prompt_version == TIANANG_PROMPT_VERSION and variant == MORGAN_VARIANT:
+    elif prompt_version == BASELINE_PROMPT_VERSION and variant == MORGAN_VARIANT:
         _remove_keys(output, _is_assay_transfer_key)
-    elif prompt_version == TIANANG_PROMPT_VERSION:
+    elif prompt_version == BASELINE_PROMPT_VERSION:
         if isinstance(group, dict):
             group.pop("assay_transfer_score_policy", None)
         for neighbor in output.get("neighbors") or []:
@@ -599,7 +599,7 @@ def apply_flat_group_prompt(
                 neighbor.pop("similarity", None)
                 neighbor.pop("similarity_bucket", None)
                 neighbor.pop("similarity_metric", None)
-    elif prompt_version == JOSEPH_V1_PROMPT_VERSION:
+    elif prompt_version == EVIDENCE_V1_PROMPT_VERSION:
         # Cache-matched selection records the method and its applicable scores
         # per physical evidence row. An outer molecule score would be ambiguous
         # after several levels are merged into one molecule card.
@@ -626,8 +626,8 @@ def render_flat_group_messages(
     flat_reranking: str = "",
 ) -> list[dict[str, str]]:
     """Render the version-owned flat group system and JSON user messages."""
-    if prompt_version == JOSEPH_PROMPT_VERSION and group_tools_enabled:
-        raise ValueError("joseph_flat_v2 does not expose group comparison tools")
+    if prompt_version == EVIDENCE_PROMPT_VERSION and group_tools_enabled:
+        raise ValueError("evidence_flat_v2 does not expose group comparison tools")
     include_comparisons = bool(group.get("tools_prefetched")) or group_tools_enabled
     contract = _task_contract(task_id, task_prompt_profile, prompt_version)
     system = _environment().get_template(
@@ -665,7 +665,7 @@ def flat_group_validation(
     validation: dict[str, Any] = {
         "required_fields": tuple(contract["required_fields"])
     }
-    if prompt_version == JOSEPH_PROMPT_VERSION and group is not None:
+    if prompt_version == EVIDENCE_PROMPT_VERSION and group is not None:
         card_ids = {
             str((row.get("prompt_evidence") or {}).get("card_id") or "")
             for neighbor in group.get("neighbors") or []
@@ -793,7 +793,7 @@ def _flat_v2_prompt_molecules(
         cards: list[dict[str, Any]] = []
         for raw_card in neighbor.get("evidence_rows") or []:
             if not isinstance(raw_card, Mapping):
-                raise ValueError("joseph_flat_v2 evidence card is not an object")
+                raise ValueError("evidence_flat_v2 evidence card is not an object")
             source = deepcopy(dict(raw_card))
             for name, value in dict(source.pop("_molecule_scores", {})).items():
                 _set_consistent(scores, name, value)
@@ -805,7 +805,7 @@ def _flat_v2_prompt_molecules(
             card_id = str(card.get("card_id") or "")
             if not card_id or card_id in seen_cards:
                 raise ValueError(
-                    f"joseph_flat_v2 card ID is missing or duplicated: {card_id!r}"
+                    f"evidence_flat_v2 card ID is missing or duplicated: {card_id!r}"
                 )
             seen_cards.add(card_id)
             cards.append(card)
@@ -1261,7 +1261,7 @@ def cache_matched_flat_retrieval(
     reranking: str,
     query_audit: Mapping[str, Any],
     query_identity: Mapping[str, Any] | None = None,
-    prompt_version: str = JOSEPH_V1_PROMPT_VERSION,
+    prompt_version: str = EVIDENCE_V1_PROMPT_VERSION,
     selection_contract: str = "cache_matched_retrieval.v2",
     preserve_physical_records: bool = False,
     neighbor_identity_policy_by_level: Mapping[str, str] | None = None,
@@ -1409,7 +1409,7 @@ def cache_matched_flat_retrieval(
         ):
             neighbor["molecule_relation"] = "level_specific_disjoint"
         card_score: float | None = None
-        if prompt_version == JOSEPH_PROMPT_VERSION:
+        if prompt_version == EVIDENCE_PROMPT_VERSION:
             level = str(payload["progressive_level"])
             scores = neighbor.setdefault("_prompt_scores", {})
             if morgan_method or method == JOINT_VARIANT:
@@ -2845,7 +2845,7 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
                 molecule_description_mode=args.molecule_description_mode,
                 molecule_description_cache_version=args.molecule_description_cache_version,
             )
-        if args.prompt_version == JOSEPH_PROMPT_VERSION:
+        if args.prompt_version == EVIDENCE_PROMPT_VERSION:
             expected.update(
                 evidence_projection=EVIDENCE_PROJECTION,
                 extra_details_policy=EXTRA_DETAILS_POLICY,
@@ -3109,7 +3109,7 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
             molecule_name_visible=False,
             group_tools_enabled=False,
         )
-    if args.prompt_version == JOSEPH_PROMPT_VERSION:
+    if args.prompt_version == EVIDENCE_PROMPT_VERSION:
         manifest.update(
             evidence_projection=EVIDENCE_PROJECTION,
             extra_details_policy=EXTRA_DETAILS_POLICY,

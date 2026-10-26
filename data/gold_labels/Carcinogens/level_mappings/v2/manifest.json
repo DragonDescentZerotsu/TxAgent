@@ -13,7 +13,7 @@
   "inputs": {
     "prior_level_mapping_manifest": {
       "path": "data/gold_labels/Carcinogens/level_mappings/v1/manifest.json",
-      "sha256": "8648a8954c3952d9183e1bb2ce6149009de7cb21d7b3b9e76f994c31ceee6cfb"
+      "sha256": "ad664ef922eb6d28752929956763b5086697c97bcfd40fd5a9863ddc229683f9"
     },
     "voter_membership": {
       "path": "data/gold_labels/Carcinogens/v1/scaffold/voter_membership.parquet",

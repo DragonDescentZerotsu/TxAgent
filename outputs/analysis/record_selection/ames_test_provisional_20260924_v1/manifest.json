@@ -15,18 +15,18 @@
     }
   },
   "source_runs": {
-    "gold_direct": ["outputs/paper/assay_transfer_harness/joseph/ames_direct_v3_full_test_20260924_v1/gold_v1"],
+    "gold_direct": ["outputs/paper/assay_transfer_harness/evidence/ames_direct_v3_full_test_20260924_v1/gold_v1"],
     "gold_direct_plus_indirect": [
-      "outputs/paper/assay_transfer_harness/joseph/ames_gold_indirect_best_full_test_upstream_v3_20260924_v1/gold_v1",
-      "outputs/paper/assay_transfer_harness/joseph/ames_gold_indirect_best_full_test_upstream_v3_openrouter_resume_20260924_v1/gold_v1",
-      "outputs/paper/assay_transfer_harness/joseph/ames_gold_indirect_query151_parallel_a_20260924_v1/gold_v1",
-      "outputs/paper/assay_transfer_harness/joseph/ames_gold_indirect_query151_parallel_b_20260924_v1/gold_v1"
+      "outputs/paper/assay_transfer_harness/evidence/ames_gold_indirect_best_full_test_upstream_v3_20260924_v1/gold_v1",
+      "outputs/paper/assay_transfer_harness/evidence/ames_gold_indirect_best_full_test_upstream_v3_openrouter_resume_20260924_v1/gold_v1",
+      "outputs/paper/assay_transfer_harness/evidence/ames_gold_indirect_query151_parallel_a_20260924_v1/gold_v1",
+      "outputs/paper/assay_transfer_harness/evidence/ames_gold_indirect_query151_parallel_b_20260924_v1/gold_v1"
     ],
     "tdc_direct": [
-      "outputs/paper/assay_transfer_harness/joseph/ames_direct_exactscore_full_test_upstream_v3_20260924_v1/tdc_v2",
-      "outputs/paper/assay_transfer_harness/joseph/ames_direct_exactscore_full_test_upstream_v3_openrouter_resume_20260924_v1/tdc_v2"
+      "outputs/paper/assay_transfer_harness/evidence/ames_direct_exactscore_full_test_upstream_v3_20260924_v1/tdc_v2",
+      "outputs/paper/assay_transfer_harness/evidence/ames_direct_exactscore_full_test_upstream_v3_openrouter_resume_20260924_v1/tdc_v2"
     ],
-    "tdc_direct_plus_indirect": ["outputs/paper/assay_transfer_harness/joseph/tdc_v2_ames_indirect_best_full_test_upstream_v3_20260924_v1/tdc_v2"]
+    "tdc_direct_plus_indirect": ["outputs/paper/assay_transfer_harness/evidence/tdc_v2_ames_indirect_best_full_test_upstream_v3_20260924_v1/tdc_v2"]
   },
   "snapshot_pins": {
     "gold_direct_completion_sha256": "154e88a8e8c4d5292be830de18df665343731c801ae888712a7861dcffd1a038",

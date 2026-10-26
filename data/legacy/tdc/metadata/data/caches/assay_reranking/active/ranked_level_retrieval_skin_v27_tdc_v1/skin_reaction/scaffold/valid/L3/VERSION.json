@@ -14,10 +14,10 @@
   "level": "L3",
   "model": {
     "checkpoint_step": 380,
-    "dataset": "jiosephlee/assay-transfer-record-level-v27-skin-reaction-combined-intern",
+    "dataset": "local-artifacts/assay-transfer-record-level-v27-skin-reaction-combined-intern",
     "dataset_revision": "1fa33cf3a7df7b6bd07a3b959f37502f951fc8ed",
     "measurement_display": "canonical_first_atomic_source_fallback.v27_skin",
-    "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v27-skin-reaction-combined-best",
+    "model": "local-artifacts/intern-s1-mini-assay-transfer-record-level-v27-skin-reaction-combined-best",
     "projection_sha256": "404d75c26b9ebd228d6459f6c57621701645eb5aed89b6d94dd03f261c40eceb",
     "prompt_profile": "v27_skin",
     "prompt_sha256": "b76517548cc5f432dacd2b15e46aef4035ccbe49a65961842b78c322ad45d21d",

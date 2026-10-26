@@ -179,7 +179,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc/dili/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/dili/scaffold/test/PARENT_UNIVERSE.json",
       "size": 943217,
-      "sha256": "e18b91d079f77d2799588e74897a9fd34050a87d59b416bacadc55d22f1b1082"
+      "sha256": "0a1f569174875502e0db168e44ccae8e10e0c855e06db17ed7c7ecc25814412e"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc/dili/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/dili/scaffold/valid/L2/VERSION.json",
@@ -274,7 +274,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc/dili/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/dili/scaffold/valid/PARENT_UNIVERSE.json",
       "size": 491894,
-      "sha256": "b953e3fabe734a976e465d523d0e793b3b5694a470becef62d4e19944e3d0c55"
+      "sha256": "f60669403b2a115c0a8470315453dd73c1815c286cb5d84f698036f92be962f0"
     },
     {
       "path": "data/evidence_libraries/dili/v10_main_universe_v3/retrieval_projection/ranked_evidence_safety_v27_v1/VERSION.json",

@@ -11,21 +11,21 @@
   "source_files": [
     {
       "split": "train",
-      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/BBB_Martins/train.csv",
+      "source_path": "data/external/therapeutic-tuning/data/raw/original/BBB_Martins/train.csv",
       "path": "data/raw/tdc/BBB_Martins/v2/train.csv",
       "sha256": "157e6d43e1cd3cf1e54835c3a2c30792d0f24e10f8f9ac96f7382a46776e3013",
       "rows": 1421
     },
     {
       "split": "valid",
-      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/BBB_Martins/val.csv",
+      "source_path": "data/external/therapeutic-tuning/data/raw/original/BBB_Martins/val.csv",
       "path": "data/raw/tdc/BBB_Martins/v2/valid.csv",
       "sha256": "dc72cf0a42d819af61b350fd95cf0f7a7f5130336b3073887cc1eb9b0729300d",
       "rows": 203
     },
     {
       "split": "test",
-      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/BBB_Martins/test.csv",
+      "source_path": "data/external/therapeutic-tuning/data/raw/original/BBB_Martins/test.csv",
       "path": "data/raw/tdc/BBB_Martins/v2/test.csv",
       "sha256": "82d4fa96f671a8382e9d8e6de3dde8385b9f337854c83e6fde2e69a7be93754f",
       "rows": 406
@@ -56,5 +56,5 @@
     "test.jsonl": "4112683c5127ed7ad97a0f053a7dc57eaa0b5d118cdb9f13136196e32cfe2619",
     "heldout_molecule_condition_labels.jsonl": "46653601c596aa0c1b3807161e0dad537e5cb28878d06b860eea33d96e62ecdf"
   },
-  "summary_sha256": "81bd8f84d0c4f961c3901431c0843711e6d128a45fbb2970ba920152a9e1236f"
+  "summary_sha256": "1474ec65ee6d2af225797ab043f02df83865b6386d34f722a8fd708a4a090fdd"
 }

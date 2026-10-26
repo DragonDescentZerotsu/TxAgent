@@ -12,7 +12,7 @@
       "reason": "Rechecked all 2,212 exact raw assignments across 57 clusters. The guinea-pig correction is otherwise supported, but the exhaustive split assigns 'rat skin vs porcine epidermis', 'rodent and pig skin', and 'rodent or porcine skin' to pig alone. Those rows explicitly contain a second species/category and require pig + rat or pig + rodent children under the policy's multi-species rule."
     }
   ],
-  "packet_manifest_sha256": "33107c221bc34289b1b552530115bd346a65958477da817f945e44452f8d309d",
+  "packet_manifest_sha256": "3b150819b8bcbb4dfd21b1504f2d453e4ee6da1cf6393870baf05b76a397161b",
   "policy_sha256": "c0ae487055daf0ea521d530c30b33ef29a2152788f61992604cb389eec8ab017",
   "primary_change_count": 30,
   "primary_file": "primary_direct_exposure.jsonl",

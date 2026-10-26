@@ -86,7 +86,7 @@ model weights, services or the original checkout. Historical horizontal/combined
 layouts and budget-scan plots are outside this maintained paper figure path.
 
 [Component ablations](paper/ablations.csv) contain the 30 task/condition values
-from Joseph's archived `gold_v1_ablation_test_20260925_v3.tsv`. The archive and
+from Evidence's archived `gold_v1_ablation_test_20260925_v3.tsv`. The archive and
 member hashes are pinned in [sources.json](paper/sources.json). Its five means
 round to 0.721, 0.704, 0.714, 0.711 and 0.714, matching the manuscript. The source
 TSV is rounded to six decimals; raw predictions have not been re-audited here.
@@ -96,9 +96,9 @@ The manuscript's sixth, similarity-only value (0.678) numerically matches the
 main naive DeepSeek 50/50 baseline. Its exact ablation protocol binding remains
 unverified, so it is not added as a sixth verified ablation condition.
 
-Main supplies the paper baseline implementations and settings; Joseph supplies
+Main supplies the paper baseline implementations and settings; Evidence supplies
 transfer tools, context optimization, Ours and component ablations. Keep the
-existing Joseph functionality and its source records rather than duplicating it.
+existing Evidence functionality and its source records rather than duplicating it.
 
 ## Reproduction inputs and distribution
 
@@ -112,7 +112,7 @@ a complete anonymous, independently installable reproduction release.
 | Prepared paper LLM execution | Complete portable batch, including source snapshots, embedded priors and evaluation files | `--bundle-paper-baseline` then `--run-paper-baseline`; provider credentials are supplied separately |
 | Fresh paper baseline candidate selection | Original source-query snapshots plus the exact cohort, complete pickle index and TDC train/heldout files | `--prepare-paper-baseline --input-map`; the frozen manifest is not rewritten |
 | Saved ML replay or training | Complete candidate/model directories, receipts, prepared targets/features, exact split embeddings and input splits; MiniMol runtime for fresh encoding | [Baseline recipes](../experiments/baselines/README.md) and [MiniMol relocation guide](../predict/baselines/minimol/README.md#runtime-and-exact-cache-reuse) |
-| Existing FINAL results and traces | The pinned FINAL Git bundle and its manifest/parts | Its [restore instructions](../outputs/paper/assay_transfer_harness/joseph/final/git_bundle/README.md); these are separately selected FINAL arms |
+| Existing FINAL results and traces | The pinned FINAL Git bundle and its manifest/parts | Its [restore instructions](../outputs/paper/assay_transfer_harness/evidence/final/git_bundle/README.md); these are separately selected FINAL arms |
 | Historical ranked retrieval release | All parts and matching cache configuration for the tagged release | [Retrieval release instructions](../data/processing/evidence_library/RETRIEVAL_RELEASE.md); this does not replace the paper baseline pickle inputs or newer named cache releases |
 
 The local retention audit covers 36 paper candidate-preparation files (38.21 GiB,

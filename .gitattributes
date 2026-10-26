@@ -13,3 +13,6 @@ data/artifacts/evidence_libraries/**/stage.tar.zst.part-* -diff
 data/artifacts/evidence_library_compressed/**/stage.tar.zst.part-* -diff
 data/legacy/artifacts/evidence_libraries/**/stage.tar.zst.part-* -diff
 data/legacy/clintox/artifacts/**/*.part-* -diff
+
+# Compressed bundle fragments are binary even if a fragment has no early NUL.
+*.tar.zst.part-* -diff

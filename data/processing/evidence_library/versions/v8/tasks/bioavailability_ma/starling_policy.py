@@ -138,7 +138,7 @@ EXPECTED_SMILES_MAPPING_SHA256 = (
 )
 DEFAULT_OUT_DIR = str(evidence_library_root(TASK_ID, "v8"))
 DEFAULT_V65_ELIGIBLE_RECORDS = (
-    "/data1/joseph/starling_assay_transfer/datasets/eligible/"
+    "data/external/starling_assay_transfer/datasets/eligible/"
     "assay_transfer_soft_evidence_v6_5/records.parquet"
 )
 DEFAULT_BENCHMARK_SPLIT_ROOT = "data/gold_labels/legacy/processed_starling/Bioavailability_Ma"

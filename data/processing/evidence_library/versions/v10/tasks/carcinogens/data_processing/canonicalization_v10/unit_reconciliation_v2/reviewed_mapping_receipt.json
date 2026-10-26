@@ -10,7 +10,7 @@
   "review_completion": {
     "reviewer_id": "codex-carcinogens-v1",
     "reviewed_packets": 1626,
-    "source_manifest_sha256": "3dbd7118e1ccdfa9e51f5de923a17602fc4c4d242a6c09d6799ea62a9b9a5552"
+    "source_manifest_sha256": "ef566dc89affa8d7a07e8c0d96d4ec860966314c99085192d782ba8a81802337"
   },
   "validations": {
     "mapping_hash_matches_reviewed_consolidation": true,

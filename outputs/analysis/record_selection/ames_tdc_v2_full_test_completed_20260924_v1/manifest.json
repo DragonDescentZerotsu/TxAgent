@@ -9,15 +9,15 @@
   },
   "source_runs": {
     "direct": [
-      "outputs/paper/assay_transfer_harness/joseph/ames_direct_exactscore_full_test_upstream_v3_20260924_v1/tdc_v2",
-      "outputs/paper/assay_transfer_harness/joseph/ames_direct_exactscore_full_test_upstream_v3_openrouter_resume_20260924_v1/tdc_v2"
+      "outputs/paper/assay_transfer_harness/evidence/ames_direct_exactscore_full_test_upstream_v3_20260924_v1/tdc_v2",
+      "outputs/paper/assay_transfer_harness/evidence/ames_direct_exactscore_full_test_upstream_v3_openrouter_resume_20260924_v1/tdc_v2"
     ],
     "direct_plus_indirect": [
-      "outputs/paper/assay_transfer_harness/joseph/tdc_v2_ames_indirect_best_full_test_upstream_v3_20260924_v1/tdc_v2",
-      "outputs/paper/assay_transfer_harness/joseph/tdc_v2_ames_indirect_best_full_test_recovery_20260924_v1/tdc_v2",
-      "outputs/paper/assay_transfer_harness/joseph/tdc_v2_ames_indirect_best_full_test_local_recovery_20260924_v1/tdc_v2",
-      "outputs/paper/assay_transfer_harness/joseph/tdc_v2_ames_indirect_best_full_test_local_18082_tail_20260924_v1/tdc_v2",
-      "outputs/paper/assay_transfer_harness/joseph/tdc_v2_ames_indirect_query1158_direct_cap16k_20260924_v1/tdc_v2"
+      "outputs/paper/assay_transfer_harness/evidence/tdc_v2_ames_indirect_best_full_test_upstream_v3_20260924_v1/tdc_v2",
+      "outputs/paper/assay_transfer_harness/evidence/tdc_v2_ames_indirect_best_full_test_recovery_20260924_v1/tdc_v2",
+      "outputs/paper/assay_transfer_harness/evidence/tdc_v2_ames_indirect_best_full_test_local_recovery_20260924_v1/tdc_v2",
+      "outputs/paper/assay_transfer_harness/evidence/tdc_v2_ames_indirect_best_full_test_local_18082_tail_20260924_v1/tdc_v2",
+      "outputs/paper/assay_transfer_harness/evidence/tdc_v2_ames_indirect_query1158_direct_cap16k_20260924_v1/tdc_v2"
     ]
   },
   "source_matrix_sha256": {

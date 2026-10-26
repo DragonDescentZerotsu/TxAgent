@@ -25,10 +25,10 @@ INFERENCE_PROJECTION_SHA256 = hashlib.sha256(json.dumps({
     "contract": "skin_v27_candidate_context_copy.v1",
 }, sort_keys=True).encode()).hexdigest()
 MODEL = {
-    "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v27-skin-reaction-combined-best",
+    "model": "local-artifacts/intern-s1-mini-assay-transfer-record-level-v27-skin-reaction-combined-best",
     "revision": "398a41ccb38cadd120ee26b989bdbce5cab6c021",
     "checkpoint_step": 380,
-    "dataset": "jiosephlee/assay-transfer-record-level-v27-skin-reaction-combined-intern",
+    "dataset": "local-artifacts/assay-transfer-record-level-v27-skin-reaction-combined-intern",
     "dataset_revision": "1fa33cf3a7df7b6bd07a3b959f37502f951fc8ed",
     "prompt_profile": "v27_skin",
     "prompt_sha256": PROMPT_SHA256,

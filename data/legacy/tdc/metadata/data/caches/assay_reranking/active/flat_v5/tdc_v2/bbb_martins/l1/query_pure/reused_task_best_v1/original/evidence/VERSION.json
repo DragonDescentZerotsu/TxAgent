@@ -6,7 +6,7 @@
   "records_sha256": "3d4d80fcbdcad4ff96740f02612998c53af38758f7b7ceaf447cdb198f754c85",
   "schema_version": "ranked_evidence_projection.v1",
   "source_identity": "tdc_v2_source_row_uid",
-  "source_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/TDC/BBB_Martins/v2/original/train_molecule_condition_labels.jsonl",
+  "source_path": "data/gold_labels/TDC/BBB_Martins/v2/original/train_molecule_condition_labels.jsonl",
   "status": "complete",
   "task_id": "bbb_martins"
 }

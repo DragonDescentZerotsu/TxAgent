@@ -94,7 +94,7 @@ FROZEN_AUDIT_HASHES = {
 }
 FROZEN_CANDIDATE_HASHES = {
     "candidate_sha256": "0647b175944400ac9e0522b1472323e0310e47fb7f8da990c37ebdb6b9a4c404",
-    "candidate_manifest_sha256": "ac5cde0a6724eaa536f52afdd9ce09b4626f3a2062e86394e3e1110affa8c0fe",
+    "candidate_manifest_sha256": "15800819fbad1c393ffc85ea8ae84138fe09ef221faa24cd85e5c8925054bf7d",
 }
 SHA256 = re.compile(r"[0-9a-f]{64}")
 

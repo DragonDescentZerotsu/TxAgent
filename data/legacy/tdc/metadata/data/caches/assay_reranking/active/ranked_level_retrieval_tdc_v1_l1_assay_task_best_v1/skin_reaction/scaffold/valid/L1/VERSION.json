@@ -3,14 +3,14 @@
   "assay_transfer_status": "complete",
   "backbone_dtype": "bfloat16",
   "base_database_sha256": "c06fc081fd85c441f031cfd40ccbfa67f97c617e479de614de60de911886ab4c",
-  "base_manifest_sha256": "f8fa6aa9f0011943710a72c5fd194c6c2b52c49ff238f9cbb808ac85cc161298",
+  "base_manifest_sha256": "921e2c631906fa2f18c547a506cdbbee46941042a0302aff3b89090a74aaefd7",
   "base_profile": "ranked_level_retrieval_tdc_v1",
   "capacity": 100,
   "content_id": "1944a5b5f1527854173032ac7bab0e010034ecc2e39f0569490331fa149ea18b",
   "database": "rankings.sqlite3",
   "database_sha256": "a9b11f65c56f926298e6b960cba0e990b56c77e0ff2b5877be15b23d155b9a62",
   "inputs": {
-    "evidence_manifest_sha256": "3b3a0090d621bb1f2c9d99948a9c170ac155d81672465455f31962b5bf14e0de",
+    "evidence_manifest_sha256": "b1c195fadc6093cafb43a1794882364b0e59fb0af51a3892d4145ef54a40e670",
     "query_sha256": "96a23fd1b662f035e8f16b2e4168e9ee10338f5b1fbf8cde5a7023d3ab7a8060",
     "train_sha256": "2102f6288d63ede7e23fa6f5f294ab6f912c6a3b25bba781eee9b6e72965c823"
   },
@@ -22,7 +22,7 @@
   "logit_extraction_dtype": "float32",
   "model": {
     "checkpoint_step": 80,
-    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v9-0-2-tdc-v2-skin-reaction-best",
+    "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v9-0-2-tdc-v2-skin-reaction-best",
     "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
     "revision": "870f401c451b4324a93af5049bec02c529119c20"
   },
@@ -248,7 +248,7 @@
     "dataset_revision": "4d97c745c735aa8d6dc07b81305e93f4e3bea496",
     "model": {
       "checkpoint_step": 80,
-      "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v9-0-2-tdc-v2-skin-reaction-best",
+      "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v9-0-2-tdc-v2-skin-reaction-best",
       "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
       "revision": "870f401c451b4324a93af5049bec02c529119c20"
     },

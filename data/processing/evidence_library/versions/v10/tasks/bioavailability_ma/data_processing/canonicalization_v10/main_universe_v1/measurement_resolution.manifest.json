@@ -2,7 +2,7 @@
   "generation_version": "stage1_measurement_resolution_replay.v1",
   "task_id": "bioavailability_ma",
   "mapping_version": "bioavailability_ma_measurement_resolution.v5",
-  "mapping_sha256": "f7412f4e287ac51f6b7b47d4e4bd29e4581e1813cec948673a6dbf43dbc7980e",
+  "mapping_sha256": "586b74f4a7ec275ef1ab906b9f98348d24ec5007c3f1029230f0bfc7f84d074d",
   "sources": {
     "published_stage1_records": {
       "path": "data/evidence_libraries/bioavailability_ma/v10_main_universe_v1/01_cleaned/records.parquet",

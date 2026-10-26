@@ -21,7 +21,7 @@
   ],
   "contextual_unit_policy": {
     "matching": "exact_all_declared_fields_fail_closed",
-    "path": "/data1/joseph/TxAgent/tools/chembl_tool/common/contextual_unit_policy.json",
+    "path": "data/external/TxAgent/tools/chembl_tool/common/contextual_unit_policy.json",
     "policy_version": "contextual_canonical_unit_policy.v1",
     "rule_ids": [
       "bioavailability_ma.fa.caco2_flux.pg_ng.v1",
@@ -125,7 +125,7 @@
       "data/processed_starling/BBB_Martins/random/train_molecule_labels.jsonl": "0691bee38cc1e6e928dce2dc98048e28b34842a698d4061f23ca48d2464e176b",
       "data/processed_starling/BBB_Martins/scaffold/heldout_molecule_labels.jsonl": "e660bbb9598c9bd008599385fce1bba100e0e7993946b95541f999e7c267b833",
       "data/processed_starling/BBB_Martins/scaffold/train_molecule_labels.jsonl": "28734aeaa1ac053c17761a5822d7f0eb8b4836e3daed870146e1922c18e29f22",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "acfa3d2ca4d356d75afc878fccff3a6be6499ee122dc1800465ac7500579cf3e",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "c01f360a6c8b4ff57ca81bc60599352f68951a2749a69174880f1d44ecd8a9e9",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/03_records/records.parquet": "79d648e5e69826a581164a214718779042388c51ae176cb93ec19ff0a492c6c1"
     },
     "outputs": {
@@ -161525,7 +161525,7 @@
   "normalization_domain_rules_version": "bbb_martins_normalization_domains.v3",
   "pipeline_layout_version": "bbb_martins.normalized_v7_layout.v1",
   "qualifier_vocabulary": {
-    "path": "/data1/joseph/TxAgent/tools/chembl_tool/common/qualifier_vocabulary_policy.json",
+    "path": "data/external/TxAgent/tools/chembl_tool/common/qualifier_vocabulary_policy.json",
     "policy_version": "qualifier_vocabulary.v1",
     "schema_version": "qualifier_vocabulary.schema.v1",
     "scoping": "shared_plus_declared_task_fail_closed",
@@ -161706,10 +161706,10 @@
     },
     "implementation_sha256": "ddf2f25fa3e69ec254957b21e7a8e42f06b5011ddab64c55d76dbf2f62136d33",
     "inputs": {
-      "/data1/joseph/TxAgent/tools/chembl_tool/common/contextual_unit_policy.json": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef",
-      "/data1/joseph/TxAgent/tools/chembl_tool/common/qualifier_vocabulary_policy.json": "da303ef8e39cd6efcb2f5863e3fd12feb63072f81af943c5beb740a6d5c07305",
-      "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/globally_reconciled_auxiliary_value_mapping.json": "9298f3572eacfbfbad3c7ca2c0c2894aeecb97feed9f37408717072806d32aa4",
-      "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/reference_semantics_v2/reference_semantics.parquet": "431a8a962c8595f2098474a82fb17fe8ee40964d42ec161d5825be80a3f95bef",
+      "data/external/TxAgent/tools/chembl_tool/common/contextual_unit_policy.json": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef",
+      "data/external/TxAgent/tools/chembl_tool/common/qualifier_vocabulary_policy.json": "da303ef8e39cd6efcb2f5863e3fd12feb63072f81af943c5beb740a6d5c07305",
+      "data/external/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/globally_reconciled_auxiliary_value_mapping.json": "9298f3572eacfbfbad3c7ca2c0c2894aeecb97feed9f37408717072806d32aa4",
+      "data/external/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/reference_semantics_v2/reference_semantics.parquet": "431a8a962c8595f2098474a82fb17fe8ee40964d42ec161d5825be80a3f95bef",
       "data/starling_data/bbb_martins/Direct_BBB/records.parquet": "14c01314377b6c31f18e6ec9c1ee72a8605a06800d74385fc8a7273f2334df57",
       "data/starling_data/bbb_martins/efflux_transport/extractions.parquet": "cc24fe33857a2032143c7b6f54d18e7796204b33fa459c2ec94e9af46a0f3db0",
       "data/starling_data/bbb_martins/influx_transport/extractions.parquet": "846acb38e8c9adad2b18835aa1ff7516ca043adfd8f402413b2170ebd1387ab4",
@@ -161723,12 +161723,12 @@
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/01_cleaned/records.parquet": "219d9ae75812fd5cdc45e31c7754ecbf5a9019b2cfc0b240385397beba845402",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/01_cleaned/source_inventory.json": "6966e6b4294c7ce60870625d6337c33e92d95fd1d658342470b1b859159269f5",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/01_cleaned/source_value_cleaning_audit.parquet": "a131999a9e755e6ec96b3ba114b66b35768f7b38ee441bb5df9c8276f9b22439",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "acfa3d2ca4d356d75afc878fccff3a6be6499ee122dc1800465ac7500579cf3e",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "c01f360a6c8b4ff57ca81bc60599352f68951a2749a69174880f1d44ecd8a9e9",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/endpoint_registry.json": "8c87687096102d5f4b98dcc1b02db9be679da179fba67d6ca83eee731b0bf01c",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/manifest.json": "c5e74523bb7f0e84eb1c12397cb8b34df9ce502ad5c906f06ce4990559cfb2af",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/record_validity_policy.json": "6ea9b47081e67b06738feb6dc60f46c781589974133782884cf99d2c38b29bf3",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/manifest.json": "79de196b162f7b97ff36fcac3b1a4f3321421df7f45932428fec938f95029c56",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/record_validity_policy.json": "807c7319b66bf41cbcfdfbe0bac200dbd8d7b4e1bb2fdf1e6e465001d5d0a5c8",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet": "4e9966a9308ced778baa3f0359a77377bd5268fcde464f3fec90be5dc47ba829",
-      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/reference_semantics_manifest.json": "a856928ecc85ee4579de4839050f885a9f4849292d7bec9584f7af89e2a2ba91",
+      "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/reference_semantics_manifest.json": "6d4c1cceab4b93d2ef6de1cf07428b307d9bc27a63c21d814995a4318a92b73c",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/02_canonicalized/source_contract.json": "650810d338b1992a15ac8dcd565a97aaefdbe51b6ddb517f601cea392fe3f889",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/03_records/duplicates.parquet": "4aa519d14410a02c8dec022ee6d7388494a4a8e9034012cc5a02367a79b60084",
       "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/03_records/exclusions.parquet": "89998e3bb2f5e16854cfbb15855beb2847e5b32cd70f2313cdffbbedd402edd7",
@@ -161741,18 +161741,18 @@
       "allow_missing_direct_endpoint_mapping": false,
       "allow_missing_reference_semantics": false,
       "auxiliary_mapping": {
-        "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/globally_reconciled_auxiliary_value_mapping.json",
+        "path": "data/external/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/globally_reconciled_auxiliary_value_mapping.json",
         "sha256": "9298f3572eacfbfbad3c7ca2c0c2894aeecb97feed9f37408717072806d32aa4"
       },
       "benchmark_split_root": "data/processed_starling/BBB_Martins",
       "direct_endpoint_mapping": {
-        "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/approved/endpoint_mapping.json",
-        "sha256": "c3990d09b6af5828b87ff08ff445ec55018fad15a162610b1151b4b63665769b"
+        "path": "data/external/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/approved/endpoint_mapping.json",
+        "sha256": "a0a34745641f9179030ea4ec4b17d74a8033e16314bb95e5c8519a08a863c363"
       },
       "max_record_examples": 6,
       "max_rows_per_source": 0,
       "reference_semantics_mapping": {
-        "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/reference_semantics_v2/reference_semantics.parquet",
+        "path": "data/external/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/reference_semantics_v2/reference_semantics.parquet",
         "sha256": "431a8a962c8595f2098474a82fb17fe8ee40964d42ec161d5825be80a3f95bef"
       },
       "starling_data_dir": "data/starling_data/bbb_martins",

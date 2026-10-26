@@ -22758,8 +22758,8 @@
   },
   "mapping_version": "bbb_martins_direct_endpoint.errata.v2",
   "provenance": {
-    "base_mapping_path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/approved/endpoint_mapping.json",
-    "base_mapping_sha256": "c3990d09b6af5828b87ff08ff445ec55018fad15a162610b1151b4b63665769b",
+    "base_mapping_path": "data/external/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/approved/endpoint_mapping.json",
+    "base_mapping_sha256": "a0a34745641f9179030ea4ec4b17d74a8033e16314bb95e5c8519a08a863c363",
     "errata_candidates_path": "tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v2/proposal/errata_candidates.parquet",
     "errata_candidates_sha256": "3fcf5040ba3bd4c72fc14c4767ad920f55b6e58dc3b6b16b63fc2ad46b420ae7",
     "generation_method": "deterministic_measurement_unit_contradiction_audit",

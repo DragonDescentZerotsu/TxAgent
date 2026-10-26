@@ -18,7 +18,7 @@ def _write(path: Path, payload: dict) -> None:
 
 def _trace_request() -> dict:
     return {
-        "schema_version": "joseph_flat_context_request.v1",
+        "schema_version": "evidence_flat_context_request.v1",
         "reasoning_reference_contract": {
             "schema_version": "progressive_reasoning_references.v1",
             "layout": "flat_level_grouped",

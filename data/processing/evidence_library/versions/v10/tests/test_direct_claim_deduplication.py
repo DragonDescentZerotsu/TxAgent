@@ -503,7 +503,7 @@ def test_bbb_mapping_registry_selects_complete_v10_measurement_map():
         "missing_endpoint_recovery",
     }
     assert registry["mappings"]["measurement_resolution"]["sha256"] == (
-        "74196a0cd1483e501f47a4124c2b763a0031060426a1cdf832b735b76bad5bf2"
+        "84710b3af068f860b2211f015b82d9bb6a8e9c3aae40920c956a8f2d2caf2e56"
     )
     assert "canonicalization_v10/main_universe_v1" in str(
         bbb_mapping_path("measurement_resolution")

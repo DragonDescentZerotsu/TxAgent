@@ -5,7 +5,7 @@
   "database": "rankings.sqlite3",
   "database_sha256": "a53cf2e3d18a8b3afde9c0ed1719b8bd8cb06693453c801ac460b2f711972237",
   "inputs": {
-    "evidence_manifest_sha256": "d329d0b579fd08312133ad1bd15bce21f99b6e92815f3d4848d96fd7640b3f79",
+    "evidence_manifest_sha256": "d63eb09b1ac1443f3f3d17791132687e6f81e903a51acbf73ac9ce719ea02f34",
     "query_sha256": "9abf8a8472b9245ae94ccf014f091af4eaadf6e2cf07189207d2e2c0135e8e13",
     "train_sha256": "38358d35479029a6aa03d8d71eeacee12215e03ff0bb23b3a0bf52fa53933b5f",
     "training_parents": 1375
@@ -17,7 +17,7 @@
   "level": "L1",
   "model": {
     "checkpoint_step": 130,
-    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-bbb-martins-best",
+    "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-bbb-martins-best",
     "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
     "revision": "42cb4afa224c102898d75fe4ad48e166254952b5"
   },

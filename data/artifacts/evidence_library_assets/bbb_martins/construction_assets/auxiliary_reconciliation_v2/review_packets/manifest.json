@@ -451,7 +451,7 @@
     }
   ],
   "policy": {
-    "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/auxiliary_reconciliation_policy.json",
+    "path": "data/external/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/auxiliary_reconciliation_policy.json",
     "sha256": "547088fc175febf7cf93ccbd69567e3e910378f5b35fe2d4d9bbabd29573d05c"
   },
   "validations": {

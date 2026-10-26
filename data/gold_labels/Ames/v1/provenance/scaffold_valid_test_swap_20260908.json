@@ -41,7 +41,7 @@
     "data/conditioned_benchmark/Ames/scaffold/valid.jsonl": "10985b3ccd3d337024a98cefa8a32ea2fa6ed2b4208d1f1e08afae471d78fc29",
     "data/conditioned_benchmark/Ames/scaffold/valid_molecule_condition_labels.jsonl": "cb33b6a6e28b847ffb84654aa2b80cd3d3b3755ca50647ad03c5caeffb050767"
   },
-  "snapshot": "/data1/tianang/Projects/TxAgent/outputs/paper/ames_scaffold_split_swap_20260908/before",
+  "snapshot": "outputs/paper/ames_scaffold_split_swap_20260908/before",
   "n_train": 1926,
   "n_valid": 274,
   "n_test": 274,

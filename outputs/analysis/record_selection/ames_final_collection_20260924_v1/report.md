@@ -1,6 +1,6 @@
 # AMES final-test collection addition
 
-The final Joseph collection now includes Gold-v1 and TDC-v2 AMES direct and direct-plus-indirect arms. All four arms have complete valid-response coverage, per-query prompts and traces, predictions, metrics, and source/provider provenance. The result numbers are in `results.tsv`.
+The final Evidence collection now includes Gold-v1 and TDC-v2 AMES direct and direct-plus-indirect arms. All four arms have complete valid-response coverage, per-query prompts and traces, predictions, metrics, and source/provider provenance. The result numbers are in `results.tsv`.
 
 | Benchmark | Direct macro-F1 | Direct + indirect macro-F1 | Queries per arm |
 |---|---:|---:|---:|

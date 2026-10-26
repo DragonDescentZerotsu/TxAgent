@@ -33,7 +33,7 @@ or frozen auxiliary reconciliation.
 Materialize the endpoint/unit decision inventory after a candidate build:
 
 ```bash
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+conda run -n txagent-glm \
   python -m tools.chembl_tool.tasks.bbb_martins.audit_starling_measurement_semantics \
   --records <candidate>/02_canonicalized/records.parquet \
   --output <candidate>/09_audits/measurement_semantics.json

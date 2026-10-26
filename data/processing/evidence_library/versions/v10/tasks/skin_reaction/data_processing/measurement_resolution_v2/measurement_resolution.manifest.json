@@ -6,7 +6,7 @@
   },
   "base_mapping": {
     "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
-    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/measurement_resolution_v1/measurement_resolution.parquet",
+    "path": "tools/chembl_tool/tasks/skin_reaction/data_processing/measurement_resolution_v1/measurement_resolution.parquet",
     "reused_rows": 243374,
     "sha256": "8ad8a94fd60591331f950dcbf35dff4c8a5b7a593d38aa73e7927c29abce3935"
   },
@@ -27,7 +27,7 @@
     "reasoning_mode": "server_default",
     "temperature": 1.0
   },
-  "mapping_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/measurement_resolution_v2/measurement_resolution.parquet",
+  "mapping_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/measurement_resolution_v2/measurement_resolution.parquet",
   "mapping_rows": 243377,
   "mapping_sha256": "4e2a5dc9df2caf5d468ad05ce11b9e41da222c92e5a8fda7fa4b88763ce5ac42",
   "mapping_version": "skin_reaction_measurement_resolution.v2",
@@ -46,7 +46,7 @@
       "skin_exposure": "fa95ff11324ccd6f32fabac1fec26efd46c4bb1a882c469495b0971fdfa085b4"
     },
     "task_instructions_sha256": "48fe44ba83282128c741c6acbbcf7279030277c343c2b7ddf4883be6e2fa8992",
-    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/measurement_resolution_templates/measurement_resolution_v5.jinja",
+    "template_path": "tools/chembl_tool/tasks/bbb_martins/measurement_resolution_templates/measurement_resolution_v5.jinja",
     "template_sha256": "0c3d5db5dec30456d578371186fbc2c96bdca9ec3076fc038ac67c0ebd498b47"
   },
   "rejected_rows": 0,

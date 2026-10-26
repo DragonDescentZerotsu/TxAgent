@@ -11,7 +11,7 @@
   "identity_normalizer_version": "rdkit_fragment_parent.v2",
   "inputs": {
     "evidence_manifest_sha256": "0481e9ab3dc262243cedc65dd76eb5828f22dc52195e9f586b1eb75665f1eb15",
-    "query_identity_manifest_sha256": "d56c0234e3ad5a5470bd69a545aff0e6cd4fd8f38745e26f2ae590e372814a18",
+    "query_identity_manifest_sha256": "8a2f29963abb89a3dcbf3d15959d518baef57f643508ca55cbdde12f3350d10c",
     "query_sha256": "f1f8560a0aefb332f770966b5581f9796ef7107f03167fbb935d69dd79bca948"
   },
   "label_release": {
@@ -20,9 +20,9 @@
   },
   "level": "L3",
   "model": {
-    "dataset": "jiosephlee/assay-transfer-record-level-v24-1-bbb-martins-l3-intern",
+    "dataset": "local-artifacts/assay-transfer-record-level-v24-1-bbb-martins-l3-intern",
     "dataset_revision": "a903fc6395ae25cad76d337d9dbae1548a6b5b51",
-    "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v24-1-bbb-martins-l3-best",
+    "model": "local-artifacts/intern-s1-mini-assay-transfer-record-level-v24-1-bbb-martins-l3-best",
     "revision": "cdffb2b2ba726c8564197046c96a7fad337ea807"
   },
   "neighbor_identity_policy": "scaffold_disjoint",
@@ -1671,37 +1671,37 @@
   },
   "score_reuse_sources": [
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/query_pure/reused_v1/original",
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/query_pure/reused_v1/original",
       "prompts_sha256": null,
       "score_files": {},
-      "stage_manifest_sha256": "e4611abed7b56d933276aa4ab827e4382f2d91faa76fd944813906d8b0d285e2"
+      "stage_manifest_sha256": "2186d95376292d707b1e93d5a67dd8fe844682dbe0d4d0ef7a95bf8fe48d2c0b"
     },
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/query_pure/reused_v1/original",
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bbb_martins/l2plus/query_pure/reused_v1/original",
       "prompts_sha256": null,
       "score_files": {},
-      "stage_manifest_sha256": "d56c0234e3ad5a5470bd69a545aff0e6cd4fd8f38745e26f2ae590e372814a18"
+      "stage_manifest_sha256": "8a2f29963abb89a3dcbf3d15959d518baef57f643508ca55cbdde12f3350d10c"
     },
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2",
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2",
       "prompts_sha256": null,
       "score_files": {},
       "stage_manifest_sha256": "f7f15c8456f9181ca7a04495512cfe7c94e1e821cd32a5e27271400dbbccde0b"
     },
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2",
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2",
       "prompts_sha256": null,
       "score_files": {},
       "stage_manifest_sha256": "38d24dcb9d4b063704b1f4f4e2ae80bc2900bbee141a168a01d92ea73c2119f6"
     },
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/ranked_level_retrieval_v4",
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_v4",
       "prompts_sha256": null,
       "score_files": {},
       "stage_manifest_sha256": "ac9d60442ccc350997c80fdd74cee7e80ed0d18869fb3280bbca9a5541815981"
     },
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/ranked_level_retrieval_v4",
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_v4",
       "prompts_sha256": null,
       "score_files": {},
       "stage_manifest_sha256": "4b78f253bf92568c9fa2cb757ee847f2b9316faf0281f8610a84f76bf6d63916"

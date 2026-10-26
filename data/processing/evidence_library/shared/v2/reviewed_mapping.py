@@ -16,9 +16,9 @@ REVIEW_REQUIRED_MAPPINGS = frozenset({"auxiliary_context", "exact_measurement_un
 # successor receipt.  This avoids relabeling historical work as newly reviewed.
 GRANDFATHERED_MAPPING_HASHES = {
     ("bbb_martins", "auxiliary_context"): "15599b9e4cb42fd350453b38cb702ca678729a5f3d8c0300c7769bf73170e2dd",
-    ("bbb_martins", "exact_measurement_units"): "9568db3c7abc10bcf37e04b3025188943ff62a701649809f49ac27c9ce21511c",
+    ("bbb_martins", "exact_measurement_units"): "e24e7283bc5d85d8acabb677de97268e40e13a651d8e2095e6ed648a67633831",
     ("bioavailability_ma", "auxiliary_context"): "423cb60a17ac10e152092afdce3d225b2e663835aa7e455acd2768a105d196f5",
-    ("bioavailability_ma", "exact_measurement_units"): "27672c54bc2bab0d30b181d562a5aa6eb5bd51809811c9ab53e05077c33031e0",
+    ("bioavailability_ma", "exact_measurement_units"): "037bfb9c4006cfc165de5197615ed634bbad7eacaf22c5cf078bba0c1bc14b22",
     ("skin_reaction", "auxiliary_context"): "28ccfb3986e2d32dbd71c7dee04814734b8b40850fd146bcda4e1d56ae97c1ac",
 }
 

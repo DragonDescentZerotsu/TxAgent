@@ -6,7 +6,7 @@
 Use this guide to run any compatible progressive prompt, retrieval mode, or
 execution mode against the immutable V3 retrieval cache. Run commands from the
 authoritative checkout at
-`/vast/projects/myatskar/design-documents/joseph/TxAgent`.
+`.`.
 
 ## Infrastructure
 
@@ -15,7 +15,7 @@ authoritative checkout at
 - Capacity: selected at launch from healthy exact-model candidates
 - Cache: `predict/retrieval/assay_reranking/ranked_evidence_retrieval_parent_v1.yaml`
 - Traces: `outputs/paper/live/`
-- Results: `outputs/paper/assay_transfer_harness/joseph/<study>/<method>/<run>/`
+- Results: `outputs/paper/assay_transfer_harness/evidence/<study>/<method>/<run>/`
 
 The candidate inventory contains transport settings only. It does not select the
 task, prompt, retrieval mode, query-prior condition, or live/throughput mode.

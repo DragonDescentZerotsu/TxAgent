@@ -34,37 +34,37 @@
         "L2": {
           "content_id": "885a565ad1b82eae4814231145317f5c7ad92e40e794c7c54c86b4fbcd51fa21",
           "manifest": "scaffold/test/L2/VERSION.json",
-          "manifest_sha256": "01031e8be1f341180609f4ea1c4a58c7660a5b7f414f5e8d7032a408e4a12777"
+          "manifest_sha256": "4339123d3b20cee44c264a90d860128436fe263a833cf056979fbc2df3869e0a"
         },
         "L3": {
           "content_id": "129876402dba7e616bbe990442b0aa20c7df8b4c0a7b52cc2b3e8a3bd7cd1132",
           "manifest": "scaffold/test/L3/VERSION.json",
-          "manifest_sha256": "6a55324b8683ba7bf9d125e7020c94d4648ac713111305f4d7fcf5df08c2ee78"
+          "manifest_sha256": "0be57793bca5c6b54e30523f2ecba69564aa34bf847b68f698998f101547bbb5"
         },
         "L4": {
           "content_id": "f35b7c3f5068273ab2fcf2f819665e190e4cf5c150b744477533968042528473",
           "manifest": "scaffold/test/L4/VERSION.json",
-          "manifest_sha256": "18866210c7d76e128901950656a25f45b4c4c7589b4b3f85fc2bbfec2371fb0d"
+          "manifest_sha256": "a406efae3e35d4b7cb791edf110079857b39026b438af2a7c72e3c6bcf9fbc0c"
         },
         "L5": {
           "content_id": "c94681844161ba0015e39ce1bafd233e914ca3894097ba05dde1f1cd541bd209",
           "manifest": "scaffold/test/L5/VERSION.json",
-          "manifest_sha256": "4f8dbad8f79b2a066eb73073b6e26286d6946a60f97f65b468a223ac516b6977"
+          "manifest_sha256": "29b4829220d74a7cfe07fc1044700cb89f795f75c3727b3fc24cde8a4ed4ee8f"
         },
         "L6": {
           "content_id": "7c1cebbda80c1e93d932c1ad77340b100b8f8780875d2c2ab78aa2f7b10ca9f1",
           "manifest": "scaffold/test/L6/VERSION.json",
-          "manifest_sha256": "27120033854d1468519e42f86030fd6ced88ab6151396e12011afef158fd49a0"
+          "manifest_sha256": "f9003fdf43bb877f1a4c4fdeba66bf3df5d37c2acb43c88facf0c03a42b35535"
         },
         "L7": {
           "content_id": "f528fea5b827fee0b3b8e4427a409c2f94923ff92e02bdafd2ef58afc0a348bd",
           "manifest": "scaffold/test/L7/VERSION.json",
-          "manifest_sha256": "e8df87666252a57fc3418eabedfe3f06bfe877e6931a86d1f34b1c7b9817522d"
+          "manifest_sha256": "aaa1a54669a7f8ee8f38a207f33413485fadc30395ca59341be5406e06369bf4"
         }
       },
       "parent_universe": {
         "file": "scaffold/test/PARENT_UNIVERSE.json",
-        "sha256": "e18b91d079f77d2799588e74897a9fd34050a87d59b416bacadc55d22f1b1082"
+        "sha256": "0a1f569174875502e0db168e44ccae8e10e0c855e06db17ed7c7ecc25814412e"
       }
     },
     "valid": {
@@ -72,37 +72,37 @@
         "L2": {
           "content_id": "2e8e6c8519bbed4b0f6ab167b175d5140b83da207b9711dd862ca3f9c1cca42a",
           "manifest": "scaffold/valid/L2/VERSION.json",
-          "manifest_sha256": "72bc7a2eeab3274305e167a372cf7ab843dd45c7e6e70a58e445fd26d2031556"
+          "manifest_sha256": "a732ffe53128930cb1874c3733df40a6fe9b2554bc82ec85dbaf4a2a2c88cdcb"
         },
         "L3": {
           "content_id": "cfab828551152149db80ee7a26dc370eb7cc2473106164298163f4e1b5f10687",
           "manifest": "scaffold/valid/L3/VERSION.json",
-          "manifest_sha256": "83569f8a5f67bbd480acdcf35837dfb548919bd8a9ee98f9b47f4817f6b48550"
+          "manifest_sha256": "acc0c14af5f2e096a5344c8533c6ec0aeac117fbd8695ba1ca856a444ceedfde"
         },
         "L4": {
           "content_id": "c7eb8ba030c5680023695f1b27ef0fa6c5c18045fafc963e33f5090527e0008e",
           "manifest": "scaffold/valid/L4/VERSION.json",
-          "manifest_sha256": "b375c53a41f53591b20bfc412a0577bbcea3ac0cf662bf37664109111ffe1b12"
+          "manifest_sha256": "42ee1884d7718806b62d735b891af0007658f403847ab14d3427c1940f11d6e5"
         },
         "L5": {
           "content_id": "9aa86e9836b3f4b30b2c556c19e26d669a6e525b7719ee0df28f5ce7519ee00a",
           "manifest": "scaffold/valid/L5/VERSION.json",
-          "manifest_sha256": "9f1c3e4b415d3571aebddebd6f9d6ce6b15e0d8ddf9301f7e7a6e73d41936aa0"
+          "manifest_sha256": "a28b8412cfd5bbf0145eee8c06e6da197ad810b589a1f06195a27aeb9f8453a0"
         },
         "L6": {
           "content_id": "faa8012e9441a299a5e373c26ec66710504a78dc3f99d995df6f54b87a640350",
           "manifest": "scaffold/valid/L6/VERSION.json",
-          "manifest_sha256": "087d8f6ebd9c5f7a7870dcb126f7397faadfdf4bdcec62bb2e8ef9cbf7efa931"
+          "manifest_sha256": "1604873dc3551be04b2c883b2a3fac1c072f1da7d79bb65eaf7a13f2c461d351"
         },
         "L7": {
           "content_id": "e5a9dc4bc1e43513e1fabbafe43c93abdcfc496bcf2285e780f2d41677269da8",
           "manifest": "scaffold/valid/L7/VERSION.json",
-          "manifest_sha256": "55727c44a5a2679e115caaee57806dddca659a9125cd89808793d922a2dbaec2"
+          "manifest_sha256": "3a45da132154838075af25dc001a7633a304c265629452f3de04c0cbe37e6b45"
         }
       },
       "parent_universe": {
         "file": "scaffold/valid/PARENT_UNIVERSE.json",
-        "sha256": "b953e3fabe734a976e465d523d0e793b3b5694a470becef62d4e19944e3d0c55"
+        "sha256": "f60669403b2a115c0a8470315453dd73c1815c286cb5d84f698036f92be962f0"
       }
     }
   },

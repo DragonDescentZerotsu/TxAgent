@@ -29,11 +29,11 @@
   "checker_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_v2/reviews/checker_phototoxicity_by_sensitization.jsonl",
   "checker_sha256": "6495c5fda81ebeec3d39961288e267b8b3df18f13e5656fa0b4b524fa170dab8",
   "checker_summary_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_v2/reviews/checker_phototoxicity_by_sensitization_summary.json",
-  "checker_summary_sha256": "739a33f88e6cf3bbf60cfef0c4e9e109659e22b11f3138420e3a28a71e236dba",
+  "checker_summary_sha256": "581f22c1283ec5e9028db398976c418bb2cabe1b7146d9382e4be518d826f734",
   "label_catalog_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_v2/label_catalog.parquet",
   "label_catalog_sha256": "4cdc3ac99a19f32889eb763d18b16256e73329e0d95cb31c2e7f4d951a08a160",
   "packet_manifest_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_v2/review_packets/manifest.json",
-  "packet_manifest_sha256": "33107c221bc34289b1b552530115bd346a65958477da817f945e44452f8d309d",
+  "packet_manifest_sha256": "3b150819b8bcbb4dfd21b1504f2d453e4ee6da1cf6393870baf05b76a397161b",
   "packet_sha256": {
     "phototoxicity_irritation_local_damage__global_context__packet_0001.json": "17a001446cd2ed40e753fd49d23a0c61f8b786c96165db18cc9b756aeb7c7c8b",
     "phototoxicity_irritation_local_damage__global_context__packet_0002.json": "bc538babce3a048fc631d9d9af8f1b7359182f31c617467b758b1a9947adec5f",
@@ -83,7 +83,7 @@
   "primary_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_v2/reviews/primary_phototoxicity.jsonl",
   "primary_sha256": "dc78e28c73c851288835f706792b550c49ba6a858b14feae9cc8f3d4257a1701",
   "primary_summary_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_v2/reviews/primary_phototoxicity_summary.json",
-  "primary_summary_sha256": "3dd5a7fda032f9458dca3dd769f3ea7f7a9501eef5b415a7819cc3984a26254a",
+  "primary_summary_sha256": "c2310f27c4e6cb494714663f0d9876113465ad99ddeca29e9fd2ab0aeb434ecc",
   "publication_status": "adjudication_complete_for_phototoxicity_scope; cross-scope proposal audit and explicit human publication approval remain required; runtime mapping and downstream stages are unchanged",
   "reject_ids": [
     "primary_photo_species_70916f96d37c2216",

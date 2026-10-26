@@ -2,9 +2,9 @@
   "archived_at": "2026-09-03T23:39:42.744931+00:00",
   "preserved_cache_files": [
     {
-      "bytes": 16107,
+      "bytes": 16051,
       "path": "manifest.json",
-      "sha256": "7f46e23b8c91b40bb43d35f90386fd727ffa3383bf1533e1e091872cf2f80d15"
+      "sha256": "cc0242efd5ddf9d7538337657968efb0606e7211b533e763bfbbd58ff8adb573"
     },
     {
       "bytes": 867768,

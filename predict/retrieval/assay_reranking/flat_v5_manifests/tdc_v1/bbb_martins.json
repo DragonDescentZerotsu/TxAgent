@@ -103,7 +103,7 @@
     {
       "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/bbb_martins/evidence/VERSION.json",
       "size": 626,
-      "sha256": "69a16a01cb8f2560f5ffe6bccc534355fce14ce471486605e32c8fa62fa60f24"
+      "sha256": "1cfe48c8d4a8c628dfb7072163f6c6807f8819787830212fcc55d7d8690ee0e3"
     },
     {
       "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/bbb_martins/evidence/records.parquet",

@@ -10,7 +10,7 @@
   "generation_version": "reference_semantics_generation.v2",
   "input_path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet",
   "input_sha256": "a082ea46661fa342be43c77852c663f0e757ea5f3ee22c037bd433181163b623",
-  "mapping_path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/reference_semantics_v2/reference_semantics.parquet",
+  "mapping_path": "data/external/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/reference_semantics_v2/reference_semantics.parquet",
   "mapping_rows": 87054,
   "mapping_sha256": "f6fdbcc5cec599aed06b1777cba15a91a1fbaa320d468e8df582e4bc1cef09e2",
   "prompt_sha256": "76a90a480811ab82c4f4e65925a60cffb8556830c44dfe385e60fb4632b270f0",

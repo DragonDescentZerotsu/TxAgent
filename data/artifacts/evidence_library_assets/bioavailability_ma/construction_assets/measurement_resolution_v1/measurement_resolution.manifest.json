@@ -44,7 +44,7 @@
         "hf_bioavailability": "f3c576da4fc30da91775a44aacf00b91af3d447f77db74283f42c8e9542b2133",
         "oral_exposure": "4d53644ae94b7d9ef9e39e8b229aeae302df0940f42e631296393ceb6e498e81"
       },
-      "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/measurement_resolution_templates/measurement_resolution_v1.jinja",
+      "template_path": "tools/chembl_tool/tasks/bioavailability_ma/measurement_resolution_templates/measurement_resolution_v1.jinja",
       "template_sha256": "e3ce4e97bb3db8ea4da6e22816ebec6991cccdc6c80d5cbfd70bf6946bb6b908"
     },
     "routing_version": "starling_measurement_routing.v2"
@@ -64,7 +64,7 @@
       "hf_bioavailability": "f3c576da4fc30da91775a44aacf00b91af3d447f77db74283f42c8e9542b2133",
       "oral_exposure": "4d53644ae94b7d9ef9e39e8b229aeae302df0940f42e631296393ceb6e498e81"
     },
-    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/measurement_resolution_templates/measurement_resolution_v1.jinja",
+    "template_path": "tools/chembl_tool/tasks/bioavailability_ma/measurement_resolution_templates/measurement_resolution_v1.jinja",
     "template_sha256": "e3ce4e97bb3db8ea4da6e22816ebec6991cccdc6c80d5cbfd70bf6946bb6b908"
   },
   "publication_source": {

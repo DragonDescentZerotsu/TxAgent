@@ -35,7 +35,7 @@
       "sha256": "a19f799e202a3a16db867f3093c2d6d249e17bb13a6ef3b83c40a65ef3b81af1"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/dili/build_reviewed_starling.py",
+      "path": "tools/chembl_tool/tasks/dili/build_reviewed_starling.py",
       "sha256": "1bc6a6e024a513860b455a17def16254d239ca632025cafe878fb39675aa1c79"
     }
   ],

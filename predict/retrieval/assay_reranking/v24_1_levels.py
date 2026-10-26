@@ -1,6 +1,6 @@
 """Build split-specific BBB V24.1 L2-L4 record-transfer score caches.
 
-The builder joins V10 records to Tianang's acquisition-UID level mapping,
+The builder joins V10 records to Baseline's acquisition-UID level mapping,
 constructs independent scaffold-disjoint Morgan-75 pools, renders the frozen
 V24.1 prompt with copied retrieval context, and publishes one compact SQLite
 cache per benchmark split. Scoring is resumable and level-specific because each
@@ -69,21 +69,21 @@ LEVEL_MANIFEST, LEVEL_MAPPING, LEVEL_MAPPING_RECEIPT = evidence_level_mapping_re
 GOLD_ROOT = Path("data/gold_labels/BBB_Martins/v1/scaffold")
 MODELS = {
     "L2": {
-        "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v24-1-bbb-martins-l2-best",
+        "model": "local-artifacts/intern-s1-mini-assay-transfer-record-level-v24-1-bbb-martins-l2-best",
         "revision": "88a5f51f7b7903c0fa5ffc1811d8156b3f0f8eac",
-        "dataset": "jiosephlee/assay-transfer-record-level-v24-1-bbb-martins-l2-intern",
+        "dataset": "local-artifacts/assay-transfer-record-level-v24-1-bbb-martins-l2-intern",
         "dataset_revision": "b7c278103235fe7528ab11b6d7aca9f9ec3bdea2",
     },
     "L3": {
-        "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v24-1-bbb-martins-l3-best",
+        "model": "local-artifacts/intern-s1-mini-assay-transfer-record-level-v24-1-bbb-martins-l3-best",
         "revision": "cdffb2b2ba726c8564197046c96a7fad337ea807",
-        "dataset": "jiosephlee/assay-transfer-record-level-v24-1-bbb-martins-l3-intern",
+        "dataset": "local-artifacts/assay-transfer-record-level-v24-1-bbb-martins-l3-intern",
         "dataset_revision": "a903fc6395ae25cad76d337d9dbae1548a6b5b51",
     },
     "L4": {
-        "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v24-1-bbb-martins-l4-best",
+        "model": "local-artifacts/intern-s1-mini-assay-transfer-record-level-v24-1-bbb-martins-l4-best",
         "revision": "595f5958d30512bd29e21ead4e130a5c44545d44",
-        "dataset": "jiosephlee/assay-transfer-record-level-v24-1-bbb-martins-l4-intern",
+        "dataset": "local-artifacts/assay-transfer-record-level-v24-1-bbb-martins-l4-intern",
         "dataset_revision": "e208d6f50982333c0df0f40291d08bd181e5a1db",
     },
 }
@@ -249,7 +249,7 @@ def _load_records() -> tuple[list[dict[str, Any]], dict[str, Any], dict[str, Pat
     accepted, dataset_files = _dataset_inputs()
     source_fields, source_union = _source_fields()
     if file_sha256(LEVEL_MAPPING) != LEVEL_MAPPING_RECEIPT["sha256"]:
-        raise ValueError("Tianang-derived BBB source UID mapping is inconsistent")
+        raise ValueError("Baseline-derived BBB source UID mapping is inconsistent")
     core = {
         "source_row_uid", "canonical_record_id", "canonical_smiles", "source_id",
         "pair_bucket_key", "assay_transfer_eligible", "measurement_kind",
@@ -268,7 +268,7 @@ def _load_records() -> tuple[list[dict[str, Any]], dict[str, Any], dict[str, Pat
         uid = str(row["source_row_uid"])
         value = (f"L{int(row['level'])}", str(row["family_key"]))
         if uid in level_by_uid and level_by_uid[uid] != value:
-            raise ValueError(f"conflicting Tianang level mapping for {uid}")
+            raise ValueError(f"conflicting Baseline level mapping for {uid}")
         level_by_uid[uid] = value
     output, mapped_counts = [], {level: 0 for level in LEVELS}
     for raw in pq.read_table(STAGE3, columns=columns).to_pylist():

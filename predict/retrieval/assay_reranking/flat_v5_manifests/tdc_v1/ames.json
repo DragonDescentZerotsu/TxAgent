@@ -13,12 +13,12 @@
     {
       "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/ames/RELEASE_INDEX.json",
       "size": 1513,
-      "sha256": "7334144331f76db41b4ac702913a7c39480718e1a3f4b9b4f8cd9ec970ff11c5"
+      "sha256": "800ce216e0b9e30df2e47348092fa21847673509957e8854d7465fe4553874b7"
     },
     {
       "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/ames/evidence/VERSION.json",
-      "size": 612,
-      "sha256": "876369f9388d875da160a811c4eeece63a8f6d28a0385143f6127c945fd47d26"
+      "size": 556,
+      "sha256": "f3e5bbd494c957d95712b1808feaf28dd59092190f5352e87db97cf8bf1f9f7c"
     },
     {
       "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/ames/evidence/records.parquet",
@@ -28,7 +28,7 @@
     {
       "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/ames/scaffold/test/L1/VERSION.json",
       "size": 221423,
-      "sha256": "91dc8e5a4c7d74a5f43e753c22d6fb16e9b88f4a75fc7c2ba56fa37ffc09d5c7"
+      "sha256": "1de2a54bb77c2086d9f2a4e0db6f3e3f8a3c805384dc57afd3e0c16723674f8b"
     },
     {
       "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/ames/scaffold/test/L1/rankings.sqlite3",
@@ -38,7 +38,7 @@
     {
       "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/ames/scaffold/valid/L1/VERSION.json",
       "size": 110614,
-      "sha256": "401cdcd1893d801da27a8f428acd70637befce0329f6fdea736a6d5eb6df9126"
+      "sha256": "d9c807d4cd9caf3ffd4fbdeb67c0f19026b0d474231fbb56ebaf815ab6c07418"
     },
     {
       "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/ames/scaffold/valid/L1/rankings.sqlite3",

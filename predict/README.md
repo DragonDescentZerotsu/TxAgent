@@ -79,7 +79,7 @@ can be migrated with `migrate_manifests --cache-catalog CATALOG --roots ROOT --r
 The default is a dry run; `--apply` requires matching frozen query and cache payload
 identities and preserves completed batches.
 Full batches launch directly in throughput mode with explicit `--parallelism`.
-The selected provider JSON owns launcher-local `max_inflight`. Joseph defaults
+The selected provider JSON owns launcher-local `max_inflight`. Evidence defaults
 to fixed `deepseek/deepseek-v4-flash-0731`, automatic OpenRouter provider routing,
 and high reasoning effort. Changed model or route requires a new run identity;
 record the actual served model and provider. `--prepare-only` uses no model calls
@@ -123,7 +123,7 @@ Default launcher traces stay inside the named run. Explicit trace roots and
 low-level batch-root overrides remain supported.
 
 Historical raw locators resolve through `outputs/predictions/relocations.json`.
-Published FINAL stays under `outputs/paper/assay_transfer_harness/joseph/final/`.
+Published FINAL stays under `outputs/paper/assay_transfer_harness/evidence/final/`.
 To inventory an authorized relocation, run
 `python -m predict.harnesses.branches.migrate_manifests --relocate-runs --report /tmp/output-relocations.json`;
 repeat with `--apply` to use that reviewed map. `--classifications JSON` supplies

@@ -23,7 +23,7 @@ def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def test_all_active_gold_releases_have_receipted_tianang_mappings():
+def test_all_active_gold_releases_have_receipted_baseline_mappings():
     for task, versions in PUBLICATIONS.items():
         assert (ROOT / task / "CURRENT").read_text().strip() == "v1"
         for version in versions:

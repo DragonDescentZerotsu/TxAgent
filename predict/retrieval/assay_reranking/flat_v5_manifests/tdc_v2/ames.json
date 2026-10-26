@@ -14,12 +14,12 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l1/query_pure/reused_task_best_v1/original/RELEASE_INDEX.json",
       "size": 2625,
-      "sha256": "7e619fe432869090bd9f18e322d9fb2069067803e7d76d7ab3dca700f7b0cb2d"
+      "sha256": "3d047cbef03a650446070da3b33ee0cb60031a7367526fb604f8cec0671edced"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l1/query_pure/reused_task_best_v1/original/evidence/VERSION.json",
       "size": 613,
-      "sha256": "31d01a7866e5f2741270be4080de1404ee8a087067a961965b1eea6f87c03443"
+      "sha256": "b69ef733ff124c10dc248ac0977771c4c07edc83b8e282a512fe926000c09f41"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l1/query_pure/reused_task_best_v1/original/evidence/records.parquet",
@@ -29,7 +29,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l1/query_pure/reused_task_best_v1/original/scaffold/test/L1/VERSION.json",
       "size": 226107,
-      "sha256": "34d1590e9278654aead0ca63aa4e25ab87d98f7c7bbff3fbfc92d93c2af51e04"
+      "sha256": "88b31608128de17a269e561b2894fd9332177ae8d192f58270e1b08a99597b12"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l1/query_pure/reused_task_best_v1/original/scaffold/test/L1/rankings.sqlite3",
@@ -39,7 +39,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l1/query_pure/reused_task_best_v1/original/scaffold/valid/L1/VERSION.json",
       "size": 113781,
-      "sha256": "3e2464dd75c16bc053b04ab71492f6115f6833fde4fc22781208668d4f26dae1"
+      "sha256": "d80089f1a688ac80621f266e7f328900ce4491b294391e2594fbba815e49631d"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l1/query_pure/reused_task_best_v1/original/scaffold/valid/L1/rankings.sqlite3",
@@ -49,12 +49,12 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original/ames/RELEASE_INDEX.json",
       "size": 4337,
-      "sha256": "03eb89381e75c4ec5d02db7ca3d9c11bbcf6eb97875280c62f18378602f7773f"
+      "sha256": "800082b55013df2eeee3ba23385a30e0f6fbcbb50e9e8fb001ae855b6812d885"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original/ames/scaffold/test/L2/VERSION.json",
       "size": 241312,
-      "sha256": "d4e5ea001f43f816a201bd7fa3dd925ca61bdf47f9cabd308812f398d2cc0702"
+      "sha256": "750f3f39adaf731e7da0b07696296522cd1d9f6ba15a772f2f58e1431a617abd"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original/ames/scaffold/test/L2/rankings.sqlite3",
@@ -64,7 +64,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original/ames/scaffold/test/L3/VERSION.json",
       "size": 241209,
-      "sha256": "074b0f666b34f328c00e822b9a1c88a2584c8ebdbe9945522fda2a94178905d1"
+      "sha256": "c6142fea934d71c2a24131c759c8c0abeb8cbedcbc6aeec9707a1ff84654327f"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original/ames/scaffold/test/L3/rankings.sqlite3",
@@ -74,7 +74,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original/ames/scaffold/test/L4/VERSION.json",
       "size": 242055,
-      "sha256": "8aff00a17ed117f49a1a94f3b1c7eb01a70546b0c055c65b0cb1978ff4ed0ec2"
+      "sha256": "f43962dd9c6f336c49340e0649aed43b79188aef7c5dd3511e9c6b8fc4423322"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original/ames/scaffold/test/L4/rankings.sqlite3",
@@ -84,7 +84,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original/ames/scaffold/test/L5/VERSION.json",
       "size": 242053,
-      "sha256": "4f0a90d7db176faae1dd411ee9fa90aa4a5cc8559364e460db43586a5e2b0ca6"
+      "sha256": "c3ee4aa489d523b3ba1510e20065d0000ffaa39e1c447a8a4c2ec350ca185503"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original/ames/scaffold/test/L5/rankings.sqlite3",
@@ -99,7 +99,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original/ames/scaffold/valid/L2/VERSION.json",
       "size": 121847,
-      "sha256": "605625b6de9b0be2e56abc95184121c64ddacef378c7cd665efb747b6ae1dad6"
+      "sha256": "1723db42b09e259259e91a3982a30941ffcbb285d92d42d9d8244903951da748"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original/ames/scaffold/valid/L2/rankings.sqlite3",
@@ -109,7 +109,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original/ames/scaffold/valid/L3/VERSION.json",
       "size": 121732,
-      "sha256": "f078a7c71bfb3d82b71f81c424ddc3c7fae5104aa84db81ed968e88111391385"
+      "sha256": "179015f201a4fe4f10e627f4e10a497d98b3f2fd08fc9c3ba24da7ae5b895ce8"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original/ames/scaffold/valid/L3/rankings.sqlite3",
@@ -119,7 +119,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original/ames/scaffold/valid/L4/VERSION.json",
       "size": 122272,
-      "sha256": "5b16d3ec6bbcfff593dedc1bb4d0eaf3d4eeda4c4d1bdb2931df8560455e0644"
+      "sha256": "e249fcaeb48515ac8a24215eca26ba21a89540370f706f08cb5b4ad728d79efe"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original/ames/scaffold/valid/L4/rankings.sqlite3",
@@ -129,7 +129,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original/ames/scaffold/valid/L5/VERSION.json",
       "size": 122293,
-      "sha256": "605b39b5cb933090b5de506f7752828c62846631aaeec3c2aa9b33978d8b7e44"
+      "sha256": "3c11c04c8c7bce5ce5da6e3dd68f9f6ed57949f47e05dd694ecfa1107bcf745e"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/query_pure/reused_v1/original/ames/scaffold/valid/L5/rankings.sqlite3",

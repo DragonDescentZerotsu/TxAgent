@@ -13,7 +13,7 @@ from predict.harnesses.branches.manifests import canonical_location
 
 WIDTHS = (10, 15, 25)
 PRIORS = ("with_query_prior", "no_query_prior")
-DEFAULT_RESULTS = Path("outputs/paper/assay_transfer_harness/joseph")
+DEFAULT_RESULTS = Path("outputs/paper/assay_transfer_harness/evidence")
 DEFAULT_OUTPUT = Path(
     "outputs/analysis/prediction/l1_context_v3_morgan10_15_25_k10_m0_m2_v1"
 )

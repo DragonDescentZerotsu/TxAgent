@@ -3,7 +3,7 @@
   "status": "round5_complete_pending_review",
   "input": "data/evidence_libraries/skin_reaction/v9/03_pair_buckets/records.parquet",
   "input_sha256": "54bf585a93bb8d98f1c5137c11e9933762090cdf6b38a8a903722a837710c6c6",
-  "prompt": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/prompts/skin_reaction_relevance_bucket_v1.jinja",
+  "prompt": "data/processing/evidence_library/prompts/skin_reaction_relevance_bucket_v1.jinja",
   "prompt_version": "skin_reaction_relevance_bucket_prompt.v1",
   "prompt_sha256": "fba5366bd374f955d81673e451baca202a5765c31a038cafc7e1fe3977464bef",
   "first_review_batch_id": "round1-direct-skin-reaction-batch-0000",

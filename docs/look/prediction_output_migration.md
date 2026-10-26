@@ -89,7 +89,7 @@ Provide reviewed overrides in a JSON object keyed by an exact source path
 
 ```json
 {
-  "outputs/paper/assay_transfer_harness/joseph/<exact-old-batch>": {
+  "outputs/paper/assay_transfer_harness/evidence/<exact-old-batch>": {
     "prompt": "<reviewed-prompt-name>",
     "run_name": "<distinct-semantic-run-name>"
   }

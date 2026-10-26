@@ -24,7 +24,7 @@ from predict.utils.files import ensure_dir
 from predict.retrieval.policies import normalize_molecule_identity
 
 
-DEFAULT_CHEMBL_FPS = "/data1/tianang/Projects/Intern-S1/DataPrepare/chembl_related/chembl_36/chembl_36_fps/chembl_36.fps.gz"
+DEFAULT_CHEMBL_FPS = "data/external/Projects/Intern-S1/DataPrepare/chembl_related/chembl_36/chembl_36_fps/chembl_36.fps.gz"
 FP_RADIUS = 2
 FP_BITS = 2048
 StandardizedIndexMolecule = tuple[

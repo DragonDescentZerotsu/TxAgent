@@ -22,7 +22,7 @@ def example(task='bbb_martins', benchmark=''):
     }
     manifest = {'task_contracts': {task: spec['contract_sha256']}, 'benchmark_profile': benchmark}
     messages = paper.render(payload)
-    prepared = {'version': 'direct_indirect_budgeted.v3', 'prompt_version': 'joseph_v5',
+    prepared = {'version': 'direct_indirect_budgeted.v3', 'prompt_version': 'evidence_v5',
                 'prompt_payload': payload, 'messages': messages, 'request_hash': paper.content_hash(messages),
                 'manifest_hash': paper.content_hash(manifest), 'card_alias_map': {},
                 'direct_ids': [], 'indirect_ids': [], 'n_direct': 0, 'n_indirect': 0}
@@ -315,7 +315,7 @@ def test_retrieval_input_relocation_preserves_contract_and_rejects_changed_files
     inputs = tmp_path/'copied'; inputs.mkdir()
     cohort = inputs/'test.jsonl'; cohort.write_text(json.dumps(dict(drug='CCO', Y=1))+'\n')
     old_path = str(tmp_path/'unavailable/test.jsonl') if absolute else 'old/test.jsonl'
-    original.update(version='direct_indirect_budgeted.v3', prompt_version='joseph_v5',
+    original.update(version='direct_indirect_budgeted.v3', prompt_version='evidence_v5',
         visibility_mode='deployment_visible_prefetched', setting='none', split_scheme='scaffold',
         direct_identity_policy='scaffold_disjoint', direct_selector='molecule_cap' if absolute else 'neighbor_fill', direct_budget=50,
         direct_records_per_molecule=5, selection=dict(budget=50,policy='neighbor_fill',per_molecule=5,seed=42),

@@ -16,4 +16,4 @@ The Luna directory preserves the frozen optimization parameters, both prompt bun
 
 All arms completed with zero failed queries. The Gold-v1 and TDC-v2 test cohorts, caches, and prompt versions differ, so their absolute scores are separate results. The validation results selected the profiles; the test results did not change their parameters.
 
-The canonical [Luna index](../../../paper/assay_transfer_harness/joseph/final/luna/index.json) and [full-test collection](../../../paper/assay_transfer_harness/joseph/final/collection.json) identify the published arms. Numerical data are in [results.tsv](results.tsv); [provenance.json](provenance.json) pins the collection, parameters, prompts, and source analyses.
+The canonical [Luna index](../../../paper/assay_transfer_harness/evidence/final/luna/index.json) and [full-test collection](../../../paper/assay_transfer_harness/evidence/final/collection.json) identify the published arms. Numerical data are in [results.tsv](results.tsv); [provenance.json](provenance.json) pins the collection, parameters, prompts, and source analyses.

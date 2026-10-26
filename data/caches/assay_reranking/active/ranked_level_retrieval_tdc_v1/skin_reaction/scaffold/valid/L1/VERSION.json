@@ -5,7 +5,7 @@
   "database": "rankings.sqlite3",
   "database_sha256": "c06fc081fd85c441f031cfd40ccbfa67f97c617e479de614de60de911886ab4c",
   "inputs": {
-    "evidence_manifest_sha256": "3b3a0090d621bb1f2c9d99948a9c170ac155d81672465455f31962b5bf14e0de",
+    "evidence_manifest_sha256": "b1c195fadc6093cafb43a1794882364b0e59fb0af51a3892d4145ef54a40e670",
     "query_sha256": "96a23fd1b662f035e8f16b2e4168e9ee10338f5b1fbf8cde5a7023d3ab7a8060",
     "train_sha256": "2102f6288d63ede7e23fa6f5f294ab6f912c6a3b25bba781eee9b6e72965c823"
   },

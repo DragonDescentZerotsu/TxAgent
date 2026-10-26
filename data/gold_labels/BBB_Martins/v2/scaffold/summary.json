@@ -41,7 +41,7 @@
       "duplicates_removed": 2506,
       "input_records": 498598,
       "output_records": 496092,
-      "policy_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/stage1_exact_deduplication.v2.json",
+      "policy_path": "data/processing/evidence_library/versions/v10/stage1_exact_deduplication.v2.json",
       "policy_sha256": "994f0cb80ce4cff6544e850288da9d4e06c28e8364f57a126d9e033c3aea482d",
       "preferred_voter_uids": {
         "count": 7634,
@@ -347,7 +347,7 @@
           "duplicates_removed": 2506,
           "input_records": 498598,
           "output_records": 496092,
-          "policy_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/stage1_exact_deduplication.v2.json",
+          "policy_path": "data/processing/evidence_library/versions/v10/stage1_exact_deduplication.v2.json",
           "policy_sha256": "994f0cb80ce4cff6544e850288da9d4e06c28e8364f57a126d9e033c3aea482d",
           "preferred_voter_uids": {
             "count": 7634,

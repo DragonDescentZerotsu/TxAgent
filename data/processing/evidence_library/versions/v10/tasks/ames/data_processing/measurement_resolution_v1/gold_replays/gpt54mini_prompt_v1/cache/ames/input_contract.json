@@ -4,7 +4,7 @@
   "profile_sha256": "a0904d753a54b72a4ab0f8df669dd84ff67de817f43d958add6906144c58c4a4",
   "prompt": {
     "prompt_version": "ames_measurement_resolution_prompt.v1",
-    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/ames/prompts/measurement_resolution_v1.jinja",
+    "template_path": "data/processing/evidence_library/versions/v10/tasks/ames/prompts/measurement_resolution_v1.jinja",
     "template_sha256": "7ddb360fd36a494e9646396c24d9304108922f202c22730fb941f515be25491d",
     "batch_size": 20,
     "maximum_measurements_per_row": 1,

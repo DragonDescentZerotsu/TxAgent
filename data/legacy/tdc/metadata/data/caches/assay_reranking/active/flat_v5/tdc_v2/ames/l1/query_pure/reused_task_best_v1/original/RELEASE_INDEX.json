@@ -4,7 +4,7 @@
   "evidence": {
     "content_id": "521a350508f8fbd46d3ee2b5a525e8a9356564f8b44ae667568599be6b542d73",
     "manifest": "evidence/VERSION.json",
-    "manifest_sha256": "31d01a7866e5f2741270be4080de1404ee8a087067a961965b1eea6f87c03443",
+    "manifest_sha256": "b69ef733ff124c10dc248ac0977771c4c07edc83b8e282a512fe926000c09f41",
     "record_count": 5094
   },
   "label_release": {
@@ -13,7 +13,7 @@
   },
   "levels_independent": true,
   "model": {
-    "model": "jiosephlee/intern-s1-mini-ames-v10-3-tdc-mixed-canonical-best",
+    "model": "local-artifacts/intern-s1-mini-ames-v10-3-tdc-mixed-canonical-best",
     "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
     "revision": "392dd01912090040cfc0427f9f680d16d47eb27b"
   },
@@ -62,7 +62,7 @@
         "L1": {
           "content_id": "8968b12cc2ca3fc5305cd151ec4ba1149a63329e467cf70082599f96c37ff766",
           "manifest": "scaffold/test/L1/VERSION.json",
-          "manifest_sha256": "34d1590e9278654aead0ca63aa4e25ab87d98f7c7bbff3fbfc92d93c2af51e04"
+          "manifest_sha256": "88b31608128de17a269e561b2894fd9332177ae8d192f58270e1b08a99597b12"
         }
       }
     },
@@ -71,7 +71,7 @@
         "L1": {
           "content_id": "bf4278f3e96739fc10cace94e19186d16450708ea82a9d9b572d1a6492dca4e2",
           "manifest": "scaffold/valid/L1/VERSION.json",
-          "manifest_sha256": "3e2464dd75c16bc053b04ab71492f6115f6833fde4fc22781208668d4f26dae1"
+          "manifest_sha256": "d80089f1a688ac80621f266e7f328900ce4491b294391e2594fbba815e49631d"
         }
       }
     }

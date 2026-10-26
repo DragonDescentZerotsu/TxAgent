@@ -14,9 +14,9 @@
   },
   "level": "L4",
   "model": {
-    "dataset": "jiosephlee/assay-transfer-record-level-v27-carcinogens-general-intern",
+    "dataset": "local-artifacts/assay-transfer-record-level-v27-carcinogens-general-intern",
     "dataset_manifest_sha256": "408548b285f32523ac190f9d0340c39049a8e8d7af83d895b59775f80478476c",
-    "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v27-carcinogens-general-best",
+    "model": "local-artifacts/intern-s1-mini-assay-transfer-record-level-v27-carcinogens-general-best",
     "revision": "13a182fbc9f8b2a49c5286514dd5b6110393544b"
   },
   "neighbor_identity_policy": "parent_disjoint",
@@ -387,12 +387,12 @@
     {
       "database_sha256": "a34fa328dc51e0d68ea4ad49003806c18ff1a37f64c89e3374c6e67885f8bd6c",
       "manifest_sha256": "d863c2e59c6ea5ce342f6d324742d3cfa7ad440ef68954bcfcf05180ebf5ec64",
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2/carcinogens/scaffold/valid/L4/VERSION.json"
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2/carcinogens/scaffold/valid/L4/VERSION.json"
     },
     {
       "database_sha256": "9e1261d7be4376defdd9c0c9cfb23865fbaa9ac65eb41a0b2be5f8df759dd843",
       "manifest_sha256": "31fc3243f4064a114e868617ca9e4484d36a159de1a3fc3d11769048f532f5a0",
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2/carcinogens/scaffold/test/L4/VERSION.json"
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2/carcinogens/scaffold/test/L4/VERSION.json"
     }
   ],
   "shared_candidate_universe": true,

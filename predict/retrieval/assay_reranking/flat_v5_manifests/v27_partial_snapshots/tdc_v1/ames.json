@@ -19,7 +19,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/ames/l1/assay_transfer/v10_3/tdc_pinned_v1/ames/evidence/VERSION.json",
       "size": 612,
-      "sha256": "876369f9388d875da160a811c4eeece63a8f6d28a0385143f6127c945fd47d26"
+      "sha256": "f3e5bbd494c957d95712b1808feaf28dd59092190f5352e87db97cf8bf1f9f7c"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/ames/l1/assay_transfer/v10_3/tdc_pinned_v1/ames/evidence/records.parquet",

@@ -28,7 +28,7 @@
     "reasoning_mode": "minimal",
     "temperature": 1.0
   },
-  "mapping_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/measurement_resolution_v8/measurement_resolution.parquet",
+  "mapping_path": "tools/chembl_tool/tasks/bbb_martins/data_processing/measurement_resolution_v8/measurement_resolution.parquet",
   "mapping_rows": 94820,
   "mapping_sha256": "71507c3939ab24f50dc217338591d3fd737bddd83d3abd913304658556be1ddf",
   "mapping_version": "bbb_martins_measurement_resolution.v8",
@@ -64,7 +64,7 @@
         "unit_field": "metric_units"
       }
     },
-    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/measurement_resolution_templates/measurement_resolution_v8.jinja",
+    "template_path": "tools/chembl_tool/tasks/bbb_martins/measurement_resolution_templates/measurement_resolution_v8.jinja",
     "template_sha256": "35c188509c93c0a7ca117f69465e34cd3ea93cd8683c51fc0e66da420695b084"
   },
   "rejected_rows": 1636,
@@ -77,9 +77,9 @@
   },
   "task_id": "bbb_martins",
   "unit_preflight": {
-    "exact_unit_mapping_sha256": "4ffc4e96cbe6279ce22df256cd28f31e005cc69232ef9014014bb25da8f07c5b",
+    "exact_unit_mapping_sha256": "92f3de17242dc0d200ddafa9bbf17a745583124cfdb1b3471e852df19ca2baa6",
     "missing_rows_before_review": 30543,
-    "review_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/canonicalization_v8/minimal_unit_review_200.jsonl",
+    "review_path": "tools/chembl_tool/tasks/bbb_martins/data_processing/canonicalization_v8/minimal_unit_review_200.jsonl",
     "review_sha256": "519a9061d84ad04e556fcfae4452c57b0f2f1036e4d213405f3986d7db2e3bab",
     "rows_preserved_as_exact_unit_identity": 10500,
     "rows_unified_by_sampled_keys": 20043,

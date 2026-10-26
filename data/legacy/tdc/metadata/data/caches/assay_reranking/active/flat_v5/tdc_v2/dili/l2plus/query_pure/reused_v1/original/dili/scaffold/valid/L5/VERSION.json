@@ -14,9 +14,9 @@
   },
   "level": "L5",
   "model": {
-    "dataset": "jiosephlee/assay-transfer-record-level-v27-dili-general-intern",
+    "dataset": "local-artifacts/assay-transfer-record-level-v27-dili-general-intern",
     "dataset_manifest_sha256": "8bd8cba9c059a441138a093d02d9d94d5298b77203c70fce0cfd204a35e01e1f",
-    "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v27-dili-general-best",
+    "model": "local-artifacts/intern-s1-mini-assay-transfer-record-level-v27-dili-general-best",
     "revision": "e34d922504cc67290ce5289607f54e5d74f6868e"
   },
   "neighbor_identity_policy": "parent_disjoint",
@@ -333,12 +333,12 @@
     {
       "database_sha256": "2aab7c00c95b847dea638013f6bf49a41341e436f785553aa5d43969de2d07f4",
       "manifest_sha256": "96432bc6da62dbe2d603f11a4ce914727cb2c95a9440fba97f403e54bc23f236",
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v1/dili/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2/dili/scaffold/valid/L5/VERSION.json"
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/dili/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2/dili/scaffold/valid/L5/VERSION.json"
     },
     {
       "database_sha256": "de5d6667fc85e232dd6cbc8c4b61b394b2e1df5c5a35fc5cd6ffe6da61f3acf0",
       "manifest_sha256": "c9dccf950b0d9d9f4a5466630f7c2984635d0fc8c04c38e6718093862bc0ff05",
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v1/dili/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2/dili/scaffold/test/L5/VERSION.json"
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/dili/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2/dili/scaffold/test/L5/VERSION.json"
     }
   ],
   "shared_candidate_universe": true,

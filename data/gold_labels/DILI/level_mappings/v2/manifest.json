@@ -13,7 +13,7 @@
   "inputs": {
     "prior_level_mapping_manifest": {
       "path": "data/gold_labels/DILI/level_mappings/v1/manifest.json",
-      "sha256": "8501056bed8c069da1e215c1c0aa4e6adc22235bb75f8695e3f9b7753d8631f3"
+      "sha256": "36eecaf141a0ba7f07176d062d2d89f7e2e7c75126992fb211ac67fe8140b3a6"
     },
     "voter_membership": {
       "path": "data/gold_labels/DILI/v1/scaffold/voter_membership.parquet",

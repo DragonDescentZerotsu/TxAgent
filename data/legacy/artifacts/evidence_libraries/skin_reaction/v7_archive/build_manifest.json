@@ -21,7 +21,7 @@
   ],
   "contextual_unit_policy": {
     "matching": "exact_all_declared_fields_fail_closed",
-    "path": "/data1/joseph/TxAgent/tools/chembl_tool/common/contextual_unit_policy.json",
+    "path": "data/external/TxAgent/tools/chembl_tool/common/contextual_unit_policy.json",
     "policy_version": "contextual_canonical_unit_policy.v1",
     "rule_ids": [
       "bioavailability_ma.fa.caco2_flux.pg_ng.v1",
@@ -124,7 +124,7 @@
       "data/processed_starling/Skin_Reaction/random/train_molecule_labels.jsonl": "887b5e065f47ac6327de6bbe2944ae1a1c345af3e17617beaebb9634d8fdc6e1",
       "data/processed_starling/Skin_Reaction/scaffold/heldout_molecule_labels.jsonl": "145b473fc15215e0ff8a1930f67f3b86f62d5a6f5ddab749a1a63520d6f20a6d",
       "data/processed_starling/Skin_Reaction/scaffold/train_molecule_labels.jsonl": "92dca143558fc197f0126c8aa498ee76735744b9118b68d569c563f1448d9fa0",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "e1479ffc975a97c490ff228f0de93aef7ddb143c4b710adbb903cc481f7fc339",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "11f1095533666bd3bf5c63c10686e41f08b90bc9574292bb9ab1e81ce5fa2a86",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/03_records/records.parquet": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697"
     },
     "outputs": {
@@ -52947,7 +52947,7 @@
   "normalization_domain_rules_version": "skin_reaction_normalization_domains.v1",
   "pipeline_layout_version": "skin_reaction.normalized_v7_layout.v1",
   "qualifier_vocabulary": {
-    "path": "/data1/joseph/TxAgent/tools/chembl_tool/common/qualifier_vocabulary_policy.json",
+    "path": "data/external/TxAgent/tools/chembl_tool/common/qualifier_vocabulary_policy.json",
     "policy_version": "qualifier_vocabulary.v1",
     "schema_version": "qualifier_vocabulary.schema.v1",
     "scoping": "shared_plus_declared_task_fail_closed",
@@ -53127,10 +53127,10 @@
     },
     "implementation_sha256": "42167719e3094f5462737aceb60a153ceb172e1054c892ddf9d60a49026c6026",
     "inputs": {
-      "/data1/joseph/TxAgent/tools/chembl_tool/common/contextual_unit_policy.json": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef",
-      "/data1/joseph/TxAgent/tools/chembl_tool/common/qualifier_vocabulary_policy.json": "da303ef8e39cd6efcb2f5863e3fd12feb63072f81af943c5beb740a6d5c07305",
-      "/data1/joseph/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/globally_reconciled_auxiliary_value_mapping.json": "152bb6e26658a6d57c6c6f38aa32da34a862b9f9b74db5a740f660bb7a81bf07",
-      "/data1/joseph/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/reference_semantics_v2/reference_semantics.parquet": "f6fdbcc5cec599aed06b1777cba15a91a1fbaa320d468e8df582e4bc1cef09e2",
+      "data/external/TxAgent/tools/chembl_tool/common/contextual_unit_policy.json": "5c6ffe6511bd7b927dcfaaca9f3ec5fb3f3d60d6fdf6b9d138bd85ad427913ef",
+      "data/external/TxAgent/tools/chembl_tool/common/qualifier_vocabulary_policy.json": "da303ef8e39cd6efcb2f5863e3fd12feb63072f81af943c5beb740a6d5c07305",
+      "data/external/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/globally_reconciled_auxiliary_value_mapping.json": "152bb6e26658a6d57c6c6f38aa32da34a862b9f9b74db5a740f660bb7a81bf07",
+      "data/external/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/reference_semantics_v2/reference_semantics.parquet": "f6fdbcc5cec599aed06b1777cba15a91a1fbaa320d468e8df582e4bc1cef09e2",
       "data/starling_data/skin_reaction/direct_skin_reaction/extractions.parquet": "e7c4819c98af47eae4dc0563f40dc39f8b09eb8e03c9626daee603147125f9c1",
       "data/starling_data/skin_reaction/phototoxicity_irritation_local_damage/extractions.parquet": "c942e956be13c80d3f6075922dcc3731ffaea298dd824b2cf8f09598238501db",
       "data/starling_data/skin_reaction/sensitization_aop/extractions.parquet": "3eca3f70d1243795bc37f06e31795566295ce8ea3bf03e810efd3807152cf2c8",
@@ -53144,12 +53144,12 @@
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/01_cleaned/records.parquet": "3747038e3f6c6be11efd1af85c1e7863254ee3824ce1e2f81342b5f1ff8f70cf",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/01_cleaned/source_inventory.json": "d0ad9c520f0fc9d57c9e607f570bf428bab30af13ca7482c59ecc03fb95b9ad3",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/01_cleaned/source_value_cleaning_audit.parquet": "3322b8180d8fa4a37a657516f1450cd9844d1dd73a27493a725ffbc886df1a43",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "e1479ffc975a97c490ff228f0de93aef7ddb143c4b710adbb903cc481f7fc339",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/auxiliary_mapping_manifest.json": "11f1095533666bd3bf5c63c10686e41f08b90bc9574292bb9ab1e81ce5fa2a86",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/endpoint_registry.json": "6efc73ccc31d922fb69b565d9b4842465b5ce65fe9023a566623ee3471002c2d",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/manifest.json": "be5481fb1a9bea6256237f2914559e19069bccb519390649884b732cd3414f9c",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/record_validity_policy.json": "e0dd63b336102b0799db29d600719d6ca0fdf1892656122b5c191027eb788ddf",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/manifest.json": "fa77d74ba930a9532bc5f4bb4fcbe50c85524df6f4eb4eaed4f81f9a4a5e0c94",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/record_validity_policy.json": "3dc310edd6b45c4d25e6ffaebd1d2a014f3552a70e676acfee99cbe8012f21f2",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet": "f92e6c12ee40cffb5ba6443e5da50d70075ac309beb315a5f561e877936dde0e",
-      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/reference_semantics_manifest.json": "0c41d6c7d553aa3284dee14a879526c1960b21708c8076d383e007457ec2b889",
+      "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/reference_semantics_manifest.json": "19e31f63c12577abe47cf5e802d0842b828d56a6064dce23bba7b90beae40bc3",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/source_contract.json": "40ac8cec4b49479372a668c598b6b7ed612f942881a23590d75d7986e3719c9e",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/03_records/duplicates.parquet": "d9859cf24109695c1eb33bdda3649b6fa930d3e8f2ee217b3e696f8e0c04c386",
       "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/03_records/exclusions.parquet": "ef257efa7349be1aaac6f1b1922e56095d8599e4309d9c2102d54704da518c2e",
@@ -53161,14 +53161,14 @@
       "allow_missing_auxiliary_mapping": false,
       "allow_missing_reference_semantics": false,
       "auxiliary_mapping": {
-        "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/globally_reconciled_auxiliary_value_mapping.json",
+        "path": "data/external/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/globally_reconciled_auxiliary_value_mapping.json",
         "sha256": "152bb6e26658a6d57c6c6f38aa32da34a862b9f9b74db5a740f660bb7a81bf07"
       },
       "benchmark_split_root": "data/processed_starling/Skin_Reaction",
       "max_record_examples": 6,
       "max_rows_per_source": 0,
       "reference_semantics_mapping": {
-        "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/reference_semantics_v2/reference_semantics.parquet",
+        "path": "data/external/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/reference_semantics_v2/reference_semantics.parquet",
         "sha256": "f6fdbcc5cec599aed06b1777cba15a91a1fbaa320d468e8df582e4bc1cef09e2"
       },
       "starling_data_dir": "data/starling_data/skin_reaction",

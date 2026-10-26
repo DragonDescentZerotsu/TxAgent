@@ -75,7 +75,7 @@
       }
     },
     "release": "v10_main_universe_v3",
-    "root": "/vast/projects/myatskar/design-documents/joseph/TxAgent/optimization/semantic_buckets/releases/ames/v10_main_universe_v3"
+    "root": "optimization/semantic_buckets/releases/ames/v10_main_universe_v3"
   },
   "bbb_martins": {
     "files": {
@@ -153,7 +153,7 @@
       }
     },
     "release": "v10_main_universe_v3",
-    "root": "/vast/projects/myatskar/design-documents/joseph/TxAgent/optimization/semantic_buckets/releases/bbb_martins/v10_main_universe_v3"
+    "root": "optimization/semantic_buckets/releases/bbb_martins/v10_main_universe_v3"
   },
   "bioavailability_ma": {
     "files": {
@@ -283,7 +283,7 @@
       }
     },
     "release": "v10_main_universe_v3",
-    "root": "/vast/projects/myatskar/design-documents/joseph/TxAgent/optimization/semantic_buckets/releases/bioavailability_ma/v10_main_universe_v3"
+    "root": "optimization/semantic_buckets/releases/bioavailability_ma/v10_main_universe_v3"
   },
   "carcinogens": {
     "files": {
@@ -365,7 +365,7 @@
       }
     },
     "release": "v10_main_universe_v3",
-    "root": "/vast/projects/myatskar/design-documents/joseph/TxAgent/optimization/semantic_buckets/releases/carcinogens/v10_main_universe_v3"
+    "root": "optimization/semantic_buckets/releases/carcinogens/v10_main_universe_v3"
   },
   "dili": {
     "files": {
@@ -527,7 +527,7 @@
       }
     },
     "release": "v10_main_universe_v3",
-    "root": "/vast/projects/myatskar/design-documents/joseph/TxAgent/optimization/semantic_buckets/releases/dili/v10_main_universe_v3"
+    "root": "optimization/semantic_buckets/releases/dili/v10_main_universe_v3"
   },
   "skin_reaction": {
     "files": {
@@ -653,6 +653,6 @@
       }
     },
     "release": "v10_main_universe_v6",
-    "root": "/vast/projects/myatskar/design-documents/joseph/TxAgent/optimization/semantic_buckets/releases/skin_reaction/v10_main_universe_v6"
+    "root": "optimization/semantic_buckets/releases/skin_reaction/v10_main_universe_v6"
   }
 }

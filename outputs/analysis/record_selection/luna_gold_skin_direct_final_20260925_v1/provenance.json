@@ -7,11 +7,11 @@
   "upstream_provider": "Azure",
   "inputs": [
     {
-      "path": "outputs/paper/assay_transfer_harness/joseph/final/luna/test/gold_v1/skin_reaction/direct/manifest.json",
+      "path": "outputs/paper/assay_transfer_harness/evidence/final/luna/test/gold_v1/skin_reaction/direct/manifest.json",
       "sha256": "af7a88d9c9387b45a306571a6fa1ca8917be7f0db89cf39cc8a2c71e7d147bf7"
     },
     {
-      "path": "outputs/paper/assay_transfer_harness/joseph/final/luna/parameters/skin_gold_direct_valid_selected_20260925_v1/validation_decision.json",
+      "path": "outputs/paper/assay_transfer_harness/evidence/final/luna/parameters/skin_gold_direct_valid_selected_20260925_v1/validation_decision.json",
       "sha256": "57c30e71b4be94b7ddd28b8bcb6710ba9049659cb449d110a3d85c75104ed514"
     },
     {
@@ -19,11 +19,11 @@
       "sha256": "ded543faa2d2f03a3fb6b915ab37689068803136d33e61268bc9566debe0793c"
     },
     {
-      "path": "outputs/paper/assay_transfer_harness/joseph/final/luna/index.json",
+      "path": "outputs/paper/assay_transfer_harness/evidence/final/luna/index.json",
       "sha256": "e949de903506746006eab691bea6769186391a2ef9b16086e172c54910983bba"
     },
     {
-      "path": "outputs/paper/assay_transfer_harness/joseph/final/collection.json",
+      "path": "outputs/paper/assay_transfer_harness/evidence/final/collection.json",
       "sha256": "ff96e5acad1b598430bcf6d25be0ff9686a7c8bff9981421894564a6ef975c19"
     },
     {

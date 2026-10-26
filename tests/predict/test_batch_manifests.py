@@ -131,7 +131,7 @@ def test_final_arm_reads_copied_source_settings(tmp_path):
     run.mkdir(parents=True)
     (run / "manifest.json").write_text(json.dumps({"query_index": 0, "benchmark_row_id": "q"}))
     (batch / "manifest.json").write_text(json.dumps({
-        "schema_version": "joseph_final_arm.v1", "task": "dili",
+        "schema_version": "evidence_final_arm.v1", "task": "dili",
         "source_batches": [{"copied_manifest": "source_manifests/batch_0.json"}]}))
     convert_batch(batch, apply=True, source_uids={str(tmp_path / "original"): "source-uid"})
     record = read_record(batch / "manifest.json")

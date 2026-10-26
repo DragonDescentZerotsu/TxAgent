@@ -5,7 +5,7 @@
   "database": "rankings.sqlite3",
   "database_sha256": "753a4ee3d9d1ae35c415e6814916398e4d44e6c2bb5f2ca03595b56fe7bfc618",
   "inputs": {
-    "evidence_manifest_sha256": "e368181e8eb8f704bd9b5e9461990c0563c8b6595ee52b1042c53ee76b3490b6",
+    "evidence_manifest_sha256": "20cd3921ec63e639e1a32dfdde27872b1c84595f0bdc1e7dad05ca3ec1423fe6",
     "query_sha256": "62b9f857889717dc95e8087cf5688fe29c6277371bb83f7dcbc1e1738cfda674",
     "train_sha256": "c7f12cbbd0b4c7cbef3ede0bb65a45ff431a329de5251c81133fde1f4b592af7",
     "training_parents": 332
@@ -16,7 +16,7 @@
   },
   "level": "L1",
   "model": {
-    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-pinned-dili-xnkoqrux",
+    "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-pinned-dili-xnkoqrux",
     "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
     "revision": "bb5248609a729ac7dc6d6c9a3cccba1566a3d19e"
   },

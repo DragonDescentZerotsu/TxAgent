@@ -91,7 +91,7 @@
       "path": "data/gold_labels/Skin_Reaction/v1/scaffold/voter_membership.parquet",
       "sha256": "f5b6000428c05009f69e21bd8bf5ce556bb14b1e67eb6c46de6759c11812a419"
     },
-    "prior_manifest_sha256": "bd86f7dc25b9670ef281f64d2c7bfee3be3260c77c982d0a020d451d66d1a297",
+    "prior_manifest_sha256": "e50050fe2c2064acae6ecb47bc7f6838ef33842ec012bd84802669076918de0d",
     "canonical_records_sha256": "9c6d5041f383a6ace9b5236aa2593fdd49d1297cb7139ae31825cddfea8b90a6"
   },
   "validations": {

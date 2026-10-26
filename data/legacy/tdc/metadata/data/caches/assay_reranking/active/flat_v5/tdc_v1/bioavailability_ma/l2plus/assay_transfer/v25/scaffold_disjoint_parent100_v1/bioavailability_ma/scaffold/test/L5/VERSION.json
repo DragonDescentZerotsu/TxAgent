@@ -11,7 +11,7 @@
   "identity_normalizer_version": "rdkit_fragment_parent.v2",
   "inputs": {
     "evidence_manifest_sha256": "762e0a12de27425a597260817990494e7ec78f6e12dea09a2d69f4f289c82461",
-    "query_identity_manifest_sha256": "4b6a95a6001e48876102b487e83888630253a79ee0e762dfd2b5ce0b75cce495",
+    "query_identity_manifest_sha256": "baeb37f5be16643d5c89a42e527f82d81a214af44fb0bf5d267da81ae1f7801c",
     "query_sha256": "a66c10e01809c624bf215f9f0683147f0b9ee3bb2a42f53b5a8119b46268b4c2"
   },
   "label_release": {
@@ -549,37 +549,37 @@
   },
   "score_reuse_sources": [
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v2/bioavailability_ma/l2plus/query_pure/reused_v1/original",
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bioavailability_ma/l2plus/query_pure/reused_v1/original",
       "prompts_sha256": null,
       "score_files": {},
       "stage_manifest_sha256": "c6daf27231c30ff3932d843d248e3cd904b18db2f6d81168e3950597683cb483"
     },
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v2/bioavailability_ma/l2plus/query_pure/reused_v1/original",
+      "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/bioavailability_ma/l2plus/query_pure/reused_v1/original",
       "prompts_sha256": null,
       "score_files": {},
       "stage_manifest_sha256": "e80ffb5c80555c14981eafb8db1884ad959740bbaa2a4767b00fa02a018c9b35"
     },
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2",
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2",
       "prompts_sha256": null,
       "score_files": {},
-      "stage_manifest_sha256": "dcd4aa61d53a192eb940e32bbca5cb91a54812d8b4210641ccc2972e3120554c"
+      "stage_manifest_sha256": "62153195a13c7695e9930ac3e0610c3313b6b3a92405767bdac91617fd8e2449"
     },
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2",
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2",
       "prompts_sha256": null,
       "score_files": {},
-      "stage_manifest_sha256": "4b6a95a6001e48876102b487e83888630253a79ee0e762dfd2b5ce0b75cce495"
+      "stage_manifest_sha256": "baeb37f5be16643d5c89a42e527f82d81a214af44fb0bf5d267da81ae1f7801c"
     },
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/ranked_level_retrieval_v4",
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_v4",
       "prompts_sha256": null,
       "score_files": {},
       "stage_manifest_sha256": "f38754ffaf93fc046f510ade50a2d26a28c58afbc89cdd52da12ce8bf4b2f8b6"
     },
     {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/ranked_level_retrieval_v4",
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_v4",
       "prompts_sha256": null,
       "score_files": {},
       "stage_manifest_sha256": "059b19efb2fbfcb120218199d47771dc9f713e4251dff96bb5367a7e756f83c1"

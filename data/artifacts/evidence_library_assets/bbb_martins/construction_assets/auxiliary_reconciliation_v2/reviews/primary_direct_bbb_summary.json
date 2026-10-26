@@ -42,7 +42,7 @@
     "cluster_count": 284,
     "exact_packet_to_provenance_row_parity": true,
     "manifest_path": "tools/chembl_tool/tasks/bbb_martins/data_processing/auxiliary_reconciliation_v2/review_packets/manifest.json",
-    "manifest_sha256": "e9f852a850729993d5801e4ed27534aa03215dbe6abe17e58ea57b7723ecd6bb",
+    "manifest_sha256": "4b07dddfc13041c478305da66c28b3f4c628363036ac7cbfecbe957b8d34cbe4",
     "packet_count": 7,
     "packet_sha256": {
       "direct_bbb__global_context__packet_0001.json": "ddfc0a4f9864730837c982f3579aef873f97eb9d39fd2b255543d9ba0137fbfa",

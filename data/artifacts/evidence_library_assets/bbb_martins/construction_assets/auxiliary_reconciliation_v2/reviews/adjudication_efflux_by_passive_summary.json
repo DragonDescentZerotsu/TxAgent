@@ -37,7 +37,7 @@
   "checker_file": "checker_efflux_by_direct.jsonl",
   "checker_file_sha256": "35e359fb2fb9273da4953a45cda5e68f402a56cc172f001b909f947e3d040ba1",
   "checker_summary_file": "checker_efflux_by_direct_summary.json",
-  "checker_summary_file_sha256": "5cfd0309919dd6720e4bccff3773d48c353404678a4c6e6b3c785a1b135a37c3",
+  "checker_summary_file_sha256": "4309701075b264692b0941100cb4ab5de28328c183f46f85c8ef0f277aff535f",
   "checker_verdict_counts": {
     "agree": 1662,
     "disagree": 3
@@ -68,7 +68,7 @@
     "all_context_merges_reopened": true,
     "all_five_species_splits_reviewed_individually": true,
     "gene_protein_alias_changes_explicitly_reviewed": true,
-    "packet_manifest_sha256": "e9f852a850729993d5801e4ed27534aa03215dbe6abe17e58ea57b7723ecd6bb",
+    "packet_manifest_sha256": "4b07dddfc13041c478305da66c28b3f4c628363036ac7cbfecbe957b8d34cbe4",
     "reviewed_assignment_count": 142842,
     "reviewed_cluster_count": 1430,
     "reviewed_packet_count": 40,

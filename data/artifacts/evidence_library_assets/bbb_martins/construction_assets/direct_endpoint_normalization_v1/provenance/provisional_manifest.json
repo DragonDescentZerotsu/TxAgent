@@ -2,11 +2,11 @@
   "artifact_version": "bbb_martins_direct_endpoint_local_provenance.v1",
   "artifacts": {
     "cluster_assignments": {
-      "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/provenance/cluster_assignments.parquet",
+      "path": "data/external/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/provenance/cluster_assignments.parquet",
       "sha256": "965a21959193254d049a25fd146c3a730130e61cd723102566b92f4e6b510baf"
     },
     "provisional_label_catalog": {
-      "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/provenance/provisional_label_catalog.parquet",
+      "path": "data/external/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/provenance/provisional_label_catalog.parquet",
       "sha256": "658ee973efdd0ec166fbd58b11ed8607180a7396458aa9b48fda73f29bb45559"
     },
     "review_packets": [
@@ -472,9 +472,9 @@
     "cluster_random_seed": 20260801,
     "cluster_target_size": 500,
     "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
-    "generation_audit_path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/provisional/local_endpoint_mapping.json.generation.json",
+    "generation_audit_path": "data/external/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/provisional/local_endpoint_mapping.json.generation.json",
     "generation_audit_sha256": "78c0191c8401ddca81d487f156a3360510f3d9995da9db0fea4bd376f5b5a852",
-    "mapping_path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/provisional/local_endpoint_mapping.json",
+    "mapping_path": "data/external/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/provisional/local_endpoint_mapping.json",
     "mapping_sha256": "bc76937eb6ef9a13e0cbba098dbb83b608807bd7f2904a2c3cfdce0d2fba6b80",
     "max_values_per_local_request": 500,
     "model": "gpt-5.4-mini",
@@ -490,7 +490,7 @@
     "non_null_raw_values": 22798,
     "normalized_inventory_count_including_missing": 22744,
     "normalized_inventory_sha256": "2441c887b9b0c2031e0de4ab54663ca23760e97cf1f095365fe3872d375ace8e",
-    "path": "/data1/joseph/TxAgent/data/starling_data/bbb_martins/Direct_BBB/records.parquet",
+    "path": "data/external/TxAgent/data/starling_data/bbb_martins/Direct_BBB/records.parquet",
     "sha256": "14c01314377b6c31f18e6ec9c1ee72a8605a06800d74385fc8a7273f2334df57"
   },
   "validations": {

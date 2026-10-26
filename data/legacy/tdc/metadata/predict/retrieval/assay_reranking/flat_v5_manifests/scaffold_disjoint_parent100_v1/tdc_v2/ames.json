@@ -84,12 +84,12 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/RELEASE_INDEX.json",
       "size": 3720,
-      "sha256": "1d826c98409e10a1b1e07768472093854492a0335475d85dc90a735eb72c13d5"
+      "sha256": "0ed51c5980241878b0c3fd22c1fe5097e3a96b382b51529be4eec0bf76b4ecdc"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/scaffold/test/L2/VERSION.json",
       "size": 162742,
-      "sha256": "c670b172323487138278a94a347a71d6e0cc921a2cf6b7496c2edeb2923dc818"
+      "sha256": "0d697bd75e27f4bbeceba4cbe0403f8c16bd35ee2b6b8836e97405bc9feef53e"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/scaffold/test/L2/rankings.sqlite3",
@@ -104,7 +104,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/scaffold/test/L3/VERSION.json",
       "size": 162830,
-      "sha256": "b1c5eb110acb88ff96afd0286188b7caa93858c3679ce31aab793bb9fe01a5ff"
+      "sha256": "dc85aae66eaa05b6f6cc68b6446d3b759cdecff9d84b18f1323feb6288f6d417"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/scaffold/test/L3/rankings.sqlite3",
@@ -119,7 +119,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/scaffold/test/L4/VERSION.json",
       "size": 163123,
-      "sha256": "ca6e7983d8506c898db574f667b19117c36c39ba1d3697e20b1b9afa320565b5"
+      "sha256": "29324bb98616180f2a208abb18988d6efe64073cd570479438bdffa8b3a3dcf3"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/scaffold/test/L4/rankings.sqlite3",
@@ -134,7 +134,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/scaffold/test/L5/VERSION.json",
       "size": 162990,
-      "sha256": "49fc9a51ff327b0b47cfd05a9ec348917fffaffc923acda41edb7cf595005998"
+      "sha256": "f442baf852b12c280c961fb9c046339230c6cde8d5f051ca75bb3c3d5acb9320"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/scaffold/test/L5/rankings.sqlite3",
@@ -144,12 +144,12 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/scaffold/test/PARENT_UNIVERSE.json",
       "size": 12917111,
-      "sha256": "dad8317e0c0f0dd945af53f3fa9ab898c7392ffa9e85c663006a9c25e7c2b93b"
+      "sha256": "8e764939511221edca380c13a3aaaeff1c4ace81c434171e1573fe0641ba266d"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/scaffold/valid/L2/VERSION.json",
       "size": 83729,
-      "sha256": "d716e3e99cbaf954f07942f1ffb664b571faa02560cd4ab2c477888a27bc4ce6"
+      "sha256": "b9da03bfba90aa9e6ae6cef0b26fe5cddea8c2d4dab90c612e74968dac11c025"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/scaffold/valid/L2/rankings.sqlite3",
@@ -164,7 +164,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/scaffold/valid/L3/VERSION.json",
       "size": 83745,
-      "sha256": "03fe58f350bc04590cd2daeba2784e40eaa7c3e8261085f9d172f186b51e33ac"
+      "sha256": "1bbe8e63bc884a08fb02ebb5ed2b44b2146f240df0434f32948f887e0b3524ec"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/scaffold/valid/L3/rankings.sqlite3",
@@ -179,7 +179,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/scaffold/valid/L4/VERSION.json",
       "size": 83957,
-      "sha256": "97431fe46366d4959a808b8b59876129a7cacd20dc3bbd003c2422b4e0342a6a"
+      "sha256": "2476824314c7141ef4eb8e0901d87e05c3eed08c53062addf8a74abc73c5054e"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/scaffold/valid/L4/rankings.sqlite3",
@@ -194,7 +194,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/scaffold/valid/L5/VERSION.json",
       "size": 83985,
-      "sha256": "72894f12c51451e800fdc48a06d1cc62891fb3b7f16fd8f97f7245678782baa2"
+      "sha256": "954da5487083bf66ec90085f51fbcb56f0a8fd3b1eaef8fbdd59823847adb5e5"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/scaffold/valid/L5/rankings.sqlite3",
@@ -209,7 +209,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v2/ames/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/ames/scaffold/valid/PARENT_UNIVERSE.json",
       "size": 6478392,
-      "sha256": "1f2de5278c1436ef72da1b9ed126382bb2a08bc7faa79feb7bb8d57b1855fca6"
+      "sha256": "5d385749345f7bf4b6515cd2e23d25a3c5839ed53917efe28cdeb8d066bcdcbf"
     },
     {
       "path": "data/evidence_libraries/ames/v10_main_universe_v3/retrieval_projection/ranked_evidence_safety_v27_v1/VERSION.json",

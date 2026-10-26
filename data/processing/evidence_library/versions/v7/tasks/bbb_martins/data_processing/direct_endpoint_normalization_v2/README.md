@@ -5,7 +5,7 @@ v1 mapping. The proposal is generated from deterministic endpoint/value/unit
 contradictions; it does not ask an LLM to infer endpoints or units.
 
 ```bash
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+conda run -n txagent-glm \
   python -m data.processing.evidence_library.versions.v7.tasks.bbb_martins.data_processing.build_direct_endpoint_errata
 ```
 

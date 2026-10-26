@@ -1,7 +1,7 @@
 {
   "agent_review_decisions": {
     "accepted_aliases": 4833,
-    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v2/agent_review.decisions.jsonl",
+    "path": "data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v2/agent_review.decisions.jsonl",
     "sha256": "8c26c7a683969210eb122d9372d29f3a33ca9cace34ca9522b62e1a9943401b4"
   },
   "all_actions": [
@@ -15,24 +15,24 @@
   "lineage": {
     "legacy_lexical_batching": true,
     "single_pass_manifest": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/20260918_gpt_primary_v4/carcinogens/pass_a/manifest.json",
+      "path": "outputs/analysis/evidence_library/unit_reconciliation/20260918_gpt_primary_v4/carcinogens/pass_a/manifest.json",
       "sha256": "45909eb388a4ef2b907fcc9c1a720e0fe45ce60ddfd15107922a593bb160e321"
     },
     "single_pass_mapping": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/20260918_gpt_primary_v4/carcinogens/pass_a/mapping.jsonl",
+      "path": "outputs/analysis/evidence_library/unit_reconciliation/20260918_gpt_primary_v4/carcinogens/pass_a/mapping.jsonl",
       "sha256": "5ed26d92fc033dc0012d5ddac2c10ef7f5145e4fc577a84dd5ac89137ab6ec0a"
     },
     "universe": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/20260918_gpt_primary_v4/carcinogens/universe.jsonl",
+      "path": "outputs/analysis/evidence_library/unit_reconciliation/20260918_gpt_primary_v4/carcinogens/universe.jsonl",
       "sha256": "67bea373db1f2a6c1ed02a874f34c7460bf586f47d0c1a4f9c8ceb11175d3c8b"
     },
     "universe_manifest": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/20260918_gpt_primary_v4/carcinogens/universe.manifest.json",
+      "path": "outputs/analysis/evidence_library/unit_reconciliation/20260918_gpt_primary_v4/carcinogens/universe.manifest.json",
       "sha256": "132605876e8d77812a783b407bd9c4a3f4970e13e702e3935c1301a4ee9c1855"
     }
   },
   "mapping": {
-    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v2/mapping.json",
+    "path": "data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v2/mapping.json",
     "sha256": "d88959c863380541e8ee4cc5cb0985aedb37283e91362c93c453eac40fdd3a81"
   },
   "review_completion": {

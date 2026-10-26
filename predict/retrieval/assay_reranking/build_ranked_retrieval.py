@@ -972,7 +972,7 @@ def main() -> None:
     parser.add_argument("--task", choices=tuple(GOLD_NAMES))
     parser.add_argument("--subset", choices=("valid", "test"))
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
-    parser.add_argument("--score-root", type=Path, default=Path("/local/jojolee-starling-retrieval-v1/later"))
+    parser.add_argument("--score-root", type=Path, default=Path("data/caches/starling-retrieval-v1/later"))
     parser.add_argument("--hashes-only", action="store_true")
     args = parser.parse_args()
     if args.command == "validate":

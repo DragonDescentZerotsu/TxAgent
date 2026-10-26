@@ -20,9 +20,9 @@ Reviewed proposal:
 - 53 cleaned raw-alias groups (55 extra spellings), all converged without conflict
 - 38 conservative near-duplicate audit candidates retained for the human checkpoint
 - proposal SHA-256:
-  `dccace52917d2c01740988f4ed5bb0b50d75b11d90ffa1d00c306f43510e7b77`
+  `4f815b621263425478184a4a354983d7901508e2da50fe5d3b78c6b405f1e65b`
 
-Joseph approved this proposal on `2026-08-04T14:17:53Z`. The approved runtime
+Evidence approved this proposal on `2026-08-04T14:17:53Z`. The approved runtime
 copy is `approved/endpoint_mapping.json`; the proposal remains unchanged so the
 human-approval boundary is explicit in the provenance.
 
@@ -34,18 +34,18 @@ The global steps use subagent review, not a second GPT API pass.
 
 ```bash
 # OPENAI_API_KEY must already be injected into the child environment.
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+conda run -n txagent-glm \
   python -m data.processing.evidence_library.versions.v7.tasks.bbb_martins.data_processing.build_direct_endpoint_mapping
 
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+conda run -n txagent-glm \
   python -m data.processing.evidence_library.versions.v7.tasks.bbb_martins.data_processing.reconcile_direct_endpoints prepare
 
 # Run after raw-level primary, checker, and adjudicator JSONL files are complete.
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+conda run -n txagent-glm \
   python -m data.processing.evidence_library.versions.v7.tasks.bbb_martins.data_processing.reconcile_direct_endpoints prepare-catalog
 
 # Run after the global catalog primary, checker, and adjudicator files are complete.
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+conda run -n txagent-glm \
   python -m data.processing.evidence_library.versions.v7.tasks.bbb_martins.data_processing.reconcile_direct_endpoints propose
 ```
 

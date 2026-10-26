@@ -5,7 +5,7 @@
   "generation_version": "reference_semantics_generation.v2",
   "input_path": "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet",
   "input_sha256": "da05bf7aaafaf8231652f49724b5c34164cae20a20bf1aaad2231fd2b44382f7",
-  "mapping_path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/reference_semantics_v2/reference_semantics.parquet",
+  "mapping_path": "data/external/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/reference_semantics_v2/reference_semantics.parquet",
   "mapping_rows": 175041,
   "mapping_sha256": "844ab9969de2db0d8fefa3acfd9259a4d4d9e8790a472d06e830d55b56c2d695",
   "prompt_sha256": "9dbd5502101225ccff8b5dba1688a3d73648ad56d77d34397a9d52a859243bf7",

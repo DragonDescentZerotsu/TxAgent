@@ -3,7 +3,7 @@
   "status": "verified",
   "bundle_id": "flat_v5/tdc_v1/bioavailability_ma/scaffold_disjoint_parent100_v1",
   "manifest": "predict/retrieval/assay_reranking/flat_v5_manifests/scaffold_disjoint_parent100_v1/tdc_v1/bioavailability_ma.json",
-  "manifest_sha256": "f5b412a2bb16781e44e706aed34e9b61417411d292920598db041a2e1181bd07",
+  "manifest_sha256": "d30d19ffe619ffb37969ca75108881ca921df926305ba98b497f3c8d06b8fbce",
   "verified_at": "2026-10-15T04:43:01.474538+00:00",
   "artifacts": [
     {
@@ -92,13 +92,13 @@
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/RELEASE_INDEX.json",
-      "sha256": "974ff565561dab453b671f5369575c15b0f4b15c81908b5b8cd97a839553e89a",
+      "sha256": "5e0317ddf56d832af4dee86dd3d996462e4863d640286e2a19159fafea3a6e9e",
       "size": 3956,
       "mtime_ns": 1792039299769639773
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L2/VERSION.json",
-      "sha256": "6eaa5e0cef0441f61f66655c92f60c142187b4884013f60d056cd5c2bf3130bc",
+      "sha256": "b2c22b4ce424e9205cd46a30bef6c57d8530a0841422b32582e0094b33088b30",
       "size": 19929,
       "mtime_ns": 1792029009154522539
     },
@@ -116,7 +116,7 @@
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L3/VERSION.json",
-      "sha256": "48b2c583fa572afa4fc4c4fe4825016e84aa5192b13fed00b93fcb01bd2a65de",
+      "sha256": "5c5c3db1010e9b4c8322b21cdd2b42d153b34632bdfd8eb514f2bef157eeee24",
       "size": 19965,
       "mtime_ns": 1792029176357555479
     },
@@ -134,7 +134,7 @@
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L4/VERSION.json",
-      "sha256": "e151eaa556e39dc5f9a8e183548dfa92310e1cc2a72f39ce3b4a3b4bbd9b6a77",
+      "sha256": "ec48e4488b28caca03ce441c99b665cd30389b85e66799e828debd8772e5fea1",
       "size": 19944,
       "mtime_ns": 1792029220312202777
     },
@@ -152,7 +152,7 @@
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L5/VERSION.json",
-      "sha256": "d409f17e7ce6849511279a9b2b4cf0bdacc646872982c07a4413750d1dbdb152",
+      "sha256": "53d5001f6d624f57b5b2870296f014de171b2bf6e509b49f2f361ab952b69f80",
       "size": 19381,
       "mtime_ns": 1791882290986657460
     },
@@ -164,7 +164,7 @@
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/test/L6/VERSION.json",
-      "sha256": "ce89dddcb9da176a6bcf042bd82fd6fa739af057eeba950b94aa4ce316bf249b",
+      "sha256": "095e04802e5bb801f6fb3fc23128a1f31571438e7235e90f162dd75d940c1538",
       "size": 19919,
       "mtime_ns": 1792029245437817154
     },
@@ -182,7 +182,7 @@
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L2/VERSION.json",
-      "sha256": "66f2b63c5be7f3fa5d282ebf07756ad1a00afda0c41558bd82a0a1c5e43dcab3",
+      "sha256": "c71166341089c9df4c9a01faa626ab5bf408d88d31f83c666666f2b641dd7b3b",
       "size": 11999,
       "mtime_ns": 1792036785315805000
     },
@@ -200,7 +200,7 @@
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L3/VERSION.json",
-      "sha256": "7d25ee0538109814adcddc9178f5121559e87e656f635c79511aec4c147085e0",
+      "sha256": "76338e2fafc16d6ee3b41c510dc03b29b375b51fcf69ac3b7c2ab46250b64899",
       "size": 12029,
       "mtime_ns": 1792036836521145772
     },
@@ -218,7 +218,7 @@
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L4/VERSION.json",
-      "sha256": "30428fefa2f0bcf61887fd3432962face12a9d6b468500bb69a79eb07ef50808",
+      "sha256": "032227a7f2926968ff4edfb5365793a045d6c7886a9a04fe5059946f4fdec0cd",
       "size": 12019,
       "mtime_ns": 1792036857507131876
     },
@@ -236,7 +236,7 @@
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L5/VERSION.json",
-      "sha256": "ca8809b15230c747cb80ba933eb75993a7532b7d8624c912aefa872e12cd5c9e",
+      "sha256": "3711c2e635d33b70371c85031afc7490634a99344e1cd4d3040fb4c29e6a347f",
       "size": 11477,
       "mtime_ns": 1791884782804884711
     },
@@ -248,7 +248,7 @@
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/bioavailability_ma/l2plus/assay_transfer/v25/scaffold_disjoint_parent100_v1/bioavailability_ma/scaffold/valid/L6/VERSION.json",
-      "sha256": "da7489a509508eed90e567e3320fff77f34e569d744ec3ffd837b05f4a0050aa",
+      "sha256": "e945d4739c9a6c1757b72cb4a078aeebb6e5352cb9c1028272357ef78f77a5ac",
       "size": 11993,
       "mtime_ns": 1792036869141285641
     },

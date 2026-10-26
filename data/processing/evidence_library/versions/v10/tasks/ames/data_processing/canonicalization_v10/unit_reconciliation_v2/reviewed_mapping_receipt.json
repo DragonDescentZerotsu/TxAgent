@@ -10,7 +10,7 @@
   "review_completion": {
     "reviewer_id": "codex-ames-v1",
     "reviewed_packets": 347,
-    "source_manifest_sha256": "8cc21c4c64d2833bada31e59b4017af5e87f6f7ac8716a740a963b092050d032"
+    "source_manifest_sha256": "8cfcae5f09cf8c7de9a30931441a2f21c6cf9b0ddbb3c2785f531cfa2535f300"
   },
   "validations": {
     "mapping_hash_matches_reviewed_consolidation": true,

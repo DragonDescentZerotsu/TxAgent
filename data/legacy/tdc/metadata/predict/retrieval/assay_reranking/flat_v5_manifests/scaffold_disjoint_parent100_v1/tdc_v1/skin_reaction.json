@@ -84,12 +84,12 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/skin_reaction/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/skin_reaction/RELEASE_INDEX.json",
       "size": 2603,
-      "sha256": "d794c35436681c611b25c1ea5a6e3afc2610d3e276a9622c14611a7050538553"
+      "sha256": "9fe851b79cb9cd249993f9c9b57840e3c65fa19d489d1a7492cf07365a644ae7"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/skin_reaction/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/skin_reaction/scaffold/test/L2/VERSION.json",
       "size": 14797,
-      "sha256": "e92fcc16488532bee952cb1b58d6cfbd23849833f79fb2cadccf0925a629ec21"
+      "sha256": "bfe5090494e92113d793174a3598b18ce14336319b1ca1b135d817d2303bda88"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/skin_reaction/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/skin_reaction/scaffold/test/L2/rankings.sqlite3",
@@ -104,7 +104,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/skin_reaction/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/skin_reaction/scaffold/test/L3/VERSION.json",
       "size": 14800,
-      "sha256": "d9cb98c9e13736a9c62ec360c51400233b3284569f654758e1e5642f2559f654"
+      "sha256": "f4e0141e449d85675ab344cabd373515de17ea7a81cbdda5455681079b72a6cc"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/skin_reaction/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/skin_reaction/scaffold/test/L3/rankings.sqlite3",
@@ -124,7 +124,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/skin_reaction/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/skin_reaction/scaffold/valid/L2/VERSION.json",
       "size": 9844,
-      "sha256": "e6793485253ee52872413816889f9edd93cdc0726732ce97359ad52d6e9a4120"
+      "sha256": "c6c524fcf89929a121a42b8151ee16128eab767cb480726b90fc161774b06e6a"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/skin_reaction/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/skin_reaction/scaffold/valid/L2/rankings.sqlite3",
@@ -139,7 +139,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/skin_reaction/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/skin_reaction/scaffold/valid/L3/VERSION.json",
       "size": 9851,
-      "sha256": "b0b6e97b1a8efbab56e871eda9818fd95f53c2e7610356a0675f5d24431539c1"
+      "sha256": "61d9597448b110e7c29cdabfae3601309b82db663b24b400fb2c8876f9ddfa05"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/skin_reaction/l2plus/assay_transfer/v27/scaffold_disjoint_parent100_v1/skin_reaction/scaffold/valid/L3/rankings.sqlite3",

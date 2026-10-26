@@ -85,7 +85,7 @@ retrieval 始终重新物化，完整复用审计保存在 target root 的 `reus
 
 所有 LLM 实验共享以下条件：
 
-- PARCC LiteLLM is the default: top-level launchers load `LITELLM_BASE_URL` and `LITELLM_API_KEY` from the
+- GATEWAY LiteLLM is the default: top-level launchers load `LITELLM_BASE_URL` and `LITELLM_API_KEY` from the
   ignored root `keys.py`, and request `nvidia/GLM-5.2-NVFP4`
 - 保持历史 `--disable-thinking --reasoning-effort ""`，GLM reasoning 仍保存到 trace
 - temperature 0，最大输出 20,480 tokens
@@ -434,14 +434,14 @@ python -m tools.chembl_tool.paper_experiments.parent_disjoint_ablation --split v
 `outputs/paper/molecular_evidence_agent_valid/analysis/report.md`，parent-disjoint 配对审计位于
 `outputs/paper/molecular_evidence_agent_valid/analysis/parent_disjoint_ablation/result_report.md`。
 
-The paper/Starling launchers now default to the PARCC LiteLLM URL and credential stored as
+The paper/Starling launchers now default to the GATEWAY LiteLLM URL and credential stored as
 `LITELLM_BASE_URL` and `LITELLM_API_KEY` in the ignored root `keys.py`. They request
 `nvidia/GLM-5.2-NVFP4` and preserve the historical `--disable-thinking --reasoning-effort ""` request contract.
 Those flags omit optional request controls; they do not disable provider-default GLM reasoning, which remains in
 the trace. Launchers inject the key into their child environment and persist only the environment-variable name.
 
 The direct loopback route remains available with explicit `--base-url http://127.0.0.1:50000/v1` and
-`--api-key-env GLM_LOCAL_API_KEY`. Establish `ssh -fNT parcc-glm` before selecting it; unauthenticated loopback
+`--api-key-env GLM_LOCAL_API_KEY`. Establish `ssh -fNT gateway-glm` before selecting it; unauthenticated loopback
 vLLM receives only the existing non-sensitive placeholder.
 
 For the explicit loopback route, `watch_glm_tunnel_and_matrix.py` can monitor `/v1/models`, the SSH tunnel, and

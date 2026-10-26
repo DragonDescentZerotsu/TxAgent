@@ -60,10 +60,10 @@ Found 15 incoming links in maintained ownership trees: 12 prediction prompt bund
 | `predict/harnesses/branches/prompts/full_flat_context_v6_oral_high_low` | `archive/branches/prompts/full_flat_context_v6_oral_high_low` |
 | `predict/harnesses/branches/prompts/full_flat_context_v7_oral_final_only` | `archive/branches/prompts/full_flat_context_v7_oral_final_only` |
 | `predict/harnesses/branches/prompts/full_flat_context_v8_context_scoped_transfer_v1` | `archive/branches/prompts/full_flat_context_v8_context_scoped_transfer_v1` |
-| `predict/harnesses/branches/prompts/joseph_flat_context_v4_v1` | `archive/branches/prompts/joseph_flat_context_v4_v1` |
-| `predict/harnesses/branches/prompts/joseph_flat_v1` | `archive/branches/prompts/joseph_flat_v1` |
-| `predict/harnesses/branches/prompts/joseph_flat_v2` | `archive/branches/prompts/joseph_flat_v2` |
-| `predict/harnesses/branches/prompts/tianang_flat_v1` | `archive/branches/prompts/tianang_flat_v1` |
+| `predict/harnesses/branches/prompts/evidence_flat_context_v4_v1` | `archive/branches/prompts/evidence_flat_context_v4_v1` |
+| `predict/harnesses/branches/prompts/evidence_flat_v1` | `archive/branches/prompts/evidence_flat_v1` |
+| `predict/harnesses/branches/prompts/evidence_flat_v2` | `archive/branches/prompts/evidence_flat_v2` |
+| `predict/harnesses/branches/prompts/baseline_flat_v1` | `archive/branches/prompts/baseline_flat_v1` |
 | `tools/chembl_tool` | `archive/chembl_tool` |
 
 `tests/data/test_data_layout.py` also explicitly expects the `tools/chembl_tool` archive alias. Root README, prediction documentation and the prior cleanup inventory describe this layout. A full archive removal needs an explicit decision about preserving or retiring these paths and corresponding reference/test updates.
@@ -147,7 +147,7 @@ The remaining archive has 539 regular files totaling 3,057,405 bytes:
 
 | Area | Exact contents | Present role |
 | --- | --- | --- |
-| `branches/prompts/` | 12 flat prompt bundles, 113 files: system/user templates, task and level instructions, mode definitions and provenance. Includes Joseph v1/v2, Tianang v1, context v4-v8, upstream-score and TDC Skin variants, and a Carcinogens direct-priority variant. | Explicit historical/variant rendering still resolves these bundles through symlinks. None is the canonical `final_full_flat` default. Keep or relocate only if retaining that rendering capability; retire it explicitly before deleting its assets. |
+| `branches/prompts/` | 12 flat prompt bundles, 113 files: system/user templates, task and level instructions, mode definitions and provenance. Includes Evidence v1/v2, Baseline v1, context v4-v8, upstream-score and TDC Skin variants, and a Carcinogens direct-priority variant. | Explicit historical/variant rendering still resolves these bundles through symlinks. None is the canonical `final_full_flat` default. Keep or relocate only if retaining that rendering capability; retire it explicitly before deleting its assets. |
 | `progressive/` | 75 progressive/filter prompt bundles (347 files), plus nine README/runbook/matrix/template/cache-policy files. | The progressive harness is retired. No maintained executable reader of these archive paths was found; the import-boundary test mentions the retired namespace only to reject it. |
 | `instructions/` | 12 ordinary Markdown snapshots covering ClinTox, raw Starling data, harness architecture, activity-transfer benchmarks, paper operations, evidence-task conventions, BBB, Oral, DILI, Skin, BBB assay screening and the trace viewer. | They are not active agent instructions. Some contain old scientific notes and results; no current execution depends on reading them. Active AGENTS.md files and current scientific contracts remain outside this subtree. |
 | `chembl_tool/` | 56 regular files: old experiment plans/results, BBB/Oral/Skin audits, two HTML casebooks, Oral example prompts, three provider settings, two generic analog templates and documentation. Three links lead to current unit/qualifier policies and an unavailable external ChEMBL dataset. | No maintained executable reader of its historical templates/reports/settings was found. The index builder's optional precomputed-fingerprint default still uses the external dataset alias; it currently falls back to SMILES fingerprints because the external path is unavailable. Full cleanup should update that default/alias rather than leave a dangling path. |
@@ -189,7 +189,7 @@ Most full predictions/metrics/traces are referenced under `outputs/paper/`;
 this archive contains the explanatory reports and, for the Skin casebook,
 compact case-level source records. Current selected results are documented in
 `docs/results.md` and frozen under
-`outputs/paper/assay_transfer_harness/joseph/final/`. The archived documents
+`outputs/paper/assay_transfer_harness/evidence/final/`. The archived documents
 should be retained only for particular comparisons or scientific explanations
 the user wants, rather than because they happen to contain historical scores.
 

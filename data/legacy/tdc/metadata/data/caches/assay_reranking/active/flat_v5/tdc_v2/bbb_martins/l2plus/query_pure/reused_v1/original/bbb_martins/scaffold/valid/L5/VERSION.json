@@ -1263,12 +1263,12 @@
     {
       "database_sha256": "8b65bb3470c3b7002dce4fc423d230ffa90ab0cd3cfbd58b4f36d069f993fe12",
       "manifest_sha256": "93dedd1087604b41fcb727ec20e28fced5506fb24a3db2731ffd540bd4cdbbbc",
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/valid/L5/VERSION.json"
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/valid/L5/VERSION.json"
     },
     {
       "database_sha256": "19f418ba06e97afd5ab0a390ffc0a541a22a5d64f5de3d22794234c36bc5d21a",
       "manifest_sha256": "55e41803e814da70826e2788c3aef54baa7b262e28898df5134135427859b2c3",
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/test/L5/VERSION.json"
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/scaffold/test/L5/VERSION.json"
     }
   ],
   "shared_candidate_universe": true,

@@ -18,7 +18,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/carcinogens/l1/assay_transfer/v10_3/tdc_pinned_v1/carcinogens/evidence/VERSION.json",
       "size": 625,
-      "sha256": "2a7080b88f6c8ab79f47aa77249d835e08842fdbc6d7319569196768f790a199"
+      "sha256": "16bab256eab11cd2a0294c88b7e618e13213cb48c68566cba768908f90268ca3"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/carcinogens/l1/assay_transfer/v10_3/tdc_pinned_v1/carcinogens/evidence/records.parquet",

@@ -458,7 +458,7 @@ def _execute_flat_context_final(
     replay_root = str(getattr(state.prepared.args, "flat_request_replay_root", "") or "")
     if replay_root:
         request = _read_json(Path(replay_root) / f"{state.item.index:05d}" / "request.json")
-        if request.get("schema_version") != "joseph_flat_context_request.v1":
+        if request.get("schema_version") != "evidence_flat_context_request.v1":
             raise ValueError("invalid frozen flat request")
         messages = request["messages"]
         prompt_metadata = {key: value for key, value in request.items()
@@ -474,7 +474,7 @@ def _execute_flat_context_final(
             prompt_version=str(state.prepared.args.flat_prompt_version),
         )
         request = {
-            "schema_version": "joseph_flat_context_request.v1",
+            "schema_version": "evidence_flat_context_request.v1",
             "messages": messages,
             "message_char_count": sum(len(message["content"]) for message in messages),
             **prompt_metadata,

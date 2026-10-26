@@ -80,7 +80,7 @@ and exit with status 77. At most the already in-flight worker set can reach the 
 do not each repeat the rejected request.
 
 The API key is read only from the environment variable named by `--api-key-env`. The approved provider
-is the standard OpenAI client configured by `/data1/joseph/therapeutic-tuning/distillation/keys.py`,
+is the standard OpenAI client configured by `data/external/therapeutic-tuning/distillation/keys.py`,
 injected into the child environment as `OPENAI_API_KEY`. Its value is never written to commands, code,
 caches, ledgers, manifests, or traces.
 The current v3 defaults are model `gpt-5.4-mini` and reasoning effort `low`. The already-complete direct
@@ -94,18 +94,18 @@ Use the project environment for every command:
 
 ```bash
 # Free inventory check. This does not initialize the API client or embedding model.
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+conda run -n txagent-glm \
   python -m data.processing.evidence_library.versions.v8.tasks.skin_reaction.data_processing.build_embedding_bucket_mapping \
   --dry-run
 
 # Core phase: 711 planned calls.
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+conda run -n txagent-glm \
   python -m data.processing.evidence_library.versions.v8.tasks.skin_reaction.data_processing.build_embedding_bucket_mapping \
   --sources direct_skin_reaction sensitization_aop skin_exposure \
   --api-key-env OPENAI_API_KEY --token-budget 500000
 
 # Phototoxicity phase. Repeat after any status-75 stop with a refreshed key.
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+conda run -n txagent-glm \
   python -m data.processing.evidence_library.versions.v8.tasks.skin_reaction.data_processing.build_embedding_bucket_mapping \
   --sources phototoxicity_irritation_local_damage \
   --api-key-env OPENAI_API_KEY --token-budget 500000 \

@@ -7,7 +7,7 @@
     },
     "proposal": {
       "path": "tools/chembl_tool/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v2/proposal/proposed_endpoint_mapping.json",
-      "sha256": "ed4076d286a0dfcfd37634c6e17be6cbb9045189e27e42faad63eb344f1aee8b"
+      "sha256": "5f57f263a891a48353f3c2bd0fa5e4f56b4f9ba9d8a2fbc9715b25460474928a"
     }
   },
   "counts": {

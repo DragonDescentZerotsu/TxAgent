@@ -6,7 +6,7 @@
   "records_sha256": "43ad22d20944fbc25f7054947cf4617337a25ecd1d97c55b7ba36873ae2cd156",
   "schema_version": "ranked_evidence_projection.v1",
   "source_identity": "tdc_source_record_id",
-  "source_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/TDC/Skin_Reaction/v1/scaffold/train_molecule_condition_labels.jsonl",
+  "source_path": "data/gold_labels/TDC/Skin_Reaction/v1/scaffold/train_molecule_condition_labels.jsonl",
   "status": "complete",
   "task_id": "skin_reaction"
 }

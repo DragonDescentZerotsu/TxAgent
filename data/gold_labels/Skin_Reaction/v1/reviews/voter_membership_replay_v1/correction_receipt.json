@@ -234,9 +234,9 @@
     "sha256": "6a288f7096c08041d8405fa2481e9cb83d672787689e62820f55bfc63b5cc37e"
   },
   "gold_contract_sha256": "76e9a7b6cefcc5086069143b31599d6ff1f8daaba67748a3a291edb7e0cf6852",
-  "level_manifest_sha256": "d5146ded03e683eb0d3c48e332687d79a37d75382bb234a7ccb1778cb6b7a3e4",
+  "level_manifest_sha256": "ae895d3d03d8268b5bfc4f5484c8ce4c181e216540003cf32c3201f5ae2c20ac",
   "scoring": {
-    "model": "jiosephlee/assay-transfer-tool-soft-v9.0.2-skin-reaction-mixed-continuous",
+    "model": "local-artifacts/assay-transfer-tool-soft-v9.0.2-skin-reaction-mixed-continuous",
     "revision": "e4e894af28151760d2041275c5ecf136971c3925",
     "fresh_valid": 104,
     "fresh_test": 93,

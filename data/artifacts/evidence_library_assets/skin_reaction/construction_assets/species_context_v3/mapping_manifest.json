@@ -74,7 +74,7 @@
     "path": "tools/chembl_tool/tasks/skin_reaction/data_processing/globally_reconciled_auxiliary_value_mapping.json",
     "sha256": "d362f5dd94df41956a4c43a2e8de39f787b6d75cf8d2270461960277f78765fc"
   },
-  "distillation_api": "/data1/joseph/therapeutic-tuning/distillation/api.py",
+  "distillation_api": "data/external/therapeutic-tuning/distillation/api.py",
   "mapping_version": "starling_auxiliary.skin_reaction.globally_reconciled.v3",
   "model": "gpt-5.4-mini",
   "output": {
@@ -82,7 +82,7 @@
     "sha256": "63cfaa7b4764e2163d741197fdd4247963056cfc69b3d5266892822e9ad2965b"
   },
   "prompt_registry": {
-    "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_value_prompts.json",
+    "path": "data/external/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_value_prompts.json",
     "sha256": "5794af50252a3cb40b5f77744a0b7315d189bd974e611175581efcd838503001"
   },
   "prompt_version": "starling_skin_embedding_bucket_mapping.v4",

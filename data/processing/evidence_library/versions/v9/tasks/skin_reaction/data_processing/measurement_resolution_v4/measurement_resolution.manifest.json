@@ -11,7 +11,7 @@
     "unsupported_exact_unit": 2645
   },
   "base_mapping": null,
-  "cleaned_records_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/skin_reaction/v9/01_cleaned/records.parquet",
+  "cleaned_records_path": "data/evidence_libraries/skin_reaction/v9/01_cleaned/records.parquet",
   "cleaned_records_sha256": "2a200b355d6e4fd3c14b7f034bcb9fdc264548a0c6918905ac16c61c765cac68",
   "delta_inference": {
     "model": "mixed",
@@ -22,12 +22,12 @@
     "rows": 97812
   },
   "endpoint_profile": {
-    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/skin_reaction/v9/01_cleaned/endpoint_unit_profile.json",
+    "path": "data/evidence_libraries/skin_reaction/v9/01_cleaned/endpoint_unit_profile.json",
     "sha256": "303df9d1de9cd8d2dadb2ba756a1109d186a4266f029c78515ffcbeb601512cf",
     "version": "starling_endpoint_unit_profile.v2"
   },
   "exact_unit_coverage": {
-    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v9/tasks/skin_reaction/data_processing/canonicalization_v7/exact_measurement_unit_map.v2.json",
+    "path": "data/processing/evidence_library/versions/v9/tasks/skin_reaction/data_processing/canonicalization_v7/exact_measurement_unit_map.v2.json",
     "sha256": "0475302f49c8094842cf45ebe7131bebcf1b077632d18274a9eb23ab34354f02",
     "unsupported_ok_rows_demoted": 2645
   },
@@ -84,10 +84,10 @@
       }
     },
     "stratified_batch_order": true,
-    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v9/prompts/measurement_resolution/skin_v8.jinja",
+    "template_path": "data/processing/evidence_library/versions/v9/prompts/measurement_resolution/skin_v8.jinja",
     "template_sha256": "fbbd22f7cc50b914fe66d369e69283a5d1c822876c13d945b359d674d2753081",
     "unit_vocabulary": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v9/unit_vocabulary.v1.json",
+      "path": "data/processing/evidence_library/versions/v9/unit_vocabulary.v1.json",
       "sha256": "6954dae6e32b6c16c4dedaf40da264e7d807d9aac8e154f53080b8dd8aa4aeaf",
       "units": 12721,
       "version": "observed_source_units.v1"

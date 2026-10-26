@@ -20,21 +20,21 @@ from . import runtime
 TASKS = ("ames", "dili", "carcinogens")
 MODELS = {
     "ames": {
-        "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v27-ames-general-best",
+        "model": "local-artifacts/intern-s1-mini-assay-transfer-record-level-v27-ames-general-best",
         "revision": "e731fd48ebebe95aa621b3500e59f28d4c27b036",
-        "dataset": "jiosephlee/assay-transfer-record-level-v27-ames-general-intern",
+        "dataset": "local-artifacts/assay-transfer-record-level-v27-ames-general-intern",
         "dataset_manifest_sha256": "6f2d2a3d80869e4c604d193568e3b9373a75200e9e5a9f9736f0f593e3be2c75",
     },
     "dili": {
-        "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v27-dili-general-best",
+        "model": "local-artifacts/intern-s1-mini-assay-transfer-record-level-v27-dili-general-best",
         "revision": "e34d922504cc67290ce5289607f54e5d74f6868e",
-        "dataset": "jiosephlee/assay-transfer-record-level-v27-dili-general-intern",
+        "dataset": "local-artifacts/assay-transfer-record-level-v27-dili-general-intern",
         "dataset_manifest_sha256": "8bd8cba9c059a441138a093d02d9d94d5298b77203c70fce0cfd204a35e01e1f",
     },
     "carcinogens": {
-        "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v27-carcinogens-general-best",
+        "model": "local-artifacts/intern-s1-mini-assay-transfer-record-level-v27-carcinogens-general-best",
         "revision": "13a182fbc9f8b2a49c5286514dd5b6110393544b",
-        "dataset": "jiosephlee/assay-transfer-record-level-v27-carcinogens-general-intern",
+        "dataset": "local-artifacts/assay-transfer-record-level-v27-carcinogens-general-intern",
         "dataset_manifest_sha256": "408548b285f32523ac190f9d0340c39049a8e8d7af83d895b59775f80478476c",
     },
 }

@@ -7,14 +7,26 @@
     "total": 25
   },
   "exact_absolute_by_source": {
-    "fixed_mutation": {"correct": 0, "rate": 0.0, "total": 10},
-    "mutagenicity_mechanism": {"correct": 1, "rate": 0.1111111111111111, "total": 9},
-    "premutagenic_damage": {"correct": 6, "rate": 1.0, "total": 6}
+    "fixed_mutation": {
+      "correct": 0,
+      "rate": 0.0,
+      "total": 10
+    },
+    "mutagenicity_mechanism": {
+      "correct": 1,
+      "rate": 0.1111111111111111,
+      "total": 9
+    },
+    "premutagenic_damage": {
+      "correct": 6,
+      "rate": 1.0,
+      "total": 6
+    }
   },
-  "manifest_sha256": "ac5cde0a6724eaa536f52afdd9ce09b4626f3a2062e86394e3e1110affa8c0fe",
+  "manifest_sha256": "15800819fbad1c393ffc85ea8ae84138fe09ef221faa24cd85e5c8925054bf7d",
   "reason": "Rejected by the one-time AMES candidate blind-v3 audit. Exact absolute-pair recall was 7/25 (28%), below the frozen overall and per-source gates. This candidate snapshot must never be used for Stage 2 or rescored.",
   "rejected_date": "2026-09-08",
-  "score_report_sha256": "ef87ba34e9783e4486c63e015db3ae79a319ad851a141e4d3a19e27dd990cbb2",
+  "score_report_sha256": "24e794334108326a0e35778b23d2bdfc8a3b2d74835a79865e8899c8ea9e76e9",
   "score_rows_sha256": "f7cc6c910ca42b721a2bc31ab9af0e3ad7bb10627b30ced39010b0b52fc8a433",
   "status": "rejected"
 }

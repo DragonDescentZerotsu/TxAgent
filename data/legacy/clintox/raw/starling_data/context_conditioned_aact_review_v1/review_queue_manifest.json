@@ -13,15 +13,15 @@
   "source_artifacts": [
     {
       "path": "data/starling_data/clintox/tdc_clintox_v1/aacttox.csv.gz",
-      "sha256": "c132ee41f78b44f72c243643fc9e6676feaa6ff44e0178daaa0570525ec9489f"
+      "sha256": "7345a305ab46cd0ccceaa0d6c373890c8c8265c4489271ca0be040cf322b3fa2"
     },
     {
       "path": "data/starling_data/clintox/tdc_clintox_v1/AACT201603_pipe_delimited.tar.gz",
-      "sha256": "db0f974ff1218ff9741595c47bb2e78e66167d0d3cc5d9ecb3877feec0498394"
+      "sha256": "8a3588c2948c768ecf9e4188265b75966fb073b2d4c4b8e86142abe79e7548cd"
     },
     {
       "path": "data/starling_data/clintox/tdc_clintox_v1/smiles_cache.csv.gz",
-      "sha256": "8d6f174ef7e44864ff17ae26c8681b69346bc1f6c5feefb19c56c138ebe28a7b"
+      "sha256": "244b8a31338a61a227cd1b33d338ac9c88aef9da3cbb09da171151d68fc3547f"
     },
     {
       "path": "data/starling_data/clintox/context_conditioned_aact_review_v1/frozen_candidate_source.parquet",

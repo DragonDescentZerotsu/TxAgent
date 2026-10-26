@@ -3,17 +3,17 @@
   "task": "carcinogens",
   "gold_release": "v1",
   "validation_basis": {
-    "basis": "pinned_tianang_l1_contract",
+    "basis": "pinned_baseline_l1_contract",
     "physical_voters": 89617,
     "status": "pass"
   },
   "original": {
-    "basis": "pinned_tianang_l1_contract",
+    "basis": "pinned_baseline_l1_contract",
     "physical_voters": 89617,
     "status": "pass"
   },
   "published": {
-    "basis": "pinned_tianang_l1_contract",
+    "basis": "pinned_baseline_l1_contract",
     "physical_voters": 89617,
     "status": "pass"
   },

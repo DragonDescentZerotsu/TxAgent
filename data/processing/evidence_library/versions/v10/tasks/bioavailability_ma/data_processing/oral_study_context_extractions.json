@@ -1,6 +1,6 @@
 {
   "artifact_version": "oral_study_context_extraction.v1",
-  "input": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet",
+  "input": "data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet",
   "input_rows": 119192,
   "model": "gpt-5.4-mini",
   "reasoning_effort": "low",

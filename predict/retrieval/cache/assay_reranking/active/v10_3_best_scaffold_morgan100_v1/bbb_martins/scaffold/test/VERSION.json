@@ -7,14 +7,14 @@
     "n_train_parents": 2994,
     "n_train_rows": 3053,
     "neighbor_identity_policy": "scaffold_disjoint",
-    "train": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/BBB_Martins/v1/scaffold/train_molecule_condition_labels.jsonl",
+    "train": "data/gold_labels/BBB_Martins/v1/scaffold/train_molecule_condition_labels.jsonl",
     "train_sha256": "3c48be5749f31bba627e5727e032dff5c77132c81405b0f8f2c943c3c124b9c2",
-    "valid": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/BBB_Martins/v1/scaffold/test_molecule_condition_labels.jsonl",
+    "valid": "data/gold_labels/BBB_Martins/v1/scaffold/test_molecule_condition_labels.jsonl",
     "valid_sha256": "d005e25667cabd1b35f02ff25094804bbad1b27a7f47505dfc32c9f98e94ce7f"
   },
   "model": {
     "checkpoint_step": 120,
-    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-bbb-martins-best",
+    "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-bbb-martins-best",
     "prompt_profile": "v10_3",
     "revision": "7678f7a1c43932f7612cfd49a8f4872d6e2f4cab"
   },
@@ -28,7 +28,7 @@
   "n_to_score": 0,
   "prompt_assets": {
     "prompt.jinja": "33e48f919237a6aeaff28f4c77c6dd9635e54bf859c990af4ad0323952ab05f1",
-    "prompt_config.json": "e33a149fc9228e546a1f304d4b9a1ddcebd8a0c763402b45b0f0f3e2bdf3051a"
+    "prompt_config.json": "727707bc60b7f6429038f62f4838267f6a15b7e1fb96b171cf676dbfdc1cf448"
   },
   "query_record_ids": [
     "BBBCTX_19F29C8B7A1D5CBC3566",
@@ -429,13 +429,13 @@
   "rankings_sha256": "083fd555d2da8819cfc8f115721ae437b5beab3f6e192768ccf776866bbbd1ea",
   "reference_provenance": {
     "benchmark_summary": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/BBB_Martins/v1/scaffold/summary.json",
+      "path": "data/gold_labels/BBB_Martins/v1/scaffold/summary.json",
       "sha256": "16b723633dc71aa7125ee0ed59bec33b8540ca974c573c10dab02a3c85fd0b3b"
     },
     "candidate_source": "official_conditioned_gold_train_contexts",
     "gold_release": "v1",
     "label_adapter": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark.py",
+      "path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark.py",
       "sha256": "7e904230d3fc37584289bcbd50c473e1a2c438d8598c391b6b922fb66a92f453"
     },
     "label_contract": "bbb_experimental_meaningful_cns_access_gold.v2",

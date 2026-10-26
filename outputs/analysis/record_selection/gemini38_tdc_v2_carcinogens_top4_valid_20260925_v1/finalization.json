@@ -2,14 +2,14 @@
   "schema_version": "gemini38_tdc_v2_carcinogens_finalization.v1",
   "validation_decision": {
     "path": "outputs/analysis/record_selection/gemini38_tdc_v2_carcinogens_top4_valid_20260925_v1/freeze.json",
-    "sha256": "e4d2c38939911c311051b5b6de105a9aaaf90ac0d8d1883698b9ca3ae3cdade9"
+    "sha256": "2c8f9178a4880d65160df757d5be77a485f8b527091a1688713c54af15c93e4f"
   },
   "final_model_index": {
-    "path": "outputs/paper/assay_transfer_harness/joseph/final/gemini38/index.json",
+    "path": "outputs/paper/assay_transfer_harness/evidence/final/gemini38/index.json",
     "sha256": "e80eee8cc47d942c78bab500e7293c3e0b3152cfcc9326d1c19c2f3b97f4c6b9"
   },
   "final_collection": {
-    "path": "outputs/paper/assay_transfer_harness/joseph/final/collection.json",
+    "path": "outputs/paper/assay_transfer_harness/evidence/final/collection.json",
     "sha256": "1c7f5f83de2bcc57feae1eae687d4aebab77c2d424fac443ece08d9e1173b36a"
   },
   "arms": [
@@ -50,7 +50,7 @@
     }
   ],
   "tables": {
-    "validation_results.tsv": "bbbbe2784c50d017fb452cacee9f8ca3a02f09d9a6e94e1cca207a110f56c9d3",
+    "validation_results.tsv": "6897b67f15b57920a14df941659a7a2431306f0218cb1481897c004aeda84c8c",
     "test_results.tsv": "290126b5883a39adfecdf1fd5fc87d1ec17a5e4d4ab78d68813469cc97a4ec2e"
   },
   "report_sha256": "a967eac2edaedb32572e9593a918b84395fb31b16c8ef468f1c1be2aac1e64ae",

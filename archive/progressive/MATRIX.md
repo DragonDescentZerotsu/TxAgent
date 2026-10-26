@@ -62,7 +62,7 @@ prompt modifiers remain composable. The contract does not require references or
 change inference: it gives rendering and diagnostics one exact identifier index.
 
 The latest organization/diagnostics validation used
-`/vast/projects/myatskar/design-documents/conda_env/openrlhf_tfv4/bin/python`
+`python`
 on epyc-1-6, not node002.
 Use `--tasks bbb_martins` or `--tasks bioavailability_ma` to prepare and run one
 task independently. Do not run multiple launchers against the same endpoints

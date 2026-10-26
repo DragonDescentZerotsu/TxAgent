@@ -339,7 +339,7 @@ def main():
     parser.add_argument("--prepared", type=Path, required=True)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--data-dir", type=Path, help="prepare: directory containing train/valid/test.jsonl")
-    parser.add_argument("--auxiliary", type=Path, help="prepare: Joseph parent-pair-bucket Parquet")
+    parser.add_argument("--auxiliary", type=Path, help="prepare: Evidence parent-pair-bucket Parquet")
     parser.add_argument("--prepare-workers", type=int, default=64)
     parser.add_argument("--condition-field", default="condition_group",
                         type=lambda value: None if value == "none" else value,

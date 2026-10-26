@@ -74,7 +74,7 @@ from predict.retrieval.assay_reranking.artifact_bundle import DEFAULT_CACHE_SET,
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
 
 
-MATRIX_VERSION = "joseph_flat_matrix.v4"
+MATRIX_VERSION = "evidence_flat_matrix.v4"
 MODEL = "deepseek/deepseek-v4-flash-0731"
 DEFAULT_PROVIDER_CONFIG = flat.DEFAULT_PROVIDER_CONFIG
 TASKS = (
@@ -470,7 +470,7 @@ def _missing_from_previous_batch(
                     prompt_version=selection_args.prompt_version,
                 )
                 expected_request = {
-                    "schema_version": "joseph_flat_context_request.v1",
+                    "schema_version": "evidence_flat_context_request.v1",
                     "messages": messages,
                     "message_char_count": sum(len(message["content"]) for message in messages),
                     **metadata,
@@ -562,7 +562,7 @@ def verify_single_reuse(task: str, detailed_input: Path) -> dict[str, Any]:
 
     source = _single_batch(task)
     manifest = read_record(source / "manifest.json")
-    expected_profile = flat.prompt_assets(flat.JOSEPH_PROMPT_VERSION)["tasks"][task][
+    expected_profile = flat.prompt_assets(flat.EVIDENCE_PROMPT_VERSION)["tasks"][task][
         "prompt_profile"
     ]
     expected = {
@@ -919,7 +919,7 @@ def _materialize_direct_request_review(
                 prompt_version=str(prepared.args.flat_prompt_version),
             )
             request = {
-                "schema_version": "joseph_flat_context_request.v1",
+                "schema_version": "evidence_flat_context_request.v1",
                 "messages": messages,
                 "message_char_count": sum(len(message["content"]) for message in messages),
                 **metadata,

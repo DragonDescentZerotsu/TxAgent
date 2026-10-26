@@ -11,21 +11,21 @@
   "source_files": [
     {
       "split": "train",
-      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/DILI/train.csv",
+      "source_path": "data/external/therapeutic-tuning/data/raw/original/DILI/train.csv",
       "path": "data/raw/tdc/DILI/v2/train.csv",
       "sha256": "333382209f248057348267d70ecea0769b0f5cade2b4abf97e10f9b57b50e64e",
       "rows": 332
     },
     {
       "split": "valid",
-      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/DILI/val.csv",
+      "source_path": "data/external/therapeutic-tuning/data/raw/original/DILI/val.csv",
       "path": "data/raw/tdc/DILI/v2/valid.csv",
       "sha256": "3c965a793efe70d3327a3f18d08b47d98883a4b7e1565fecab88e2a419d4c2c7",
       "rows": 47
     },
     {
       "split": "test",
-      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/DILI/test.csv",
+      "source_path": "data/external/therapeutic-tuning/data/raw/original/DILI/test.csv",
       "path": "data/raw/tdc/DILI/v2/test.csv",
       "sha256": "eb4cacff67a3f25d1d5e6a4c15ada68239af630ec19979097c4c832b185478e8",
       "rows": 96
@@ -56,5 +56,5 @@
     "test.jsonl": "1d2d86fdf91b8e97667fc1159c05ee876c1ddc3ea5e86fe3930d753ca5996a73",
     "heldout_molecule_condition_labels.jsonl": "c142d91043c627842c991f2dfeab830d7c9176425e1340b5fbf4e616fa504a6f"
   },
-  "summary_sha256": "c1b62f99ae0fefd4daa31e2d82239c9f504f9567c7e7f6131fe2d8b7dce29fcd"
+  "summary_sha256": "35dc500f785918b2961b7c0e0f019ba86de1609c56813f614b2c11c70c251360"
 }

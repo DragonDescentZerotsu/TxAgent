@@ -32,22 +32,22 @@
         "L2": {
           "content_id": "0cc46563f6daceeec3fa764ae40f963b7c7e0e53185e943a211146456c1aaf24",
           "manifest": "scaffold/test/L2/VERSION.json",
-          "manifest_sha256": "e0bd5d74d070b97a8781598b4d4a772fc22d6edf69a4caec9a67903c58191646"
+          "manifest_sha256": "f72f022f09964edd0b080e1ad0fa36ce78eecde321962fe9bba2d3e4173602ee"
         },
         "L3": {
           "content_id": "b4adb4ac921f90c73dec69c5eb6de0d19bf079a39829b1256367338aec2fc3e6",
           "manifest": "scaffold/test/L3/VERSION.json",
-          "manifest_sha256": "8f1ff4771bbc3565a453a6c48dc9a2994c8fe5af7a01c2813b1756ffd5f5bfaf"
+          "manifest_sha256": "6f68129d69b6fd033d697595571a0f1afaf59a2d1cc9646499955fb4ae931dd1"
         },
         "L4": {
           "content_id": "ea65322e34d52819403eb49a83ea3b2b8e4a86f1ad2d8c240804b0b8068f5c12",
           "manifest": "scaffold/test/L4/VERSION.json",
-          "manifest_sha256": "8b66cbbd97ad7436e5ab07c325a5ec8fa652bd93ac10c891ddf377d3029b5b82"
+          "manifest_sha256": "3e460f938e470568677dfab74f1665d7846820c49afb4edb2a53cc522e4f931e"
         },
         "L5": {
           "content_id": "39af0312bc64a889280969a95d3ea62aaa5084a1e2c0f3ad6448de4ad7982b74",
           "manifest": "scaffold/test/L5/VERSION.json",
-          "manifest_sha256": "9738956f3ab68844ba3aea305ee42b6ec49c8579ba5bbd887532260f28c1ece4"
+          "manifest_sha256": "43c756d1d3136970075bdf95c6694f89e0fcb3a28dcea747cbf10ea0e5b6f8de"
         }
       }
     },
@@ -56,22 +56,22 @@
         "L2": {
           "content_id": "30832e8c8172f07fe869b6f5a7cf6662cc988b3246e64ef8205aea3088763435",
           "manifest": "scaffold/valid/L2/VERSION.json",
-          "manifest_sha256": "36a713419eb0301fecb8996989f335e97470b8e21c9a05663c6fcd712180c169"
+          "manifest_sha256": "c87b0f9612c6b7b787858d8af3af00d926c6543bd043422047cc063b4b08ba27"
         },
         "L3": {
           "content_id": "43d03e8e322fc236502d470a2ea72cc29715a86dbf14233bd68e0c0293cd6543",
           "manifest": "scaffold/valid/L3/VERSION.json",
-          "manifest_sha256": "f89cdc302d2641650886fef8c240a69d0dc093bba5538b76ae0e8ba36456932f"
+          "manifest_sha256": "180650a4e2e079c4ec8f30f4f356d21971cb6be94764a5a4ccebbebc2b281163"
         },
         "L4": {
           "content_id": "47540ff22b56ae2052ceb7da868ad4f2f94610fcddabc59420123b3ffd6c37ea",
           "manifest": "scaffold/valid/L4/VERSION.json",
-          "manifest_sha256": "12947429e9692deef80e342c8fc337627996658a27e0a669e2e553ded9fc7bd4"
+          "manifest_sha256": "5b5d86ac4b234952722990a0a0b350687a18559c7a39463b3363c341b437a252"
         },
         "L5": {
           "content_id": "d7ad2cb8fbbb262f3907c95869cb283bcb26c182468cb2ac5b567e870f94546c",
           "manifest": "scaffold/valid/L5/VERSION.json",
-          "manifest_sha256": "c904bbd9c8e8d876c423ecef93b088fffe2649c51bb358260c0f24e409c339f8"
+          "manifest_sha256": "f0f4a6b9abcde896b8360b54a9cf30f7b6040d4c1378c68dc6ad1f5912b69a80"
         }
       }
     }

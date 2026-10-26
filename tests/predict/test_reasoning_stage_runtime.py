@@ -73,7 +73,7 @@ def _prepared(tmp_path):
 def test_flat_context_one_call_skips_single_and_group_stages(tmp_path):
     prepared = _prepared(tmp_path)
     prepared.args.experiment_mode = "full_flat"
-    prepared.args.flat_prompt_version = "joseph_flat_context_v4_v1"
+    prepared.args.flat_prompt_version = "evidence_flat_context_v4_v1"
     prepared.args.flat_query_prior = "none"
     run_dir = prepared.batch_run_root / "condition_idx00000"
     run_dir.mkdir(parents=True)

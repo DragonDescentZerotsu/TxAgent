@@ -43,11 +43,11 @@
       "sha256": "5e2f06014e1f5d5a48d840b129345801b6a13fba261d00495a524f182940807f"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/carcinogens/build_reviewed_starling.py",
+      "path": "tools/chembl_tool/tasks/carcinogens/build_reviewed_starling.py",
       "sha256": "355480f0800046905f88d8afd474934ea8e24291cbd76b38061187eb790e34a9"
     },
     {
-      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/carcinogens/reviewed_conditions.py",
+      "path": "tools/chembl_tool/tasks/carcinogens/reviewed_conditions.py",
       "sha256": "27caeeb1411950dbc486a5afe23351ba0c98ab2e2a805edd20b8d156385fb34b"
     }
   ],

@@ -9,7 +9,7 @@
     "status_or_pair:unsure->relative": 2
   },
   "gold_corpus_version": "clintox_measurement_resolution_gold.v1",
-  "gold_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/clintox/data_processing/stage2_review_v1/measurement_resolution_gold.jsonl",
+  "gold_path": "tools/chembl_tool/tasks/clintox/data_processing/stage2_review_v1/measurement_resolution_gold.jsonl",
   "gold_sha256": "5ea50747fb08ba687119c59cace1c48c17042bf66509fe08801b14d8294e98e0",
   "mapping_path": "tools/chembl_tool/tasks/clintox/data_processing/measurement_resolution_v1/gold_replay_clean_v9_gpt.parquet",
   "mapping_sha256": "9c9cc3f25ddd11d2abec92fce286c71c5a5d07f6a45560a7d6016f8ee50b2da4",

@@ -48,7 +48,7 @@
     "packet_hashes_valid": true,
     "packet_items_exactly_match_provenance_assignments": true
   },
-  "packet_manifest_sha256": "e9f852a850729993d5801e4ed27534aa03215dbe6abe17e58ea57b7723ecd6bb",
+  "packet_manifest_sha256": "4b07dddfc13041c478305da66c28b3f4c628363036ac7cbfecbe957b8d34cbe4",
   "partial_global_validator": {
     "action_counts": {
       "merge": 504,

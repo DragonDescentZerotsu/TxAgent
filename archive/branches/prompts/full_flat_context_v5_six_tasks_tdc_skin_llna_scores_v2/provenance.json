@@ -27,7 +27,7 @@
   },
   "dili_label_revision": {
     "commit": "3f1e7b2784ea974d95fd1241b25b362809c67735",
-    "task_config_path": "tools/chembl_tool/paper_experiments/shared/joseph_full_flat_v5/tasks.yaml",
+    "task_config_path": "tools/chembl_tool/paper_experiments/shared/evidence_full_flat_v5/tasks.yaml",
     "task_config_sha256": "147029a3df7513f5a9338c636f48aa46d8a1adc5122a2202f1c3a03f488f35b0",
     "handoff_path": "tools/chembl_tool/paper_experiments/shared/DILI_HANDOFF.md",
     "handoff_sha256": "2a699fd7df128f9e6d69416e74b2afff1a2dfdee96e882e23f6391c8e0ce3618"
@@ -120,7 +120,7 @@
     }
   },
   "task_prompt_handoff": {
-    "source": "tools/chembl_tool/paper_experiments/shared/joseph_full_flat_v5/tasks.yaml",
+    "source": "tools/chembl_tool/paper_experiments/shared/evidence_full_flat_v5/tasks.yaml",
     "branch": "codex/bbb-indirect-review-20260924",
     "commit": "f1985af42798fb85dcb0eebef29d0618291246f0",
     "sha256": "205230c6d08b397c3916c0ee1dae4e2ed0672881fa5ca041e9f19f32"

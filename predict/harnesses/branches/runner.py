@@ -67,9 +67,9 @@ from predict.harnesses.branches.flat import (
     CONTEXT_PROMPT_VERSIONS,
     EVIDENCE_PROJECTION,
     EXTRA_DETAILS_POLICY,
-    JOSEPH_PROMPT_VERSION,
-    JOSEPH_PROMPT_VERSIONS,
-    TIANANG_PROMPT_VERSION,
+    EVIDENCE_PROMPT_VERSION,
+    EVIDENCE_PROMPT_VERSIONS,
+    BASELINE_PROMPT_VERSION,
     TASKS,
     flat_group_validation,
     flat_prompt_provenance,
@@ -520,7 +520,7 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
         ),
         "group_evidence_presentation": (
             EVIDENCE_PROJECTION
-            if args.flat_prompt_version == JOSEPH_PROMPT_VERSION
+            if args.flat_prompt_version == EVIDENCE_PROMPT_VERSION
             else f"{args.flat_prompt_version}.v1"
             if _is_versioned_flat(args)
             else "minimal_evidence.v1"
@@ -1396,7 +1396,7 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     )
     parser.add_argument(
         "--flat-prompt-version",
-        choices=[TIANANG_PROMPT_VERSION, *JOSEPH_PROMPT_VERSIONS],
+        choices=[BASELINE_PROMPT_VERSION, *EVIDENCE_PROMPT_VERSIONS],
         default="",
         help=(
             "full_flat only: load one immutable version-owned flat group prompt"
@@ -1619,7 +1619,7 @@ def _validate_flat_prompt(config: BatchConfig, args: argparse.Namespace) -> None
         raise SystemExit(
             "--flat-prompt-version cannot be combined with custom group instructions"
         )
-    if args.flat_prompt_version in JOSEPH_PROMPT_VERSIONS:
+    if args.flat_prompt_version in EVIDENCE_PROMPT_VERSIONS:
         if not args.flat_reranking:
             raise SystemExit(
                 f"{args.flat_prompt_version} requires its cache-matched reranking mode"
@@ -1669,14 +1669,14 @@ def _validate_flat_prompt(config: BatchConfig, args: argparse.Namespace) -> None
                 FINAL_FULL_FLAT_TDC_CARC_PROMPT_VERSION,
                 FINAL_FULL_FLAT_TDC_CARC_STRONG_PROMPT_VERSION, FINAL_FULL_FLAT_TDC_CARC_POSITIVE_GATE_PROMPT_VERSION,
             }:
-                raise SystemExit("Joseph flat is enabled only for BBB and oral")
+                raise SystemExit("Evidence flat is enabled only for BBB and oral")
             raise SystemExit(f"{args.flat_prompt_version} does not support {task_id}")
         if not args.retrieval_replay_source_batch:
-            raise SystemExit("Joseph flat requires prepared cache-matched retrieval")
+            raise SystemExit("Evidence flat requires prepared cache-matched retrieval")
         if not args.flat_selection_manifest:
-            raise SystemExit("Joseph flat requires its cache-matched selection manifest")
-        if args.flat_prompt_version == JOSEPH_PROMPT_VERSION and not args.disable_flat_tools:
-            raise SystemExit("joseph_flat_v2 requires --disable-flat-tools")
+            raise SystemExit("Evidence flat requires its cache-matched selection manifest")
+        if args.flat_prompt_version == EVIDENCE_PROMPT_VERSION and not args.disable_flat_tools:
+            raise SystemExit("evidence_flat_v2 requires --disable-flat-tools")
         if args.flat_prompt_version in CONTEXT_PROMPT_VERSIONS:
             if args.flat_reranking not in CONTEXT_V4_VARIANTS:
                 raise SystemExit(
@@ -1699,9 +1699,9 @@ def _validate_flat_prompt(config: BatchConfig, args: argparse.Namespace) -> None
                     "--flat-query-prior none cannot reuse a single-analysis batch"
                 )
     elif args.flat_reranking:
-        raise SystemExit("--flat-reranking is owned by Joseph flat")
+        raise SystemExit("--flat-reranking is owned by Evidence flat")
     elif args.flat_selection_manifest:
-        raise SystemExit("--flat-selection-manifest is owned by Joseph flat")
+        raise SystemExit("--flat-selection-manifest is owned by Evidence flat")
     elif (
         args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
         and not args.enable_assay_transfer_scores
@@ -1724,8 +1724,8 @@ def _validated_flat_selection_manifest(
     args: argparse.Namespace,
     indices: list[int],
 ) -> dict[str, Any]:
-    """Bind a Joseph batch to the materialized cache-matched selection receipt."""
-    if args.flat_prompt_version not in JOSEPH_PROMPT_VERSIONS:
+    """Bind a Evidence batch to the materialized cache-matched selection receipt."""
+    if args.flat_prompt_version not in EVIDENCE_PROMPT_VERSIONS:
         return {}
     path = canonical_location(args.flat_selection_manifest)
     if path.parent != canonical_location(args.retrieval_replay_source_batch):
@@ -1796,7 +1796,7 @@ def _validated_flat_selection_manifest(
         require_query_ids(arm, _read_jsonl(Path(args.input_jsonl)), indices)
         if any(not (root / f"{index:05d}" / "request.json").is_file() for index in indices):
             raise SystemExit("frozen request files do not cover this batch")
-    if args.flat_prompt_version in {JOSEPH_PROMPT_VERSION, *CONTEXT_PROMPT_VERSIONS}:
+    if args.flat_prompt_version in {EVIDENCE_PROMPT_VERSION, *CONTEXT_PROMPT_VERSIONS}:
         expected_projection = {
             "evidence_projection": EVIDENCE_PROJECTION,
             "extra_details_policy": EXTRA_DETAILS_POLICY,

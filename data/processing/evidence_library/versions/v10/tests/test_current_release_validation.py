@@ -194,7 +194,7 @@ def test_existing_mapping_mode_validates_the_selected_registry() -> None:
     assert selected["mode"] == "existing"
     assert selected["registry_version"] == "bbb_martins_prebuilt_mapping_registry.v2"
     assert selected["mappings"]["measurement_resolution"]["sha256"] == (
-        "74196a0cd1483e501f47a4124c2b763a0031060426a1cdf832b735b76bad5bf2"
+        "84710b3af068f860b2211f015b82d9bb6a8e9c3aae40920c956a8f2d2caf2e56"
     )
 
 

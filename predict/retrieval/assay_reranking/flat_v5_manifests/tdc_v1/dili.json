@@ -13,12 +13,12 @@
     {
       "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/dili/RELEASE_INDEX.json",
       "size": 1512,
-      "sha256": "e3bc81323891e9ee15eae96861c50a59729043f32c7036e7a06f500146d6a86d"
+      "sha256": "30ca20783ceb2779dfe3c9c774a74973758503b12e3bbf836e37b37e7b8beee6"
     },
     {
       "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/dili/evidence/VERSION.json",
-      "size": 611,
-      "sha256": "f7eacef4ae581fb85352f166ff4fd671f78a1b1220ee6f1d65f63a41436737df"
+      "size": 555,
+      "sha256": "63b67b215464905318b18bf3fbcec63717cb240b8f72ecc143ef5afbfa4b5fa9"
     },
     {
       "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/dili/evidence/records.parquet",
@@ -28,7 +28,7 @@
     {
       "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/dili/scaffold/test/L1/VERSION.json",
       "size": 15763,
-      "sha256": "3e4c3f4e52e3c24026ead11408eef7942c0be799f4a274015c7bfd799aed17eb"
+      "sha256": "cd78fad416ef9e5e0c77a61542baa73b29e6f372a9259eb51276031bfa184b5f"
     },
     {
       "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/dili/scaffold/test/L1/rankings.sqlite3",
@@ -38,7 +38,7 @@
     {
       "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/dili/scaffold/valid/L1/VERSION.json",
       "size": 8316,
-      "sha256": "0f430d93a78dd52a68137e3398452056f39f76a233c0a52c2a02ab9d8f58369d"
+      "sha256": "4345bdcc1d66746528f2a23e5dedc791e420c1a7c29cb6ca5e44b50d370935db"
     },
     {
       "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/dili/scaffold/valid/L1/rankings.sqlite3",

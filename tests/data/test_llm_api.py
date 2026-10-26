@@ -50,7 +50,7 @@ def test_openrouter_refuses_an_openai_key(tmp_path: Path) -> None:
 def test_provider_is_inferred_from_known_endpoint(monkeypatch) -> None:
     monkeypatch.setenv("LITELLM_BASE_URL", "https://gateway.example.org/v1")
     assert provider_from_base_url("https://openrouter.ai/api/v1") == "openrouter"
-    assert provider_from_base_url("https://gateway.example.org/v1") == "parcc"
+    assert provider_from_base_url("https://gateway.example.org/v1") == "gateway"
     assert provider_from_base_url("https://api.openai.com/v1") == "openai"
     assert provider_from_base_url("https://api.deepseek.com") == "deepseek"
     assert provider_from_base_url("http://127.0.0.1:8000/v1") == "local"
@@ -68,11 +68,11 @@ def test_provider_is_inferred_from_known_endpoint(monkeypatch) -> None:
             provider_from_base_url(misleading)
 
 
-def test_parcc_uses_its_own_credential_alias(tmp_path: Path) -> None:
+def test_gateway_uses_its_own_credential_alias(tmp_path: Path) -> None:
     env_file = tmp_path / ".env"
-    env_file.write_text("LITE_LLM_KEY=sk-parcc-example-123456789\n")
+    env_file.write_text("LITE_LLM_KEY=sk-gateway-example-123456789\n")
 
-    _, name = resolve_api_key("parcc", env_file=env_file)
+    _, name = resolve_api_key("gateway", env_file=env_file)
 
     assert name == "LITE_LLM_KEY"
 
@@ -90,7 +90,7 @@ def test_explicit_provider_must_match_a_recognized_endpoint() -> None:
     with pytest.raises(ValueError, match="does not match endpoint provider"):
         openai_compatible_client(
             base_url="https://openrouter.ai/api/v1",
-            provider="parcc",
+            provider="gateway",
             credential_env="LITE_LLM_KEY",
             env_file=None,
         )

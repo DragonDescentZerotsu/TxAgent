@@ -31,7 +31,7 @@
     },
     "assay_transfer/assets/oral_geometry.json": {
       "bytes": 310858,
-      "sha256": "01a01901f2b96ed6897fd08cbd84e4affc3cd8725e7dcf68377eca7db9bacb67"
+      "sha256": "7f9f2fb732b04ae787ec0d0e9e8ae1b2dae3ed4b542008d8fb6c081f4959bad1"
     },
     "assay_transfer/assets/prompt_projection.json": {
       "bytes": 5446,
@@ -87,7 +87,7 @@
     },
     "assay_transfer/extraction.json": {
       "bytes": 4140,
-      "sha256": "4d15a66db89519ae56f68813be8413d47066dfde7e9c470eb3757ee8308db639"
+      "sha256": "2534d3476b34364cc55591a254c68239a65414409af49f288c6376792553ce48"
     },
     "assay_transfer/filtering.py": {
       "bytes": 19286,
@@ -197,6 +197,6 @@
   "schema_version": "starling_assay_transfer.source_copy.v1",
   "scientific_inputs": "../data; external to this package, already in TxAgent",
   "source_commit": "717d529d268d853eee2570d8fec239dec7d12d46",
-  "source_root": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer",
+  "source_root": "data/external/starling_assay_transfer",
   "source_tree": "working_files_including_uncommitted_changes"
 }

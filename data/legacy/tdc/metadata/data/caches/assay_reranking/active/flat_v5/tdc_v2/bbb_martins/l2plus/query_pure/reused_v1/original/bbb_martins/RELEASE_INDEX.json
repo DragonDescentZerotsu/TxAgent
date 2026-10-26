@@ -33,7 +33,7 @@
   ],
   "schema_version": "ranked_uid_task_release_index.v1",
   "score_coverage": "query_pure",
-  "score_source_release_index": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/RELEASE_INDEX.json",
+  "score_source_release_index": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_indirect_v2/bbb_martins/RELEASE_INDEX.json",
   "score_source_release_index_sha256": "8c64a6ec3bb5651209e2268be51d940f0fc7b54a1cea2a28ca75f9d838f96b35",
   "selection_contract": "ranked_uid_retrieval.v1",
   "selection_coverage": "complete",
@@ -43,22 +43,22 @@
         "L2": {
           "content_id": "6b2cff149619d32f1620fb127646846f3cf561a41f6c2d279fab5e129a5e8565",
           "manifest": "scaffold/test/L2/VERSION.json",
-          "manifest_sha256": "c48e1c61f260d0c091d90dd646668c52c54f96703f6f2a2cfb97def2742b66aa"
+          "manifest_sha256": "7ef39d74bab0da36cd33d05bec09b58c5df488df0d1e1b030b3d4c871ecb530d"
         },
         "L3": {
           "content_id": "05c92a4c3c57af29d7cdd108d362f65eee8888a1532b68f6b328cc903b39f96e",
           "manifest": "scaffold/test/L3/VERSION.json",
-          "manifest_sha256": "d56c0234e3ad5a5470bd69a545aff0e6cd4fd8f38745e26f2ae590e372814a18"
+          "manifest_sha256": "8a2f29963abb89a3dcbf3d15959d518baef57f643508ca55cbdde12f3350d10c"
         },
         "L4": {
           "content_id": "8fcec4b6df4c924d54c7d8655be99d0be36c43de05a7d4aa10a3372caf100e9b",
           "manifest": "scaffold/test/L4/VERSION.json",
-          "manifest_sha256": "3fef37410a1d6715826fd1e87a7e85fe33d2f0a5855f2ffef58c735e7a7af3a6"
+          "manifest_sha256": "6d6cc3ed3304ab5211063d367602177530427a7169acc5f2527bd201a8b7ea22"
         },
         "L5": {
           "content_id": "1c24f407e2bb7874529913c6d6b0b46f004f5f88bef78121634085f9cefadbb7",
           "manifest": "scaffold/test/L5/VERSION.json",
-          "manifest_sha256": "c99edf851e4cc8c0aab2db929a3af934f8b1340ece2402716267450eb7f70d8b"
+          "manifest_sha256": "ee7730abc215fa8fd00f687f5a5faac459d847abf4189e4e2422e8a0e9b4b3fb"
         }
       }
     },
@@ -67,22 +67,22 @@
         "L2": {
           "content_id": "4050ca154bfdce362ba4ff141881023834f79470d93872fb3792926a00102124",
           "manifest": "scaffold/valid/L2/VERSION.json",
-          "manifest_sha256": "d7d7e15ed5551c91fe82ab45d3ced17300aeed293aa18c49f65121a66f79a6a9"
+          "manifest_sha256": "d0d61f9f6074dde8943077cfa664f0736daf979275346361cb5978c2c2319334"
         },
         "L3": {
           "content_id": "d1a85c2dba1d5d47fda9aaf032ec5ffb422cbad63724f91d7f79a3dc3ca634dc",
           "manifest": "scaffold/valid/L3/VERSION.json",
-          "manifest_sha256": "e4611abed7b56d933276aa4ab827e4382f2d91faa76fd944813906d8b0d285e2"
+          "manifest_sha256": "2186d95376292d707b1e93d5a67dd8fe844682dbe0d4d0ef7a95bf8fe48d2c0b"
         },
         "L4": {
           "content_id": "f3751675f0eeb637e85a883d79c20ae5b4049419f4da5934d30b041d6942e69d",
           "manifest": "scaffold/valid/L4/VERSION.json",
-          "manifest_sha256": "5e3a53e7620a5014b915cafb021052607e825ff196dfbaddfe76b70d1442cc7f"
+          "manifest_sha256": "d44db5e386e8e0719c75f0deb584d8d493efbd5a19ced82e12d395ac34dc7bb6"
         },
         "L5": {
           "content_id": "1eba58908cbf6b881c5c5c47345f655bd6d6e87e094a688ea6734936eded62a8",
           "manifest": "scaffold/valid/L5/VERSION.json",
-          "manifest_sha256": "aa5889761affa515a55a767b3f94805ac7f6af6f7f2a81c70d7520e2ce9f64d8"
+          "manifest_sha256": "a9ea7985b2018d1de3bf0b5fb4a02bf4c9991ddf20bef1800b62fcf43acf3750"
         }
       }
     }

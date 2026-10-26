@@ -43,7 +43,7 @@
       "organ_specific_toxicity": "982fa068cf9aca900290245b81c3317336fccfbdb78929da535f199df4ff0ba3"
     },
     "task_instructions_sha256": "f96f79e73022771e7513a72fb6354f69364d890b82b458fd68b955ae9faab7d2",
-    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/measurement_resolution_templates/measurement_resolution_v5.jinja",
+    "template_path": "tools/chembl_tool/tasks/bbb_martins/measurement_resolution_templates/measurement_resolution_v5.jinja",
     "template_sha256": "0c3d5db5dec30456d578371186fbc2c96bdca9ec3076fc038ac67c0ebd498b47"
   },
   "rejected_rows": 0,

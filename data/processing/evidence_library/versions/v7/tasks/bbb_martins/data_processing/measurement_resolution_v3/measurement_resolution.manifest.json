@@ -11,7 +11,7 @@
   },
   "base_mapping": {
     "model": "mixed",
-    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/measurement_resolution_v2/measurement_resolution.parquet",
+    "path": "tools/chembl_tool/tasks/bbb_martins/data_processing/measurement_resolution_v2/measurement_resolution.parquet",
     "reused_rows": 109166,
     "sha256": "7ee69b221714325700c8736a96f24c77c9d9e2f4b4e73bb7508df385872c8377"
   },
@@ -32,7 +32,7 @@
     "reasoning_mode": "low",
     "temperature": 1.0
   },
-  "mapping_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/measurement_resolution_v3/measurement_resolution.parquet",
+  "mapping_path": "tools/chembl_tool/tasks/bbb_martins/data_processing/measurement_resolution_v3/measurement_resolution.parquet",
   "mapping_rows": 168223,
   "mapping_sha256": "82526f4716067b8b3428477f59068ec86f3246c35a092ba1ff39900c8ea354e3",
   "mapping_version": "bbb_martins_measurement_resolution.v3",
@@ -50,7 +50,7 @@
       "influx_transport": "a35b3aaa8764800d3546d799117335a15df9d6c6c87423f74a5298f6620a790c",
       "passive_permeability": "5572cc9140c6388c709ff94cc197dc73014c1b64e20717572006551f92970b98"
     },
-    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/measurement_resolution_templates/measurement_resolution_v5.jinja",
+    "template_path": "tools/chembl_tool/tasks/bbb_martins/measurement_resolution_templates/measurement_resolution_v5.jinja",
     "template_sha256": "0c3d5db5dec30456d578371186fbc2c96bdca9ec3076fc038ac67c0ebd498b47"
   },
   "rejected_rows": 2296,

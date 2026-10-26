@@ -37,9 +37,9 @@ from predict.harnesses.branches.flat import (
     EVIDENCE_PROJECTION,
     EXTRA_DETAILS_POLICY,
     JOINT_VARIANT,
-    JOSEPH_PROMPT_VERSION,
-    JOSEPH_V1_HARNESS_VERSION,
-    JOSEPH_V1_PROMPT_VERSION,
+    EVIDENCE_PROMPT_VERSION,
+    EVIDENCE_V1_HARNESS_VERSION,
+    EVIDENCE_V1_PROMPT_VERSION,
     MORGAN_VARIANT,
     PROMPT_VERSION,
     PUBLIC_HARNESS_VERSION,
@@ -66,8 +66,8 @@ from predict.harnesses.branches.tasks.skin_reaction.contract import CONFIG as SK
 from predict.api_client.pool import OpenAIProviderPool
 
 
-FIXTURE_PATH = Path("tests/predict/fixtures/tianang_flat_v1_rendered.json")
-JOSEPH_FIXTURE_PATH = Path("tests/predict/fixtures/joseph_flat_v2_rendered.json")
+FIXTURE_PATH = Path("tests/predict/fixtures/baseline_flat_v1_rendered.json")
+EVIDENCE_FIXTURE_PATH = Path("tests/predict/fixtures/evidence_flat_v2_rendered.json")
 
 
 
@@ -89,7 +89,7 @@ def test_flat_prompt_variant_is_selected_by_existing_retrieval_strategy() -> Non
         flat_prompt_variant("unsupported")
     assert flat_prompt_variant(
         "morgan_fingerprint",
-        prompt_version=JOSEPH_PROMPT_VERSION,
+        prompt_version=EVIDENCE_PROMPT_VERSION,
         flat_reranking="joint",
     ) == JOINT_VARIANT
 
@@ -108,9 +108,9 @@ def test_flat_prompt_bundle_is_complete_and_version_owned() -> None:
     assert manifest["assembly_files_sha256"].keys() == {"flat.py", "prompts/__init__.py"}
     assert len(manifest["sha256"]) == 64
     with pytest.raises(ValueError, match="Unknown flat prompt version"):
-        prompt_directory("../tianang_flat_v1")
-    joseph = prompt_asset_manifest(JOSEPH_PROMPT_VERSION)
-    assert set(joseph["files_sha256"]) == {
+        prompt_directory("../baseline_flat_v1")
+    evidence = prompt_asset_manifest(EVIDENCE_PROMPT_VERSION)
+    assert set(evidence["files_sha256"]) == {
         "modes/assay-transfer/user.yaml",
         "modes/joint/user.yaml",
         "modes/morgan/user.yaml",
@@ -978,7 +978,7 @@ def test_flat_v2_rounds_similarity_after_assigning_its_bucket() -> None:
     }
     retrieval = cache_matched_flat_retrieval(
         "q", "CCO", [molecule], {}, task="bbb_martins", reranking="morgan",
-        query_audit={}, prompt_version=JOSEPH_PROMPT_VERSION,
+        query_audit={}, prompt_version=EVIDENCE_PROMPT_VERSION,
     )
     neighbor = retrieval["groups"][0]["neighbors"][0]
     assert neighbor["similarity"] == 0.8
@@ -1015,7 +1015,7 @@ def test_flat_v2_uses_cached_query_identity_without_normalizing(monkeypatch) -> 
         reranking="morgan",
         query_audit={},
         query_identity={"parent_id": "QUERY", "parent_smiles": "cached-query"},
-        prompt_version=JOSEPH_PROMPT_VERSION,
+        prompt_version=EVIDENCE_PROMPT_VERSION,
     )
     assert retrieval["query"]["canonical_smiles"] == "cached-query"
     assert retrieval["query"]["standard_inchi_key"] == "QUERY"
@@ -1033,7 +1033,7 @@ def test_flat_v2_claims_allow_empty_and_reject_unknown_cards() -> None:
     validation = flat_group_validation(
         "bbb_martins",
         task_prompt_profile="meaningful_cns_access_v1",
-        prompt_version=JOSEPH_PROMPT_VERSION,
+        prompt_version=EVIDENCE_PROMPT_VERSION,
         group=group,
     )
     validator = validation["content_validator"]
@@ -1056,15 +1056,15 @@ def test_public_flat_defaults_to_final_and_rejects_retired_harnesses(monkeypatch
     assert observed["prompt"] == flat.FINAL_FULL_FLAT_PROMPT_VERSION
     assert observed["cache"].name == "catalog.json"
     with pytest.raises(SystemExit):
-        flat.run(["--harness-version", "tianang-flat-v1", "--task", "bbb_martins"])
+        flat.run(["--harness-version", "baseline-flat-v1", "--task", "bbb_martins"])
 
 
-def test_joseph_flat_prompt_rejects_skin() -> None:
+def test_evidence_flat_prompt_rejects_skin() -> None:
     args = _parse_args(
         SKIN_CONFIG,
         [
             "--experiment-mode", "full_flat",
-            "--flat-prompt-version", JOSEPH_PROMPT_VERSION,
+            "--flat-prompt-version", EVIDENCE_PROMPT_VERSION,
             "--flat-reranking", "morgan",
             "--retrieval-replay-source-batch", "/tmp/frozen",
         ],
@@ -1098,7 +1098,7 @@ def test_score_only_upstream_flat_prompt_accepts_skin() -> None:
         ("--record_pool", "all", "all"),
     ],
 )
-def test_joseph_cli_maps_public_pool_names_only(
+def test_evidence_cli_maps_public_pool_names_only(
     monkeypatch, tmp_path: Path, flag: str, public: str, stored: str
 ) -> None:
     observed = {}
@@ -1133,7 +1133,7 @@ def test_flat_launcher_forwards_the_selected_provider_config(monkeypatch, tmp_pa
 
 
 @pytest.mark.parametrize("pool", ["assay-transfer-trained", "all_transfer_eligible"])
-def test_active_joseph_cli_rejects_legacy_pools(pool: str) -> None:
+def test_active_evidence_cli_rejects_legacy_pools(pool: str) -> None:
     with pytest.raises(SystemExit):
         flat.run([
             "--task", "bioavailability_ma", "--record_pool", pool,
@@ -1141,14 +1141,14 @@ def test_active_joseph_cli_rejects_legacy_pools(pool: str) -> None:
         ])
 
 
-def test_joseph_cli_rejects_legacy_retrieval_flags() -> None:
+def test_evidence_cli_rejects_legacy_retrieval_flags() -> None:
     with pytest.raises(SystemExit):
         flat.run([
             "--task", "bbb_martins", "--retrieval-strategy", "morgan_fingerprint"
         ])
 
 
-def test_joseph_batch_binds_selection_manifest(tmp_path: Path) -> None:
+def test_evidence_batch_binds_selection_manifest(tmp_path: Path) -> None:
     from predict.tasks.bbb_martins import EVIDENCE_POLICY
     input_path = Path(
         "data/gold_labels/BBB_Martins/v1/scaffold/valid_molecule_condition_labels.jsonl"
@@ -1156,9 +1156,9 @@ def test_joseph_batch_binds_selection_manifest(tmp_path: Path) -> None:
     source = tmp_path / "cache_matched_retrieval"
     source.mkdir()
     selection = {
-        "harness_version": "joseph-flat-v2",
+        "harness_version": "evidence-flat-v2",
         "bbb_evidence_policy": EVIDENCE_POLICY,
-        "prompt_version": JOSEPH_PROMPT_VERSION,
+        "prompt_version": EVIDENCE_PROMPT_VERSION,
         "task": "bbb_martins",
         "evaluation_subset": "valid",
         "reranking": "joint",
@@ -1184,7 +1184,7 @@ def test_joseph_batch_binds_selection_manifest(tmp_path: Path) -> None:
             "--input-jsonl", str(input_path),
             "--indices", "0",
             "--experiment-mode", "full_flat",
-            "--flat-prompt-version", JOSEPH_PROMPT_VERSION,
+            "--flat-prompt-version", EVIDENCE_PROMPT_VERSION,
             "--flat-reranking", "joint",
             "--flat-selection-manifest", str(manifest_path),
             "--retrieval-replay-source-batch", str(source),

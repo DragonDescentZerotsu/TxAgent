@@ -94,7 +94,7 @@
     {
       "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/skin_reaction/evidence/VERSION.json",
       "size": 629,
-      "sha256": "3b3a0090d621bb1f2c9d99948a9c170ac155d81672465455f31962b5bf14e0de"
+      "sha256": "b1c195fadc6093cafb43a1794882364b0e59fb0af51a3892d4145ef54a40e670"
     },
     {
       "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1/skin_reaction/evidence/records.parquet",

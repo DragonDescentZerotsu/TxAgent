@@ -27,11 +27,11 @@ or rejected by an adjudicator.
 Commands:
 
 ```bash
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+conda run -n txagent-glm \
   python -m data.processing.evidence_library.versions.v8.tasks.bbb_martins.data_processing.reconcile_auxiliary_mapping \
   snapshot --overwrite
 
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+conda run -n txagent-glm \
   python -m data.processing.evidence_library.versions.v8.tasks.bbb_martins.data_processing.reconcile_auxiliary_mapping \
   prepare-review
 ```

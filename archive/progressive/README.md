@@ -142,7 +142,7 @@ Its detailed resume and receipt contract is in
 launcher is `python -m predict.harnesses.branches.matrix`.
 
 Run leaves are organized under
-`outputs/paper/assay_transfer_harness/joseph/<study>/<method>/`. For example,
+`outputs/paper/assay_transfer_harness/evidence/<study>/<method>/`. For example,
 contrastive Morgan K=10, M=3 is
 `contrastive/morgan/k10_m3_<date>/`; assay-transfer is a sibling method, not a
 condition buried inside the Morgan directory. Shared matrix calls live only in

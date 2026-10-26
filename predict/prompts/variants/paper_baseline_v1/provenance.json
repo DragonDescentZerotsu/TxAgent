@@ -1,6 +1,6 @@
 {
   "version": "paper_baseline_v1",
-  "source_adapter": "joseph_full_flat_v5_adapted.v2",
+  "source_adapter": "evidence_full_flat_v5_adapted.v2",
   "upstream_prompt_commit": "3c36c2640ada12119f4a74a9bdf8511b0d7b8f6e",
   "supported_benchmark_profiles": [
     "",

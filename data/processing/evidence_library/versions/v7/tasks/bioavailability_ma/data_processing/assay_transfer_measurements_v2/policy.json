@@ -62026,7 +62026,7 @@
         "same_endpoint_unit": 1086,
         "same_unit": 100
       },
-      "reference_mapping_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/reference_semantics_v3/reference_semantics.parquet",
+      "reference_mapping_path": "tools/chembl_tool/tasks/bioavailability_ma/data_processing/reference_semantics_v3/reference_semantics.parquet",
       "reference_mapping_sha256": "6f4b78f75a17799af10fee8417a1bb8f85288b1d62ee4c65eafa31160cf72bde"
     },
     "review_scope": "all finite continuous valid Stage-03 pretransform rows",

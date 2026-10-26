@@ -39,7 +39,7 @@ SPLIT_PRECEDENCE = {"train": 0, "valid": 1, "test": 2}
 MAIN_COMMIT = "8972834103833c18a8d269a92f898bad07f7e5ab"
 AMES_COMMIT = "f7af9885bc0cdfa2969b52db0065c94bd1f00567"
 ORIGINAL_ROOT = Path(
-    "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/"
+    "data/external/therapeutic-tuning/"
     "data/raw/original"
 )
 ORIGINAL_COMMIT = "f409ff3673498f0b16efc4c05d8a027815c08f0e"
@@ -76,7 +76,7 @@ TASKS: dict[str, dict[str, Any]] = {
         "root": "data/raw/tdc/Ames/v1",
         "upstream": AMES_COMMIT,
         "source_location": (
-            "/vast/projects/myatskar/design-documents/joseph/"
+            "data/external/"
             "therapeutic-tuning/data/raw/original/AMES"
         ),
         "source_names": {"train": "train.csv", "valid": "val.csv", "test": "test.csv"},

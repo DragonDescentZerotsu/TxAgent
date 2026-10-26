@@ -387,7 +387,7 @@ def publish_dataset_task(task: str, version: str, spec: dict, source_manifest: d
         validation = validate_ames_voters()
     else:
         validation = {
-            "basis": "pinned_tianang_l1_contract",
+            "basis": "pinned_baseline_l1_contract",
             "physical_voters": int(source_spec["rows_by_level"]["1"]),
             "status": "pass",
         }
@@ -435,7 +435,7 @@ def publish_dataset_task(task: str, version: str, spec: dict, source_manifest: d
     write_json_atomic(output / "manifest.json", manifest)
     print(
         f"{task}/{version}: {source_spec['mapped_rows']:,} rows; "
-        f"Tianang L1 contract has {validation['physical_voters']:,} rows"
+        f"Baseline L1 contract has {validation['physical_voters']:,} rows"
     )
 
 

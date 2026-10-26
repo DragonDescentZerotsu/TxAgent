@@ -3,7 +3,7 @@
   "evidence": {
     "content_id": "0d8c69ae7fdbe72d37f621019769ca2b9de3e86a594717bdcf067779ccdd56c2",
     "manifest": "evidence/VERSION.json",
-    "manifest_sha256": "2a7080b88f6c8ab79f47aa77249d835e08842fdbc6d7319569196768f790a199",
+    "manifest_sha256": "16bab256eab11cd2a0294c88b7e618e13213cb48c68566cba768908f90268ca3",
     "record_count": 193
   },
   "label_release": {
@@ -33,7 +33,7 @@
         "L1": {
           "content_id": "896792bd43daaa651ebc8ef7ed944544254816b276c95d5417a4d3ff0f268054",
           "manifest": "scaffold/test/L1/VERSION.json",
-          "manifest_sha256": "d016e636dc18f730b06ba0344bcee7cb1d608d70e83a707a95fb14fe117b39cd"
+          "manifest_sha256": "a1f572037524e37797b109342c099707df876a94289aab24bd5fcefbb0f72c59"
         }
       }
     },
@@ -42,7 +42,7 @@
         "L1": {
           "content_id": "85e87de53a8382f55cf7699feb03f58c7daa75cd89dc0dd7225567f9a663d6be",
           "manifest": "scaffold/valid/L1/VERSION.json",
-          "manifest_sha256": "8cf4b96d3b00371890774149b30f0e0a5d0629d25fa0bf6cb93331ea0cbb341d"
+          "manifest_sha256": "5b4edacfcdfc282906b070e703041f83d51cf188f98db1b5ed5f177d7eba4617"
         }
       }
     }

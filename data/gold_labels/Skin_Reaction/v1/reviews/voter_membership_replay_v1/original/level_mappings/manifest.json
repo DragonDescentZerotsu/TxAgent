@@ -23,7 +23,7 @@
   },
   "inputs": {
     "voter_validation": {
-      "basis": "pinned_tianang_l1_contract",
+      "basis": "pinned_baseline_l1_contract",
       "physical_voters": 42435,
       "status": "pass"
     }
@@ -67,7 +67,7 @@
     },
     "alignment_report": {
       "path": "alignment_report.json",
-      "sha256": "cd48eec303634cdd3c8dfbf0fbb1616a38a5aef8d1be05a1ed8307c96e2304fa"
+      "sha256": "b94dd34eabbde1a04470e152bd86edba5a2f17a5159b0724bd290ebc28bc210f"
     }
   }
 }

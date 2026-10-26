@@ -10,51 +10,51 @@
   "review_scope": "all_non_test_L2_L3_L4_L5_L6_buckets_passing_support_with_raw_Tukey_SD_alert",
   "input_snapshot": {
     "manifest": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/bioavailability_ma/v10/manifest.json",
+      "path": "data/evidence_libraries/bioavailability_ma/v10/manifest.json",
       "sha256": "84bc63c623a76029253e1b4d606b274199d16c38ede574bb6be75e998ff8dd28"
     },
     "stage2_manifest": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/bioavailability_ma/v10/02_canonicalized/manifest.json",
+      "path": "data/evidence_libraries/bioavailability_ma/v10/02_canonicalized/manifest.json",
       "sha256": "ae408740ec5e78368d9a4f8702782794e93e78ad6ce90dde050bc69b127a3343"
     },
     "source_contract": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/bioavailability_ma/v10/02_canonicalized/source_contract.json",
+      "path": "data/evidence_libraries/bioavailability_ma/v10/02_canonicalized/source_contract.json",
       "sha256": "d3a3e235a9505618c71d50b2d6524a8f912e0a829d9aa0ce2f35dd57d273a098"
     },
     "stage3_manifest": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/bioavailability_ma/v10/03_pair_buckets/manifest.json",
+      "path": "data/evidence_libraries/bioavailability_ma/v10/03_pair_buckets/manifest.json",
       "sha256": "4888127944cb6b7aac2e8c1c02a0e12feebdcce6faaca81529a840270f8ee2cf"
     },
     "record_pruning": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/bioavailability_ma/v10/reviews/assay_transfer_record_pruning_v3/manifest.json",
+      "path": "data/evidence_libraries/bioavailability_ma/v10/reviews/assay_transfer_record_pruning_v3/manifest.json",
       "sha256": "57402e107be2cd8e39ba9e7d4795500a88a8b2daba0c695409e133ec851d9798"
     },
     "records": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/bioavailability_ma/v10/03_pair_buckets/records.parquet",
+      "path": "data/evidence_libraries/bioavailability_ma/v10/03_pair_buckets/records.parquet",
       "sha256": "96755c3962ccbf98daa29f80cbf07ec32777ceab3b02375834f1108a279bd2da"
     },
     "pair_buckets": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/bioavailability_ma/v10/03_pair_buckets/pair_bucket_records.parquet",
+      "path": "data/evidence_libraries/bioavailability_ma/v10/03_pair_buckets/pair_bucket_records.parquet",
       "sha256": "3d5d50e58096f7073d0ccedb03ef564998fd113b52ffbe6d17c3d9c6061f0fb0"
     },
     "upstream_calibration": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer/assay_transfer/record_level/artifacts/v24/upstream_calibration/bioavailability_ma/pair_bucket_distance_calibration.json.gz",
+      "path": "data/external/starling_assay_transfer/assay_transfer/record_level/artifacts/v24/upstream_calibration/bioavailability_ma/pair_bucket_distance_calibration.json.gz",
       "sha256": "47b82b1060b9efacb090ab1633d48d57e5bc54d4e17c80d595e66aeaf36a8d2c"
     },
     "gold_validation": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/Bioavailability_Ma/v1/scaffold/valid_molecule_condition_labels.jsonl",
+      "path": "data/gold_labels/Bioavailability_Ma/v1/scaffold/valid_molecule_condition_labels.jsonl",
       "sha256": "a04cf813c136b2b7d4363d7651738fee73a01def93c95f93ac059bc94383ea7d"
     },
     "gold_test": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/Bioavailability_Ma/v1/scaffold/test_molecule_condition_labels.jsonl",
+      "path": "data/gold_labels/Bioavailability_Ma/v1/scaffold/test_molecule_condition_labels.jsonl",
       "sha256": "3e0b83798135f8d26f13b650a97238c966ff219bf329e39d595cbd2d79f7f52e"
     },
     "uid_levels": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/artifacts/starling/source_uid_levels/bioavailability_ma.parquet",
+      "path": "data/artifacts/starling/source_uid_levels/bioavailability_ma.parquet",
       "sha256": "c1d8b8f137303f9c222e2e4a0509fbcd4e48390e91459c6c757b945707731fd6"
     },
     "uid_manifest": {
-      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/artifacts/starling/source_uid_levels/manifest.json",
+      "path": "data/artifacts/starling/source_uid_levels/manifest.json",
       "sha256": "0a5146a7c6ff49e8cf0f4cc78bae7228aad67fbda6c552d246a91cf9ffa8d57c"
     }
   },

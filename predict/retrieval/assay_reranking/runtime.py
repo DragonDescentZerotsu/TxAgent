@@ -153,101 +153,101 @@ MODEL_ROLES = (
 MODEL_PROFILES = {
     "bbb_martins": {
         "direct_task_best": {
-            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-bbb-martins-best",
+            "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-bbb-martins-best",
             "revision": "42cb4afa224c102898d75fe4ad48e166254952b5",
             "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
             "checkpoint_step": 130,
         },
         "direct": {
-            "model": "jiosephlee/assay-transfer-tool-soft-v9.0.2-bbb-martins-vote-mean",
+            "model": "local-artifacts/assay-transfer-tool-soft-v9.0.2-bbb-martins-vote-mean",
             "revision": "06b9900222e887597ca06f0015a09fa87b8eb509",
             "prompt_profile": "v9",
         },
         "direct_v10_3": {
-            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-bbb-martins-best",
+            "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-bbb-martins-best",
             "revision": "7678f7a1c43932f7612cfd49a8f4872d6e2f4cab",
             "prompt_profile": "v10_3",
             "checkpoint_step": 120,
         },
         "direct_v10_4": {
-            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-4-bbb-martins-best",
+            "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-4-bbb-martins-best",
             "revision": "4c064f571a53234c5eb1c9d4c0e068bdd10860c1",
             "prompt_profile": "v10_4",
             "checkpoint_step": 70,
         },
         "indirect": {
-            "model": "jiosephlee/intern-s1-mini-assay-transfer-v19-1-bbb-martins-numeric-best",
+            "model": "local-artifacts/intern-s1-mini-assay-transfer-v19-1-bbb-martins-numeric-best",
             "revision": "b93ebfb909de5689fe3b50978d65172a6096b974",
             "prompt_profile": "v19_1",
         },
         "all_records": {
-            "model": "jiosephlee/intern-s1-mini-assay-transfer-v21-bbb-martins-mixed-best",
+            "model": "local-artifacts/intern-s1-mini-assay-transfer-v21-bbb-martins-mixed-best",
             "revision": "2521166a95cd36bc78fb9b90669cc097ead758ca",
             "prompt_profile": "v21_bbb",
         },
     },
     "bioavailability_ma": {
         "direct_task_best": {
-            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-v2-hp-bioavailability-ma-best",
+            "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-v2-hp-bioavailability-ma-best",
             "revision": "a1cb6960e9ea4b18c69a87cf10bb7ef695192208",
             "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
             "checkpoint_step": 80,
         },
         "direct": {
-            "model": "jiosephlee/assay-transfer-tool-soft-v9-bioavailability-ma-mixed-continuous",
+            "model": "local-artifacts/assay-transfer-tool-soft-v9-bioavailability-ma-mixed-continuous",
             "revision": "6f3aefabc9a07b357066aaf7ca0f69ab63785240",
             "prompt_profile": "v9",
         },
         "direct_v10_3": {
-            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-bioavailability-ma-best",
+            "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-bioavailability-ma-best",
             "revision": "e8837889f707d97f8aeb7e54e74fcf2c7c2968de",
             "prompt_profile": "v10_3",
             "checkpoint_step": 140,
         },
         "direct_v10_3_0_2": {
-            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-0-2-bioavailability-ma-BEST",
+            "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-0-2-bioavailability-ma-BEST",
             "revision": "29cc74f02df160b1f153edb700da66d1c30ef4ed",
             "prompt_profile": "v10_3_0_2",
             "checkpoint_step": 160,
         },
         "direct_v10_4": {
-            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-4-bioavailability-ma-best",
+            "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-4-bioavailability-ma-best",
             "revision": "e3a5b31ce8c47b4aa950c974cf9c3eb80c67fcae",
             "prompt_profile": "v10_4",
             "checkpoint_step": 200,
         },
         "indirect": {
-            "model": "jiosephlee/intern-s1-mini-assay-transfer-v19-1-bioavailability-ma-numeric-best",
+            "model": "local-artifacts/intern-s1-mini-assay-transfer-v19-1-bioavailability-ma-numeric-best",
             "revision": "612cd794583e2129a664defaf9229b26d94b9a69",
             "prompt_profile": "v19_1",
         },
     },
     "skin_reaction": {
         "direct_task_best": {
-            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v9-0-2-tdc-v2-skin-reaction-best",
+            "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v9-0-2-tdc-v2-skin-reaction-best",
             "revision": "870f401c451b4324a93af5049bec02c529119c20",
             "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
             "checkpoint_step": 80,
         },
         "direct": {
-            "model": "jiosephlee/assay-transfer-tool-soft-v9.0.2-skin-reaction-mixed-continuous",
+            "model": "local-artifacts/assay-transfer-tool-soft-v9.0.2-skin-reaction-mixed-continuous",
             "revision": "e4e894af28151760d2041275c5ecf136971c3925",
             "prompt_profile": "v9",
         },
         "indirect": {
-            "model": "jiosephlee/intern-s1-mini-assay-transfer-v19-1-skin-reaction-numeric-best",
+            "model": "local-artifacts/intern-s1-mini-assay-transfer-v19-1-skin-reaction-numeric-best",
             "revision": "f29d100ca2112490d22913736d4efa5bc5308cb6",
             "prompt_profile": "v19_1",
         },
     },
     "ames": {
         "direct_tdc_best": {
-            "model": "jiosephlee/intern-s1-mini-ames-v10-3-tdc-mixed-canonical-best",
+            "model": "local-artifacts/intern-s1-mini-ames-v10-3-tdc-mixed-canonical-best",
             "revision": "392dd01912090040cfc0427f9f680d16d47eb27b",
             "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
         },
         "direct_task_best": {
-            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-ames-best",
+            "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-ames-best",
             "revision": "d27f5f44328a43ccfea650841dba9fcf4729ec69",
             "prompt_profile": "gold_v1_context.v10.3",
             "checkpoint_step": 50,
@@ -255,12 +255,12 @@ MODEL_PROFILES = {
     },
     "dili": {
         "direct_tdc_best": {
-            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-pinned-dili-xnkoqrux",
+            "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-pinned-dili-xnkoqrux",
             "revision": "bb5248609a729ac7dc6d6c9a3cccba1566a3d19e",
             "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
         },
         "direct_task_best": {
-            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-1-dili-best",
+            "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-1-dili-best",
             "revision": "b594bd7be81d140a9ebdf137aea5b979359e0b7f",
             "prompt_profile": "gold_v1_context.v10.3",
             "checkpoint_step": 140,
@@ -268,12 +268,12 @@ MODEL_PROFILES = {
     },
     "carcinogens": {
         "direct_tdc_best": {
-            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-pinned-carcinogens-2xcwcpul",
+            "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-pinned-carcinogens-2xcwcpul",
             "revision": "8be3376cd1d84e46c18b61617f63ad597aeaff52",
             "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
         },
         "direct_task_best": {
-            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-carcinogens-step160",
+            "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-carcinogens-step160",
             "revision": "204d66ca9f7692ae76938ef6c5ebaa84737fd5f2",
             "prompt_profile": "gold_v1_context.v10.3",
             "checkpoint_step": 160,

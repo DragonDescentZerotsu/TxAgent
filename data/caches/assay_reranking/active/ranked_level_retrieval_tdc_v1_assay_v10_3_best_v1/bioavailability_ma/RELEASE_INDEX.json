@@ -3,7 +3,7 @@
   "evidence": {
     "content_id": "cd5e3e8a3010adf0fefa25e3a0b374dd7e41a913e116812c3177ae3d9fc1b249",
     "manifest": "evidence/VERSION.json",
-    "manifest_sha256": "cb757afa1215c9fd28a8e21c1569e8cc78f77520482f9983a5b0fc981e2ae0f9",
+    "manifest_sha256": "317e9047caef94797edc97427cf101d851f9ca0a5357ecc1d9aac64b0de991ed",
     "record_count": 448
   },
   "label_release": {
@@ -13,7 +13,7 @@
   "levels_independent": true,
   "model": {
     "checkpoint_step": 160,
-    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-0-2-bioavailability-ma-BEST",
+    "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-0-2-bioavailability-ma-BEST",
     "prompt_profile": "v10_3_0_2",
     "revision": "29cc74f02df160b1f153edb700da66d1c30ef4ed"
   },
@@ -41,7 +41,7 @@
         "L1": {
           "content_id": "7fa15eb9842ed77ff4ca7c227c4a0e70b85eaad8d45cdca3b45a9e954efe57a7",
           "manifest": "scaffold/test/L1/VERSION.json",
-          "manifest_sha256": "38098c143c74f7cec09ef0358a151600c11442e2f31081364eee6e3b919d7d48"
+          "manifest_sha256": "245c8e4de2b3d61abf984f1b1d2e68f6e8a37d815b3625308ae6625324190640"
         }
       }
     },
@@ -50,7 +50,7 @@
         "L1": {
           "content_id": "021713fb319a5bf0dbf88e82c1b8959a0a2f0b84f8ef5abbcd9601e994579e66",
           "manifest": "scaffold/valid/L1/VERSION.json",
-          "manifest_sha256": "45229104d6b0f8899d984b14d906cde557a9a9d0cd9696facb489a85bb80dc55"
+          "manifest_sha256": "04cfb75eb9e69a1d4c1e3d9d24e48d2b54f11ded3520c35eea31bb4ef8d64fc5"
         }
       }
     }

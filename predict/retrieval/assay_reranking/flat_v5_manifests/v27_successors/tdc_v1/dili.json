@@ -18,7 +18,7 @@
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/dili/l1/assay_transfer/v10_3/tdc_pinned_v1/dili/evidence/VERSION.json",
       "size": 611,
-      "sha256": "f7eacef4ae581fb85352f166ff4fd671f78a1b1220ee6f1d65f63a41436737df"
+      "sha256": "63b67b215464905318b18bf3fbcec63717cb240b8f72ecc143ef5afbfa4b5fa9"
     },
     {
       "path": "data/caches/assay_reranking/active/flat_v5/tdc_v1/dili/l1/assay_transfer/v10_3/tdc_pinned_v1/dili/evidence/records.parquet",

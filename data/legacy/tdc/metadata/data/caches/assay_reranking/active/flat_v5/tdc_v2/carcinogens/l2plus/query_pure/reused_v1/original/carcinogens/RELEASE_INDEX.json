@@ -36,7 +36,7 @@
   "score_coverage": "query_pure",
   "selection_coverage": "complete",
   "schema_version": "ranked_uid_task_release_index.v1",
-  "score_source_release_index": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/flat_v5/tdc_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2/carcinogens/RELEASE_INDEX.json",
+  "score_source_release_index": "data/caches/assay_reranking/active/flat_v5/tdc_v1/carcinogens/l2plus/assay_transfer/v27/general_candidate_copy_shared_parent100_v2/carcinogens/RELEASE_INDEX.json",
   "score_source_release_index_sha256": "d6eb6635f7ca3ad5157a55ac9d69bddc0a5eed454ba53c97384d8d53f607be94",
   "selection_contract": "ranked_uid_retrieval.v1",
   "splits": {
@@ -45,32 +45,32 @@
         "L2": {
           "content_id": "e0eddfabd41c44bc50ddc44e21743815370635f1f9b3ba502d8bba8b0edb675b",
           "manifest": "scaffold/test/L2/VERSION.json",
-          "manifest_sha256": "b06430b291314228c67533f5537d25926369ae766123d094eefeaa6fe1c01962"
+          "manifest_sha256": "5ef7d8832e93c70585972f18e26871086275ccb4b08a775a837ff6b3a28dcefe"
         },
         "L3": {
           "content_id": "a65ef5088378a1cbc486963c469b2fb5abb879738266a7fe861d451cf92b6ca9",
           "manifest": "scaffold/test/L3/VERSION.json",
-          "manifest_sha256": "aee7099a854273e333ca5d03df78084cca37bb780df3bd8b16d15bcbab00ac41"
+          "manifest_sha256": "7ba527a26ec3e1adf1d0bc8af8ad47f3c366a2dd63ac6c57630d181b8c1dfd42"
         },
         "L4": {
           "content_id": "6ec751c2934f8bac72f86fc48910bdf77dcee60562da8104a28cfe06cb7981b2",
           "manifest": "scaffold/test/L4/VERSION.json",
-          "manifest_sha256": "f718a765465c757d34a14b74939ba3ec8680e42143684b086133decae6b8005e"
+          "manifest_sha256": "4a6fc2162d5af3a56ffd305d439be209f6c0262d70d332d84c6303c59249e698"
         },
         "L5": {
           "content_id": "312670dd91dcbb8cdef3b0bf1b175192fbcd9f8bc16801953372a9c95cd724be",
           "manifest": "scaffold/test/L5/VERSION.json",
-          "manifest_sha256": "a209893988ffab045e2ee5a61badb1f207fc208ccdf8808e094f6c94e9f67afe"
+          "manifest_sha256": "430a08a99e8a457a7acfc955507b998a94f89ce6781c921d1995f26845c2347e"
         },
         "L6": {
           "content_id": "98ebb4bc0640c098a103dc7d92a27e5b86e145e42237f19f9ba570b55c507f9d",
           "manifest": "scaffold/test/L6/VERSION.json",
-          "manifest_sha256": "2a97f6eb3ff860305a509b89a66596b798c8007fc7b62a0dd34c19fcd5ec2206"
+          "manifest_sha256": "c1d025f015e81cbf353f04309e69791d962d6cb9785384ed883f0a6ca7a0c2fc"
         },
         "L7": {
           "content_id": "1339850525f312b61ba383a13c96ead1d30f3acf3395471866e394b66e4eab55",
           "manifest": "scaffold/test/L7/VERSION.json",
-          "manifest_sha256": "af575fa8c9a9e48e1e6f268c83dae9852c9cd8f617d3faae01d2c89b667c6b40"
+          "manifest_sha256": "87e053883800ed21c8f466b09cf99afdf3cd86c3f8e2cc77eaded8cae4b21a4a"
         }
       },
       "parent_universe": {
@@ -83,32 +83,32 @@
         "L2": {
           "content_id": "ed19b005e37177efe52a1fc9ee9b8bbba1b4fdc6701f234c89e1c1fbc8eea8a1",
           "manifest": "scaffold/valid/L2/VERSION.json",
-          "manifest_sha256": "7df2daa5d1d3febf4764fe32091ad14d047706cb369168eed1873ee0e2d1cf4f"
+          "manifest_sha256": "2beaac0eb7e3a6d7047fddaf7cea7915c1ea5d8c17095105aaf1689b1b6a1de3"
         },
         "L3": {
           "content_id": "543e4f234c42e8452f2b86814adb977ad0ccd049085c5dbb7750ae6175812d96",
           "manifest": "scaffold/valid/L3/VERSION.json",
-          "manifest_sha256": "bd19ae18b820ab18760e2d6fd298e58f37b38bd7eb66f25a0488c5663324ff57"
+          "manifest_sha256": "6778aeaad09f27e49afd030af1ac83871697b563836bec12138425dceb43d91f"
         },
         "L4": {
           "content_id": "c631c3e9204bc9d4df3341386e289b6431f971a8fe8b3a5c2ec9274b89419ad1",
           "manifest": "scaffold/valid/L4/VERSION.json",
-          "manifest_sha256": "0b442673226608909b81449f2e758d3d0aac5a6a2a90b347729355b2884b0849"
+          "manifest_sha256": "11965ad15a79a7fde70fdd81b2ce80d52a1175c02a4e1ad2dccf82cea98dd626"
         },
         "L5": {
           "content_id": "3463d1cc99f4e8bedb93f82661fc10843beeec6ba833ccba1a10b8ccfcba4cd2",
           "manifest": "scaffold/valid/L5/VERSION.json",
-          "manifest_sha256": "199fda34de769f3fbe5f7dae0e569afb03707a8d770c628a62bb2933858dbe64"
+          "manifest_sha256": "515d996d39bbeef72a0f4bd2206ef5e69473bdf7fad06b7e7792c15ef627c6ee"
         },
         "L6": {
           "content_id": "a25f99eb0bd3db2467ed02b251bd4ed7e2ad6a05cc47da2531615146cd4f40fd",
           "manifest": "scaffold/valid/L6/VERSION.json",
-          "manifest_sha256": "518766820cce10442fe0ca1af0868a83f03fdb90ddd2e474449c8a9f1a36fe80"
+          "manifest_sha256": "533d5dbdb2818f7c5a76824f9c379fa902b8052c666417c54e81f17de3f85430"
         },
         "L7": {
           "content_id": "0fab13f830ba60406c4f4a17fdbd97c69fc35fc05961c11e2b64514aaa8bd6bb",
           "manifest": "scaffold/valid/L7/VERSION.json",
-          "manifest_sha256": "0e00895f7a0505f181d2f3b51f45472f36690e5f86828407d179778c5508f740"
+          "manifest_sha256": "6224def17322dff662c44ffe65a0ac82fafbbf79495e7a0fbe4bd0692f97cbc6"
         }
       },
       "parent_universe": {

@@ -79,7 +79,7 @@
         "6": 60986
       },
       "manifest": "Bioavailability_Ma/level_mappings/v1/manifest.json",
-      "manifest_sha256": "c09b2409bc3ec9865f4839df75c0c2ae7daeec8d3fad42be472b22b921d9b6b7"
+      "manifest_sha256": "dc3663e86f7fca54f6fda3536296d4ccfd260813b2f887840b9c5cd72220074e"
     },
     "carcinogens": {
       "kind": "parquet_dataset",
@@ -162,7 +162,7 @@
         "7": 286938
       },
       "manifest": "Carcinogens/level_mappings/v2/manifest.json",
-      "manifest_sha256": "7021109458aa17f548799a6bec26ec8b953fda5a21169d6884d1460af6b56e6a"
+      "manifest_sha256": "3c2b1b81c3dc689f2098026d2862e93b8143a31c9486261737f7bcb2938fc48b"
     },
     "dili": {
       "kind": "parquet_dataset",
@@ -210,7 +210,7 @@
         "7": 402982
       },
       "manifest": "DILI/level_mappings/v2/manifest.json",
-      "manifest_sha256": "fa7726e72819141cdbd2d00d934f2ef9fa14ef7121cc40816250a6afe1ae678b"
+      "manifest_sha256": "2b9a84768da81ee10537e5c6ef7cc1e544f893ef697b64ae4749ea253a900fe8"
     },
     "skin_reaction": {
       "parts": [
@@ -228,7 +228,7 @@
         "3": 12005
       },
       "manifest": "Skin_Reaction/level_mappings/v1/manifest.json",
-      "manifest_sha256": "d5146ded03e683eb0d3c48e332687d79a37d75382bb234a7ccb1778cb6b7a3e4",
+      "manifest_sha256": "ae895d3d03d8268b5bfc4f5484c8ce4c181e216540003cf32c3201f5ae2c20ac",
       "kind": "parquet_dataset"
     }
   }

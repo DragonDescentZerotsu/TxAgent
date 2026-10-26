@@ -40,27 +40,27 @@ from predict.retrieval.assay_reranking.v9 import (
 
 DIRECT_MODELS = {
     "bbb_martins": (
-        "jiosephlee/assay-transfer-tool-soft-v9.0.2-bbb-martins-vote-mean",
+        "local-artifacts/assay-transfer-tool-soft-v9.0.2-bbb-martins-vote-mean",
         "06b9900222e887597ca06f0015a09fa87b8eb509",
     ),
     "bioavailability_ma": (
-        "jiosephlee/assay-transfer-tool-soft-v9-bioavailability-ma-mixed-continuous",
+        "local-artifacts/assay-transfer-tool-soft-v9-bioavailability-ma-mixed-continuous",
         "6f3aefabc9a07b357066aaf7ca0f69ab63785240",
     ),
     "skin_reaction": (
-        "jiosephlee/assay-transfer-tool-soft-v9.0.2-skin-reaction-mixed-continuous",
+        "local-artifacts/assay-transfer-tool-soft-v9.0.2-skin-reaction-mixed-continuous",
         "e4e894af28151760d2041275c5ecf136971c3925",
     ),
 }
 
 V10_3_DIRECT_MODELS = {
     "bbb_martins": (
-        "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-bbb-martins-best",
+        "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-bbb-martins-best",
         "7678f7a1c43932f7612cfd49a8f4872d6e2f4cab",
         120,
     ),
     "bioavailability_ma": (
-        "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-bioavailability-ma-best",
+        "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-bioavailability-ma-best",
         "e8837889f707d97f8aeb7e54e74fcf2c7c2968de",
         140,
     ),
@@ -68,19 +68,19 @@ V10_3_DIRECT_MODELS = {
 
 V10_4_DIRECT_MODELS = {
     "bbb_martins": (
-        "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-4-bbb-martins-best",
+        "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-4-bbb-martins-best",
         "4c064f571a53234c5eb1c9d4c0e068bdd10860c1",
         70,
     ),
     "bioavailability_ma": (
-        "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-4-bioavailability-ma-best",
+        "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-4-bioavailability-ma-best",
         "e3a5b31ce8c47b4aa950c974cf9c3eb80c67fcae",
         200,
     ),
 }
 
 V10_3_0_2_ORAL_MODEL = (
-    "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-0-2-bioavailability-ma-BEST",
+    "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-0-2-bioavailability-ma-BEST",
     "29cc74f02df160b1f153edb700da66d1c30ef4ed",
     160,
 )
@@ -165,17 +165,17 @@ def test_v10_4_direct_role_and_v2_provenance(task_id):
     (
         (
             "bbb_martins",
-            "jiosephlee/intern-s1-mini-assay-transfer-v19-1-bbb-martins-numeric-best",
+            "local-artifacts/intern-s1-mini-assay-transfer-v19-1-bbb-martins-numeric-best",
             "b93ebfb909de5689fe3b50978d65172a6096b974",
         ),
         (
             "bioavailability_ma",
-            "jiosephlee/intern-s1-mini-assay-transfer-v19-1-bioavailability-ma-numeric-best",
+            "local-artifacts/intern-s1-mini-assay-transfer-v19-1-bioavailability-ma-numeric-best",
             "612cd794583e2129a664defaf9229b26d94b9a69",
         ),
         (
             "skin_reaction",
-            "jiosephlee/intern-s1-mini-assay-transfer-v19-1-skin-reaction-numeric-best",
+            "local-artifacts/intern-s1-mini-assay-transfer-v19-1-skin-reaction-numeric-best",
             "f29d100ca2112490d22913736d4efa5bc5308cb6",
         ),
     ),
@@ -188,7 +188,7 @@ def test_indirect_model_is_pinned(task_id, model, revision):
 def test_bbb_all_record_model_is_pinned():
     profile = model_profile("bbb_martins", "all_records")
     assert profile == {
-        "model": "jiosephlee/intern-s1-mini-assay-transfer-v21-bbb-martins-mixed-best",
+        "model": "local-artifacts/intern-s1-mini-assay-transfer-v21-bbb-martins-mixed-best",
         "revision": "2521166a95cd36bc78fb9b90669cc097ead758ca",
         "prompt_profile": "v21_bbb",
     }

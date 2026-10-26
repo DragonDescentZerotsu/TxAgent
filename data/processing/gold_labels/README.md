@@ -68,7 +68,7 @@ Other label-eligible Stage-1 rows never enter gold v2.
 
 ```bash
 python -m data.processing.gold_labels.build_repaired_v2 \
-  --stage1-root /local/joseph/txagent-v10-stage1-gold-priority-v3 \
+  --stage1-root /local/evidence/txagent-v10-stage1-gold-priority-v3 \
   --condition-ledger-root <reviewed-ledger-root> \
   --voter-lineage-root \
     data/artifacts/gold_labels/conditioned_benchmark/v2_voter_lineage \

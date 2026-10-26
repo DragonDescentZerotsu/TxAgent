@@ -9,7 +9,7 @@
   },
   "base_mapping": {
     "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
-    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/measurement_resolution_v2/measurement_resolution.parquet",
+    "path": "tools/chembl_tool/tasks/bioavailability_ma/data_processing/measurement_resolution_v2/measurement_resolution.parquet",
     "reused_rows": 192728,
     "sha256": "a0ecd8a3d51cb82b33e6a0ea602769c6f1463a6a53acb8b4644ed3b08dc64afe"
   },
@@ -30,7 +30,7 @@
     "reasoning_mode": "low",
     "temperature": 1.0
   },
-  "mapping_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/measurement_resolution_v3/measurement_resolution.parquet",
+  "mapping_path": "tools/chembl_tool/tasks/bioavailability_ma/data_processing/measurement_resolution_v3/measurement_resolution.parquet",
   "mapping_rows": 201184,
   "mapping_sha256": "8b3a07e4fc70232da2e666caa8dd089cf18254b24ac6b84e706134cfb5343f1d",
   "mapping_version": "bioavailability_ma_measurement_resolution.v3",
@@ -49,7 +49,7 @@
       "hf_bioavailability": "f3c576da4fc30da91775a44aacf00b91af3d447f77db74283f42c8e9542b2133",
       "oral_exposure": "4d53644ae94b7d9ef9e39e8b229aeae302df0940f42e631296393ceb6e498e81"
     },
-    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/measurement_resolution_templates/measurement_resolution_v1.jinja",
+    "template_path": "tools/chembl_tool/tasks/bioavailability_ma/measurement_resolution_templates/measurement_resolution_v1.jinja",
     "template_sha256": "e3ce4e97bb3db8ea4da6e22816ebec6991cccdc6c80d5cbfd70bf6946bb6b908"
   },
   "rejected_rows": 64,

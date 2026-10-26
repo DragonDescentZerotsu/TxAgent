@@ -56,7 +56,7 @@
     "max_completion_tokens": 8192,
     "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
     "openrouter_used": false,
-    "parcc_litellm_used": false,
+    "gateway_litellm_used": false,
     "provider": "local",
     "reasoning_effort": "none",
     "returned_model_exact": true,
@@ -123,7 +123,7 @@
       "unsupported_percent_scale": 2474
     },
     "manifest_path": "data/processing/evidence_library/versions/v10/tasks/dili/data_processing/measurement_resolution_v1/measurement_resolution.manifest.json",
-    "manifest_sha256": "b15b8ae281e07d3f01d0a216c12308ed8b22ee80d3318f46d09b6fa53f929454",
+    "manifest_sha256": "c6292a4439afab3f27b3564141a031227654e27621db7b69ac6b61430979282c",
     "path": "data/processing/evidence_library/versions/v10/tasks/dili/data_processing/measurement_resolution_v1/measurement_resolution.parquet",
     "rows": 478469,
     "sha256": "d8d979c6415b4385a64e3346da00a64b91b7e0a001d779782dd1e43e27d3c1af",

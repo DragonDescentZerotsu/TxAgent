@@ -1,5 +1,5 @@
 {
-  "gold_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tests/chembl_tool/common/measurement_resolution_quality/gold/bbb_martins.v8.jsonl",
+  "gold_path": "tests/chembl_tool/common/measurement_resolution_quality/gold/bbb_martins.v8.jsonl",
   "gold_corpus_version": "measurement_resolution_gold.v8.1",
   "gold_cases": 500,
   "mapping_path": "data/artifacts/evidence_library_assets/bbb_martins/construction_assets/measurement_resolution_v13_gpt54mini/quality/measurement_resolution.parquet",

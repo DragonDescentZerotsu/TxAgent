@@ -34,17 +34,17 @@ Independent role rotation is fixed by namespace group:
 Commands:
 
 ```bash
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+conda run -n txagent-glm \
   python -m data.processing.evidence_library.versions.v9.tasks.skin_reaction.data_processing.reconcile_auxiliary_mapping \
   snapshot --overwrite
 
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+conda run -n txagent-glm \
   python -m data.processing.evidence_library.versions.v9.tasks.skin_reaction.data_processing.reconcile_auxiliary_mapping \
   prepare-review
 
 # `propose` requires explicit primary, checker, adjudicator, and reviewer-summary files.
 
-/data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
+conda run -n txagent-glm \
   python -m data.processing.evidence_library.versions.v9.tasks.skin_reaction.data_processing.reconcile_auxiliary_mapping \
   audit
 ```

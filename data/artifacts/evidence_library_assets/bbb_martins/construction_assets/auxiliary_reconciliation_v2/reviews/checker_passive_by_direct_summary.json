@@ -79,7 +79,7 @@
   "missing_change_ids": [],
   "packet_audit": {
     "exact_packet_to_provenance_row_parity": true,
-    "packet_manifest_sha256": "e9f852a850729993d5801e4ed27534aa03215dbe6abe17e58ea57b7723ecd6bb",
+    "packet_manifest_sha256": "4b07dddfc13041c478305da66c28b3f4c628363036ac7cbfecbe957b8d34cbe4",
     "reviewed_assignment_count": 1176,
     "reviewed_cluster_count": 12,
     "reviewed_packet_ids": [

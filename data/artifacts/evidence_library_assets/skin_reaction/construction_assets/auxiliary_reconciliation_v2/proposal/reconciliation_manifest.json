@@ -5,14 +5,14 @@
     "adjudication_review.jsonl": "62e1771e740dcd7c7d551957a0645c1a1788970312206d2f45b173a921cd559a",
     "checker_review.jsonl": "9007950f193732d987a6e28acceb4cda75520a1108c46b38bf20b8b4b86b471e",
     "primary_review.jsonl": "b463bdec6cfac2a9fd8e386e014f153468bf376a213b4d540ed1d416f9c954d2",
-    "primary_review_summaries.json": "3ae30f2522298c1a71465cc6be23c07813e5f0f88ed17ae006a9a2c08f12fffa",
+    "primary_review_summaries.json": "6238bf114aaad69a3fe9787d7e6c3a95e8674cbd0eaff9beab2d381fee868771",
     "proposed_globally_reconciled_mapping.json": "5cd011cbd536dd5e720e9e7e42c18619788b54e33ec384f56933ee24bb50c6b5",
     "reconciliation_changes.parquet": "525d50174ee65a6640f096a12010f30e334206fd7bf2f83592e96a8c18396519"
   },
   "manifest_version": "skin_reaction_auxiliary_reconciliation_proposal.v1",
-  "packet_manifest_sha256": "33107c221bc34289b1b552530115bd346a65958477da817f945e44452f8d309d",
+  "packet_manifest_sha256": "3b150819b8bcbb4dfd21b1504f2d453e4ee6da1cf6393870baf05b76a397161b",
   "policy": {
-    "path": "/data1/joseph/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_policy.json",
+    "path": "data/external/TxAgent/tools/chembl_tool/tasks/skin_reaction/data_processing/auxiliary_reconciliation_policy.json",
     "sha256": "c0ae487055daf0ea521d530c30b33ef29a2152788f61992604cb389eec8ab017"
   },
   "primary_packet_coverage": {

@@ -30,6 +30,6 @@
     "provenance/v1_split_reallocations.jsonl": "dd46d7defb921d2b716b9a58f382b63d211f742208794205f7ff01852b268934",
     "provenance/v1_lineage_label_rejections.jsonl": "40eb9a2cf064de1fe97a1abf44ffef9808b0719fbfe9d557a66ee97882e4cba1",
     "provenance/source_rejection_audit.json": "901a1f4f0d525a8c1e463bad51c943b1f8ce4c757dd46df8fdf9d249391c8cf0",
-    "summary.json": "e706f354678ce3a24f6f35b4bb0da5d49f2245502df81105beb2cfda81ef4d8e"
+    "summary.json": "15c08ed34ab25df430c35eb1a04c040aacb58456b346be0a29eb25ad06506c26"
   }
 }

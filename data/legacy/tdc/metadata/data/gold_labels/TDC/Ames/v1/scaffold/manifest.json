@@ -30,7 +30,7 @@
     }
   },
   "source_manifest": "data/raw/tdc/Ames/v1/source_manifest.json",
-  "source_manifest_sha256": "184e950a23bd286c12d727359c4684efb7de45202c3225ad2919d6514eb51e47",
+  "source_manifest_sha256": "69fa7eaf237eb11c8536e5fcda530997f0d3678050cf601d6d6c6f2def25c177",
   "outputs": {
     "conflicting_parent_labels.jsonl": "6b20e8c8ed8d4519e446716ea638aa1ca37bd95509c0c3cf5e3407d6c202deed",
     "heldout_molecule_condition_labels.jsonl": "fa1e1008d5758886ebd107acd9905ab1c5e424d9b86b0642ad344874e76dbb1a",
@@ -44,5 +44,5 @@
     "valid_molecule_condition_labels.jsonl": "75d8f7fdd57a56349cc072ac8da7ad98f2c31bf24e7fec10c0fbb51d8dbe6578"
   },
   "current_pointer_changed": false,
-  "summary_sha256": "af3c15f68a311cb5a0cbc0edfb49c4036bd15bb2078b5754d3fdc3b0af86e91e"
+  "summary_sha256": "96b6a8a1ad95e5fcb2cbd6a724bf9ca0c844f171d1bcc600937dbe1d5bcd334b"
 }

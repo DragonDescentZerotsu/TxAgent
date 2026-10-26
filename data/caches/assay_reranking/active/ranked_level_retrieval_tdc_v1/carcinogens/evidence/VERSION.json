@@ -6,7 +6,7 @@
   "records_sha256": "98b69476f1872de70a62109075cceb618b3631ffd273a8211596adebceed77d1",
   "schema_version": "ranked_evidence_projection.v1",
   "source_identity": "tdc_source_record_id",
-  "source_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/TDC/Carcinogens/v1/scaffold/train_molecule_condition_labels.jsonl",
+  "source_path": "data/gold_labels/TDC/Carcinogens/v1/scaffold/train_molecule_condition_labels.jsonl",
   "status": "complete",
   "task_id": "carcinogens"
 }

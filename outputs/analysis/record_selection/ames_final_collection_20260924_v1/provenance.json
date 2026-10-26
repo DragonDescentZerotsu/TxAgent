@@ -1,16 +1,16 @@
 {
   "schema_version": "ames_final_collection_addition.v1",
   "status": "complete",
-  "collection_path": "outputs/paper/assay_transfer_harness/joseph/final/collection.json",
+  "collection_path": "outputs/paper/assay_transfer_harness/evidence/final/collection.json",
   "collection_sha256": "9cfceb4913b1e99feaafeee30bbace30421d83f8c16aea4282a36dec87a14f46",
   "source_analyses": [
     {
       "path": "outputs/analysis/record_selection/ames_gold_full_test_completed_20260924_v1/manifest.json",
-      "sha256": "f4207c2127fb6382bba484792246cdb855e13d730574cc14f4f3b54bd845d070"
+      "sha256": "8d21c5f52c9996769a8cd8297c070da1f8d761ff153fbe8b7312101e4f1ef470"
     },
     {
       "path": "outputs/analysis/record_selection/ames_tdc_v2_full_test_completed_20260924_v1/manifest.json",
-      "sha256": "de62a2453557eb795f717968873651a70a0f94ddef6756c128099c2ee915a82c"
+      "sha256": "ff0e44405df2192c778042712461af0ca1f4bc6a1ddd379f9cdf737dec606393"
     }
   ],
   "new_arm_manifest_sha256": {

@@ -4,7 +4,7 @@
   "evidence": {
     "content_id": "0ab65711540f870be10c9878993698d8957f62f2967e1988d1ea14002ef8619d",
     "manifest": "evidence/VERSION.json",
-    "manifest_sha256": "d4f7b5873097d6c1c82339a9af45f36a32cb840c4f8c3b82c14e9daf35af91ee",
+    "manifest_sha256": "2862fb26684672361fe2545544a81701bcd313e08bce2ca189373cfc7c63a163",
     "record_count": 196
   },
   "label_release": {
@@ -13,7 +13,7 @@
   },
   "levels_independent": true,
   "model": {
-    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-pinned-carcinogens-2xcwcpul",
+    "model": "local-artifacts/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-pinned-carcinogens-2xcwcpul",
     "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
     "revision": "8be3376cd1d84e46c18b61617f63ad597aeaff52"
   },
@@ -62,7 +62,7 @@
         "L1": {
           "content_id": "f305b1f98a82400ed00e08d2bb5653fe70a7bdbffec67b5e2a198ead501ed1b9",
           "manifest": "scaffold/test/L1/VERSION.json",
-          "manifest_sha256": "7ae375b5727fc0107b41866eaa09e16dc91070629723dcfc43c0468130a637aa"
+          "manifest_sha256": "c6463fb740f5979c0512172b0b5c56457677e5831d6ca6c4c0823ae0d1f102be"
         }
       }
     },
@@ -71,7 +71,7 @@
         "L1": {
           "content_id": "02f169432121c3bb00b132a338c5c7eed403154a888fd4af0e9564b2f9a1668f",
           "manifest": "scaffold/valid/L1/VERSION.json",
-          "manifest_sha256": "38a68f5ec8e5e4353bd929e8a159e649da4b7bbec5b8f169844556bfb98852ff"
+          "manifest_sha256": "94cbbea3b2a5225eebeb0b23dd8e2de03a7f394e87e1b2c85a7e0136d9f95c72"
         }
       }
     }

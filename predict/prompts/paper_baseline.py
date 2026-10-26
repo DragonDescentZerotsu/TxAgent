@@ -204,7 +204,7 @@ def validation_kwargs(payload, aliases):
 
 def verify_request(prepared, manifest):
     """Validate the frozen task, request and selected-record bindings."""
-    if prepared.get("version") != "direct_indirect_budgeted.v3" or prepared.get("prompt_version") != "joseph_v5":
+    if prepared.get("version") != "direct_indirect_budgeted.v3" or prepared.get("prompt_version") != "evidence_v5":
         raise ValueError("unsupported paper baseline prepared format")
     payload = prepared["prompt_payload"]
     spec = profile(payload)

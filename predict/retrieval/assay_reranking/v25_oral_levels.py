@@ -1,6 +1,6 @@
 """Build split-specific Oral V25 L2, L3, and L4/L6 record-transfer score caches.
 
-The builder joins Oral V10 records to Tianang's acquisition-UID level mapping,
+The builder joins Oral V10 records to Baseline's acquisition-UID level mapping,
 constructs independent scaffold-disjoint Morgan-75 pools, renders the frozen
 V25 prompt with copied non-result retrieval context, and publishes one compact SQLite
 cache per benchmark split. Scoring is resumable and level-specific because each
@@ -73,27 +73,27 @@ LEVEL_MANIFEST, LEVEL_MAPPING, LEVEL_MAPPING_RECEIPT = evidence_level_mapping_re
 GOLD_ROOT = Path("data/gold_labels/Bioavailability_Ma/v1/scaffold")
 MODELS = {
     "L2": {
-        "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v25-bioavailability-ma-l2-best",
+        "model": "local-artifacts/intern-s1-mini-assay-transfer-record-level-v25-bioavailability-ma-l2-best",
         "revision": "c8bcca2e541bc5fdedb7a74be9881ea91eec7539",
-        "dataset": "jiosephlee/assay-transfer-record-level-v25-bioavailability-ma-l2-intern",
+        "dataset": "local-artifacts/assay-transfer-record-level-v25-bioavailability-ma-l2-intern",
         "dataset_revision": "b07ad9337a7f97a75db5770b521fd5a8779f8620",
     },
     "L3": {
-        "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v25-bioavailability-ma-l3-best",
+        "model": "local-artifacts/intern-s1-mini-assay-transfer-record-level-v25-bioavailability-ma-l3-best",
         "revision": "089199baaac086dfb97f5944f520717c69044a94",
-        "dataset": "jiosephlee/assay-transfer-record-level-v25-bioavailability-ma-l3-intern",
+        "dataset": "local-artifacts/assay-transfer-record-level-v25-bioavailability-ma-l3-intern",
         "dataset_revision": "b6901b3e7eafca06835a2b9d5b60135ca2432521",
     },
     "L4": {
-        "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v25-bioavailability-ma-l4-best",
+        "model": "local-artifacts/intern-s1-mini-assay-transfer-record-level-v25-bioavailability-ma-l4-best",
         "revision": "0c3c134a33ef4b67cba78fad228b485ccbd0d05b",
-        "dataset": "jiosephlee/assay-transfer-record-level-v25-bioavailability-ma-l4-intern",
+        "dataset": "local-artifacts/assay-transfer-record-level-v25-bioavailability-ma-l4-intern",
         "dataset_revision": "2c14fa0784e03125a89d4d52636023b7e3cd07e2",
     },
     "L6": {
-        "model": "jiosephlee/intern-s1-mini-assay-transfer-record-level-v25-bioavailability-ma-l6-best",
+        "model": "local-artifacts/intern-s1-mini-assay-transfer-record-level-v25-bioavailability-ma-l6-best",
         "revision": "6c5f76d6afafd0517c7630e8fc374915d4c2b98a",
-        "dataset": "jiosephlee/assay-transfer-record-level-v25-bioavailability-ma-l6-intern",
+        "dataset": "local-artifacts/assay-transfer-record-level-v25-bioavailability-ma-l6-intern",
         "dataset_revision": "7df75e575fb60c297f02b4b21c75b470ae1ec261",
     },
 }
@@ -282,7 +282,7 @@ def _load_records(levels: Sequence[str] = LEVELS) -> tuple[list[dict[str, Any]],
     accepted, dataset_files = _dataset_inputs(levels)
     source_fields, source_union = _source_fields()
     if file_sha256(LEVEL_MAPPING) != LEVEL_MAPPING_RECEIPT["sha256"]:
-        raise ValueError("Tianang-derived Oral source UID mapping is inconsistent")
+        raise ValueError("Baseline-derived Oral source UID mapping is inconsistent")
     core = {
         "source_row_uid", "canonical_record_id", "canonical_smiles", "source_id",
         "pair_bucket_key", "assay_transfer_eligible", "measurement_kind",
@@ -301,7 +301,7 @@ def _load_records(levels: Sequence[str] = LEVELS) -> tuple[list[dict[str, Any]],
         uid = str(row["source_row_uid"])
         value = (f"L{int(row['level'])}", str(row["family_key"]))
         if uid in level_by_uid and level_by_uid[uid] != value:
-            raise ValueError(f"conflicting Tianang level mapping for {uid}")
+            raise ValueError(f"conflicting Baseline level mapping for {uid}")
         level_by_uid[uid] = value
     output, mapped_counts = [], {level: 0 for level in levels}
     for raw in pq.read_table(STAGE3, columns=columns).to_pylist():
