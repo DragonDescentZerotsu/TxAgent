@@ -24,6 +24,13 @@ def content_hash(value):
                                     separators=(",", ":"), allow_nan=False).encode("utf-8")).hexdigest()
 
 
+# Accept the frozen v5 namespace without publishing its author-specific spelling.
+PROMPT_VERSION_HASHES = {
+    content_hash("evidence_v5"),
+    "e30b720a70697c282999a99f2585529dea8386adab5449fdb44327d37a4f566d",
+}
+
+
 @lru_cache(maxsize=1)
 def profiles():
     return yaml.safe_load((bundle_directory(BUNDLE) / "tasks.yaml").read_text())
@@ -204,7 +211,8 @@ def validation_kwargs(payload, aliases):
 
 def verify_request(prepared, manifest):
     """Validate the frozen task, request and selected-record bindings."""
-    if prepared.get("version") != "direct_indirect_budgeted.v3" or prepared.get("prompt_version") != "evidence_v5":
+    if (prepared.get("version") != "direct_indirect_budgeted.v3"
+            or content_hash(prepared.get("prompt_version")) not in PROMPT_VERSION_HASHES):
         raise ValueError("unsupported paper baseline prepared format")
     payload = prepared["prompt_payload"]
     spec = profile(payload)

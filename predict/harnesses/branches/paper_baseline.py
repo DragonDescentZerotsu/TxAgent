@@ -35,7 +35,7 @@ def prepare(source_root, source_batch, target, indices=None, *, input_map=None):
         raise ValueError('preparation requires a separate output root')
     original = json.loads((source_batch / 'experiment_manifest.json').read_text())
     if (original.get('version') != 'direct_indirect_budgeted.v3'
-            or original.get('prompt_version') != 'evidence_v5'
+            or prompt.content_hash(original.get('prompt_version')) not in prompt.PROMPT_VERSION_HASHES
             or original.get('visibility_mode') != 'deployment_visible_prefetched'
             or original.get('assessment_required') or original.get('feature_inputs_only')
             or original.get('skip_tool_prefetch') or original.get('migration')):

@@ -50,7 +50,7 @@ def test_native_labels_and_conditioned_tdc_profiles(task, benchmark):
         assert paper.profile(prepared['prompt_payload']) != paper.profiles()['conditioned'][task]
 
 
-@pytest.mark.parametrize('change', ['message', 'payload', 'schema', 'manifest', 'response_hash', 'receipt', 'aliases', 'raw_response'])
+@pytest.mark.parametrize('change', ['message', 'payload', 'schema', 'manifest', 'response_hash', 'receipt', 'aliases', 'raw_response', 'version'])
 def test_changed_requests_and_failed_responses_are_not_reusable(change):
     p, m, o = example()
     if change == 'message': p['messages'][0]['content'] += 'changed'
@@ -61,6 +61,7 @@ def test_changed_requests_and_failed_responses_are_not_reusable(change):
     if change == 'receipt': o['llm']['structured_output_validation']['valid'] = False
     if change == 'aliases': p['card_alias_map']['C001'] = 'foreign record'
     if change == 'raw_response': o['llm']['raw_content'] = '{"different": true}'
+    if change == 'version': p['prompt_version'] = 'unknown_v5'
     with pytest.raises(ValueError): paper.verify_prepared(p, m, o)
 
 
