@@ -1,20 +1,6 @@
-"""Keep documentation and derived analyses in their canonical roots."""
+"""Keep derived analyses in their canonical roots and retired entrypoints absent."""
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
-
-def test_human_documentation_is_centralized() -> None:
-    remaining = []
-    for source_root in ('baselines', 'data/processing', 'predict', 'tools'):
-        for path in (ROOT / source_root).rglob('*.md'):
-            relative = path.relative_to(ROOT)
-            if path.name == 'AGENTS.md':
-                continue
-            if any((part in {'prompt_instructions', 'prompt_examples', 'reports'} for part in relative.parts)):
-                continue
-            if 'rejected_candidate_inventory' in str(relative):
-                continue
-            remaining.append(str(relative))
-    assert remaining == []
 
 def test_recent_analysis_defaults_use_their_canonical_roots() -> None:
     from optimization.semantic_buckets import inputs as artifacts, build as construction

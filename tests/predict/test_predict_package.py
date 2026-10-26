@@ -34,7 +34,7 @@ def test_public_harness_cli_selects_the_evidence_plan(monkeypatch):
         return 0
 
     monkeypatch.setattr(runner, "mode_main", record)
-    monkeypatch.setattr(branches_cli, "run", lambda argv: record("full_flat", argv))
+    monkeypatch.setattr(flat, "run", lambda argv: record("full_flat", argv))
     assert branches_cli.main(["--task", "bbb_martins"]) == 0
 
     assert captured == [

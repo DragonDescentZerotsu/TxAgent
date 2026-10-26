@@ -46,6 +46,11 @@ and metrics. It prints a report and does not modify the batch. This verifies
 saved artifacts; it does not rebuild candidates or independently re-audit gold
 labels, providers or costs.
 
+Both the original frozen v5 protocol tag and the neutral publication tag are
+accepted. The legacy spelling is pinned by its digest; arbitrary v5 names are
+rejected. Neither tag conversion nor manifest rewriting is needed to read an
+original baseline batch, and message/content hashes remain enforced.
+
 Rebuild candidates from a restored paper batch and its hash-bound source inputs:
 
 ```bash
