@@ -104,7 +104,9 @@ existing Evidence functionality and its source records rather than duplicating i
 
 The compact result export can rebuild tables and figures by itself. Prediction,
 retrieval and training need the pinned inputs below; this repository is not yet
-a complete anonymous, independently installable reproduction release.
+a self-contained reproduction release. The checked-in file snapshot has passed
+its anonymity review; separately delivered inputs and full training environments
+remain to be prepared.
 
 | Purpose | Inputs to retain | Existing restoration/execution path |
 | --- | --- | --- |
@@ -131,8 +133,10 @@ difference between cached prediction and fresh scoring, and the
 
 Preserve original checkpoint and manifest bytes: saved runs bind their hashes.
 Runtime relocation uses the existing explicit directory/input-map options.
-Historical path strings, package provenance and compressed archives require
-separate anonymity review before distributing them. The portable execution
+Historical path strings, package provenance and compressed archives in external
+input bundles require separate anonymity review before distributing them.
+Compatibility links for unexpanded legacy evidence releases can remain unresolved
+in a fresh clone until their pinned archives are restored. The portable execution
 exporter is not an anonymizer; do not publish its output without that review.
 
 ## Existing FINAL collection

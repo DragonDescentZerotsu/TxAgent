@@ -171,3 +171,7 @@ CLAUDE.md
 # Local assistant skills and context are not publication inputs.
 /.agents/
 /.claude/
+
+# Local Python package build products.
+/build/
+*.egg-info/
