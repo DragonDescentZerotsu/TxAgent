@@ -68,25 +68,9 @@ are rejected. Resume an interrupted candidate or finalize explicitly through
 
 ## Frozen LLM baseline
 
-The shared prediction CLI can verify saved paper baseline batches offline:
-
-```bash
-python -m predict.harnesses.branches --verify-paper-baseline /path/to/frozen/batch
-```
-
-See the [frozen prompt contract](../../predict/prompts/README.md#frozen-paper-baseline)
-for commands and verification limits. The same entry point supports
-`--prepare-paper-baseline` to rebuild Neighbor-fill candidates,
-`--bundle-paper-baseline` to export portable prepared inputs, and
-`--run-paper-baseline` for ordinary API execution and checkpoint recovery.
-Preparation retains frozen queries/priors/configuration and applies the approved
-retrieval rules; it does not rebuild train/valid/test splits. A portable execution
-bundle does not include the large indexes needed for a fresh candidate rebuild.
-For moved full indexes or absolute TDC source paths, preparation accepts an
-explicit `--input-map` in place of `--source-root`; its files are checked against
-the frozen hashes. The prompt guide describes the required source-query snapshot
-and mapping format. No repository-wide path aliases or manifest rewrites are needed.
-The same execution command accepts a single OpenRouter Batch provider with an
-explicit journal, or ordinary API retry races and bounded stage requeues.
-See the prompt guide for configuration, recovery and accounting boundaries.
-The FINAL defaults are not the paper baseline recipe.
+Use `python -m predict.harnesses.branches` with the explicit paper-baseline mode.
+The [frozen prompt contract](../../predict/prompts/README.md#frozen-paper-baseline)
+owns commands for offline verification, candidate preparation, portable bundles,
+API/Batch execution and recovery, including relocation and dependency requirements.
+These preserve frozen paper messages and apply the approved retrieval rules;
+the FINAL defaults are not the paper baseline recipe.

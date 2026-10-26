@@ -1,6 +1,6 @@
 # A small core for many experiments
 
-[发布整合状态（中文）](release_refactor.md)记录本地 baseline 的迁移进度、保留的科学规则和待验收项目。
+[发布整合状态（中文）](release_refactor.md)记录交接分支、已验收范围、保留的科学规则和待补依赖。
 
 Keep the implementation small enough that a reader can follow an experiment
 from its command to its evidence, prompt and result. Put reusable scientific
@@ -103,72 +103,11 @@ Reuse still requires the exact input, prompt and model bindings.
 
 ## Canonical semantic utility scorer
 
-`optimization.semantic_buckets.bucket_scoring` is the maintained
-engine. Bradley–Terry fitting and its ranking executables are retired. The
-older V5 sliding and V6 shelf-calibration executables are also retired;
-only the latest maintained construction, refinement and scoring commands remain.
-Semantic intermediates were removed; selected releases and required pinned inputs remain.
-Grouping, refinement, eligibility and publication retain their distinct jobs.
-
-Pass 1 scores independent batches. Pass 2 sorts each task-level by descending
-Pass-1 utility, breaking ties by bucket ID. It divides that order into batches
-and streams waves of parallel chains. Completed chains supply their last
-`overlap` candidates as locked anchors for the next wave. The first
-`advance_after` completed chains freeze the anchor decision; later completions
-cannot change it. All scheduled candidates must still complete.
-
-Automatic mode uses one reference across **all requested task-levels**:
-`largest bucket count / max_chains`. Each task-level chooses a power-of-two
-chain count that makes its count per chain closest to that reference, capped
-by available batches. Manual mode uses `--chains N`, with optional
-`--chain-count TASK:LEVEL=N` overrides. Defaults are batch sizes 12/12,
-fanout/averaging 1/1 then 3/3, overlap 2 and advancement after 2 chains.
-Averaging uses the first required valid replicas and the existing aggregation
-and representative-rationale rules; late receipts are retained.
-
-Inputs are an explicit JSON descriptor. Paths are relative to the descriptor:
-
-```json
-{
-  "tasks": {
-    "dili": {
-      "target": "drug-induced liver injury",
-      "world": "world.parquet",
-      "payloads": "bucket_prompt_payloads.json.gz",
-      "levels": ["L2", "L3"]
-    }
-  }
-}
-```
-
-The world needs `level` and `semantic_bucket_id`. Payloads are the existing
-bucket-ID-to-card mapping with identity/source components and sample records;
-`source_labels` can optionally name evidence families. Resolve scientific
-inputs through the selected manifests. Preparation reads existing cards and
-writes schedules, reviews, bindings and hashes; it makes no provider probes or
-completion requests. Execution uses the shared provider pool, records actual
-served models/routes and replica receipts, and rejects changed inputs, code,
-prompts or provider configurations on resume.
-
-```bash
-python -m optimization.semantic_buckets.bucket_scoring prepare \
-  --input-manifest inputs.json --root outputs/analysis/semantic_buckets/new-run \
-  --chain-mode auto --max-chains 8 \
-  --pass1-provider-config provider.json --pass2-provider-config provider.json
-python -m optimization.semantic_buckets.bucket_scoring run --through-pass 1 \
-  --root outputs/analysis/semantic_buckets/new-run
-python -m optimization.semantic_buckets.bucket_scoring run \
-  --root outputs/analysis/semantic_buckets/new-run
-```
-
-Each pass accepts its own batch size, fanout, averaging count and provider JSON
-at preparation. A provider JSON can declare `fixed_replica_counts` for a pinned
-provider mix; its positive counts must sum to that pass's fanout. Otherwise
-replicas use the shared pool's dynamic routing. Local DGX and OpenRouter use
-`predict/api_client/transport.py` for SDK construction and
-`predict/api_client/pool.py` for routing/capacity. Provider JSONs are under
-`predict/api_client/providers/`. Finished scores remain unselected candidates;
-publication is a separate operation.
+`optimization.semantic_buckets.bucket_scoring` owns batched scoring, sorted
+sliding rescoring and replica aggregation. The [semantic bucket guide](../optimization/semantic_buckets/README.md#score)
+is the single reference for descriptors, multi-pass behavior, locked anchors,
+chain/replica controls, seeded refreshes and publication. The recipes under
+`experiments/scoring/` supply concrete settings to that shared implementation.
 
 ## Physical UID selections
 
@@ -227,7 +166,8 @@ Query-prior and structure-only predictors do not consume evidence UIDs.
   `summarize_sweep.py` preserves selection by validation AUROC, then macro F1,
   then lower threshold. Training remains in its existing baseline command.
 
-All recipes accept extra capability arguments. Use a fresh output identity
-when changing scientific settings. These recipes were syntax-checked and the
-scoring, UID and sweep paths tested with fixtures; no live inference, training
-or active-release publication was launched for this refactor.
+Use a fresh output identity when changing scientific settings. Recipe-specific
+environment variables and forwarded arguments are documented by their capability
+guides. Scoring, UID and sweep checks used fixtures; the later paper-baseline
+replay, limited retraining and live smoke are recorded in the
+[integration acceptance status](release_refactor.md#baseline-配置与验收).

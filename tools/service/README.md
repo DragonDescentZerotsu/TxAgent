@@ -1,8 +1,14 @@
 # Resident molecular tool service
 
-`tools.service.app` exposes the three frozen molecular tools used by all retrieval methods. Retrieval code
+`tools.service.app` exposes three frozen molecular tools for workflows that request tool evidence. Retrieval code
 selects neighbors; this service only computes deterministic molecule and molecule-pair evidence. Morgan,
 MiniMol, coverage-based, and future retrievers therefore share the same prefetch/cache path.
+
+The service is stopped during the release handoff. Frozen paper-baseline execution
+uses embedded priors and does not require starting it. Resume only when a workflow
+explicitly needs tool computation; restore an offline cache copy onto local disk
+and set `TXAGENT_TOOL_CACHE_PATH` before launch. Keep the shared archive as a backup,
+not the active SQLite/WAL database.
 
 ## Implementation map
 
@@ -19,16 +25,16 @@ tools/service/runtime.py
   Native-library thread caps applied before model initialization.
 tools/service/molgpka_predictor.py
   Process-resident acid/base MolGpKa networks reused by molecule_properties.
-predict/api_client/client.py
+predict/tools/client.py
   Batch-capable client with backward-compatible fallback to individual invokes.
 predict/harnesses/branches/visibility.py
   Retriever-agnostic assembly of the fixed per-sample tool bundle.
 ```
 
 Keep retrieval selection outside this package. A new retriever should emit the common retrieval payload and
-reuse `identity_blind` plus this service; it should not add another cache or tool-prefetch implementation.
+reuse `predict.harnesses.branches.visibility` plus this service; it should not add another cache or tool-prefetch implementation.
 
-## Production launch on node002
+## Optional launch on a large CPU host
 
 Activate the environment containing the service dependencies before these commands.
 
@@ -64,8 +70,8 @@ An empty `TXAGENT_TOOL_CACHE_PATH` disables the persistent layer. Cache keys inc
 debug mode, MolGpKa availability, pH, and an implementation namespace. Bump the namespace in
 `tools/service/registry.py` whenever an output-semantic change does not already require a tool version bump.
 
-The OpenAI-compatible client automatically falls back to individual calls when it reaches an older service
-without `/tools/batch`, permitting rolling upgrades. `identity_blind.prepare_harness_prefetched_retrieval`
+`ToolServiceClient` automatically falls back to individual calls when it reaches an older service
+without `/tools/batch`, permitting rolling upgrades. `visibility.prepare_harness_prefetched_retrieval`
 builds batches solely from the common retrieval payload (`query`, `groups`, `neighbors`); retriever-specific
 branches must not duplicate this logic.
 

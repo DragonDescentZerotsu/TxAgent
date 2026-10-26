@@ -144,7 +144,11 @@ exporter is not an anonymizer; do not publish its output without that review.
 The following tables retain the branch's separately selected FINAL arms and
 caveats. They are not substituted for the paper's user-reported Ours values above.
 
-Synchronize these DeepSeek and Luna tables with the `finalizing` skill whenever a completed result is explicitly promoted. Each value must match a complete FINAL test arm and be documented in its report. A dash means no completed FINAL arm is recorded for that model and selection. Starling means Gold-v1; TDC includes the version pinned by each arm. Preserve older arms for audit and do not silently replace a selected cell with the highest score across prompts or versions.
+Use the [FINAL update procedure](finalize.md#updating-the-final-files) for an
+explicitly approved result promotion. Each value must match a complete test arm
+and its report. Starling means Gold-v1; TDC retains the version pinned by each
+arm. Preserve older arms and never silently replace a selected cell with the
+highest score across prompts or versions.
 
 ### DeepSeek
 

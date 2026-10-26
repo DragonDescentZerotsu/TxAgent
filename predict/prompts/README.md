@@ -193,31 +193,16 @@ journal, to resume elsewhere; exporting a fresh input bundle intentionally does
 not copy jobs or predictions. The migrated Batch protocol and retry paths have
 offline acceptance coverage, not a new paid endpoint-availability check.
 
-Historical matched Direct-3 is outside the current manuscript migration scope.
-The paper's k=3 ML KNN and three-neighbor RASAR remain separate supported capabilities.
-The paper baseline reuses frozen priors; it does not regenerate them. Each source
-`prepared.json` already embeds the exact model-visible analysis in
-`prompt_payload.query_prior`. Preparation preserves it, and the portable bundle
-carries both the source snapshot and the new prepared request. The historical
-`query_prior_source` paths are provenance, not files opened during prepared
-execution. None means no retrieved records; it still uses the same cached prior
-as Direct and Direct+Indirect. Do not replace a frozen prior with a fresh model output and describe
-that as the same paper input.
+Frozen priors come from each source `prepared.json`'s `prompt_payload.query_prior`.
+None omits retrieved records but uses the same cached prior as Direct and
+Direct+Indirect. Historical `query_prior_source` paths are provenance; prepared
+execution does not open them or require the old single-analysis cache/progressive
+runtime. Preserve original caches for audit until their source archive is verified
+and distributed. The existing `six_task_query_priors.py` and `tdc_query_priors.py`
+generate native/FINAL priors; their outputs do not replace these frozen inputs.
 
-For rebuilding candidates, retain the source manifest, prepared request, output
-and evaluation files listed above, plus the mapped cohort/index inputs. No separate
-historical progressive runtime or single-analysis cache is needed for this path.
-Keep those original cache files for provenance until the source archive has been
-verified and distributed; a working execution bundle alone is not authorization
-to delete them. The local compact prior inventory is an audit artifact, not an
-additional runtime cache format.
-
-Evidence's `six_task_query_priors.py` and `tdc_query_priors.py` remain the existing
-capabilities for generating native/FINAL priors. Their defaults are not substituted
-for main's frozen paper baseline inputs. A fresh baseline prior-generation protocol
-is outside this migration's frozen-result reproduction scope. This mode does not
-replace the default FINAL scheduler or its named-cache protocol. Offline transport
-and recovery tests are not a fresh model-performance replication. Candidate
-rebuilding still requires the original full retrieval inputs; the portable bundle
-only makes already prepared execution self-contained. Full data distribution,
-anonymization and full-cohort validation remain release gates.
+Historical matched Direct-3 LLM is outside the manuscript migration scope; k=3
+ML KNN and three-neighbor RASAR remain supported. This explicit paper mode leaves
+the default FINAL scheduler and named-cache contract intact. For completed smoke
+checks and remaining distribution/full-cohort limitations, see the
+[integration acceptance status](../../docs/release_refactor.md).

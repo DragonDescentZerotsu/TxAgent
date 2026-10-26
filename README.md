@@ -42,7 +42,8 @@ Morgan KNN, MiniMol and RASAR use the shared
 [baseline recipes](experiments/baselines/README.md), with explicit frozen inputs
 and the original validation-selection settings.
 
-The [integration status](docs/release_refactor.md) distinguishes verified paper
-migrations from remaining independent-environment, input-distribution and
-anonymous-publication checks. See the [reproduction inputs](docs/results.md#reproduction-inputs-and-distribution)
-for what each existing restore or execution command requires.
+The collaborator handoff is on `merge_release_v1`; main has not been replaced.
+The [integration status](docs/release_refactor.md) records completed acceptance
+and remaining input distribution and provenance work. See the
+[reproduction inputs](docs/results.md#reproduction-inputs-and-distribution)
+for what each restore or execution command requires.
