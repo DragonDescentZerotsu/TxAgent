@@ -157,6 +157,34 @@ def test_runtime_filters_before_top_k(path, query, other, policy, expected):
     assert result['retrieval_policy']['retrieval_parent_refinement_policy'] == identity.PARENT_REFINEMENT_POLICY
 
 
+@pytest.mark.parametrize('task', identity.TASKS)
+@pytest.mark.parametrize('representative', ['O=c1cccc[nH]1', 'Oc1ccccn1'])
+def test_paper_legacy_group_filters_actual_structures_before_top_k(task, representative):
+    import pickle
+    from predict.retrieval.paper_baseline import build_evidence_view, retrieve_candidates
+    from predict.retrieval.policies import standardize_smiles_and_fp
+    keto, enol, query = 'O=c1cccc[nH]1', 'Oc1ccccn1', 'COc1ccccn1'
+    assert identity.leakage_identity(task, keto)['leakage_group'] == identity.leakage_identity(task, enol)['leakage_group']
+    rows = [dict(canonical_smiles=smi, assay_chembl_id='test', source_record_examples=[
+        dict(evidence_family='test', evidence_family_level=level)]) for smi in (keto, enol) for level in (1, 2)]
+    index = dict(source={**SOURCE, 'retrieval_identity_task': task},
+        molecules=[dict(candidate(representative), molecule_chembl_id='frozen-group')],
+        fingerprints=[standardize_smiles_and_fp(representative)[2]], group_to_molecule_indices={},
+        evidence_by_molecule_group={'frozen-group': {'test': rows}}, tdc_merged=True)
+    before = pickle.dumps(index)
+    view = build_evidence_view(index)
+    assert pickle.dumps(index) == before
+    pool = retrieve_candidates(query, view, split_scheme='scaffold', candidate_molecules=1,
+                              min_similarity=0, indirect_identity_policy='scaffold_disjoint')
+    # The enol shares the query's Murcko scaffold; the keto does not. This must
+    # hold regardless of which frozen representative happened to be chosen.
+    for records in pool.values():
+        assert len(records) == 1 and records[0]['record_smiles'] == keto
+    parent_pool = retrieve_candidates(query, view, split_scheme='scaffold', candidate_molecules=2,
+                                     min_similarity=0, indirect_identity_policy='parent_disjoint')
+    assert {r['record_smiles'] for r in parent_pool['indirect']} == {keto, enol}
+
+
 @pytest.mark.parametrize('path', ['indexed', 'branches'])
 def test_monatomic_fingerprint_collision_cannot_fill_neighbor_budget(path):
     from predict.retrieval.features import STRUCTURAL_ELIGIBILITY_VERSION

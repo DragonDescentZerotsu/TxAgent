@@ -2,12 +2,13 @@
 from collections import defaultdict
 
 from predict.prompts.paper_baseline import content_hash
-from predict.retrieval.policies import identity_from_record, normalize_molecule_identity, standardize_smiles_and_fp
+from predict.retrieval.policies import bemis_murcko_scaffold, identity_from_record, normalize_molecule_identity, standardize_smiles_and_fp
 from predict.retrieval.retrieve import retrieve_neighbors
 
 
 def build_evidence_view(index):
     """Partition each physical assay's cards BEFORE applying identity policies."""
+    index = _separate_legacy_structures(index)
     positions = {str(m['molecule_chembl_id']): i for i, m in enumerate(index['molecules'])}
     parents, unresolved = {}, []
     for molecule in index['molecules']:
@@ -40,6 +41,52 @@ def build_evidence_view(index):
                 groups[group].append(positions[str(molecule)])
     return {**index, 'group_to_molecule_indices': groups, 'evidence_by_molecule_group': evidence,
             'budgeted_parent_groups': parents, 'budgeted_unresolved_parent_ids': sorted(unresolved)}
+
+
+def _separate_legacy_structures(index):
+    """Do not let a coarse frozen group's representative decide another structure's eligibility."""
+    source = index.get('source', {})
+    contract = source.get('retrieval_identity_contract')
+    if not contract:
+        return index
+    from predict.retrieval.task_identity import leakage_identity, validate_contract
+    task = source.get('retrieval_identity_task')
+    validate_contract(task, contract)
+
+    def signature(smiles):
+        identity = normalize_molecule_identity(smiles)
+        if identity.status != 'ok':
+            raise ValueError('Legacy evidence row lacks a reliable source structure')
+        return identity.parent_connectivity_key, bemis_murcko_scaffold(identity.parent_smiles)
+
+    molecules, fingerprints = list(index['molecules']), list(index['fingerprints'])
+    by_id = {str(m['molecule_chembl_id']): m for m in molecules}
+    evidence = {}
+    for native, assays in index['evidence_by_molecule_group'].items():
+        molecule = by_id[str(native)]
+        variants = {signature(molecule['canonical_smiles']): native}
+        for group, rows in assays.items():
+            for row in rows:
+                smiles = row.get('canonical_smiles') or molecule['canonical_smiles']
+                key = signature(smiles)
+                if key not in variants:
+                    canonical, inchi, fp = standardize_smiles_and_fp(smiles)
+                    if fp is None:
+                        raise ValueError('Legacy evidence row lacks a valid fingerprint')
+                    variant = str(native) + ':structure:' + content_hash(key)
+                    identity = leakage_identity(task, canonical)
+                    molecules.append({**molecule, 'molecule_chembl_id': variant,
+                        'canonical_smiles': canonical, 'standard_inchi_key': inchi,
+                        'molecule_identity': normalize_molecule_identity(canonical).to_dict(),
+                        'retrieval_identity_source_smiles': canonical,
+                        'retrieval_leakage_group': identity['leakage_group'],
+                        'retrieval_scaffold_leakage_group': identity['scaffold_leakage_group'],
+                        'retrieval_scaffold_smiles': identity['bemis_murcko_scaffold']})
+                    fingerprints.append(fp)
+                    variants[key] = variant
+                evidence.setdefault(variants[key], {}).setdefault(group, []).append(row)
+    return {**index, 'molecules': molecules, 'fingerprints': fingerprints,
+            'evidence_by_molecule_group': evidence}
 
 
 def retrieve_candidates(smiles, view, *, split_scheme, candidate_molecules=128, min_similarity=.3,

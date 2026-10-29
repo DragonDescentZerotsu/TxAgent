@@ -111,6 +111,11 @@ The new parent rules apply during candidate filtering before ranking/budget fill
 DILI/Carcinogens retain the declared parent refinement but now use the shared
 bond-preserving Murcko scaffold check. Frozen topology groups do not filter new
 retrieval; no split is regenerated. Historical requests and results remain unchanged.
+Some legacy groups contain evidence rows with different parent connectivity or
+Murcko scaffolds. Preparation separates those structures and computes their own
+fingerprints before eligibility checks and top-k selection; a group's representative
+cannot admit same-scaffold evidence from another structure. Equivalent variants
+keep their original group, and the frozen index is never rewritten.
 
 Execute a prepared batch with the shared provider pool (this calls the model):
 
