@@ -46,7 +46,7 @@ release merely because a candidate finished. This guide and the capability READM
 | Capability | Maintained owner | Inputs and outputs |
 | --- | --- | --- |
 | Query prediction | `predict/harnesses/branches/` | Frozen query/cache/selection, prompt and prior → requests, resumable predictions and traces |
-| Paper LLM baseline | `predict/harnesses/branches/paper_baseline.py`, `predict/prompts/paper_baseline.py` | Restored paper inputs → new candidate selection, portable prepared-input bundles, embedded frozen query priors (no regeneration), exact messages, shared API execution, resumable native predictions and offline verification |
+| Paper LLM baseline | `predict/harnesses/branches/paper_baseline.py`, `predict/prompts/paper_baseline.py` | Restored paper inputs → new candidate selection, portable prepared-input bundles, embedded frozen query priors (no regeneration), protocol-bound messages, shared API execution, resumable native predictions and offline verification |
 | Paper record controls | `predict/retrieval/paper_baseline.py`, `optimization/selection/record_budget.py` | Frozen source index / TDC train labels → shared identity filtering and deterministic record-budget selection |
 | Model transport and retries | `predict/api_client/{client,pool,batch,retry}.py` | Shared request/response handling, durable Batch journals and cancellable first-valid retry races; paper execution supplies native validators and bounded stage requeues |
 | Parent/scaffold exclusions | `predict/retrieval/policies.py`, `task_identity.py` | Molecular identities and declared task policy → candidate eligibility; never rewrites benchmark splits |
@@ -62,12 +62,15 @@ release merely because a candidate finished. This guide and the capability READM
 The [integration record](release_refactor.md) owns the migration status; a mapped
 capability is not a claim that all its historical experiments are distributable.
 
-The paper baseline adapter retains main's frozen messages, native labels and
-prepared/output format. Evidence FINAL retains its own prompt and execution
-contract. The two paths share provider transport, response validation and
-molecular identity filtering; substituting FINAL templates or checkpoints would
-change the paper experiment. The paper-specific modules do not introduce another
-SDK client, task-specific runner or prior generator. They support the manuscript's
+The paper baseline adapter retains main's prompt templates, native labels and
+prepared/output format. `legacy_paper` additionally enforces exact original inputs;
+`murcko` permits evidence and message changes under the revised retrieval rules.
+Evidence FINAL retains its own prompt and execution contract. The two paths share
+provider transport, response validation and identity-filtering code, but source
+contracts and frozen cache contents still determine which rules apply; see the
+[retrieval contract](../predict/retrieval/assay_reranking/CACHE_LAYOUT.md#current-exclusion-rules).
+Substituting FINAL templates or checkpoints would change the paper experiment.
+The paper-specific modules do not introduce another SDK client, task-specific runner or prior generator. They support the manuscript's
 None / Direct50 / Direct50+Indirect50 settings; matched Direct-3 LLM is not a
 maintained migration target.
 

@@ -42,12 +42,13 @@ source-backed preparation rejects missing source identity rather than substituti
 a displayed parent. Mixture measurements remain attached to the complete source.
 
 Version 3 unifies retrieval scaffold checks, including DILI/Carcinogens. Their
-frozen `MURCKO_TOPOLOGY_` fields remain provenance/grouping metadata; benchmark
-splits and gold construction are unchanged. Historical baseline predictions and
-the October scaffold-indirect follow-up used the earlier topology gate. Explicit
+frozen `MURCKO_TOPOLOGY_` fields remain provenance/grouping metadata in the default
+`murcko` mode; benchmark splits and gold construction are unchanged. Historical
+DILI/Carcinogens baseline predictions and the October scaffold-indirect follow-up
+used the earlier topology gate. Explicit
 paper-baseline `legacy_paper` preparation preserves that old behavior, including
 coarse parent groups and group representatives, and requires exact frozen-input
-parity. See the [protocol switch](../../prompts/README.md#frozen-paper-baseline).
+parity. See the [protocol switch](../../prompts/README.md#retrieval-protocol-selection).
 It does not reinterpret FINAL's frozen cache releases. New
 preparations require a new run identity. Reading a frozen ranked cache cannot
 recover candidates excluded when that cache was built.

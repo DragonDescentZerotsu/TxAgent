@@ -72,5 +72,6 @@ Use `python -m predict.harnesses.branches` with the explicit paper-baseline mode
 The [frozen prompt contract](../../predict/prompts/README.md#frozen-paper-baseline)
 owns commands for offline verification, candidate preparation, portable bundles,
 API/Batch execution and recovery, including relocation and dependency requirements.
-These preserve frozen paper messages and apply the approved retrieval rules;
-the FINAL defaults are not the paper baseline recipe.
+Use `--retrieval-protocol legacy_paper` to reproduce frozen paper inputs exactly.
+The default `murcko` mode preserves prompt templates and generation settings, but
+retrieved evidence and full messages can change. FINAL defaults are a separate recipe.

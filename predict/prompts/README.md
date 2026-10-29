@@ -61,11 +61,13 @@ python -m predict.harnesses.branches \
   --run-name paper-baseline-recheck --query-indices 0 10 20
 ```
 
+### Retrieval protocol selection
+
 Choose the retrieval protocol explicitly when preparing a paper baseline:
 
 | `--retrieval-protocol` | Behavior |
 | --- | --- |
-| `murcko` (default) | Approved parent refinement, bond-preserving ordinary Murcko, and actual evidence structures separated before filtering/ranking |
+| `murcko` (default) | Approved parent refinement where declared by the source index, bond-preserving ordinary Murcko, and actual evidence structures separated before filtering/ranking |
 | `legacy_paper` | Frozen paper identity behavior: coarse DILI/Carcinogens parent/topology groups and their original representative structures; generic tasks retain their original identity checks |
 
 `legacy_paper` rebuilds candidates from the frozen index; it does not copy selected
@@ -127,15 +129,11 @@ filtering and preserves the original TDC train-label merge and heldout filter.
 ordering; historical molecule-cap and group-balanced evidence preparations are rejected.
 The frozen molecule-cap marker in None manifests remains readable only with empty evidence; source records are projected through the existing
 minimal-evidence helper. The frozen query, condition and cached prior are retained.
-With `murcko`, the new parent rules apply before ranking/budget fill;
-DILI/Carcinogens retain the declared parent refinement but now use the shared
-bond-preserving Murcko scaffold check. Frozen topology groups do not filter this
-mode; neither protocol regenerates splits. Historical requests and results remain unchanged.
-Some legacy groups contain evidence rows with different parent connectivity or
-Murcko scaffolds. Murcko preparation separates those structures and computes their own
-fingerprints before eligibility checks and top-k selection; a group's representative
-cannot admit same-scaffold evidence from another structure. Equivalent variants
-keep their original group, and the frozen index is never rewritten.
+Neither protocol regenerates splits or rewrites frozen indexes. Under `murcko`,
+evidence structures with different parent connectivity or Murcko scaffolds receive
+their own fingerprints before filtering/top-k/budget fill; equivalent variants keep
+the original group. Detailed eligibility rules live in the
+[retrieval contract](../retrieval/assay_reranking/CACHE_LAYOUT.md#current-exclusion-rules).
 
 Execute a prepared batch with the shared provider pool (this calls the model):
 

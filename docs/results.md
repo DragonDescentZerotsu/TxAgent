@@ -67,7 +67,7 @@ above or establish new six-task means.
 Paper-baseline preparation now offers `--retrieval-protocol legacy_paper` for
 the frozen paper rules and `--retrieval-protocol murcko` (default) for the revised
 rules. Legacy preparation must reproduce the original model inputs exactly;
-new model responses can still vary. See the [shared CLI](../predict/prompts/README.md#frozen-paper-baseline).
+new model responses can still vary. See the [protocol selection guide](../predict/prompts/README.md#retrieval-protocol-selection).
 
 ## Rebuild paper tables
 

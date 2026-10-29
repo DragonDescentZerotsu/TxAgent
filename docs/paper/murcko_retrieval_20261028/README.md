@@ -9,13 +9,15 @@ Direct 50 + scaffold-disjoint Indirect 50。最后一项承接 10 月的独立�
 这组结果单独登记，[冻结论文主表](../baselines.csv)保持原值。train/val/test、标签、
 query condition、cached prior、prompt 模板、生成参数及 Neighbor-fill 配方沿用对应
 原 manifest。检索使用普通、忽略立体构型但保留键型的 Murcko，并保留已批准的
-parent 细化规则；索引里的旧拓扑字段仅保留来源用途。旧分组内实际 parent/Murcko
-身份不同的结构在过滤、排序和预算填充前分别建候选，避免用代表结构替另一条记录
+parent 细化规则；在本次 Murcko 运行中，索引里的旧拓扑字段不再用于检索排除。
+旧分组内实际 parent/Murcko 身份不同的结构在过滤、排序和预算填充前分别建候选，避免用代表结构替另一条记录
 作判断。冻结索引未改写，既有预排除记录和外部排名缓存未自动恢复。
 
 ## 结果
 
-下表为 **原冻结 Macro-F1 → 本次 Macro-F1**；完整精度、消息变化数量及预测分歧见
+下表为 **原冻结 Macro-F1 → 本次 Murcko Macro-F1**。左侧来自旧检索规则下的
+保存预测：前两列设置为原 baseline，最后一列为原 scaffold-indirect 对照；不是本次
+重新运行 legacy 得到的分数。完整精度、消息变化数量及预测分歧见
 [scores.csv](scores.csv)，逐查询标签、预测及请求/响应哈希见
 [predictions.csv](predictions.csv)。这里没有重跑 None、其他四项任务或其他骨干，
 不据此计算新的六任务论文均值。重新推理存在波动，本次也包含已批准的 parent
@@ -76,6 +78,8 @@ provider 配置。执行记录保存 OpenRouter 实际模型 ID；共用池仅�
 若要复现旧论文检索，改用 `--retrieval-protocol legacy_paper` 和新的运行名。
 该选项恢复旧 parent/scaffold 分组及代表结构行为，并要求重建后的证据和模型输入
 与冻结批次一致；本页表格右侧对应 `murcko`，不是 legacy 重跑结果。
+
+## 双协议离线验收
 
 协议开关的离线验收见 [protocol_parity.json](protocol_parity.json)：DILI/Carcinogens
 两 benchmark 的 12 单元、3,069 条 legacy 输入全部与原冻结实验一致；Murcko
