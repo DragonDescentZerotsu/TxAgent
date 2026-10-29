@@ -16,7 +16,7 @@ from rdkit.Chem.MolStandardize import rdMolStandardize
 
 
 IDENTITY_NORMALIZER_VERSION = "rdkit_fragment_parent.v2"
-RELATION_POLICY_VERSION = "fragment_parent_connectivity.v2"
+RELATION_POLICY_VERSION = "fragment_parent_connectivity.v3"
 MOLECULAR_REPRESENTATION_POLICY = "query_parent_evidence_source.v1"
 FP_RADIUS = 2
 FP_BITS = 2048
@@ -317,9 +317,7 @@ def decide_candidate(
         decision = task_identity.decide_candidate(task_query, candidate_record, policy, contract)
         if decision.excluded:
             return decision
-        # The declared task scaffold replaces the generic Murcko gate; retain
-        # exact/component/selected-parent exclusions after parent refinement.
-        normalized_policy = NeighborIdentityPolicy.PARENT_DISJOINT
+        # Refine legacy parent groups, then apply the same Murcko gate as all tasks.
     elif candidate_record.get("retrieval_identity_contract"):
         raise ValueError("Candidate retrieval identity requires an explicit index source contract")
     candidate = identity_from_record(candidate_record)

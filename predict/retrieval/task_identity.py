@@ -113,7 +113,7 @@ def _canonical_parent(smiles):
 
 
 def decide_candidate(query, candidate, policy, contract):
-    """Refine matching parent groups without changing frozen scaffold exclusions."""
+    """Refine frozen parent groups; the caller owns the shared Murcko check."""
     if candidate.get('retrieval_identity_contract') != contract:
         raise ValueError('Missing or mixed candidate retrieval identity contract')
     if policy not in {'parent_disjoint', 'scaffold_disjoint'}:
@@ -123,10 +123,6 @@ def decide_candidate(query, candidate, policy, contract):
     if not candidate.get('retrieval_leakage_group'):
         raise ValueError('Candidate lacks a reliable leakage identity')
     same_parent = query['leakage_group'] == candidate['retrieval_leakage_group']
-    same_scaffold = (policy == 'scaffold_disjoint' and query['scaffold_leakage_group']
-                     and query['scaffold_leakage_group'] == candidate.get('retrieval_scaffold_leakage_group'))
-    if same_scaffold:
-        return CandidateDecision(MoleculeRelation.SAME_SCAFFOLD, True, policy + ':same_tautomer_scaffold_group')
     if same_parent:
         query_parent = _canonical_parent(query.get('source_parent_smiles'))
         candidate_parent = _canonical_parent(

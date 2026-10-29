@@ -21,7 +21,7 @@ in each cache contract (including direct-card chirality).
 
 ### Current exclusion rules
 
-`policies.py` applies `fragment_parent_connectivity.v2` to source identities,
+`policies.py` applies `fragment_parent_connectivity.v3` to source identities,
 independently of scoring and display. The approved rules are:
 
 | Check | Exclusion behavior |
@@ -30,7 +30,7 @@ independently of scoring and display. The approved rules are:
 | Multiple components | Retain exact selected-parent-to-component matching in either direction; do not compare arbitrary secondary components with each other or expand their stereo/scaffold matches |
 | Generic scaffold-disjoint | Additionally compare nonempty, non-chiral Murcko scaffolds of the selected parents, preserving bond types; shared empty acyclic scaffolds do not exclude |
 | Declared DILI/Carcinogens parent-disjoint | Refine only legacy ElementGraph + formula + net-charge groups using completed stereo-free tautomer normalization; distinct completed keys proceed to generic parent checks, while equal keys, missing structures or incomplete enumeration remain excluded |
-| Declared DILI/Carcinogens scaffold-disjoint | Keep the original terminal-pruned ring/linker topology gate; do not replace it with generic Murcko |
+| Declared DILI/Carcinogens scaffold-disjoint | Apply the same bond-preserving, non-chiral selected-parent Murcko gate as other tasks, after the retained parent refinement; do not use frozen topology groups for retrieval exclusion |
 
 The task-specific rules live in `../task_identity.py` and require the index's
 `new_task_tautomer_identity.v2` declaration and matching task metadata. Missing or
@@ -40,6 +40,13 @@ also retain the element eligibility gate before fingerprint ranking.
 Source structures and normalized/effective representations stay separate;
 source-backed preparation rejects missing source identity rather than substituting
 a displayed parent. Mixture measurements remain attached to the complete source.
+
+Version 3 unifies retrieval scaffold checks, including DILI/Carcinogens. Their
+frozen `MURCKO_TOPOLOGY_` fields remain provenance/grouping metadata; benchmark
+splits and gold construction are unchanged. Historical baseline predictions and
+the October scaffold-indirect follow-up used the earlier topology gate. New
+preparations require a new run identity. Reading a frozen ranked cache cannot
+recover candidates excluded when that cache was built.
 
 These runtime rules do not rebuild benchmark splits, restore candidates removed
 by heldout-L1 prefiltering, or regenerate frozen SQLite/UID releases. Existing

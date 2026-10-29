@@ -63,13 +63,36 @@ def test_original_structure_precedes_display_and_missing_structure_is_conservati
     assert identity.decide_candidate(query, row, 'parent_disjoint', identity.VERSION).excluded
 
 
-def test_scaffold_rule_stays_topological_and_skips_enumeration(monkeypatch):
-    monkeypatch.setattr(identity, '_canonical_parent', lambda _: pytest.fail('Already scaffold-excluded'))
-    decision = decide_candidate(normalize_molecule_identity('c1ccccc1'), candidate('C1CCCCC1'),
-                                'scaffold_disjoint', source=SOURCE)
-    assert decision.excluded and decision.reason.endswith(':same_tautomer_scaffold_group')
+@pytest.mark.parametrize('task', identity.TASKS)
+@pytest.mark.parametrize('left,right,excluded', [
+    ('c1ccccc1', 'C1CCCCC1', False),
+    ('CC1CCCCC1', 'CC1=CCCCC1', False),
+    ('Cc1ccccc1', 'Oc1ccccc1', True),
+    ('CC1CCCCC1', 'OC1CCCCC1', True),
+    ('C=CCC', 'CC=CC', False),
+])
+def test_declared_scaffold_uses_shared_bond_preserving_murcko(task, left, right, excluded):
+    from predict.retrieval.selection import assert_disjoint
+    for query, other in [(left, right), (right, left)]:
+        normalized = normalize_molecule_identity(query)
+        legacy = decide_candidate(normalized, candidate(other), 'scaffold_disjoint',
+                                  source={**SOURCE, 'retrieval_identity_task': task})
+        generic = decide_candidate(normalized, {'canonical_smiles': other}, 'scaffold_disjoint')
+        assert legacy == generic
+        assert legacy.excluded is excluded
+        if excluded:
+            with pytest.raises(ValueError, match='violates disjointness'):
+                assert_disjoint(query, other, 'scaffold_disjoint')
+        else:
+            assert_disjoint(query, other, 'scaffold_disjoint')
+
+
+def test_frozen_topology_groups_remain_unchanged():
+    benzene = identity.leakage_identity('dili', 'c1ccccc1')
+    cyclohexane = identity.leakage_identity('dili', 'C1CCCCC1')
+    assert benzene['scaffold_leakage_group'] == cyclohexane['scaffold_leakage_group']
     assert not decide_candidate(normalize_molecule_identity('c1ccccc1'), candidate('C1CCCCC1'),
-                                'parent_disjoint', source=SOURCE).excluded
+                                'scaffold_disjoint', source=SOURCE).excluded
 
 
 @pytest.mark.parametrize('broken', ['contract', 'task', 'candidate', 'scaffold', 'group', 'source', 'policy'])
