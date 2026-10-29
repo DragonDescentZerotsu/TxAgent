@@ -64,6 +64,11 @@ Scores, per-query predictions, source hashes and a small frozen-input diagnostic
 are kept together there. These new runs do not replace the frozen paper tables
 above or establish new six-task means.
 
+Paper-baseline preparation now offers `--retrieval-protocol legacy_paper` for
+the frozen paper rules and `--retrieval-protocol murcko` (default) for the revised
+rules. Legacy preparation must reproduce the original model inputs exactly;
+new model responses can still vary. See the [shared CLI](../predict/prompts/README.md#frozen-paper-baseline).
+
 ## Rebuild paper tables
 
 ```bash

@@ -17,6 +17,7 @@ from rdkit.Chem.MolStandardize import rdMolStandardize
 
 IDENTITY_NORMALIZER_VERSION = "rdkit_fragment_parent.v2"
 RELATION_POLICY_VERSION = "fragment_parent_connectivity.v3"
+RETRIEVAL_PROTOCOLS = ("murcko", "legacy_paper")
 MOLECULAR_REPRESENTATION_POLICY = "query_parent_evidence_source.v1"
 FP_RADIUS = 2
 FP_BITS = 2048
@@ -270,7 +271,7 @@ def _standardize_molecule(molecule: Chem.Mol) -> tuple[str, str]:
 
 
 def classify_molecule_relation(
-    query: MoleculeIdentity, candidate: MoleculeIdentity
+    query: MoleculeIdentity, candidate: MoleculeIdentity, *, legacy=False
 ) -> MoleculeRelation:
     """Classify identity overlap without treating covalent analogs as one parent."""
     if query.status != "ok" or candidate.status != "ok":
@@ -293,9 +294,16 @@ def classify_molecule_relation(
     ):
         return MoleculeRelation.SAME_PARENT
     # Salt and stereo changes combined still share the selected parent connectivity.
-    if _same_nonempty(_connectivity_key(query.parent_inchi_key), _connectivity_key(candidate.parent_inchi_key)):
+    if not legacy and _same_nonempty(_connectivity_key(query.parent_inchi_key), _connectivity_key(candidate.parent_inchi_key)):
         return MoleculeRelation.SAME_CONNECTIVITY_VARIANT
     return MoleculeRelation.STRUCTURAL_ANALOG
+
+
+def retrieval_protocol(source: Mapping[str, Any] | None = None) -> str:
+    protocol = (source or {}).get("retrieval_protocol", "murcko")
+    if protocol not in RETRIEVAL_PROTOCOLS:
+        raise ValueError(f"Unsupported retrieval protocol: {protocol}")
+    return protocol
 
 
 def decide_candidate(
@@ -307,6 +315,7 @@ def decide_candidate(
 ) -> CandidateDecision:
     """Apply one exclusion policy to a candidate molecule record."""
     normalized_policy = NeighborIdentityPolicy(policy)
+    legacy = retrieval_protocol(source) == "legacy_paper"
     contract = (source or {}).get("retrieval_identity_contract", "")
     if contract:
         from predict.retrieval import task_identity
@@ -314,14 +323,16 @@ def decide_candidate(
         task = source.get("retrieval_identity_task")
         task_identity.validate_contract(task, contract)
         task_query = task_identity.leakage_identity(task, query.input_smiles)
-        decision = task_identity.decide_candidate(task_query, candidate_record, policy, contract)
+        decision = task_identity.decide_candidate(task_query, candidate_record, policy, contract, legacy=legacy)
         if decision.excluded:
             return decision
-        # Refine legacy parent groups, then apply the same Murcko gate as all tasks.
+        # Frozen paper retrieval replaced Murcko with the task topology gate.
+        if legacy:
+            normalized_policy = NeighborIdentityPolicy.PARENT_DISJOINT
     elif candidate_record.get("retrieval_identity_contract"):
         raise ValueError("Candidate retrieval identity requires an explicit index source contract")
     candidate = identity_from_record(candidate_record)
-    relation = classify_molecule_relation(query, candidate)
+    relation = classify_molecule_relation(query, candidate, legacy=legacy)
     if (
         normalized_policy is NeighborIdentityPolicy.SCAFFOLD_DISJOINT
         and relation is MoleculeRelation.STRUCTURAL_ANALOG
@@ -340,6 +351,7 @@ def policy_metadata(
     policy: str | NeighborIdentityPolicy, *, source: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     normalized = NeighborIdentityPolicy(policy)
+    protocol = retrieval_protocol(source)
     task_metadata = {}
     contract = (source or {}).get("retrieval_identity_contract", "")
     if contract:
@@ -352,11 +364,13 @@ def policy_metadata(
         task_metadata = {
             "retrieval_identity_contract": contract,
             "retrieval_identity_task": task,
-            "retrieval_parent_refinement_policy": task_identity.PARENT_REFINEMENT_POLICY,
+            "retrieval_parent_refinement_policy": (
+                "frozen_coarse_groups" if protocol == "legacy_paper" else task_identity.PARENT_REFINEMENT_POLICY),
         }
     return {
         "neighbor_identity_policy": normalized.value,
-        "relation_policy_version": RELATION_POLICY_VERSION,
+        "relation_policy_version": "frozen_paper_identity.v1" if protocol == "legacy_paper" else RELATION_POLICY_VERSION,
+        "retrieval_protocol": protocol,
         **task_metadata,
         "excluded_relations": _excluded_relation_values(normalized),
         "threshold_preserving_backfill": True,

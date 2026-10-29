@@ -57,8 +57,28 @@ Rebuild candidates from a restored paper batch and its hash-bound source inputs:
 python -m predict.harnesses.branches \
   --prepare-paper-baseline /path/to/frozen/batch \
   --source-root /path/to/restored/paper/repository \
+  --retrieval-protocol murcko \
   --run-name paper-baseline-recheck --query-indices 0 10 20
 ```
+
+Choose the retrieval protocol explicitly when preparing a paper baseline:
+
+| `--retrieval-protocol` | Behavior |
+| --- | --- |
+| `murcko` (default) | Approved parent refinement, bond-preserving ordinary Murcko, and actual evidence structures separated before filtering/ranking |
+| `legacy_paper` | Frozen paper identity behavior: coarse DILI/Carcinogens parent/topology groups and their original representative structures; generic tasks retain their original identity checks |
+
+`legacy_paper` rebuilds candidates from the frozen index; it does not copy selected
+evidence or predictions from the old request. Preparation and execution both
+require messages, payload, citation aliases and ordered Direct/Indirect IDs to
+match the original batch exactly. A mismatch blocks reproduction rather than
+silently switching rules. Matching inputs do not guarantee identical new LLM
+outputs; exact published scores still come from the saved paper predictions.
+The protocol is bound in `experiment_manifest.json` under
+`migration.retrieval_protocol`. Execution and bundling preserve that choice and
+reject the CLI switch; use a new run name to change it. Existing prepared batches
+are not rebuilt; their saved requests remain authoritative. This option is for paper
+baseline preparation, not a global override of FINAL's frozen ranking caches.
 
 Omit `--query-indices` to prepare the entire source cohort. Preparation makes no
 model or tool-service calls. It writes a new batch under
@@ -107,12 +127,12 @@ filtering and preserves the original TDC train-label merge and heldout filter.
 ordering; historical molecule-cap and group-balanced evidence preparations are rejected.
 The frozen molecule-cap marker in None manifests remains readable only with empty evidence; source records are projected through the existing
 minimal-evidence helper. The frozen query, condition and cached prior are retained.
-The new parent rules apply during candidate filtering before ranking/budget fill;
+With `murcko`, the new parent rules apply before ranking/budget fill;
 DILI/Carcinogens retain the declared parent refinement but now use the shared
-bond-preserving Murcko scaffold check. Frozen topology groups do not filter new
-retrieval; no split is regenerated. Historical requests and results remain unchanged.
+bond-preserving Murcko scaffold check. Frozen topology groups do not filter this
+mode; neither protocol regenerates splits. Historical requests and results remain unchanged.
 Some legacy groups contain evidence rows with different parent connectivity or
-Murcko scaffolds. Preparation separates those structures and computes their own
+Murcko scaffolds. Murcko preparation separates those structures and computes their own
 fingerprints before eligibility checks and top-k selection; a group's representative
 cannot admit same-scaffold evidence from another structure. Equivalent variants
 keep their original group, and the frozen index is never rewritten.

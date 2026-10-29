@@ -2,13 +2,15 @@
 from collections import defaultdict
 
 from predict.prompts.paper_baseline import content_hash
-from predict.retrieval.policies import bemis_murcko_scaffold, identity_from_record, normalize_molecule_identity, standardize_smiles_and_fp
+from predict.retrieval.policies import bemis_murcko_scaffold, identity_from_record, normalize_molecule_identity, retrieval_protocol, standardize_smiles_and_fp
 from predict.retrieval.retrieve import retrieve_neighbors
 
 
-def build_evidence_view(index):
+def build_evidence_view(index, *, protocol='murcko'):
     """Partition each physical assay's cards BEFORE applying identity policies."""
-    index = _separate_legacy_structures(index)
+    index = {**index, 'source': {**index.get('source', {}), 'retrieval_protocol': protocol}}
+    if retrieval_protocol(index['source']) != 'legacy_paper':
+        index = _separate_legacy_structures(index)
     positions = {str(m['molecule_chembl_id']): i for i, m in enumerate(index['molecules'])}
     parents, unresolved = {}, []
     for molecule in index['molecules']:

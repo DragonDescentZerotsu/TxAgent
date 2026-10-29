@@ -321,7 +321,8 @@ def test_tdc_train_merge_filters_heldout_before_card_ranking():
 
 
 @pytest.mark.parametrize('absolute', [False, True])
-def test_retrieval_input_relocation_preserves_contract_and_rejects_changed_files(tmp_path, absolute):
+@pytest.mark.parametrize('protocol', ['murcko', 'legacy_paper'])
+def test_retrieval_input_relocation_preserves_contract_and_rejects_changed_files(tmp_path, absolute, protocol):
     from predict.harnesses.branches import paper_baseline as runtime
     from predict.utils.json import write_json_atomic, sha256_file
     task = 'bbb_martins'
@@ -343,8 +344,12 @@ def test_retrieval_input_relocation_preserves_contract_and_rejects_changed_files
         write_json_atomic(path,value)
     mapping = inputs/'input_paths.json';write_json_atomic(mapping,{old_path:'test.jsonl'})
     target = tmp_path/'prepared'
-    runtime.prepare(None,source,target,[0],input_map=mapping)
+    runtime.prepare(None,source,target,[0],input_map=mapping,retrieval_protocol=protocol)
     manifest, _ = runtime.validate_batch(target)
+    assert manifest['migration']['retrieval_protocol'] == protocol
+    with pytest.raises(ValueError, match='preparation contract changed'):
+        runtime.prepare(None,source,target,[0],input_map=mapping,
+                        retrieval_protocol='legacy_paper' if protocol == 'murcko' else 'murcko')
     assert manifest['inputs'] == original['inputs']
     prepared = json.loads((target/'runs'/task/'query_00000/prepared.json').read_text())
     assert prepared['messages'] == frozen['messages']
@@ -366,3 +371,20 @@ def test_retrieval_input_relocation_preserves_contract_and_rejects_changed_files
     with pytest.raises(ValueError,match='input changed'):
         runtime.prepare(None,source,tmp_path/'bad',[0],input_map=mapping)
     assert not (tmp_path/'bad').exists()
+
+
+@pytest.mark.parametrize('key', ['messages', 'card_alias_map', 'direct_ids', 'indirect_ids', 'prompt_payload'])
+def test_legacy_paper_refuses_changed_frozen_inputs(key):
+    from predict.harnesses.branches.paper_baseline import _verify_legacy_inputs
+    frozen, _, _ = example()
+    _verify_legacy_inputs(frozen, frozen)
+    with pytest.raises(ValueError, match='legacy_paper differs from frozen'):
+        _verify_legacy_inputs({**frozen, key: 'changed'}, frozen)
+
+
+@pytest.mark.parametrize('mode', ['--run-paper-baseline', '--bundle-paper-baseline'])
+def test_retrieval_protocol_cannot_be_changed_after_preparation(mode, capsys):
+    from predict.harnesses.branches.paper_baseline import run
+    with pytest.raises(SystemExit):
+        run([mode, 'unused', '--retrieval-protocol', 'legacy_paper'])
+    assert 'execution uses its manifest' in capsys.readouterr().err

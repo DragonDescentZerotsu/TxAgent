@@ -95,6 +95,30 @@ def test_frozen_topology_groups_remain_unchanged():
                                 'scaffold_disjoint', source=SOURCE).excluded
 
 
+@pytest.mark.parametrize('task', identity.TASKS)
+@pytest.mark.parametrize('query,other,policy', [
+    ('c1ccccc1', 'C1CCCCC1', 'scaffold_disjoint'),
+    ('C=CCC', 'CC=CC', 'parent_disjoint'),
+])
+def test_legacy_paper_restores_coarse_groups(task, query, other, policy):
+    source = {**SOURCE, 'retrieval_identity_task': task, 'retrieval_protocol': 'legacy_paper'}
+    assert decide_candidate(normalize_molecule_identity(query), candidate(other), policy, source=source).excluded
+    assert not decide_candidate(normalize_molecule_identity(query), candidate(other), policy,
+                                source={**source, 'retrieval_protocol': 'murcko'}).excluded
+    assert policy_metadata(policy, source=source)['retrieval_parent_refinement_policy'] == 'frozen_coarse_groups'
+
+
+def test_legacy_generic_identity_and_unknown_protocol():
+    query = normalize_molecule_identity('C[C@H](O)C(=O)O')
+    row = {'canonical_smiles': 'C[C@@H](O)C(=O)[O-].[Na+]'}
+    assert not decide_candidate(query, row, 'parent_disjoint', source={'retrieval_protocol': 'legacy_paper'}).excluded
+    assert decide_candidate(query, row, 'parent_disjoint').excluded
+    for check in (lambda: decide_candidate(query, row, 'parent_disjoint', source={'retrieval_protocol': 'typo'}),
+                  lambda: policy_metadata('parent_disjoint', source={'retrieval_protocol': 'typo'})):
+        with pytest.raises(ValueError, match='Unsupported retrieval protocol'):
+            check()
+
+
 @pytest.mark.parametrize('broken', ['contract', 'task', 'candidate', 'scaffold', 'group', 'source', 'policy'])
 def test_incompatible_contracts_fail_before_selection(broken):
     source, row, policy = dict(SOURCE), candidate('CC=CC'), 'parent_disjoint'
@@ -159,7 +183,8 @@ def test_runtime_filters_before_top_k(path, query, other, policy, expected):
 
 @pytest.mark.parametrize('task', identity.TASKS)
 @pytest.mark.parametrize('representative', ['O=c1cccc[nH]1', 'Oc1ccccn1'])
-def test_paper_legacy_group_filters_actual_structures_before_top_k(task, representative):
+@pytest.mark.parametrize('protocol', ['murcko', 'legacy_paper'])
+def test_paper_legacy_group_filters_actual_structures_before_top_k(task, representative, protocol):
     import pickle
     from predict.retrieval.paper_baseline import build_evidence_view, retrieve_candidates
     from predict.retrieval.policies import standardize_smiles_and_fp
@@ -172,10 +197,14 @@ def test_paper_legacy_group_filters_actual_structures_before_top_k(task, represe
         fingerprints=[standardize_smiles_and_fp(representative)[2]], group_to_molecule_indices={},
         evidence_by_molecule_group={'frozen-group': {'test': rows}}, tdc_merged=True)
     before = pickle.dumps(index)
-    view = build_evidence_view(index)
+    view = build_evidence_view(index, protocol=protocol)
     assert pickle.dumps(index) == before
     pool = retrieve_candidates(query, view, split_scheme='scaffold', candidate_molecules=1,
                               min_similarity=0, indirect_identity_policy='scaffold_disjoint')
+    if protocol == 'legacy_paper':
+        assert len(view['molecules']) == 1
+        assert pool == {'direct': [], 'indirect': []}
+        return
     # The enol shares the query's Murcko scaffold; the keto does not. This must
     # hold regardless of which frozen representative happened to be chosen.
     for records in pool.values():

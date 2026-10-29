@@ -17,11 +17,15 @@ from predict.utils.response import call_with_json_validation, response_validatio
 REVISION = 'paper_baseline_retrieval.v1'
 
 
-def prepare(source_root, source_batch, target, indices=None, *, input_map=None):
+def prepare(source_root, source_batch, target, indices=None, *, input_map=None, retrieval_protocol='murcko'):
     """Use frozen query/prior/config inputs; rebuild all eligible evidence before budgets."""
     from optimization.selection.record_budget import SIMPLE_POLICIES, select_simple_records
     from predict.retrieval.features import load_retrieval_index
     from predict.retrieval.paper_baseline import build_evidence_view, merge_train_labels, retrieve_candidates
+    from predict.retrieval.policies import RETRIEVAL_PROTOCOLS
+
+    if retrieval_protocol not in RETRIEVAL_PROTOCOLS:
+        raise ValueError('unsupported retrieval protocol')
 
     if (source_root is None) == (input_map is None):
         raise ValueError('provide exactly one source root or input map')
@@ -52,7 +56,8 @@ def prepare(source_root, source_batch, target, indices=None, *, input_map=None):
     manifest = deepcopy(original)
     manifest['migration'] = {'version': REVISION, 'source_manifest_sha256': sha256_file(source_batch/'experiment_manifest.json'),
         'source_batch': str(source_batch), 'source_root': str(source_root), 'query_indices': {},
-        'scope': 'frozen query/prior/generation; approved retrieval identity refinement; no inherited predictions'}
+        'retrieval_protocol': retrieval_protocol,
+        'scope': 'frozen query/prior/generation; explicit retrieval protocol; no inherited predictions'}
     from predict.retrieval import policies, task_identity, retrieve, features
     from predict.utils import evidence, response
     from optimization.selection import record_budget
@@ -101,7 +106,7 @@ def prepare(source_root, source_batch, target, indices=None, *, input_map=None):
             index = load_retrieval_index(paths['index'])
             if original['benchmark_profile']:
                 index = merge_train_labels(index, task, read_jsonl(paths['train']), read_jsonl(paths['heldout']))
-            view = build_evidence_view(index)
+            view = build_evidence_view(index, protocol=retrieval_protocol)
         for i in manifest['migration']['query_indices'][task]:
             source = source_batch/'runs'/task/f'query_{i:05d}'
             frozen = json.loads((source/'prepared.json').read_text())
@@ -131,6 +136,8 @@ def prepare(source_root, source_batch, target, indices=None, *, input_map=None):
                 'candidate_pool_hash': prompt.content_hash(sorted(r['id'] for r in pool['indirect'])),
                 'n_direct': len(direct), 'n_indirect': len(selected)}
             prompt.verify_request(prepared, manifest)
+            if retrieval_protocol == 'legacy_paper':
+                _verify_legacy_inputs(prepared, frozen)
             directory = target/'runs'/task/f'query_{i:05d}'
             if (directory/'prepared.json').exists() and json.loads((directory/'prepared.json').read_text()) != prepared:
                 raise ValueError('prepared evidence or frozen prior changed; use a new output root')
@@ -184,6 +191,8 @@ def run(argv):
                         help='Preparation-only JSON mapping frozen input paths to relocated files; relative to this JSON')
     parser.add_argument('--run-name')
     parser.add_argument('--query-indices', type=int, nargs='+')
+    parser.add_argument('--retrieval-protocol', choices=('murcko', 'legacy_paper'),
+                        help='Preparation only: murcko (default) or frozen paper retrieval')
     parser.add_argument('--provider-config', type=Path)
     parser.add_argument('--env-file', type=Path)
     parser.add_argument('--parallelism', type=int, default=1)
@@ -191,6 +200,8 @@ def run(argv):
     parser.add_argument('--max-stage-requeues', type=int, default=0)
     parser.add_argument('--retry-delay-s', type=float, default=0)
     args = parser.parse_args(argv)
+    if args.retrieval_protocol is not None and not args.prepare_paper_baseline:
+        parser.error('--retrieval-protocol requires --prepare-paper-baseline; execution uses its manifest')
     if sum(bool(value) for value in (args.prepare_paper_baseline, args.run_paper_baseline, args.bundle_paper_baseline)) != 1:
         parser.error('choose preparation, bundling or execution')
     if not args.run_paper_baseline and (args.retry_race_width != 1 or args.max_stage_requeues or args.retry_delay_s):
@@ -227,10 +238,16 @@ def run(argv):
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         if args.prepare_paper_baseline:
             print(json.dumps(prepare(args.source_root, args.prepare_paper_baseline, target, args.query_indices,
-                                     input_map=args.input_map), indent=2))
+                                     input_map=args.input_map, retrieval_protocol=args.retrieval_protocol or 'murcko'), indent=2))
             return 0
         return execute_batch(target, args.provider_config, args.env_file, args.parallelism,
             retry_race_width=args.retry_race_width, max_stage_requeues=args.max_stage_requeues, retry_delay_s=args.retry_delay_s)
+
+
+def _verify_legacy_inputs(prepared, frozen):
+    for key in ('messages', 'card_alias_map', 'direct_ids', 'indirect_ids', 'prompt_payload'):
+        if prepared[key] != frozen[key]:
+            raise ValueError(f'legacy_paper differs from frozen {key}; do not claim paper reproduction')
 
 
 def validate_batch(root):
@@ -238,6 +255,9 @@ def validate_batch(root):
     manifest = json.loads((root/'experiment_manifest.json').read_text())
     if manifest.get('migration', {}).get('version') != REVISION:
         raise ValueError('execute only a newly prepared paper-baseline batch')
+    protocol = manifest['migration'].get('retrieval_protocol', 'murcko')
+    if protocol not in ('murcko', 'legacy_paper'):
+        raise ValueError('unsupported retrieval protocol')
     source = root / manifest['migration']['source_batch']
     if sha256_file(source/'experiment_manifest.json') != manifest['migration']['source_manifest_sha256']:
         raise ValueError('frozen source manifest changed')
@@ -271,6 +291,8 @@ def validate_batch(root):
                  'condition_group': row.get('condition_group', '')}
         frozen = json.loads((source/'runs'/task/f'query_{i:05d}'/'prepared.json').read_text())
         prompt.verify_request(frozen, original)
+        if protocol == 'legacy_paper':
+            _verify_legacy_inputs(prepared, frozen)
         if (prepared['query_hash'] != prompt.content_hash(query)
                 or json.loads((directory/'evaluation.json').read_text())['label'] != int(row['Y'])
                 or {k: v for k, v in prepared['prompt_payload'].items() if k != 'neighbors'}

@@ -21,7 +21,7 @@ in each cache contract (including direct-card chirality).
 
 ### Current exclusion rules
 
-`policies.py` applies `fragment_parent_connectivity.v3` to source identities,
+By default, `policies.py` applies `fragment_parent_connectivity.v3` to source identities,
 independently of scoring and display. The approved rules are:
 
 | Check | Exclusion behavior |
@@ -44,7 +44,11 @@ a displayed parent. Mixture measurements remain attached to the complete source.
 Version 3 unifies retrieval scaffold checks, including DILI/Carcinogens. Their
 frozen `MURCKO_TOPOLOGY_` fields remain provenance/grouping metadata; benchmark
 splits and gold construction are unchanged. Historical baseline predictions and
-the October scaffold-indirect follow-up used the earlier topology gate. New
+the October scaffold-indirect follow-up used the earlier topology gate. Explicit
+paper-baseline `legacy_paper` preparation preserves that old behavior, including
+coarse parent groups and group representatives, and requires exact frozen-input
+parity. See the [protocol switch](../../prompts/README.md#frozen-paper-baseline).
+It does not reinterpret FINAL's frozen cache releases. New
 preparations require a new run identity. Reading a frozen ranked cache cannot
 recover candidates excluded when that cache was built.
 

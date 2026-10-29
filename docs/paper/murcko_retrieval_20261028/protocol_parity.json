@@ -1,0 +1,279 @@
+{
+  "version": "paper_retrieval_protocol_parity.v1",
+  "model_calls": 0,
+  "legacy_paper": [
+    {
+      "benchmark": "conditioned",
+      "task": "dili",
+      "setting": "direct50",
+      "queries": 402,
+      "query_indices": "all",
+      "source_batch": "outputs/paper/aligned_record_scaling_test_20260921/direct/runs/direct_fill_b50/dili",
+      "source_manifest_sha256": "6ed377eb8d3388388c9319010ebc956dd4d6cb7154357acc78ea8602b55aebc9",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/legacy-paper-v1-20261028-conditioned-dili-direct50",
+      "prepared_manifest_sha256": "a994f165e15ce63f0d1218691a35b0f805dfda904e674f26d0b839a9119b772f",
+      "reference_manifest_sha256": "6ed377eb8d3388388c9319010ebc956dd4d6cb7154357acc78ea8602b55aebc9",
+      "ordered_input_digest": "577d3b26e8c3131f3b94e3608c8fa5a83d3a809b2dafb0cb363434c440534151",
+      "all_inputs_equal": true
+    },
+    {
+      "benchmark": "conditioned",
+      "task": "dili",
+      "setting": "direct50_indirect50_parent",
+      "queries": 402,
+      "query_indices": "all",
+      "source_batch": "outputs/paper/aligned_record_scaling_test_20260921/indirect/runs/both_fill_b50/dili",
+      "source_manifest_sha256": "a5018219f5e76622554994407f9da3c8cc67018e09d3f1a485123fa867f5a284",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/legacy-paper-v1-20261028-conditioned-dili-direct50_indirect50_parent",
+      "prepared_manifest_sha256": "562ad59b9ef3dabacb7ce8aeac870fdb2c53b23dddae150264c8c8802f9f2732",
+      "reference_manifest_sha256": "a5018219f5e76622554994407f9da3c8cc67018e09d3f1a485123fa867f5a284",
+      "ordered_input_digest": "efd31d833247437513afd7e58af47374a9a9d0a0dc785b86ab037d173e8f39fd",
+      "all_inputs_equal": true
+    },
+    {
+      "benchmark": "conditioned",
+      "task": "carcinogens",
+      "setting": "direct50",
+      "queries": 469,
+      "query_indices": "all",
+      "source_batch": "outputs/paper/aligned_record_scaling_test_20260921/direct/runs/direct_fill_b50/carcinogens",
+      "source_manifest_sha256": "592877c4f1e1cb5a8670adb395130ef6a9768f43410e3f1e0c570496e226b2d0",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/legacy-paper-v1-20261028-conditioned-carcinogens-direct50",
+      "prepared_manifest_sha256": "fb2030c474e10dfd5954cca5869e3a81da30562eb65a85ec523a8a779e8ab60f",
+      "reference_manifest_sha256": "592877c4f1e1cb5a8670adb395130ef6a9768f43410e3f1e0c570496e226b2d0",
+      "ordered_input_digest": "489cb74801ebbc11a2e15ad1f4d1c0082d73a4fd4c8734054be3b66af77334a8",
+      "all_inputs_equal": true
+    },
+    {
+      "benchmark": "conditioned",
+      "task": "carcinogens",
+      "setting": "direct50_indirect50_parent",
+      "queries": 469,
+      "query_indices": "all",
+      "source_batch": "outputs/paper/aligned_record_scaling_test_20260921/indirect/runs/both_fill_b50/carcinogens",
+      "source_manifest_sha256": "dc15f4028e474d4ec6e6554f6f03589009f31303abfec4d01eb0a708fb3cbc29",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/legacy-paper-v1-20261028-conditioned-carcinogens-direct50_indirect50_parent",
+      "prepared_manifest_sha256": "7864c07f40701cff7b6c2a28cb4480d9678efb3d5689dd4cf3e1a0f543015fbd",
+      "reference_manifest_sha256": "dc15f4028e474d4ec6e6554f6f03589009f31303abfec4d01eb0a708fb3cbc29",
+      "ordered_input_digest": "70fb963060c96eaeb805a186b1a361e037c5f1f6d1f3bcfa7856b535240aad8c",
+      "all_inputs_equal": true
+    },
+    {
+      "benchmark": "tdc",
+      "task": "dili",
+      "setting": "direct50",
+      "queries": 96,
+      "query_indices": "all",
+      "source_batch": "outputs/paper/tdc_scaffold_baselines_b50_20260918/llm/runs/direct_fill/dili",
+      "source_manifest_sha256": "86a93262da16657870bf52725f1829c7b3d80f4b9626b62ee8e4e8aac1e67db5",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/legacy-paper-v1-20261028-tdc-dili-direct50",
+      "prepared_manifest_sha256": "116f8295329222affaa5f597d048464e7d31ca6f34b006f392a10f92c4d38d30",
+      "reference_manifest_sha256": "86a93262da16657870bf52725f1829c7b3d80f4b9626b62ee8e4e8aac1e67db5",
+      "ordered_input_digest": "92b0fe26ca042db50b620f5cf0cf3ca1686afed2ae3fb1728f418c6a47a401dd",
+      "all_inputs_equal": true
+    },
+    {
+      "benchmark": "tdc",
+      "task": "dili",
+      "setting": "direct50_indirect50_parent",
+      "queries": 96,
+      "query_indices": "all",
+      "source_batch": "outputs/paper/tdc_scaffold_baselines_b50_20260918/llm/runs/both_fill/dili",
+      "source_manifest_sha256": "9bd437cd64231e7045fe3cd2b09e4e03ea0f5cb08dbf2b3ba593e170fd097fed",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/legacy-paper-v1-20261028-tdc-dili-direct50_indirect50_parent",
+      "prepared_manifest_sha256": "43788eeec1d3ee9df958fb43d1bed4ff67ba5aa46ce987f8427ac0990933838c",
+      "reference_manifest_sha256": "9bd437cd64231e7045fe3cd2b09e4e03ea0f5cb08dbf2b3ba593e170fd097fed",
+      "ordered_input_digest": "7242bc04118ef5dec3ef7e1b10cb3260afffb77842256b60829b85260b12e5c6",
+      "all_inputs_equal": true
+    },
+    {
+      "benchmark": "tdc",
+      "task": "carcinogens",
+      "setting": "direct50",
+      "queries": 56,
+      "query_indices": "all",
+      "source_batch": "outputs/paper/tdc_seed42_neighbor_fill_20260924/deepseek/carcinogens/runs/direct_fill/carcinogens",
+      "source_manifest_sha256": "6c82b43651c74e6a3241171c260640a9101971bdc9f94a5c3506fbb492bdc2a9",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/legacy-paper-v1-20261028-tdc-carcinogens-direct50",
+      "prepared_manifest_sha256": "a993f58ab8bbe111d35a25939006760323be5ca9d536fc9d534e47899ebd37a6",
+      "reference_manifest_sha256": "6c82b43651c74e6a3241171c260640a9101971bdc9f94a5c3506fbb492bdc2a9",
+      "ordered_input_digest": "c72f09fc4c1ee600ce7f77684e6e3470325fccf3daea30cb162284b1e1398293",
+      "all_inputs_equal": true
+    },
+    {
+      "benchmark": "tdc",
+      "task": "carcinogens",
+      "setting": "direct50_indirect50_parent",
+      "queries": 56,
+      "query_indices": "all",
+      "source_batch": "outputs/paper/tdc_seed42_neighbor_fill_20260924/deepseek/carcinogens/runs/both_fill/carcinogens",
+      "source_manifest_sha256": "dcb7a3edc1cadedb720a4130d71d60501a5d10c8a8d5dad64d4ee1979517506f",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/legacy-paper-v1-20261028-tdc-carcinogens-direct50_indirect50_parent",
+      "prepared_manifest_sha256": "2e4b56faf08de4525bc9492e1bd595cbb9e593960013af6dd7ad4e1340418649",
+      "reference_manifest_sha256": "dcb7a3edc1cadedb720a4130d71d60501a5d10c8a8d5dad64d4ee1979517506f",
+      "ordered_input_digest": "7d48aa113a94c17c9b0e64ddd1d63dba9e9e76b75a6985a117032f92a79803d3",
+      "all_inputs_equal": true
+    },
+    {
+      "benchmark": "conditioned",
+      "task": "dili",
+      "setting": "direct50_indirect50_scaffold",
+      "queries": 402,
+      "query_indices": "all",
+      "source_batch": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned/runs/both_fill/dili",
+      "source_manifest_sha256": "8a1986fe9226ea515836040dffa4acac0d3eb619d7ab4177627da7a74fc7367a",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/legacy-paper-v1-20261028-conditioned-dili-direct50_indirect50_scaffold",
+      "prepared_manifest_sha256": "0cbef5af02d5e42427754a57a90df18dc59583b906c8c0a6ce53de5a3435713d",
+      "reference_manifest_sha256": "8a1986fe9226ea515836040dffa4acac0d3eb619d7ab4177627da7a74fc7367a",
+      "ordered_input_digest": "54750c5f255f797ec7ca7955e5270cf2575d144185e20124528ef151fcd31a8d",
+      "all_inputs_equal": true
+    },
+    {
+      "benchmark": "conditioned",
+      "task": "carcinogens",
+      "setting": "direct50_indirect50_scaffold",
+      "queries": 469,
+      "query_indices": "all",
+      "source_batch": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned/runs/both_fill/carcinogens",
+      "source_manifest_sha256": "1fc743367d1b1c5019117cb3102ef85990b988a23e173299cd3ab7e47d8171ee",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/legacy-paper-v1-20261028-conditioned-carcinogens-direct50_indirect50_scaffold",
+      "prepared_manifest_sha256": "cedad5d9c3cc58125bf37a2a6f42a3280abc900796c78f208fe997b9ca8927c8",
+      "reference_manifest_sha256": "1fc743367d1b1c5019117cb3102ef85990b988a23e173299cd3ab7e47d8171ee",
+      "ordered_input_digest": "9c4ec36797c22661a53e3074570fa8b7d32bbec9ed48159872957bbd9045339c",
+      "all_inputs_equal": true
+    },
+    {
+      "benchmark": "tdc",
+      "task": "dili",
+      "setting": "direct50_indirect50_scaffold",
+      "queries": 96,
+      "query_indices": "all",
+      "source_batch": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main/runs/both_fill/dili",
+      "source_manifest_sha256": "ab70d40f33619172e3c58835ebb02597ee03037fdfb6433c3d47f9d97107ffd5",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/legacy-paper-v1-20261028-tdc-dili-direct50_indirect50_scaffold",
+      "prepared_manifest_sha256": "b5849cff6a124615e7fb5cbbc1f1486b45a55222739afd4f7d8b421b68be7af8",
+      "reference_manifest_sha256": "ab70d40f33619172e3c58835ebb02597ee03037fdfb6433c3d47f9d97107ffd5",
+      "ordered_input_digest": "cf1821976a54064e3f0549588429a1a3b0064bd18c7abf3973ccda80293bbed5",
+      "all_inputs_equal": true
+    },
+    {
+      "benchmark": "tdc",
+      "task": "carcinogens",
+      "setting": "direct50_indirect50_scaffold",
+      "queries": 56,
+      "query_indices": "all",
+      "source_batch": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_seed42/runs/both_fill/carcinogens",
+      "source_manifest_sha256": "e25ec74225aa2a5b7d9a26234ccaa4473559f6ef2ecf928ea7750943601cd645",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/legacy-paper-v1-20261028-tdc-carcinogens-direct50_indirect50_scaffold",
+      "prepared_manifest_sha256": "2f98f69e46ede8f83a0b796d0265759b4c2c8d4dbe621b6dd1e7b9fa15ffec17",
+      "reference_manifest_sha256": "e25ec74225aa2a5b7d9a26234ccaa4473559f6ef2ecf928ea7750943601cd645",
+      "ordered_input_digest": "982bc868fd0881330369b76fa00e7406ad7a81f549f749762095bb52dc19520b",
+      "all_inputs_equal": true
+    }
+  ],
+  "murcko": [
+    {
+      "benchmark": "conditioned",
+      "task": "dili",
+      "setting": "direct50_indirect50_scaffold",
+      "queries": 3,
+      "query_indices": [
+        0,
+        201,
+        401
+      ],
+      "source_batch": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned/runs/both_fill/dili",
+      "source_manifest_sha256": "8a1986fe9226ea515836040dffa4acac0d3eb619d7ab4177627da7a74fc7367a",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/murcko-protocol-check-20261028-conditioned-dili-direct50_indirect50_scaffold",
+      "prepared_manifest_sha256": "20840babb398013ce1b0d14333dfff98258b3878f9b02ee2212f166788b426a7",
+      "reference_manifest_sha256": "7f911df1bd9e71d5715ae6036ad216a3be1076f527df2dc1de58f997b3a0118b",
+      "ordered_input_digest": "28b7fdfb2cebe4cca9cd5909a35730a6d3471037a8c4648a6856474436302bbf",
+      "all_inputs_equal": true
+    },
+    {
+      "benchmark": "conditioned",
+      "task": "carcinogens",
+      "setting": "direct50_indirect50_scaffold",
+      "queries": 3,
+      "query_indices": [
+        0,
+        234,
+        468
+      ],
+      "source_batch": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned/runs/both_fill/carcinogens",
+      "source_manifest_sha256": "1fc743367d1b1c5019117cb3102ef85990b988a23e173299cd3ab7e47d8171ee",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/murcko-protocol-check-20261028-conditioned-carcinogens-direct50_indirect50_scaffold",
+      "prepared_manifest_sha256": "1ee24b4d5dc96ee710e389fb58932f2ef6b70b4f7077ac9815d526b361fa6896",
+      "reference_manifest_sha256": "9633311e79112387c90e50926afb318201b437d607136faa0f91122e7e1ef0bb",
+      "ordered_input_digest": "dd3d6d1c18c2b1ab178271f1c304a7004b2fd4826f5d8b6210712f61829b720c",
+      "all_inputs_equal": true
+    },
+    {
+      "benchmark": "tdc",
+      "task": "dili",
+      "setting": "direct50_indirect50_scaffold",
+      "queries": 3,
+      "query_indices": [
+        0,
+        63,
+        95
+      ],
+      "source_batch": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main/runs/both_fill/dili",
+      "source_manifest_sha256": "ab70d40f33619172e3c58835ebb02597ee03037fdfb6433c3d47f9d97107ffd5",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/murcko-protocol-check-20261028-tdc-dili-direct50_indirect50_scaffold",
+      "prepared_manifest_sha256": "f52648e683dd915ef384c1cdaef720d398e432ec6a2063fc4c23dde5ae9310ac",
+      "reference_manifest_sha256": "9d59fcd9742b7b3d8393f3705762124c718219594785c3e12406ff3acd622821",
+      "ordered_input_digest": "3839ba6681671d85b1af1a0e309a824a1d524fa7be1ce2433202604ae656ba6e",
+      "all_inputs_equal": true
+    },
+    {
+      "benchmark": "tdc",
+      "task": "carcinogens",
+      "setting": "direct50_indirect50_scaffold",
+      "queries": 3,
+      "query_indices": [
+        0,
+        28,
+        55
+      ],
+      "source_batch": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_seed42/runs/both_fill/carcinogens",
+      "source_manifest_sha256": "e25ec74225aa2a5b7d9a26234ccaa4473559f6ef2ecf928ea7750943601cd645",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/murcko-protocol-check-20261028-tdc-carcinogens-direct50_indirect50_scaffold",
+      "prepared_manifest_sha256": "5f19fcd6e8ac2d229589794315280499a97cbbe5a8d6d12ba21a17c660677294",
+      "reference_manifest_sha256": "d1b1fde4b72be76def1f6e80a8e83a69c1b63f7d4f11162f6fea0b570801c1a3",
+      "ordered_input_digest": "394595461fef1776288b904e70e0b1c37d4e0b833883eb80469dd0e4a3043374",
+      "all_inputs_equal": true
+    }
+  ],
+  "checks": [
+    "full frozen indexes reloaded and retrieval rebuilt",
+    "query labels, priors and generation bound to source",
+    "messages, payloads, aliases and ordered evidence IDs equal",
+    "protocol persisted in prepared manifests",
+    "source code hashes match tested implementation"
+  ],
+  "regression_tests": {
+    "passed": 171,
+    "log_sha256": "90ac257718888974a4cf1fdf81da54d42daf88818610dc11b08449069146b2ac"
+  },
+  "existing_murcko_compatibility": {
+    "cells": 12,
+    "queries": 3069,
+    "network_connections": 0,
+    "status": "passed",
+    "scope": "Existing Murcko manifests and saved responses remain valid after adding the protocol switch; no retrieval or inference replay."
+  },
+  "implementation_code": {
+    "predict/prompts/paper_baseline.py": "f18ed8fc530c8da2d99991ec555f5cd66d616d94cebf54f038b09885351f7baa",
+    "predict/retrieval/paper_baseline.py": "3500eb60d6597fffd5505d6bd10e0cbdccb9843cfc8abf3b53598372f5f4824f",
+    "predict/retrieval/policies.py": "8b1b853fb9bff3c538575f265876993b66c343407f7589047b89aa02718df9c9",
+    "predict/retrieval/task_identity.py": "002eb252034dc9e16ff776b44ed28e295df1462ed9390c072c3cb2f1adcdc307",
+    "predict/retrieval/retrieve.py": "7c96de3b2407b3613a285af2df2dcd84defec924701f31d3496f14120b7b9da7",
+    "predict/retrieval/features.py": "b96ca8abec2706eaea43dafbbecc66a465159964fbbe89c17a43772553226cf0",
+    "predict/utils/evidence.py": "0d740e20f11f3d66c2b746f4894f47f92abc9c2b72341d3c4d6063c7dcdc88c5",
+    "predict/utils/response.py": "6c843145439ed35d07cb2738724ca8513cd248483e6288e6e5b0267e2be24c7a",
+    "optimization/selection/record_budget.py": "aedc1136c7d79f2b420d2946fe315b21fd319e5eb01ca9efc89a13cf8125b61d",
+    "predict/harnesses/branches/paper_baseline.py": "4abc9cd2f1204a0608e369ee8095e394162d9e9e0ea6e14689a65bebe8bd5465"
+  },
+  "limitations": "No new model inference or score claim. Full-cohort legacy audit covers DILI and Carcinogens; other tasks are not covered by this real-index audit. Murcko check uses three queries per task/benchmark."
+}

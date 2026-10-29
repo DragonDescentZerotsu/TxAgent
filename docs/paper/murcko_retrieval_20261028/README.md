@@ -59,7 +59,7 @@ TDC Carcinogens 的 scaffold-indirect 出现较明显下降，因此追加核对
 ```bash
 python -m predict.harnesses.branches \
   --prepare-paper-baseline "$SOURCE_ROOT/$SOURCE_BATCH" \
-  --source-root "$SOURCE_ROOT" --run-name "$RUN_NAME"
+  --source-root "$SOURCE_ROOT" --retrieval-protocol murcko --run-name "$RUN_NAME"
 
 python -m predict.harnesses.branches \
   --run-paper-baseline "outputs/predictions/branches/paper_baseline_v1/$RUN_NAME" \
@@ -72,3 +72,13 @@ python -m predict.harnesses.branches \
 若冻结 manifest 的路径在新机器不可用，用文档中的 `--input-map` 替代 `--source-root`。
 模型温度、reasoning 和 token 上限由各自原 manifest 提供；不要改用其他方法的默认
 provider 配置。执行记录保存 OpenRouter 实际模型 ID；共用池仅接受已审核的 0731 别名。
+
+若要复现旧论文检索，改用 `--retrieval-protocol legacy_paper` 和新的运行名。
+该选项恢复旧 parent/scaffold 分组及代表结构行为，并要求重建后的证据和模型输入
+与冻结批次一致；本页表格右侧对应 `murcko`，不是 legacy 重跑结果。
+
+协议开关的离线验收见 [protocol_parity.json](protocol_parity.json)：DILI/Carcinogens
+两 benchmark 的 12 单元、3,069 条 legacy 输入全部与原冻结实验一致；Murcko
+另抽查 12 条重新检索输入，与本页复跑输入一致。171 项相关测试通过，已有
+3,069 条 Murcko 运行仍可离线验证。本轮开关验收没有调用模型，也未覆盖其他
+四任务的全量重检索；精确论文分数继续使用冻结预测，重新调用模型仍可能波动。
