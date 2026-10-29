@@ -1,0 +1,57 @@
+{
+  "scope": "Diagnostic replay of original frozen requests on the current executor and OpenRouter; no new retrieval; outside the 12-cell Murcko matrix.",
+  "n": 56,
+  "new_inference_queries": 28,
+  "reused_identical_requests": 28,
+  "model": "deepseek/deepseek-v4-flash-0731",
+  "generation": {
+    "temperature": 0.0,
+    "thinking": "provider_default",
+    "reasoning_effort": "omitted"
+  },
+  "request_extra_body": {
+    "reasoning": {
+      "enabled": true
+    }
+  },
+  "max_tokens": 16384,
+  "original_source": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_seed42/runs/both_fill/carcinogens",
+  "source_manifest_sha256": "e25ec74225aa2a5b7d9a26234ccaa4473559f6ef2ecf928ea7750943601cd645",
+  "control_batch": "outputs/predictions/branches/paper_baseline_v1/murcko-v3r2-20261028-tdc-carcinogens-frozen-request-control",
+  "control_manifest_sha256": "4e3a5c7fdcb9c1f940b376c11e03cbb2bb8a221befd3b0310c9884d6e0355e6a",
+  "comparison_batch": "outputs/predictions/branches/paper_baseline_v1/murcko-v3r2-20261028-tdc-carcinogens-direct50_indirect50_scaffold",
+  "implementation_commit": "8f0b8a31",
+  "historical_metrics": {
+    "n_total": 56,
+    "n_successful": 56,
+    "accuracy": 0.75,
+    "macro_f1": 0.6813008130081302
+  },
+  "current_frozen_input_metrics": {
+    "n_total": 56,
+    "n_successful": 56,
+    "n_failed_runs": 0,
+    "accuracy": 0.6428571428571429,
+    "macro_f1": 0.5776772247360482
+  },
+  "current_murcko_metrics": {
+    "n_total": 56,
+    "n_successful": 56,
+    "n_failed_runs": 0,
+    "accuracy": 0.6428571428571429,
+    "macro_f1": 0.5776772247360482
+  },
+  "historical_to_control_prediction_changes": 10,
+  "control_to_murcko_prediction_changes": 4,
+  "upstream_routing": "OpenRouter auto; original historical upstream provider was not recorded.",
+  "current_control_upstreams": {
+    "Wafer": 13,
+    "Cohere": 4,
+    "DigitalOcean": 31,
+    "Relace": 3,
+    "CoreWeave": 2,
+    "Venice": 3
+  },
+  "predictions_sha256": "a8a098d9c10c45349038629060d41ea0181278f4c0f2425849b08b4cc25ec584",
+  "limitations": "One small-cohort replay, not a variance estimate or proof of no retrieval effect. The same aggregate score can contain different predictions. No score-selected rerun replaces the main matrix."
+}

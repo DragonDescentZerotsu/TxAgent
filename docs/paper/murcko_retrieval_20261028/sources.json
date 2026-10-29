@@ -1,0 +1,675 @@
+{
+  "runtime": {
+    "python": "3.12.11",
+    "rdkit": "2025.9.4",
+    "numpy": "1.26.4",
+    "scikit-learn": "1.8.0",
+    "openai": "2.16.0",
+    "httpx": "0.28.1",
+    "jinja2": "3.1.6"
+  },
+  "version": "murcko_retrieval_followup.v1",
+  "relation_policy_version": "fragment_parent_connectivity.v3",
+  "implementation_commit": "8f0b8a31",
+  "relation_policy_commit": "7e798cc9",
+  "provider_alias_commit": "e8ae8bf4",
+  "model": "deepseek/deepseek-v4-flash-0731",
+  "provider_base_url": "https://openrouter.ai/api/v1",
+  "cells": [
+    {
+      "source_structure_checks": 20100,
+      "selected_records": 20100,
+      "run_name": "murcko-v3r2-20261028-conditioned-dili-direct50",
+      "source_batch": "outputs/paper/aligned_record_scaling_test_20260921/direct/runs/direct_fill_b50/dili",
+      "source_manifest_sha256": "6ed377eb8d3388388c9319010ebc956dd4d6cb7154357acc78ea8602b55aebc9",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/murcko-v3r2-20261028-conditioned-dili-direct50",
+      "prepared_manifest_sha256": "ba9b6da6d8ce52e74250fb9b2293d5d5bcc6cb25f2fe7f0a58f97e41257222e7",
+      "predictions_sha256": "d23bbf2b264fb145726f44868eda8a16063bee2c5d7fa682793069b8e61bc29f",
+      "metrics_sha256": "e39a4490693424538ba22126cca8e4f974bd7bab8aa554c9ce2902aa6c1120a6",
+      "original_metrics_sha256": "4b7ce3c3d484b9cdb05ecd90bd6d2fed65110c8fa1ece840ef61bf5ab90932a5",
+      "cohort_sha256": "e548bcefa7c10c9ee90ae546d0631d2cb47aa7fc227892455563c503b26b5f19",
+      "prepared_code": {
+        "predict/prompts/paper_baseline.py": "f18ed8fc530c8da2d99991ec555f5cd66d616d94cebf54f038b09885351f7baa",
+        "predict/retrieval/paper_baseline.py": "d8bb1ec3d0b087e78bbcf4ec061a4fa985afa33eeea4b72a9eba3748f219b718",
+        "predict/retrieval/policies.py": "27b8968ac94b0d960c9d32ce779f80be20f03ecb63401da6cf18a6dc3b49173d",
+        "predict/retrieval/task_identity.py": "53c94723e7c6f34b19ad87d7ce3a8ccb13f6a7112284eb4ddd1e3bd632ec5a46",
+        "predict/retrieval/retrieve.py": "7c96de3b2407b3613a285af2df2dcd84defec924701f31d3496f14120b7b9da7",
+        "predict/retrieval/features.py": "b96ca8abec2706eaea43dafbbecc66a465159964fbbe89c17a43772553226cf0",
+        "predict/utils/evidence.py": "0d740e20f11f3d66c2b746f4894f47f92abc9c2b72341d3c4d6063c7dcdc88c5",
+        "predict/utils/response.py": "6c843145439ed35d07cb2738724ca8513cd248483e6288e6e5b0267e2be24c7a",
+        "optimization/selection/record_budget.py": "aedc1136c7d79f2b420d2946fe315b21fd319e5eb01ca9efc89a13cf8125b61d",
+        "predict/harnesses/branches/paper_baseline.py": "fccd97344bd7eaacc17cf8e284f7cfc551b33e7813c20ba2f3cdc728f84d9bc1"
+      },
+      "original_model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "generation": {
+        "temperature": 1.0,
+        "thinking": "provider_default",
+        "reasoning_effort": "low"
+      },
+      "request_extra_body": {
+        "reasoning": {
+          "enabled": true
+        }
+      },
+      "max_tokens": 16384,
+      "direct_identity_policy": "scaffold_disjoint",
+      "indirect_identity_policy": "parent_disjoint",
+      "direct_budget": 50,
+      "indirect_budget": 0,
+      "selection": {
+        "budget": 0,
+        "policy": "neighbor_fill",
+        "weights": [
+          0.5,
+          0.375,
+          0.125
+        ],
+        "per_molecule": 5,
+        "seed": 0
+      },
+      "candidate_molecules": 128,
+      "min_similarity": 0.0
+    },
+    {
+      "source_structure_checks": 40200,
+      "selected_records": 40200,
+      "run_name": "murcko-v3r2-20261028-conditioned-dili-direct50_indirect50_parent",
+      "source_batch": "outputs/paper/aligned_record_scaling_test_20260921/indirect/runs/both_fill_b50/dili",
+      "source_manifest_sha256": "a5018219f5e76622554994407f9da3c8cc67018e09d3f1a485123fa867f5a284",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/murcko-v3r2-20261028-conditioned-dili-direct50_indirect50_parent",
+      "prepared_manifest_sha256": "2574a89657260e1c6a6280f591e577e6f53c0cfd993e5bce6404ab6dcc44e9bb",
+      "predictions_sha256": "1d5a7432423010815faced4830ad5ab1def9299f76b6d38f61a3cdfe8499916a",
+      "metrics_sha256": "20775b87d2846eca9398e996d3f6eff16f13cd72dbed23c55e5c6589c6fb5b08",
+      "original_metrics_sha256": "c6f21f7877b27c37f65af648dcd2ed1622d484da267f786ed83c8db253f76881",
+      "cohort_sha256": "e548bcefa7c10c9ee90ae546d0631d2cb47aa7fc227892455563c503b26b5f19",
+      "prepared_code": {
+        "predict/prompts/paper_baseline.py": "f18ed8fc530c8da2d99991ec555f5cd66d616d94cebf54f038b09885351f7baa",
+        "predict/retrieval/paper_baseline.py": "d8bb1ec3d0b087e78bbcf4ec061a4fa985afa33eeea4b72a9eba3748f219b718",
+        "predict/retrieval/policies.py": "27b8968ac94b0d960c9d32ce779f80be20f03ecb63401da6cf18a6dc3b49173d",
+        "predict/retrieval/task_identity.py": "53c94723e7c6f34b19ad87d7ce3a8ccb13f6a7112284eb4ddd1e3bd632ec5a46",
+        "predict/retrieval/retrieve.py": "7c96de3b2407b3613a285af2df2dcd84defec924701f31d3496f14120b7b9da7",
+        "predict/retrieval/features.py": "b96ca8abec2706eaea43dafbbecc66a465159964fbbe89c17a43772553226cf0",
+        "predict/utils/evidence.py": "0d740e20f11f3d66c2b746f4894f47f92abc9c2b72341d3c4d6063c7dcdc88c5",
+        "predict/utils/response.py": "6c843145439ed35d07cb2738724ca8513cd248483e6288e6e5b0267e2be24c7a",
+        "optimization/selection/record_budget.py": "aedc1136c7d79f2b420d2946fe315b21fd319e5eb01ca9efc89a13cf8125b61d",
+        "predict/harnesses/branches/paper_baseline.py": "fccd97344bd7eaacc17cf8e284f7cfc551b33e7813c20ba2f3cdc728f84d9bc1"
+      },
+      "original_model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "generation": {
+        "temperature": 1.0,
+        "thinking": "provider_default",
+        "reasoning_effort": "low"
+      },
+      "request_extra_body": {
+        "reasoning": {
+          "enabled": true
+        }
+      },
+      "max_tokens": 16384,
+      "direct_identity_policy": "scaffold_disjoint",
+      "indirect_identity_policy": "parent_disjoint",
+      "direct_budget": 50,
+      "indirect_budget": 50,
+      "selection": {
+        "budget": 50,
+        "policy": "neighbor_fill",
+        "weights": [
+          0.5,
+          0.375,
+          0.125
+        ],
+        "per_molecule": 5,
+        "seed": 0
+      },
+      "candidate_molecules": 128,
+      "min_similarity": 0.0
+    },
+    {
+      "source_structure_checks": 23450,
+      "selected_records": 23450,
+      "run_name": "murcko-v3r2-20261028-conditioned-carcinogens-direct50",
+      "source_batch": "outputs/paper/aligned_record_scaling_test_20260921/direct/runs/direct_fill_b50/carcinogens",
+      "source_manifest_sha256": "592877c4f1e1cb5a8670adb395130ef6a9768f43410e3f1e0c570496e226b2d0",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/murcko-v3r2-20261028-conditioned-carcinogens-direct50",
+      "prepared_manifest_sha256": "baccced89060829dc81be8e924d5d171187f0fa330e5598bb2d7029d4615b430",
+      "predictions_sha256": "48b8031902a94eff625ed9f46194a8ae6c9cd82c93708b581da71adfe091fe44",
+      "metrics_sha256": "6a3c1b8e9a16a147ab85ee7bef703ade4ddd9a0717712c959888f11e4a954c0e",
+      "original_metrics_sha256": "bd81777325cb13929d173d49729fde3cd0d9c482ba1e9c21e6e94313d9fab924",
+      "cohort_sha256": "b2ec17336315d3deb6c5a210cdff383be9151ee2434406c3a7eff5d633656520",
+      "prepared_code": {
+        "predict/prompts/paper_baseline.py": "f18ed8fc530c8da2d99991ec555f5cd66d616d94cebf54f038b09885351f7baa",
+        "predict/retrieval/paper_baseline.py": "d8bb1ec3d0b087e78bbcf4ec061a4fa985afa33eeea4b72a9eba3748f219b718",
+        "predict/retrieval/policies.py": "27b8968ac94b0d960c9d32ce779f80be20f03ecb63401da6cf18a6dc3b49173d",
+        "predict/retrieval/task_identity.py": "53c94723e7c6f34b19ad87d7ce3a8ccb13f6a7112284eb4ddd1e3bd632ec5a46",
+        "predict/retrieval/retrieve.py": "7c96de3b2407b3613a285af2df2dcd84defec924701f31d3496f14120b7b9da7",
+        "predict/retrieval/features.py": "b96ca8abec2706eaea43dafbbecc66a465159964fbbe89c17a43772553226cf0",
+        "predict/utils/evidence.py": "0d740e20f11f3d66c2b746f4894f47f92abc9c2b72341d3c4d6063c7dcdc88c5",
+        "predict/utils/response.py": "6c843145439ed35d07cb2738724ca8513cd248483e6288e6e5b0267e2be24c7a",
+        "optimization/selection/record_budget.py": "aedc1136c7d79f2b420d2946fe315b21fd319e5eb01ca9efc89a13cf8125b61d",
+        "predict/harnesses/branches/paper_baseline.py": "fccd97344bd7eaacc17cf8e284f7cfc551b33e7813c20ba2f3cdc728f84d9bc1"
+      },
+      "original_model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "generation": {
+        "temperature": 1.0,
+        "thinking": "provider_default",
+        "reasoning_effort": "low"
+      },
+      "request_extra_body": {
+        "reasoning": {
+          "enabled": true
+        }
+      },
+      "max_tokens": 16384,
+      "direct_identity_policy": "scaffold_disjoint",
+      "indirect_identity_policy": "parent_disjoint",
+      "direct_budget": 50,
+      "indirect_budget": 0,
+      "selection": {
+        "budget": 0,
+        "policy": "neighbor_fill",
+        "weights": [
+          0.5,
+          0.375,
+          0.125
+        ],
+        "per_molecule": 5,
+        "seed": 0
+      },
+      "candidate_molecules": 128,
+      "min_similarity": 0.0
+    },
+    {
+      "source_structure_checks": 46900,
+      "selected_records": 46900,
+      "run_name": "murcko-v3r2-20261028-conditioned-carcinogens-direct50_indirect50_parent",
+      "source_batch": "outputs/paper/aligned_record_scaling_test_20260921/indirect/runs/both_fill_b50/carcinogens",
+      "source_manifest_sha256": "dc15f4028e474d4ec6e6554f6f03589009f31303abfec4d01eb0a708fb3cbc29",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/murcko-v3r2-20261028-conditioned-carcinogens-direct50_indirect50_parent",
+      "prepared_manifest_sha256": "89d359e7d1c399f5bca800def4387d34f23073f4cacffb5c6e21c26b040d04b5",
+      "predictions_sha256": "a9a0dbea5fe08e05d54c410c2c24299f36039cd791da5c98e5e7bd0f4e03ab39",
+      "metrics_sha256": "914e973efbed5f2a2a8f3184f931eb9b6981ff964105678e2683071913010ad5",
+      "original_metrics_sha256": "d91a486504552386f4a259982be191075bae69e0aed35ff1fd620989ba3286a6",
+      "cohort_sha256": "b2ec17336315d3deb6c5a210cdff383be9151ee2434406c3a7eff5d633656520",
+      "prepared_code": {
+        "predict/prompts/paper_baseline.py": "f18ed8fc530c8da2d99991ec555f5cd66d616d94cebf54f038b09885351f7baa",
+        "predict/retrieval/paper_baseline.py": "d8bb1ec3d0b087e78bbcf4ec061a4fa985afa33eeea4b72a9eba3748f219b718",
+        "predict/retrieval/policies.py": "27b8968ac94b0d960c9d32ce779f80be20f03ecb63401da6cf18a6dc3b49173d",
+        "predict/retrieval/task_identity.py": "53c94723e7c6f34b19ad87d7ce3a8ccb13f6a7112284eb4ddd1e3bd632ec5a46",
+        "predict/retrieval/retrieve.py": "7c96de3b2407b3613a285af2df2dcd84defec924701f31d3496f14120b7b9da7",
+        "predict/retrieval/features.py": "b96ca8abec2706eaea43dafbbecc66a465159964fbbe89c17a43772553226cf0",
+        "predict/utils/evidence.py": "0d740e20f11f3d66c2b746f4894f47f92abc9c2b72341d3c4d6063c7dcdc88c5",
+        "predict/utils/response.py": "6c843145439ed35d07cb2738724ca8513cd248483e6288e6e5b0267e2be24c7a",
+        "optimization/selection/record_budget.py": "aedc1136c7d79f2b420d2946fe315b21fd319e5eb01ca9efc89a13cf8125b61d",
+        "predict/harnesses/branches/paper_baseline.py": "fccd97344bd7eaacc17cf8e284f7cfc551b33e7813c20ba2f3cdc728f84d9bc1"
+      },
+      "original_model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "generation": {
+        "temperature": 1.0,
+        "thinking": "provider_default",
+        "reasoning_effort": "low"
+      },
+      "request_extra_body": {
+        "reasoning": {
+          "enabled": true
+        }
+      },
+      "max_tokens": 16384,
+      "direct_identity_policy": "scaffold_disjoint",
+      "indirect_identity_policy": "parent_disjoint",
+      "direct_budget": 50,
+      "indirect_budget": 50,
+      "selection": {
+        "budget": 50,
+        "policy": "neighbor_fill",
+        "weights": [
+          0.5,
+          0.375,
+          0.125
+        ],
+        "per_molecule": 5,
+        "seed": 0
+      },
+      "candidate_molecules": 128,
+      "min_similarity": 0.0
+    },
+    {
+      "source_structure_checks": 4800,
+      "selected_records": 4800,
+      "run_name": "murcko-v3r2-20261028-tdc-dili-direct50",
+      "source_batch": "outputs/paper/tdc_scaffold_baselines_b50_20260918/llm/runs/direct_fill/dili",
+      "source_manifest_sha256": "86a93262da16657870bf52725f1829c7b3d80f4b9626b62ee8e4e8aac1e67db5",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/murcko-v3r2-20261028-tdc-dili-direct50",
+      "prepared_manifest_sha256": "458888a3a3c683199d162795abe715997c178e1e99c1b05c6c560d1e5b402116",
+      "predictions_sha256": "285797f684a80baf65e4f6f2641e3582c6fbd45394b104a9aa113be8ae15d3e6",
+      "metrics_sha256": "d852139eec693de486b30a9d371890e22de645da83a4518c8a7c31b194f1d618",
+      "original_metrics_sha256": "fe0fbf9b8a56293e91e15f31e2a5e56215532ff58197f56c36e63bb01393d3d3",
+      "cohort_sha256": "32315845a9d992a97355d1729f4bfe5e39c7635fda022950be52dfb43d4ca244",
+      "prepared_code": {
+        "predict/prompts/paper_baseline.py": "f18ed8fc530c8da2d99991ec555f5cd66d616d94cebf54f038b09885351f7baa",
+        "predict/retrieval/paper_baseline.py": "d8bb1ec3d0b087e78bbcf4ec061a4fa985afa33eeea4b72a9eba3748f219b718",
+        "predict/retrieval/policies.py": "27b8968ac94b0d960c9d32ce779f80be20f03ecb63401da6cf18a6dc3b49173d",
+        "predict/retrieval/task_identity.py": "53c94723e7c6f34b19ad87d7ce3a8ccb13f6a7112284eb4ddd1e3bd632ec5a46",
+        "predict/retrieval/retrieve.py": "7c96de3b2407b3613a285af2df2dcd84defec924701f31d3496f14120b7b9da7",
+        "predict/retrieval/features.py": "b96ca8abec2706eaea43dafbbecc66a465159964fbbe89c17a43772553226cf0",
+        "predict/utils/evidence.py": "0d740e20f11f3d66c2b746f4894f47f92abc9c2b72341d3c4d6063c7dcdc88c5",
+        "predict/utils/response.py": "6c843145439ed35d07cb2738724ca8513cd248483e6288e6e5b0267e2be24c7a",
+        "optimization/selection/record_budget.py": "aedc1136c7d79f2b420d2946fe315b21fd319e5eb01ca9efc89a13cf8125b61d",
+        "predict/harnesses/branches/paper_baseline.py": "fccd97344bd7eaacc17cf8e284f7cfc551b33e7813c20ba2f3cdc728f84d9bc1"
+      },
+      "original_model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "generation": {
+        "temperature": 1.0,
+        "thinking": "provider_default",
+        "reasoning_effort": "low"
+      },
+      "request_extra_body": {
+        "reasoning": {
+          "enabled": true
+        }
+      },
+      "max_tokens": 16384,
+      "direct_identity_policy": "scaffold_disjoint",
+      "indirect_identity_policy": "parent_disjoint",
+      "direct_budget": 50,
+      "indirect_budget": 0,
+      "selection": {
+        "budget": 50,
+        "policy": "neighbor_fill",
+        "weights": [
+          0.5,
+          0.375,
+          0.125
+        ],
+        "per_molecule": 5,
+        "seed": 0
+      },
+      "candidate_molecules": 128,
+      "min_similarity": 0.0
+    },
+    {
+      "source_structure_checks": 9600,
+      "selected_records": 9600,
+      "run_name": "murcko-v3r2-20261028-tdc-dili-direct50_indirect50_parent",
+      "source_batch": "outputs/paper/tdc_scaffold_baselines_b50_20260918/llm/runs/both_fill/dili",
+      "source_manifest_sha256": "9bd437cd64231e7045fe3cd2b09e4e03ea0f5cb08dbf2b3ba593e170fd097fed",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/murcko-v3r2-20261028-tdc-dili-direct50_indirect50_parent",
+      "prepared_manifest_sha256": "3b97a7926de6b1542d7c7752f1791fa9832579dc34f844e51614ed653c09871f",
+      "predictions_sha256": "3905ad3e50b127f88ec119b8f363bb57cdf3239bbea89c5e1bd4708a1c389fc9",
+      "metrics_sha256": "ec516cfaa56f494ce1e8532528f5e233474b28c434bfeb15a488568d683d591f",
+      "original_metrics_sha256": "fc90dc7057f369a8f2f00aaf4ba690cdfdcb65322fb8458b5f7966c0f12740f9",
+      "cohort_sha256": "32315845a9d992a97355d1729f4bfe5e39c7635fda022950be52dfb43d4ca244",
+      "prepared_code": {
+        "predict/prompts/paper_baseline.py": "f18ed8fc530c8da2d99991ec555f5cd66d616d94cebf54f038b09885351f7baa",
+        "predict/retrieval/paper_baseline.py": "d8bb1ec3d0b087e78bbcf4ec061a4fa985afa33eeea4b72a9eba3748f219b718",
+        "predict/retrieval/policies.py": "27b8968ac94b0d960c9d32ce779f80be20f03ecb63401da6cf18a6dc3b49173d",
+        "predict/retrieval/task_identity.py": "53c94723e7c6f34b19ad87d7ce3a8ccb13f6a7112284eb4ddd1e3bd632ec5a46",
+        "predict/retrieval/retrieve.py": "7c96de3b2407b3613a285af2df2dcd84defec924701f31d3496f14120b7b9da7",
+        "predict/retrieval/features.py": "b96ca8abec2706eaea43dafbbecc66a465159964fbbe89c17a43772553226cf0",
+        "predict/utils/evidence.py": "0d740e20f11f3d66c2b746f4894f47f92abc9c2b72341d3c4d6063c7dcdc88c5",
+        "predict/utils/response.py": "6c843145439ed35d07cb2738724ca8513cd248483e6288e6e5b0267e2be24c7a",
+        "optimization/selection/record_budget.py": "aedc1136c7d79f2b420d2946fe315b21fd319e5eb01ca9efc89a13cf8125b61d",
+        "predict/harnesses/branches/paper_baseline.py": "fccd97344bd7eaacc17cf8e284f7cfc551b33e7813c20ba2f3cdc728f84d9bc1"
+      },
+      "original_model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "generation": {
+        "temperature": 1.0,
+        "thinking": "provider_default",
+        "reasoning_effort": "low"
+      },
+      "request_extra_body": {
+        "reasoning": {
+          "enabled": true
+        }
+      },
+      "max_tokens": 16384,
+      "direct_identity_policy": "scaffold_disjoint",
+      "indirect_identity_policy": "parent_disjoint",
+      "direct_budget": 50,
+      "indirect_budget": 50,
+      "selection": {
+        "budget": 50,
+        "policy": "neighbor_fill",
+        "weights": [
+          0.5,
+          0.375,
+          0.125
+        ],
+        "per_molecule": 5,
+        "seed": 0
+      },
+      "candidate_molecules": 128,
+      "min_similarity": 0.0
+    },
+    {
+      "source_structure_checks": 2800,
+      "selected_records": 2800,
+      "run_name": "murcko-v3r2-20261028-tdc-carcinogens-direct50",
+      "source_batch": "outputs/paper/tdc_seed42_neighbor_fill_20260924/deepseek/carcinogens/runs/direct_fill/carcinogens",
+      "source_manifest_sha256": "6c82b43651c74e6a3241171c260640a9101971bdc9f94a5c3506fbb492bdc2a9",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/murcko-v3r2-20261028-tdc-carcinogens-direct50",
+      "prepared_manifest_sha256": "6d05f8f06c518a05b2ed7179ef0df7f8bc0824565bb40dada8a0f46bac291f4e",
+      "predictions_sha256": "83908e1137bfe2f7b50503bff7f28da137ac4f28d678faa89179b610df4f35f4",
+      "metrics_sha256": "f16e075f310ebb0081e226e43e4262fdd41042e0154b14921aac96685588f0cf",
+      "original_metrics_sha256": "4f508d3a3f9f1d9890810a7a80f446cd89929aff2511b49493a880b6daea4af2",
+      "cohort_sha256": "82a2f3ce63c6f77d520439251da70a4df70dabdfc140a61385ffbae9b0cc1d08",
+      "prepared_code": {
+        "predict/prompts/paper_baseline.py": "f18ed8fc530c8da2d99991ec555f5cd66d616d94cebf54f038b09885351f7baa",
+        "predict/retrieval/paper_baseline.py": "d8bb1ec3d0b087e78bbcf4ec061a4fa985afa33eeea4b72a9eba3748f219b718",
+        "predict/retrieval/policies.py": "27b8968ac94b0d960c9d32ce779f80be20f03ecb63401da6cf18a6dc3b49173d",
+        "predict/retrieval/task_identity.py": "53c94723e7c6f34b19ad87d7ce3a8ccb13f6a7112284eb4ddd1e3bd632ec5a46",
+        "predict/retrieval/retrieve.py": "7c96de3b2407b3613a285af2df2dcd84defec924701f31d3496f14120b7b9da7",
+        "predict/retrieval/features.py": "b96ca8abec2706eaea43dafbbecc66a465159964fbbe89c17a43772553226cf0",
+        "predict/utils/evidence.py": "0d740e20f11f3d66c2b746f4894f47f92abc9c2b72341d3c4d6063c7dcdc88c5",
+        "predict/utils/response.py": "6c843145439ed35d07cb2738724ca8513cd248483e6288e6e5b0267e2be24c7a",
+        "optimization/selection/record_budget.py": "aedc1136c7d79f2b420d2946fe315b21fd319e5eb01ca9efc89a13cf8125b61d",
+        "predict/harnesses/branches/paper_baseline.py": "fccd97344bd7eaacc17cf8e284f7cfc551b33e7813c20ba2f3cdc728f84d9bc1"
+      },
+      "original_model": "deepseek/deepseek-v4-flash-0731",
+      "generation": {
+        "temperature": 0.0,
+        "thinking": "provider_default",
+        "reasoning_effort": "omitted"
+      },
+      "request_extra_body": {
+        "reasoning": {
+          "enabled": true
+        }
+      },
+      "max_tokens": 16384,
+      "direct_identity_policy": "scaffold_disjoint",
+      "indirect_identity_policy": "parent_disjoint",
+      "direct_budget": 50,
+      "indirect_budget": 0,
+      "selection": {
+        "budget": 50,
+        "policy": "neighbor_fill",
+        "weights": [
+          0.5,
+          0.375,
+          0.125
+        ],
+        "per_molecule": 5,
+        "seed": 0
+      },
+      "candidate_molecules": 128,
+      "min_similarity": 0.0
+    },
+    {
+      "source_structure_checks": 5600,
+      "selected_records": 5600,
+      "run_name": "murcko-v3r2-20261028-tdc-carcinogens-direct50_indirect50_parent",
+      "source_batch": "outputs/paper/tdc_seed42_neighbor_fill_20260924/deepseek/carcinogens/runs/both_fill/carcinogens",
+      "source_manifest_sha256": "dcb7a3edc1cadedb720a4130d71d60501a5d10c8a8d5dad64d4ee1979517506f",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/murcko-v3r2-20261028-tdc-carcinogens-direct50_indirect50_parent",
+      "prepared_manifest_sha256": "5c56b7c8064e1a17d0bdbc216cd7ea0b0bc92ac96931aa3c2406a7ec07ce8737",
+      "predictions_sha256": "e621703940052d2b6741c4833998e81662ad8641cbb8488bf3d9899165d640bc",
+      "metrics_sha256": "f16e075f310ebb0081e226e43e4262fdd41042e0154b14921aac96685588f0cf",
+      "original_metrics_sha256": "bf72abc7388caf10ac3cc123e6bb45d7d1c37884a917be26428c1b1d4743342a",
+      "cohort_sha256": "82a2f3ce63c6f77d520439251da70a4df70dabdfc140a61385ffbae9b0cc1d08",
+      "prepared_code": {
+        "predict/prompts/paper_baseline.py": "f18ed8fc530c8da2d99991ec555f5cd66d616d94cebf54f038b09885351f7baa",
+        "predict/retrieval/paper_baseline.py": "d8bb1ec3d0b087e78bbcf4ec061a4fa985afa33eeea4b72a9eba3748f219b718",
+        "predict/retrieval/policies.py": "27b8968ac94b0d960c9d32ce779f80be20f03ecb63401da6cf18a6dc3b49173d",
+        "predict/retrieval/task_identity.py": "53c94723e7c6f34b19ad87d7ce3a8ccb13f6a7112284eb4ddd1e3bd632ec5a46",
+        "predict/retrieval/retrieve.py": "7c96de3b2407b3613a285af2df2dcd84defec924701f31d3496f14120b7b9da7",
+        "predict/retrieval/features.py": "b96ca8abec2706eaea43dafbbecc66a465159964fbbe89c17a43772553226cf0",
+        "predict/utils/evidence.py": "0d740e20f11f3d66c2b746f4894f47f92abc9c2b72341d3c4d6063c7dcdc88c5",
+        "predict/utils/response.py": "6c843145439ed35d07cb2738724ca8513cd248483e6288e6e5b0267e2be24c7a",
+        "optimization/selection/record_budget.py": "aedc1136c7d79f2b420d2946fe315b21fd319e5eb01ca9efc89a13cf8125b61d",
+        "predict/harnesses/branches/paper_baseline.py": "fccd97344bd7eaacc17cf8e284f7cfc551b33e7813c20ba2f3cdc728f84d9bc1"
+      },
+      "original_model": "deepseek/deepseek-v4-flash-0731",
+      "generation": {
+        "temperature": 0.0,
+        "thinking": "provider_default",
+        "reasoning_effort": "omitted"
+      },
+      "request_extra_body": {
+        "reasoning": {
+          "enabled": true
+        }
+      },
+      "max_tokens": 16384,
+      "direct_identity_policy": "scaffold_disjoint",
+      "indirect_identity_policy": "parent_disjoint",
+      "direct_budget": 50,
+      "indirect_budget": 50,
+      "selection": {
+        "budget": 50,
+        "policy": "neighbor_fill",
+        "weights": [
+          0.5,
+          0.375,
+          0.125
+        ],
+        "per_molecule": 5,
+        "seed": 0
+      },
+      "candidate_molecules": 128,
+      "min_similarity": 0.0
+    },
+    {
+      "source_structure_checks": 40200,
+      "selected_records": 40200,
+      "run_name": "murcko-v3r2-20261028-conditioned-dili-direct50_indirect50_scaffold",
+      "source_batch": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned/runs/both_fill/dili",
+      "source_manifest_sha256": "8a1986fe9226ea515836040dffa4acac0d3eb619d7ab4177627da7a74fc7367a",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/murcko-v3r2-20261028-conditioned-dili-direct50_indirect50_scaffold",
+      "prepared_manifest_sha256": "7f911df1bd9e71d5715ae6036ad216a3be1076f527df2dc1de58f997b3a0118b",
+      "predictions_sha256": "5c254e31d4effecd7be9dc87823d4442e0ef46a02963fed0a95c6721ce44e226",
+      "metrics_sha256": "0062c38947e08c9264a9bd280176907e6f89a79c8159563f766675b45b40ccde",
+      "original_metrics_sha256": "1050451a9538a5a96facc99193c32cc1d381123ea26371863f7552e16cead6b4",
+      "cohort_sha256": "e548bcefa7c10c9ee90ae546d0631d2cb47aa7fc227892455563c503b26b5f19",
+      "prepared_code": {
+        "predict/prompts/paper_baseline.py": "f18ed8fc530c8da2d99991ec555f5cd66d616d94cebf54f038b09885351f7baa",
+        "predict/retrieval/paper_baseline.py": "d8bb1ec3d0b087e78bbcf4ec061a4fa985afa33eeea4b72a9eba3748f219b718",
+        "predict/retrieval/policies.py": "27b8968ac94b0d960c9d32ce779f80be20f03ecb63401da6cf18a6dc3b49173d",
+        "predict/retrieval/task_identity.py": "53c94723e7c6f34b19ad87d7ce3a8ccb13f6a7112284eb4ddd1e3bd632ec5a46",
+        "predict/retrieval/retrieve.py": "7c96de3b2407b3613a285af2df2dcd84defec924701f31d3496f14120b7b9da7",
+        "predict/retrieval/features.py": "b96ca8abec2706eaea43dafbbecc66a465159964fbbe89c17a43772553226cf0",
+        "predict/utils/evidence.py": "0d740e20f11f3d66c2b746f4894f47f92abc9c2b72341d3c4d6063c7dcdc88c5",
+        "predict/utils/response.py": "6c843145439ed35d07cb2738724ca8513cd248483e6288e6e5b0267e2be24c7a",
+        "optimization/selection/record_budget.py": "aedc1136c7d79f2b420d2946fe315b21fd319e5eb01ca9efc89a13cf8125b61d",
+        "predict/harnesses/branches/paper_baseline.py": "fccd97344bd7eaacc17cf8e284f7cfc551b33e7813c20ba2f3cdc728f84d9bc1"
+      },
+      "original_model": "deepseek/deepseek-v4-flash-0731",
+      "generation": {
+        "temperature": 1.0,
+        "thinking": "provider_default",
+        "reasoning_effort": "low"
+      },
+      "request_extra_body": {
+        "reasoning": {
+          "enabled": true
+        }
+      },
+      "max_tokens": 16384,
+      "direct_identity_policy": "scaffold_disjoint",
+      "indirect_identity_policy": "scaffold_disjoint",
+      "direct_budget": 50,
+      "indirect_budget": 50,
+      "selection": {
+        "budget": 50,
+        "policy": "neighbor_fill",
+        "weights": [
+          0.5,
+          0.375,
+          0.125
+        ],
+        "per_molecule": 5,
+        "seed": 0
+      },
+      "candidate_molecules": 128,
+      "min_similarity": 0.0
+    },
+    {
+      "source_structure_checks": 46900,
+      "selected_records": 46900,
+      "run_name": "murcko-v3r2-20261028-conditioned-carcinogens-direct50_indirect50_scaffold",
+      "source_batch": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned/runs/both_fill/carcinogens",
+      "source_manifest_sha256": "1fc743367d1b1c5019117cb3102ef85990b988a23e173299cd3ab7e47d8171ee",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/murcko-v3r2-20261028-conditioned-carcinogens-direct50_indirect50_scaffold",
+      "prepared_manifest_sha256": "9633311e79112387c90e50926afb318201b437d607136faa0f91122e7e1ef0bb",
+      "predictions_sha256": "ee4b9c4c4d4aadabf6c24303ee953d0ec4daa540bb7eb5bd96c978b8c0a52a21",
+      "metrics_sha256": "b4b71530e1d8e5df4895925e466dfad8219cfd1b8ed203699e2eafaaeaa37834",
+      "original_metrics_sha256": "cce53b5bf2e19ae8ccba240fdae7b46d3cb1dcce4655e8418a1bfca432e2ba00",
+      "cohort_sha256": "b2ec17336315d3deb6c5a210cdff383be9151ee2434406c3a7eff5d633656520",
+      "prepared_code": {
+        "predict/prompts/paper_baseline.py": "f18ed8fc530c8da2d99991ec555f5cd66d616d94cebf54f038b09885351f7baa",
+        "predict/retrieval/paper_baseline.py": "d8bb1ec3d0b087e78bbcf4ec061a4fa985afa33eeea4b72a9eba3748f219b718",
+        "predict/retrieval/policies.py": "27b8968ac94b0d960c9d32ce779f80be20f03ecb63401da6cf18a6dc3b49173d",
+        "predict/retrieval/task_identity.py": "53c94723e7c6f34b19ad87d7ce3a8ccb13f6a7112284eb4ddd1e3bd632ec5a46",
+        "predict/retrieval/retrieve.py": "7c96de3b2407b3613a285af2df2dcd84defec924701f31d3496f14120b7b9da7",
+        "predict/retrieval/features.py": "b96ca8abec2706eaea43dafbbecc66a465159964fbbe89c17a43772553226cf0",
+        "predict/utils/evidence.py": "0d740e20f11f3d66c2b746f4894f47f92abc9c2b72341d3c4d6063c7dcdc88c5",
+        "predict/utils/response.py": "6c843145439ed35d07cb2738724ca8513cd248483e6288e6e5b0267e2be24c7a",
+        "optimization/selection/record_budget.py": "aedc1136c7d79f2b420d2946fe315b21fd319e5eb01ca9efc89a13cf8125b61d",
+        "predict/harnesses/branches/paper_baseline.py": "fccd97344bd7eaacc17cf8e284f7cfc551b33e7813c20ba2f3cdc728f84d9bc1"
+      },
+      "original_model": "deepseek/deepseek-v4-flash-0731",
+      "generation": {
+        "temperature": 1.0,
+        "thinking": "provider_default",
+        "reasoning_effort": "low"
+      },
+      "request_extra_body": {
+        "reasoning": {
+          "enabled": true
+        }
+      },
+      "max_tokens": 16384,
+      "direct_identity_policy": "scaffold_disjoint",
+      "indirect_identity_policy": "scaffold_disjoint",
+      "direct_budget": 50,
+      "indirect_budget": 50,
+      "selection": {
+        "budget": 50,
+        "policy": "neighbor_fill",
+        "weights": [
+          0.5,
+          0.375,
+          0.125
+        ],
+        "per_molecule": 5,
+        "seed": 0
+      },
+      "candidate_molecules": 128,
+      "min_similarity": 0.0
+    },
+    {
+      "source_structure_checks": 9600,
+      "selected_records": 9600,
+      "run_name": "murcko-v3r2-20261028-tdc-dili-direct50_indirect50_scaffold",
+      "source_batch": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main/runs/both_fill/dili",
+      "source_manifest_sha256": "ab70d40f33619172e3c58835ebb02597ee03037fdfb6433c3d47f9d97107ffd5",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/murcko-v3r2-20261028-tdc-dili-direct50_indirect50_scaffold",
+      "prepared_manifest_sha256": "9d59fcd9742b7b3d8393f3705762124c718219594785c3e12406ff3acd622821",
+      "predictions_sha256": "9e47863aba3632f1ae4fd181dbdecdb1d9ea93763a378f91d2d4c0fe22fc0635",
+      "metrics_sha256": "186b757567a37c35f23d52d354bd7edb308b36a52356217e6700ae178393c2e7",
+      "original_metrics_sha256": "0dec0d1e9c6b5410ba96a629a17b57a32f1b778cbf171ac588b2cf1584ef7165",
+      "cohort_sha256": "32315845a9d992a97355d1729f4bfe5e39c7635fda022950be52dfb43d4ca244",
+      "prepared_code": {
+        "predict/prompts/paper_baseline.py": "f18ed8fc530c8da2d99991ec555f5cd66d616d94cebf54f038b09885351f7baa",
+        "predict/retrieval/paper_baseline.py": "d8bb1ec3d0b087e78bbcf4ec061a4fa985afa33eeea4b72a9eba3748f219b718",
+        "predict/retrieval/policies.py": "27b8968ac94b0d960c9d32ce779f80be20f03ecb63401da6cf18a6dc3b49173d",
+        "predict/retrieval/task_identity.py": "53c94723e7c6f34b19ad87d7ce3a8ccb13f6a7112284eb4ddd1e3bd632ec5a46",
+        "predict/retrieval/retrieve.py": "7c96de3b2407b3613a285af2df2dcd84defec924701f31d3496f14120b7b9da7",
+        "predict/retrieval/features.py": "b96ca8abec2706eaea43dafbbecc66a465159964fbbe89c17a43772553226cf0",
+        "predict/utils/evidence.py": "0d740e20f11f3d66c2b746f4894f47f92abc9c2b72341d3c4d6063c7dcdc88c5",
+        "predict/utils/response.py": "6c843145439ed35d07cb2738724ca8513cd248483e6288e6e5b0267e2be24c7a",
+        "optimization/selection/record_budget.py": "aedc1136c7d79f2b420d2946fe315b21fd319e5eb01ca9efc89a13cf8125b61d",
+        "predict/harnesses/branches/paper_baseline.py": "fccd97344bd7eaacc17cf8e284f7cfc551b33e7813c20ba2f3cdc728f84d9bc1"
+      },
+      "original_model": "deepseek/deepseek-v4-flash-0731",
+      "generation": {
+        "temperature": 1.0,
+        "thinking": "provider_default",
+        "reasoning_effort": "low"
+      },
+      "request_extra_body": {
+        "reasoning": {
+          "enabled": true
+        }
+      },
+      "max_tokens": 16384,
+      "direct_identity_policy": "scaffold_disjoint",
+      "indirect_identity_policy": "scaffold_disjoint",
+      "direct_budget": 50,
+      "indirect_budget": 50,
+      "selection": {
+        "budget": 50,
+        "policy": "neighbor_fill",
+        "weights": [
+          0.5,
+          0.375,
+          0.125
+        ],
+        "per_molecule": 5,
+        "seed": 0
+      },
+      "candidate_molecules": 128,
+      "min_similarity": 0.0
+    },
+    {
+      "source_structure_checks": 5600,
+      "selected_records": 5600,
+      "run_name": "murcko-v3r2-20261028-tdc-carcinogens-direct50_indirect50_scaffold",
+      "source_batch": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_seed42/runs/both_fill/carcinogens",
+      "source_manifest_sha256": "e25ec74225aa2a5b7d9a26234ccaa4473559f6ef2ecf928ea7750943601cd645",
+      "prepared_batch": "outputs/predictions/branches/paper_baseline_v1/murcko-v3r2-20261028-tdc-carcinogens-direct50_indirect50_scaffold",
+      "prepared_manifest_sha256": "d1b1fde4b72be76def1f6e80a8e83a69c1b63f7d4f11162f6fea0b570801c1a3",
+      "predictions_sha256": "a5c02e236aef778a5baf51c8dab3f64f54beff5aa546724b0e65e77a9cdc8395",
+      "metrics_sha256": "367e9f9686dc7f20f0a35004b355cea2fe7c349d0200906983c662f56bdea246",
+      "original_metrics_sha256": "e61779fce72412428d4d62f5aba2eb8736ee06370b8663154c00ffcb35d31eb1",
+      "cohort_sha256": "82a2f3ce63c6f77d520439251da70a4df70dabdfc140a61385ffbae9b0cc1d08",
+      "prepared_code": {
+        "predict/prompts/paper_baseline.py": "f18ed8fc530c8da2d99991ec555f5cd66d616d94cebf54f038b09885351f7baa",
+        "predict/retrieval/paper_baseline.py": "d8bb1ec3d0b087e78bbcf4ec061a4fa985afa33eeea4b72a9eba3748f219b718",
+        "predict/retrieval/policies.py": "27b8968ac94b0d960c9d32ce779f80be20f03ecb63401da6cf18a6dc3b49173d",
+        "predict/retrieval/task_identity.py": "53c94723e7c6f34b19ad87d7ce3a8ccb13f6a7112284eb4ddd1e3bd632ec5a46",
+        "predict/retrieval/retrieve.py": "7c96de3b2407b3613a285af2df2dcd84defec924701f31d3496f14120b7b9da7",
+        "predict/retrieval/features.py": "b96ca8abec2706eaea43dafbbecc66a465159964fbbe89c17a43772553226cf0",
+        "predict/utils/evidence.py": "0d740e20f11f3d66c2b746f4894f47f92abc9c2b72341d3c4d6063c7dcdc88c5",
+        "predict/utils/response.py": "6c843145439ed35d07cb2738724ca8513cd248483e6288e6e5b0267e2be24c7a",
+        "optimization/selection/record_budget.py": "aedc1136c7d79f2b420d2946fe315b21fd319e5eb01ca9efc89a13cf8125b61d",
+        "predict/harnesses/branches/paper_baseline.py": "fccd97344bd7eaacc17cf8e284f7cfc551b33e7813c20ba2f3cdc728f84d9bc1"
+      },
+      "original_model": "deepseek/deepseek-v4-flash-0731",
+      "generation": {
+        "temperature": 0.0,
+        "thinking": "provider_default",
+        "reasoning_effort": "omitted"
+      },
+      "request_extra_body": {
+        "reasoning": {
+          "enabled": true
+        }
+      },
+      "max_tokens": 16384,
+      "direct_identity_policy": "scaffold_disjoint",
+      "indirect_identity_policy": "scaffold_disjoint",
+      "direct_budget": 50,
+      "indirect_budget": 50,
+      "selection": {
+        "budget": 50,
+        "policy": "neighbor_fill",
+        "weights": [
+          0.5,
+          0.375,
+          0.125
+        ],
+        "per_molecule": 5,
+        "seed": 0
+      },
+      "candidate_molecules": 128,
+      "min_similarity": 0.0
+    }
+  ],
+  "export_hashes": {
+    "scores.csv": "38eccd21a42642275b2522dc66a4dbe776e815b654d51df2d2c4a946f411e73c",
+    "predictions.csv": "330d9ca56d4f35abd52cb7f27084391a8af0fbb5cf30fdd5ed2922a6fbfcdaf3",
+    "provider.json": "ec418d4ec10f380862858b0d9f23c0a4fe28d112fe16042064c627fca4abe6f4",
+    "control.json": "15db7b7d835c38175b6536fcce18589a4a7ecadab32494c69b76e0aa70e23f00",
+    "control_predictions.csv": "a8a098d9c10c45349038629060d41ea0181278f4c0f2425849b08b4cc25ec584"
+  }
+}

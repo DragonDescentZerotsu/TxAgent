@@ -53,6 +53,17 @@ remain separate experiments in the preserved source registry. They are outside
 the current manuscript migration scope unless a specific paper item uses them.
 Existing historical sources remain preserved.
 
+## Current Murcko retrieval validation
+
+The [2026-10-28 follow-up](paper/murcko_retrieval_20261028/README.md) records
+12 DeepSeek cells / 3,069 predictions for DILI and Carcinogens across both
+benchmarks, using the release branch's bond-preserving Murcko retrieval and
+retained parent refinement. It includes Direct50, 50+50 with parent-disjoint
+indirect evidence, and the requested scaffold-disjoint indirect control.
+Scores, per-query predictions, source hashes and a small frozen-input diagnostic
+are kept together there. These new runs do not replace the frozen paper tables
+above or establish new six-task means.
+
 ## Rebuild paper tables
 
 ```bash
