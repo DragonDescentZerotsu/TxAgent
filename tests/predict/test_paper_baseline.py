@@ -204,7 +204,12 @@ def test_new_candidate_path_uses_selected_parent_and_keeps_scaffold_policy():
 
 
 @pytest.mark.parametrize('portable', [False, True])
-def test_batch_execution_freezes_generation_cohort_prior_and_resume(tmp_path, monkeypatch, portable):
+@pytest.mark.parametrize('source_model,provider_model', [
+    ('google/gemini-3.8-flash', 'google/gemini-3.8-flash'),
+    ('deepseek-ai/DeepSeek-V4-Flash-0731', 'deepseek/deepseek-v4-flash-0731'),
+    ('deepseek/deepseek-v4-flash-0731', 'deepseek-ai/DeepSeek-V4-Flash-0731'),
+])
+def test_batch_execution_freezes_generation_cohort_prior_and_resume(tmp_path, monkeypatch, portable, source_model, provider_model):
     from predict.harnesses.branches import paper_baseline as runtime
     from predict.api_client import pool
     from predict.utils.json import write_json_atomic, sha256_file
@@ -214,7 +219,7 @@ def test_batch_execution_freezes_generation_cohort_prior_and_resume(tmp_path, mo
     frozen, original, response = example()
     cohort = tmp_path/'test.jsonl'
     cohort.write_text(json.dumps({'drug': 'CCO', 'Y': 1})+'\n')
-    original.update(model='google/gemini-3.8-flash', generation=dict(temperature=None, thinking='provider_default', reasoning_effort='medium'),
+    original.update(model=source_model, generation=dict(temperature=None, thinking='provider_default', reasoning_effort='medium'),
                     max_tokens=16384, request_extra_body={}, inputs={task: {'input': dict(path=str(cohort), sha256=sha256_file(cohort))}})
     frozen.update(context_ready=True, manifest_hash=paper.content_hash(original),
                   query_hash=paper.content_hash(dict(benchmark_profile='', canonical_smiles='CCO', condition_group='')))
@@ -227,7 +232,7 @@ def test_batch_execution_freezes_generation_cohort_prior_and_resume(tmp_path, mo
     write_json_atomic(directory/'prepared.json', prepared)
     write_json_atomic(directory/'evaluation.json', {'label': 1})
     config = pool.ProviderPoolConfig.from_mapping({'version': pool.POOL_CONFIG_VERSION, 'providers': [
-        dict(name='test', base_url='https://invalid.example/v1', model=original['model'], api_key_env='NOT_USED', max_inflight=1)]})
+        dict(name='test', base_url='https://invalid.example/v1', model=provider_model, api_key_env='NOT_USED', max_inflight=1)]})
     monkeypatch.setattr(pool, 'load_provider_pool_config', lambda _: config)
     from types import SimpleNamespace
     builds, calls, closed = [], [], []
@@ -236,6 +241,14 @@ def test_batch_execution_freezes_generation_cohort_prior_and_resume(tmp_path, mo
         return SimpleNamespace(chat_json=lambda messages: calls.append(messages) or deepcopy(response['llm']),
                                close=lambda: closed.append(True))
     monkeypatch.setattr(pool, 'build_provider_pool', build)
+    from dataclasses import replace
+    for changed_provider in (replace(config.providers[0], model='deepseek/unreviewed-version'),
+                             replace(config.providers[0], request_extra_body={'reasoning': {'effort': 'high'}})):
+        monkeypatch.setattr(pool, 'load_provider_pool_config', lambda _: replace(config, providers=(changed_provider,)))
+        with pytest.raises(ValueError, match='provider model or extra generation'):
+            runtime.execute_batch(target, None, None, 1)
+        assert not builds and not calls
+    monkeypatch.setattr(pool, 'load_provider_pool_config', lambda _: config)
     assert runtime.execute_batch(target, None, None, 1) == 0
     assert builds[0]['max_tokens'] == 16384 and builds[0]['reasoning_effort'] == 'medium'
     assert builds[0]['token_limit_parameter'] == 'max_tokens' and builds[0]['enable_thinking'] is False

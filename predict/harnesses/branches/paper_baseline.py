@@ -328,7 +328,7 @@ def bundle(root, target):
 
 def execute_batch(root, provider_config, env_file, parallelism, *, retry_race_width=1, max_stage_requeues=0, retry_delay_s=0):
     """Execute frozen generation settings through the selected transport and bounded recovery."""
-    from predict.api_client.pool import load_provider_pool_config, build_provider_pool, validate_parallelism, ProviderPoolExhausted
+    from predict.api_client.pool import load_provider_pool_config, build_provider_pool, validate_parallelism, ProviderPoolExhausted, DEEPSEEK_V4_ALIASES
     from sklearn.metrics import accuracy_score, f1_score
 
     manifest, queries = validate_batch(root)
@@ -341,7 +341,8 @@ def execute_batch(root, provider_config, env_file, parallelism, *, retry_race_wi
         raise ValueError('Batch requires retry-race-width 1; paid remote jobs cannot be raced')
     if retry_race_width > 1 and config.spend_budget is not None:
         raise ValueError('retry races cannot use the synchronous spend ledger')
-    if any(p.model != manifest['model'] or dict(p.request_extra_body or {}) != manifest['request_extra_body'] for p in config.providers):
+    if any((p.model != manifest['model'] and not {p.model, manifest['model']} <= DEEPSEEK_V4_ALIASES)
+           or dict(p.request_extra_body or {}) != manifest['request_extra_body'] for p in config.providers):
         raise ValueError('provider model or extra generation parameters differ from the frozen experiment')
     generation = manifest['generation']
     if generation['thinking'] != 'provider_default':

@@ -154,6 +154,10 @@ These dependencies cover prepared LLM execution, not retrieval rebuilding or ML
 training. The latter still require their documented data and environments.
 
 Provider model and extra request parameters must match the frozen manifest.
+The shared pool's reviewed DeepSeek V4 Flash 0731 aliases are accepted: use
+`deepseek/deepseek-v4-flash-0731` on OpenRouter even when the frozen manifest
+records `deepseek-ai/DeepSeek-V4-Flash-0731`. The execution receipt keeps the
+actual provider model; other model substitutions remain rejected.
 Temperature, reasoning effort and token budget come from that manifest. The paper
 protocol explicitly retains `max_tokens` and rejects context overflow rather
 than silently shrinking the budget; current FINAL defaults are unchanged.
@@ -176,7 +180,8 @@ OpenRouter Batch uses the same execution command and a provider configuration
 with `max_failovers: 0`, one provider with `transport: "openrouter_batch"`, and
 optional `batch_options` (`max_requests`, `max_bytes`, `flush_seconds`,
 `poll_seconds`, `submit_interval_seconds`). The provider must use
-`https://openrouter.ai/api/v1` and the exact frozen model ID, without `:batch`.
+`https://openrouter.ai/api/v1` and the frozen model or its reviewed provider alias,
+without `:batch`.
 Generation settings still come from the frozen manifest. Batch requires race
 width 1, no automatic POST retries and no synchronous spend
 ledger. Unsupported transports and mixed/failover Batch pools are rejected.
