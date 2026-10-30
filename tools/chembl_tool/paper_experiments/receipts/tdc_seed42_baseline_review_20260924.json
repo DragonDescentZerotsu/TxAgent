@@ -1,0 +1,75 @@
+{
+  "status": "complete_verified",
+  "scope": [
+    "Skin/Carcinogens ML split successor orchestration",
+    "shared baseline-suite retry racing",
+    "current ML Appendix and manuscript synchronization"
+  ],
+  "changes": [
+    "Verify input/model code hashes before ML resume",
+    "Verify historical code against pinned source ZIPs",
+    "Enable bounded cancellable retries in shared suite, keep CPU preparation width 1",
+    "Extend existing exporter for seed42 replacements without rewriting historical results",
+    "Reuse verified NVMe index copies across retrieval preparation processes"
+  ],
+  "tests": {
+    "budgeted_suite_and_pipeline": 52,
+    "reasoning_race_including_http_cancellation": 4,
+    "minimol_and_retrieval_forest": 25,
+    "saved_ml_report_cells_reverified": 36,
+    "paper_metric_values_checked": 324,
+    "budgeted_preparation": 12,
+    "build_runtime_hash_and_copy_integrity": 5,
+    "new_llm_predictions_verified": 828,
+    "unique_unit_tests_passed": 98
+  },
+  "known_fixed_preparation_issues": [
+    "Add missing heldout leakage_group metadata for Carcinogens",
+    "Use larger local NVMe staging for 11GB index plus 24GB evidence and temporary shards"
+  ],
+  "scientific_protocol_changed": false,
+  "cohort_change": "Skin and Carcinogens TDC seed42 only",
+  "paper_ml_source": "outputs/paper/llm_vs_standard_baselines_20260924/ml_appendix.csv",
+  "llm_run_plan": "outputs/paper/tdc_seed42_neighbor_fill_20260924/run_plan.json",
+  "llm_verification": "outputs/paper/tdc_seed42_neighbor_fill_20260924/verification.json",
+  "figure_verification": "outputs/paper/llm_vs_standard_baselines_20260924/figure_verification.json",
+  "manuscript_verification": "outputs/paper/llm_vs_standard_baselines_20260924/manuscript_verification.json",
+  "source_snapshot": "outputs/paper/tdc_seed42_neighbor_fill_20260924/source_snapshot.json",
+  "cleanup": "outputs/paper/tdc_seed42_neighbor_fill_20260924/cleanup.json",
+  "archived_launch_receipts": "outputs/paper/tdc_seed42_neighbor_fill_20260924/source_snapshot.zip",
+  "followup_review": {
+    "status": "complete_verified",
+    "changes": [
+      "Preserve current figure metadata and resolve relative score references at its own path",
+      "Reject historical comparison roots as seed42 export destinations",
+      "Remove duplicate live Skin scheduler after verifying frozen ZIP equality",
+      "Archive completed top-level ML logs; retain data, checkpoints and prediction traces",
+      "Route active guides and six original registry suites to current seed42 replacements"
+    ],
+    "validation": {
+      "shared_suite_pipeline_preparation_tests_passed": 64,
+      "llm_predictions_reverified": 828,
+      "frozen_ml_source_and_input_hashes": true,
+      "current_figure_and_paper_hashes": true,
+      "appendix_162_cells_identical": true,
+      "comparison_234_rows_identical": true,
+      "current_metadata_and_relative_score_reference_preserved": true,
+      "historical_output_roots_rejected": 2
+    },
+    "cleanup": {
+      "archived_log_hashes": {
+        "outputs/paper/skin_tdc_upstream_split_20260924/boost.log": "a657c4b3118e5514df9243e2b84d128123f112cccb7a7375a4a48ed30aef5af1",
+        "outputs/paper/skin_tdc_upstream_split_20260924/launcher.log": "73f6161cdd9e2a6699e7c5f29c00a5e9ece2d3c4fd85e6827172276eb41cffbf",
+        "outputs/paper/skin_tdc_upstream_split_20260924/verification.log": "ce5fddf3763f9ed59c5efdd8d828c0a05262354433dcf46f929d1a247101f5bf",
+        "outputs/paper/carcinogens_tdc_upstream_split_20260924/build.log": "691eb3d79531e1792b8f6ffff520a6c7303da97cb56e6e59b54df8ffa6ca1c27",
+        "outputs/paper/carcinogens_tdc_upstream_split_20260924/run.log": "b497d9a9133e026726e57bab32b36350c12b23b24d6d5f88eb3af765a0d6c864",
+        "outputs/paper/carcinogens_tdc_upstream_split_20260924/verify.log": "920d4e9d674bd8e981e4a03b2430d0d8d0aa2295736003c878ebd5e9f4252bfb"
+      },
+      "removed_duplicate_runner": "outputs/paper/skin_tdc_upstream_split_20260924/run.py",
+      "runner_preserved_in": "outputs/paper/skin_tdc_upstream_split_20260924/source_snapshot.zip"
+    },
+    "exporter_sha256": "13dc338a05fde4f34708db8d0911c8cc98467c39026c2b83240e7f1c3cd1307b",
+    "current_ml_csv_sha256": "240abc4bfd4cc006b5cb51e41f66768bb224f942d0fc54211b70c083d4489280",
+    "scientific_scores_changed": false
+  }
+}

@@ -1,37 +1,39 @@
-# Reference handoff: prompts and plotting points
+# Collaborator prompt handoff
 
 ## Task prompts
 
-`full_flat_v5/tasks.yaml` adds **Ames, Skin, DILI and Carcinogens** to
-the reference BBB/Bioavailability task definitions. `system.jinja` and `user.jinja`
-use Reference v5 (`3c36c264`) prose and his `claims` + `final_prediction` output.
-The prior renderer supports all six tasks and excludes the retired ChEMBL field.
-`provenance.json` contains the positive/negative label mapping in both directions.
-See the bundle README for the remaining runner/data registration step; this is
-a prompt handoff, not a second inference implementation.
+Use [tasks.yaml](full_flat_v5/tasks.yaml) and the matching
+[provenance.json](full_flat_v5/provenance.json) together. The shared bundle
+keeps `claims` + `final_prediction` and uses our native labels for the risk tasks:
 
-## Reproduce the curves
+| Task | Positive (1) | Negative (0) |
+|---|---|---|
+| DILI | `dili_risk` | `no_dili_risk` |
+| Ames | `positive` | `negative` |
+| Carcinogens | `positive` | `negative` |
+| Skin | `risk` | `no_risk` |
 
-From the repository root (Python with matplotlib):
+Apply these task definitions and label mappings to the existing harness.
+Its validator derives allowed values from the configuration; its mapper uses
+identity mappings for these four tasks. Keep `final_prediction` as the field
+name and use a fresh prompt identity/output root. Do not run the historical
+portable exporter to recreate this bundle: it emits the superseded pass/fail
+contract. Copy the checked-in bundle or apply its task/mapping changes directly.
 
-```bash
-python -m tools.chembl_tool.paper_experiments.plot_assay_retrieval_curve \
-  --baseline-curves-csv tools/chembl_tool/paper_experiments/shared/baseline_curves/valid.csv \
-  --baseline-curves-metadata tools/chembl_tool/paper_experiments/shared/baseline_curves/valid.json \
-  --analysis-dir outputs/shared_figures --output-stem valid
-```
+The general bundle keeps its existing templates and scientific evidence rules.
+Offline rendering, validation, mapping and scoring checks passed.
+For **TDC DILI only**, use the separate [retained prompt and results](TDC_DILI_HANDOFF.md):
+conditional-transfer rules plus hidden `Transfer likelihood` lines. Its full
+96-query replay scored 0.784076 Macro-F1, versus 0.760436 historical Mixed and
+0.829712 historical Direct. The two later A/B variants were rejected.
+Gold-v1 and the other tasks retain the general bundle; its full-test improvement
+is not established.
+This is a compatible adapter, not a
+byte-identical copy of our local runtime prompt. General-bundle versions and hashes live
+in [provenance.json](full_flat_v5/provenance.json); [bundle provenance](full_flat_v5/README.md) explains
+its relationship to the collaborator's templates.
 
-Replace both `valid` inputs with `test` to plot test. This writes PNG/PDF/SVG,
-CSV and a receipt. It reads only these small score files, not original traces.
-
-The CSV columns are `task,method,family,n,macro_f1,accuracy` (scores in [0,1]).
-To add a method, add its rows for all six tasks and add a label-to-three-method-IDs
-entry under `curve_settings` in a copy of the metadata, e.g.
-`"Reference": ["none", "reference_direct", "reference_indirect"]`. Use your own None ID if
-the prompt/prior differs. Keep the five ML rows. The plotter rejects duplicate,
-missing, nonfinite or out-of-range scores and mixed cohort sizes. It auto-scales
-the y-axis unless `--macro-f1-limits LOW HIGH` is supplied.
-
-These published points are the completed **tool-visible 50+50** no-threshold
-validation/test baselines. They are not results from the new aligned prompt or
-record-budget scaling runs. Each point is one run; no uncertainty intervals.
+- [TDC DILI: retained prompt, integration and completed results](TDC_DILI_HANDOFF.md) — identity fix verified; no new run requested.
+- [Gold-v1 DILI observations and retrieval suggestions](DILI_HANDOFF.md) — separate benchmark; no rerun requested now.
+- [Ames, Carcinogens and Skin trace audit](LABEL_ENCODING_AUDIT.md)
+- [Historical baseline plotting instructions](baseline_curves/README.md) — separate from prompt setup.

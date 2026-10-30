@@ -144,3 +144,41 @@ def test_zero_warmup_starts_at_configured_learning_rate():
     _, optimizer, _, _ = make_model(args, torch.device("cpu"))
 
     assert optimizer.param_groups[0]["lr"] == 0.001
+
+
+def test_validation_selection_saves_chosen_checkpoint_and_valid_predictions(tmp_path, monkeypatch):
+    import sys
+    import numpy as np
+    from baselines.minimol import run_bioavailability_ma as runner
+
+    data, out = tmp_path / 'data', tmp_path / 'out'
+    data.mkdir()
+    for split, labels in [('train', [0, 1, 0, 1]), ('valid', [0, 0, 1, 1]), ('test', [1, 1, 0, 0])]:
+        (data / f'{split}.jsonl').write_text(''.join(
+            json.dumps({'drug': f'{split}_{i}', 'Y': y}) + '\n' for i, y in enumerate(labels)))
+    monkeypatch.setattr(sys, 'argv', ['run', '--data-dir', str(data), '--output-dir', str(out),
+        '--device', 'cpu', '--epochs', '3', '--ensemble-size', '2', '--hidden-dim', '4',
+        '--threshold-strategy', 'valid_macro_f1'])
+    monkeypatch.setattr(runner, 'featurize_splits', lambda splits, args: {
+        name: torch.ones(len(split.labels), 512) for name, split in splits.items()})
+
+    def train(model, *args):
+        model.test_epoch = getattr(model, 'test_epoch', 0) + 1
+    monkeypatch.setattr(runner, 'train_one_epoch', train)
+    monkeypatch.setattr(runner, 'evaluate_loss', lambda model, *args: [0.6, 0.2, 0.4][model.test_epoch - 1])
+
+    def predict(model, *args):
+        assert model.test_epoch == 2  # The saved best checkpoint, not the last epoch.
+        return np.array([0.6, 0.7, 0.8, 0.9])
+    monkeypatch.setattr(runner, 'predict_proba', predict)
+    runner.main()
+    metrics = json.loads((out / 'metrics.json').read_text())
+    assert [m['best_epoch'] for m in metrics['members']] == [2, 2]
+    assert len(metrics['validation_history']) == 6
+    assert metrics['valid_metrics']['macro_f1'] == 1.0
+    assert metrics['test_metrics']['macro_f1'] == 0.0
+    assert metrics['model_selection']['decision_threshold_source'] == 'valid_macro_f1'
+    for split in ('valid', 'test'):
+        rows = [json.loads(line) for line in (out / f'{split}_predictions.jsonl').read_text().splitlines()]
+        assert [r['prediction'] for r in rows] == [0, 0, 1, 1]
+        assert [r['drug'] for r in rows] == [f'{split}_{i}' for i in range(4)]

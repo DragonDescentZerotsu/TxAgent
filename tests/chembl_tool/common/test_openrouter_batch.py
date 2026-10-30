@@ -29,6 +29,9 @@ class Response:
         if self.status_code >= 400:
             raise requests.HTTPError(str(self.status_code))
 
+    def close(self):
+        pass
+
 
 class Server:
     def __init__(self):
@@ -36,8 +39,8 @@ class Server:
         self.partial_failure = False
         self.uncertain = False
 
-    def post(self, url, *, data, timeout):
-        assert url.endswith('/api/beta/batches')
+    def post(self, url, *, data, timeout, stream=False):
+        assert url.endswith('/api/v1/batches')
         payload = json.loads(data)
         self.posts.append(copy.deepcopy(payload))
         if self.uncertain:
@@ -254,3 +257,84 @@ def test_runner_uses_batch_with_actual_generation_settings(tmp_path, monkeypatch
     args.retry_race_width = 6
     with pytest.raises(ValueError, match='retry-race-width 1'):
         rt._make_client(args, config)
+
+
+def test_prefetch_submits_all_before_results_and_recovers_without_duplicates(tmp_path, monkeypatch):
+    import threading
+    import time
+    from tools.chembl_tool.common.openai_provider_pool import OpenAIProviderPool
+
+    finished = threading.Event()
+    class SlowServer(Server):
+        def get(self, url, *, timeout):
+            if not finished.is_set():
+                return Response({'id': url.rsplit('/', 1)[1], 'status': 'in_progress'})
+            return super().get(url, timeout=timeout)
+    server = SlowServer()
+    spec = ProviderSpec(name='batch', base_url='https://openrouter.ai/api/v1', model='openai/test',
+                        api_key_env='KEY', max_inflight=1, transport='openrouter_batch')
+    config = ProviderPoolConfig(providers=(spec,), max_failovers=0)
+    pool = OpenAIProviderPool(config, client_factory=lambda _: client(tmp_path, monkeypatch, server))
+    # Identical messages are separate experiment requests, not a global cache.
+    messages = [[{'role': 'user', 'content': x}] for x in ['same', 'same', 'a', 'b', 'c']]
+    try:
+        assert pool.supports_batch_prefetch
+        for m in messages:
+            pool.prefetch_batch_json(m)
+        deadline = time.monotonic()+5
+        while sum(len(p['requests']) for p in server.posts) < len(messages):
+            assert time.monotonic() < deadline
+            time.sleep(.01)
+        assert not finished.is_set()
+    finally:
+        pool.close()  # Leave all remote jobs in flight.
+    post_count = len(server.posts)
+    resumed = OpenAIProviderPool(config, client_factory=lambda _: client(tmp_path, monkeypatch, server))
+    try:
+        for m in messages:
+            resumed.prefetch_batch_json(m)
+        finished.set()
+        outputs = [resumed.chat_json(m) for m in messages]
+        assert len(server.posts) == post_count
+        assert len({o['batch']['custom_id'] for o in outputs}) == 5
+        assert all(o['batch']['recovered'] for o in outputs)
+        assert [o['content']['ok'] for o in outputs] == ['same', 'same', 'a', 'b', 'c']
+    finally:
+        resumed.close()
+
+
+def test_explicit_429_waits_and_requeues_same_call_without_failing_consumer(tmp_path, monkeypatch):
+    import time
+    class LimitedServer(Server):
+        attempts = 0
+        def post(self, url, *, data, timeout, stream=False):
+            self.attempts += 1
+            if self.attempts == 1:
+                self.rejected = json.loads(data)
+                # A truncated 429 body must still be treated as a known rejection.
+                response = Response({}, 429)
+                response.headers = {'Retry-After': '60'}
+                def broken(): raise requests.exceptions.ChunkedEncodingError('truncated 429 body')
+                response.json = broken
+                return response
+            return super().post(url, data=data, timeout=timeout, stream=stream)
+    server = LimitedServer()
+    c = client(tmp_path, monkeypatch, server)
+    messages = [{'role': 'user', 'content': 'rate-limited'}]
+    try:
+        c.prefetch_json(messages)
+        deadline = time.monotonic()+5
+        while not c._submit_after:
+            assert time.monotonic() < deadline
+            time.sleep(.01)
+        assert c._submit_after > time.time()+50
+        time.sleep(.05)
+        assert server.attempts == 1 and not c._fatal
+        with c._condition:
+            c._submit_after = 0
+            c._condition.notify_all()
+        assert c.chat_json(messages)['content']['ok'] == 'rate-limited'
+        assert len(server.posts) == 1
+        assert server.posts[0]['requests'] == server.rejected['requests']
+    finally:
+        c.close()

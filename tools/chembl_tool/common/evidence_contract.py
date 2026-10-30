@@ -247,7 +247,8 @@ def _assay_record_cards(
     Unlike ``assay_compact.v1``, this view does not repeat contract boilerplate,
     opaque assay identifiers, default role/transferability fields, confidence,
     or extraction diagnostics.  It preserves the endpoint/value/unit/species/
-    condition/support pairing for each of at most three representative records.
+    condition/support pairing for every selected raw record. The historical
+    summary-backed v2 view retains its three-record limit.
     The historical v2 profile requires frozen summaries for long support; the
     current raw-v3 profile keeps every selected card field complete without
     rewriting or field-level truncation.
@@ -256,7 +257,9 @@ def _assay_record_cards(
         item
         for item in row.get("source_record_examples") or []
         if isinstance(item, Mapping)
-    ][:3]
+    ]
+    if use_summary:
+        examples = examples[:3]
     cards = []
     for example in examples:
         raw_support = _text(example.get("support_text"))

@@ -10,9 +10,10 @@ from __future__ import annotations
 
 import argparse
 import concurrent.futures
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 import json
+import hashlib
 import multiprocessing
 import os
 from pathlib import Path
@@ -235,14 +236,14 @@ class ProgressiveTaskSpec:
 
 
 def _progressive_task_specs(
-    split_scheme: str, evaluation_subset: str = "valid"
+    split_scheme: str, evaluation_subset: str = "valid", retrieval_index_root: Path | None = None,
 ) -> dict[str, ProgressiveTaskSpec]:
     index_root = (
         SOURCE_PURITY_ROOT / "indices"
         if split_scheme == "scaffold"
         else RANDOM_INDEX_ROOT
     )
-    return {
+    specs = {
         **{
             task: ProgressiveTaskSpec(
                 split_path(task, evaluation_subset, split_scheme),
@@ -284,6 +285,14 @@ def _progressive_task_specs(
             "skin_reaction_source_purity_v7/manifest.json",
         ),
     }
+    if retrieval_index_root is not None:
+        specs = {
+            task: ProgressiveTaskSpec(spec.input_jsonl,
+                Path(retrieval_index_root) / task / split_scheme / "assay_neighbor_index.pkl",
+                spec.family_manifest)
+            for task, spec in specs.items()
+        }
+    return specs
 
 
 PROGRESSIVE_TASKS = _progressive_task_specs("scaffold")
@@ -407,11 +416,27 @@ def _heldout_filter_validation(
     }
 
 
-def _task_contract(task: str) -> ProgressiveTaskContract:
+def _task_contract(task: str, prompt_adaptation: str = "") -> ProgressiveTaskContract:
     try:
-        return TASK_CONFIGS[task].get_progressive_task_contract()
+        config = TASK_CONFIGS[task]
     except KeyError as exc:
         raise ValueError(f"unsupported progressive task: {task}") from exc
+    if prompt_adaptation:
+        builder = getattr(config, "get_adapted_prompt_contract", None)
+        if builder is None:
+            raise ValueError(f"unsupported prompt adaptation for {task}: {prompt_adaptation}")
+        return builder(prompt_adaptation)
+    return config.get_progressive_task_contract()
+
+
+def _prompt_adaptation(profile: str, tasks) -> dict[str, Any]:
+    """Pin the selected scientific prompt independently of provider/transport."""
+    if not profile:
+        return {}
+    return {"profile": profile, "task_contract_sha256": {
+        task: hashlib.sha256(json.dumps(asdict(_task_contract(task, profile)), sort_keys=True).encode()).hexdigest()
+        for task in tasks
+    }}
 
 
 def _query_dir(output_root: Path, task: str, query_index: int) -> Path:
@@ -632,9 +657,11 @@ def _prepare_query(
     neighbor_identity_policy: str,
     initial_card_limit: int,
     delta_card_limit: int,
+    combined_molecule_limit: int | None = None,
     min_similarity: float = 0.3,
     reasoning_policy: Mapping[str, Any] | None = None,
     selection_policy: str = "assay_diverse.v1",
+    card_selection_policy: str = "assay_diverse.v1",
     max_level: int = 0,
     initial_condition_priority: Mapping[str, Any] | None = None,
     card_condition_groups: Mapping[str, list[str]] | None = None,
@@ -648,8 +675,13 @@ def _prepare_query(
         "initial_card_limit_per_molecule": initial_card_limit,
         "delta_card_limit_per_molecule": delta_card_limit,
     }
+    if combined_molecule_limit is not None:
+        selection_budget["combined_later_molecule_limit"] = combined_molecule_limit
     if selection_policy != "assay_diverse.v1":
         selection_budget["later_card_selection_policy"] = selection_policy
+    if card_selection_policy == "feature_based.v1":
+        from tools.chembl_tool.common.record_feature_selection import selection_contract
+        selection_budget["record_selector"] = selection_contract()
     if complete_path.is_file():
         manifest = _read_json(complete_path)
         if (
@@ -697,7 +729,7 @@ def _prepare_query(
         neighbor_identity_policy=neighbor_identity_policy,
     )
     condition_scope = (initial_condition_priority or {}).get("scope", "molecules_and_cards")
-    shortlisted = min_similarity == 0 and (
+    shortlisted = combined_molecule_limit is None and min_similarity == 0 and (
         card_condition_groups is None or condition_scope in {"cards_only", "cards_exact_only"}
     )
     if shortlisted:
@@ -740,6 +772,7 @@ def _prepare_query(
                 query_condition=str(record.get("condition_group") or ""),
                 card_condition_groups=card_condition_groups,
                 condition_priority_scope=condition_scope,
+                card_selection_policy=card_selection_policy,
             )
         else:
             new, augmentations, selection_audit = select_progressive_delta(
@@ -749,6 +782,8 @@ def _prepare_query(
                 level=level,
                 card_limit=delta_card_limit,
                 prefer_distinct_endpoints=selection_policy == "endpoint_diverse_delta.v1",
+                combined_molecule_limit=combined_molecule_limit,
+                card_selection_policy=card_selection_policy,
             )
             active = append_evidence(active, new, augmentations)
         snapshots[level] = json.loads(json.dumps(active, ensure_ascii=False))
@@ -1000,6 +1035,14 @@ def _run_query(
             if not getattr(args, "prepare_only", False):
                 write_json_atomic(level_dir / "failed_attempts" / f"{time.time_ns()}.json", existing)
         prepared = _read_json(level_dir / "prepared.json")
+        policy = prepared.get("reasoning_policy") or {}
+        adaptation = policy.get("prompt_adaptation") or {}
+        if adaptation:
+            profile = adaptation["profile"]
+            if (_prompt_adaptation(profile, [task])["task_contract_sha256"][task]
+                    != adaptation["task_contract_sha256"][task]):
+                raise ValueError(f"changed prepared prompt adaptation: {task}")
+            contract = _task_contract(task, profile)
         if not prepared.get("tool_prefetch_complete"):
             raise ValueError(
                 f"formal inference requires visible tool prefetch: {level_dir}"
@@ -1030,7 +1073,6 @@ def _run_query(
             continue
 
         active = prepared["active_evidence"]
-        policy = prepared.get("reasoning_policy") or {}
         if policy.get("omit_query_prior_with_evidence") and not has_evidence_state:
             prior_state = None
         card_id_to_alias, alias_to_card_id = card_alias_maps(active)
@@ -1775,6 +1817,7 @@ def _prepare_fresh_query_priors(args, task_specs, provider_config):
 
     if args.prepare_only or args.query_prior_source_root:
         raise ValueError("fresh query priors require inference and no prior-source override")
+    adaptation = _prompt_adaptation(getattr(args, "prompt_adaptation", ""), args.tasks)
     root = Path(args.output_root) / "single_cache"
     args.single_source_root = str(root)
     records, queries, configs = {}, [], {}
@@ -1785,7 +1828,8 @@ def _prepare_fresh_query_priors(args, task_specs, provider_config):
             config = SimpleNamespace(
                 __file__=conditioned_query_prior.__file__,
                 build_query_prior_messages=partial(
-                    conditioned_query_prior.build_query_prior_messages, _task_contract(task)
+                    conditioned_query_prior.build_query_prior_messages,
+                    _task_contract(task, adaptation.get("profile", "")),
                 ),
             )
         elif task == "ames":
@@ -1812,6 +1856,8 @@ def _prepare_fresh_query_priors(args, task_specs, provider_config):
             "runner_sha256": sha256_file(Path(__file__)),
             "retry_race_width": getattr(args, "retry_race_width", 1),
         }
+        if adaptation:
+            manifest["prompt_adaptation"] = adaptation
         if hasattr(config, "_reason_single_molecule"):
             manifest["native_prompt_profile_sha256"] = sha256_file(Path(config.__file__).with_name("prompt_profiles.py"))
         target = root / task / "none" / "manifest.json"
@@ -1932,7 +1978,19 @@ def _prepare_fresh_query_priors(args, task_specs, provider_config):
 
 
 def run(args: argparse.Namespace) -> int:
-    task_specs = _progressive_task_specs(args.split_scheme, args.evaluation_subset)
+    record_selector = None
+    if getattr(args, "card_selection_policy", "assay_diverse.v1") == "feature_based.v1":
+        from tools.chembl_tool.common.record_feature_selection import selection_contract
+        record_selector = selection_contract()  # Fail before index loading or fresh prior calls.
+    adaptation = _prompt_adaptation(getattr(args, "prompt_adaptation", ""), args.tasks)
+    if adaptation and not getattr(args, "fresh_query_priors", False):
+        raise ValueError("--prompt-adaptation requires --fresh-query-priors")
+    if adaptation and getattr(args, "evidence_grounding", False):
+        raise ValueError("run prompt adaptation separately from --evidence-grounding")
+    task_specs = _progressive_task_specs(
+        args.split_scheme, args.evaluation_subset,
+        Path(args.retrieval_index_root) if getattr(args, "retrieval_index_root", "") else None,
+    )
     provider_config = _resolve_provider_pool_config(args)
     if sum(spec.max_inflight for spec in provider_config.providers) > args.endpoint_concurrency_budget:
         raise ValueError("provider pool capacity exceeds the explicit endpoint budget")
@@ -2103,6 +2161,17 @@ def run(args: argparse.Namespace) -> int:
         "started_at": _now(),
         "provider_routing": provider_config.public_dict(),
     }
+    if getattr(args, "combined_molecule_limit", 0):
+        manifest["selection"].pop("later_new_pool")
+        manifest["selection"].pop("later_augmentation_pool")
+        manifest["selection"].pop("slot_borrowing")
+        manifest["selection"]["later_combined_pool"] = {
+            "molecule_limit": args.combined_molecule_limit,
+            "delta_card_limit_per_molecule": args.delta_card_limit,
+            "record_scope": "newly_unlocked",
+        }
+    if record_selector is not None:
+        manifest["selection"]["record_selector"] = record_selector
     manifest["execution_providers"] = [
         _execution_provider_from_spec(
             spec,
@@ -2127,6 +2196,8 @@ def run(args: argparse.Namespace) -> int:
             manifest["reasoning_policy"]["task_grounding_rules"] = {
                 task: dict(_task_contract(task).evidence_grounding_rules) for task in args.tasks
             }
+    if adaptation:
+        manifest.setdefault("reasoning_policy", {})["prompt_adaptation"] = adaptation
     manifest_path = output_root / "experiment_manifest.json"
     if manifest_path.is_file():
         previous = _read_json(manifest_path)
@@ -2170,9 +2241,11 @@ def run(args: argparse.Namespace) -> int:
             tool_service_url=args.tool_service_url, timeout_s=args.timeout_s,
             prefetch_tools=not args.skip_tool_prefetch, neighbor_identity_policy=run_identity_policy,
             initial_card_limit=args.initial_card_limit, delta_card_limit=args.delta_card_limit,
+            combined_molecule_limit=getattr(args, "combined_molecule_limit", 0) or None,
             min_similarity=getattr(args, "min_similarity", 0.3),
             reasoning_policy=manifest.get("reasoning_policy"),
             selection_policy=index.get("record_review_selection_policy", "assay_diverse.v1"),
+            card_selection_policy=getattr(args, "card_selection_policy", "assay_diverse.v1"),
             max_level=getattr(args, "max_level", 0),
             initial_condition_priority=condition_priority,
             card_condition_groups=card_condition_groups,
@@ -2282,6 +2355,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
     parser.add_argument("--evaluation-subset", choices=("valid", "test"), default="valid")
+    parser.add_argument("--retrieval-index-root", default="",
+                        help="Alternate indices at ROOT/<task>/<split_scheme>/assay_neighbor_index.pkl; input and heldout hash checks still apply.")
     parser.add_argument("--max-level", type=int, default=0,
                         help="Execute a prefix only (0 means all); keep the complete level plan in prompts.")
     parser.add_argument("--initial-condition-map", default="",
@@ -2344,12 +2419,17 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--preparation-executor", choices=("thread", "process"), default="thread",
                         help="Linux fork processes share the read-only index for CPU-heavy candidate preparation.")
     parser.add_argument("--initial-card-limit", type=int, default=4)
+    parser.add_argument("--card-selection-policy", choices=("assay_diverse.v1", "feature_based.v1"),
+                        default="assay_diverse.v1",
+                        help="Opt-in record coverage selector at all levels; molecule selection is unchanged.")
     parser.add_argument("--min-similarity", type=float, default=0.3)
     parser.add_argument("--omit-query-prior-with-evidence", action="store_true",
                         help="Omit no-retrieval model judgments once evidence is available; retain evidence-based progressive state.")
     parser.add_argument("--evidence-grounding", action="store_true",
                         help="Explicit observation attribution, endpoint scope, and symmetric evidence assessment; retain progressive update rules.")
     parser.add_argument("--delta-card-limit", type=int, default=2)
+    parser.add_argument("--combined-molecule-limit", type=int, default=0,
+                        help="Later levels share this quota across new and active molecules; 0 keeps separate quotas.")
     parser.add_argument("--max-tokens", type=int, default=20_480)
     parser.add_argument("--timeout-s", type=int, default=900)
     parser.add_argument("--retry-race-width", type=int, default=None,
@@ -2371,9 +2451,13 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Diagnostic preparation only; formal inference requires visible prefetched tools.",
     )
+    parser.add_argument("--prompt-adaptation", choices=("gpt_calibration.v1", "measurement_scope.v1"), default="",
+                        help="Opt-in Carcinogens calibration or Bioavailability measurement scope; requires fresh query priors.")
     args = parser.parse_args(argv)
     if not 0 <= args.min_similarity <= 1:
         parser.error("--min-similarity must be between 0 and 1")
+    if args.combined_molecule_limit < 0:
+        parser.error("--combined-molecule-limit must be nonnegative")
     if args.query_priors_only and (not args.fresh_query_priors or args.prepare_only):
         parser.error("--query-priors-only requires --fresh-query-priors and excludes --prepare-only")
     if args.retry_race_width is None:

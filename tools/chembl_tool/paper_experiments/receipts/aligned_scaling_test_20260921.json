@@ -1,0 +1,35 @@
+{
+  "date": "2026-09-21",
+  "scope": "Reusable test record scaling in the existing family suite; no new inference runner.",
+  "implementation": [
+    "tools/chembl_tool/paper_experiments/budgeted_suite.py",
+    "tools/chembl_tool/paper_experiments/run_conditioned_assay_family_curve.py"
+  ],
+  "validation": {
+    "passed": 98,
+    "tests": [
+      "test_budgeted_suite.py",
+      "test_flat_prompt_alignment.py",
+      "test_budgeted_preparation.py",
+      "test_budgeted_evidence.py",
+      "test_budgeted_pipeline.py",
+      "test_request_admission.py"
+    ],
+    "socket_test_note": "Four admission tests require local sockets and passed outside the restricted sandbox.",
+    "git_diff_check": "passed"
+  },
+  "guards": [
+    "Full validation/test cohorts only",
+    "Recompute validation winners and input hashes before test",
+    "Exact validation/test task-set match",
+    "Pin validation receipt and its hash",
+    "Sweep all 16 settings on test without reselecting Direct context"
+  ],
+  "run_registry": "budgeted_evidence_protocol.aligned_record_scaling_test",
+  "run_root": "outputs/paper/aligned_record_scaling_test_20260921",
+  "inference_status": "running; not a completed test result",
+  "transport": "User confirmed OpenRouter only at 1024 after both DGX services refused connections",
+  "preservation": "Existing completed validation and unrelated worktree changes retained.",
+  "scheduler_change": "Enumerate created query directories instead of issuing filesystem checks for every expected query on every poll.",
+  "resume_receipt": "outputs/paper/aligned_record_scaling_test_20260921/resume_discovery.json"
+}

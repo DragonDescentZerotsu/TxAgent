@@ -1,35 +1,38 @@
-# TxAgent
+# TxAgent — archived paper implementation
+
+This branch is a historical source archive. Read [archive scope and restoration limits](ARCHIVE.md)
+before running it. Active handoff work is on `merge_release_v1`; the sections below
+retain their historical context and may refer to separately retained experiment assets.
 
 Molecular evidence retrieval and reasoning over condition-aware benchmarks.
 Shared tools compute molecular properties and structural comparisons; task-specific
 experimental records provide evidence for the reasoning model.
 
-## Environment configuration
+## Current paper results
 
-Use the Python environment containing the project dependencies. Python orchestration
-defaults to that interpreter; existing `--python-executable` overrides still apply.
-MiniMol uses an installed package or a sibling `minimol/` checkout; set
-`TXAGENT_MINIMOL_SOURCE` or the existing `--minimol-source` option for another location.
-Conda launchers use `CONDA_EXE` or `conda` on PATH; Hugging Face caches follow `HF_HOME`.
-The optional SSH watchdog accepts `--ssh-host` or `TXAGENT_SSH_HOST`.
+Use the [current comparison](outputs/paper/llm_vs_standard_baselines_20260924/RESULTS.md)
+and [complete ML Appendix](outputs/paper/llm_vs_standard_baselines_20260924/ML_APPENDIX.md).
+The 198-cell ML table includes RASAR and RASAR+indirect across both benchmarks,
+with the corrected seed-42 Skin/Carcinogens TDC baselines. The
+[paper guide](tools/chembl_tool/paper_experiments/README.md#current-comparison-figures)
+owns entrypoints and reproduction. Both final pastel bar layouts (vertical task panels
+or all-horizontal task panels) and the separate mean figure use one shared renderer;
+left-line/right-point figures are retired.
+Earlier seed-1 scores are historical.
 
-The historical activity-transfer helpers accept explicit HF dataset IDs through
-`--repos` / `TXAGENT_TRANSFER_DATASETS` (space-separated), or
-`--hf-repo` / `TXAGENT_TRANSFER_HF_REPO`; feature preparation also accepts local
-`--train-jsonl`. Use the existing input/output path arguments for saved runs.
-The ChEMBL data symlink points to a sibling data checkout; replace it with a link
-to your local ChEMBL data when using those optional tools.
+The repository is now in [release preparation](tools/chembl_tool/paper_experiments/README.md#release-preparation).
+Code/documentation consolidation and clean-environment reproduction remain pending.
 
-Review copies use repository-relative paths and neutral archive ownership.
-Historical path strings are normalized; scientific record payloads, labels and
-scores retain their original values. Artifact manifests bind the distributed bytes.
-Hashes changed by release metadata normalization refer to the distributed copy;
-this does not represent a new experiment or revised scientific result. In the
-Carcinogens archive, only document-location fields within audit provenance were
-normalized; all other record cells were checked for equality. Provider-pool examples
-use local loopback endpoints and generic credential variable names; pass your
-existing provider configuration when resuming a saved deployment.
-Reading saved results or using the offline scorer does not start a tool service.
+For post-paper maintenance, the molecular tool service is stopped. Its caches
+are archived on shared storage; [restore and launch instructions](tools/service/README.md#production-launch-on-node002)
+are available when tool computation is needed again. MiniMol's preserved runtime
+dependencies now live on shared storage; see the [runtime setup](baselines/minimol/README.md).
+The `storage maintenance receipt` (local-only historical record)
+records verified moves, duplicate removal and retained historical files.
+The `build-cache cleanup receipt` (local-only historical record)
+records the subsequent verified shared archive and removal of the local build cache;
+archive locations and restoration guidance are linked from the
+[cache audit](outputs/paper/local_build_cache_audit_20260930/README.md).
 
 ## Score a DILI evidence record
 
@@ -70,6 +73,7 @@ do not choose inputs by the largest version number in a directory name.
 
 - [Benchmark definition and splits](tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md)
 - [Shared experiment entrypoints](tools/chembl_tool/paper_experiments/README.md)
+- [DeepSeek/Luna scaffold-indirect follow-up and reuse entrypoints](tools/chembl_tool/paper_experiments/README.md#scaffold-disjoint-indirect-follow-up)
 - [Current results and limitations](tools/chembl_tool/paper_experiments/RESULTS.md)
 - [Machine-readable result registry](tools/chembl_tool/paper_experiments/current_conditioned_results.json)
 - [Molecular tool service](tools/service/README.md)
@@ -77,3 +81,7 @@ do not choose inputs by the largest version number in a directory name.
 
 Use the manifests and linked receipts to establish reproducibility. Historical source
 reviews are provenance; obsolete materialized indices are not alternate defaults.
+
+### TDC BBB indirect ablation
+
+The [BBB guide and Codex handoff](tools/chembl_tool/tasks/bbb_martins/INDIRECT_ABLATION.md#codex-handoff) provide the official 406-row TDC test set and the current assay-aware filter. Historical test-tuned scores used the retired filter; the current filter has offline verification only. Optional ablations reuse the shared runner.

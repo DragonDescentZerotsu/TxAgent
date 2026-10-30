@@ -51,6 +51,7 @@ class ProgressiveTaskContract:
     system_role: str
     task_instructions: tuple[str, ...]
     evidence_grounding_rules: tuple[tuple[str, str], ...] = ()
+    query_prior_instructions: tuple[str, ...] = ()
 
     @property
     def prediction_values(self) -> set[str]:
@@ -196,9 +197,16 @@ def shortlist_progressive_retrievals(retrievals, family_levels_by_molecule):
 _NUMERIC_PATTERN = re.compile(r"[-+]?\d")
 
 
-def _card_order(card: Mapping[str, Any]) -> tuple[Any, ...]:
+def _card_order(card: Mapping[str, Any], *, measured_values_only: bool = False) -> tuple[Any, ...]:
     value = _clean(card.get("reported_value"))
     support = _clean(card.get("support_text"))
+    has_number = bool(_NUMERIC_PATTERN.search(value))
+    if measured_values_only:
+        from tools.chembl_tool.common.record_diversity import has_measured_value, selection_text
+
+        value = selection_text(card.get("reported_value"))
+        support = selection_text(card.get("support_text"))
+        has_number = has_measured_value(card)
     confidence = card.get("_confidence")
     try:
         confidence_value = float(confidence)
@@ -206,7 +214,7 @@ def _card_order(card: Mapping[str, Any]) -> tuple[Any, ...]:
         confidence_value = -1.0
     return (
         -int(bool(support) and bool(value)),
-        -int(bool(_NUMERIC_PATTERN.search(value))),
+        -int(has_number),
         -int(bool(value)),
         -int(bool(support)),
         -int(bool(_clean(card.get("endpoint")))),
@@ -230,9 +238,20 @@ def _endpoint_diversity_key(card: Mapping[str, Any]) -> str:
 
 
 def _select_cards(cards: Iterable[Mapping[str, Any]], limit: int, *,
-                  prefer_distinct_endpoints: bool = False) -> list[dict[str, Any]]:
+                  prefer_distinct_endpoints: bool = False,
+                  card_selection_policy: str = "assay_diverse.v1",
+                  covered_cards: Iterable[Mapping[str, Any]] = (),
+                  feature_audits: list | None = None) -> list[dict[str, Any]]:
     """Prefer informative cards while spanning physical assays first."""
     ordered = sorted((dict(card) for card in cards), key=_card_order)
+    if card_selection_policy == "feature_based.v1":
+        from tools.chembl_tool.common.record_feature_selection import select_feature_cards
+        selected, audit = select_feature_cards(ordered, limit, covered_cards=list(covered_cards))
+        if feature_audits is not None:
+            feature_audits.append(audit)
+        return selected
+    if card_selection_policy != "assay_diverse.v1":
+        raise ValueError(f"unknown card selection policy: {card_selection_policy}")
     selected: list[dict[str, Any]] = []
     selected_ids: set[str] = set()
     used_assays: set[str] = set()
@@ -296,6 +315,7 @@ def select_initial_evidence(
     query_condition: str = "",
     card_condition_groups: Mapping[str, list[str]] | None = None,
     condition_priority_scope: str = "molecules_and_cards",
+    card_selection_policy: str = "assay_diverse.v1",
 ) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
     if condition_priority_scope not in {"molecules_and_cards", "cards_only", "cards_exact_only"}:
         raise ValueError("unknown initial condition priority scope")
@@ -314,6 +334,8 @@ def select_initial_evidence(
         return 2
 
     selected: dict[str, dict[str, Any]] = {}
+    covered_cards: list[dict[str, Any]] = []
+    feature_audits: list[dict[str, Any]] = []
     candidates = sorted(cumulative.values(), key=_analog_order)
     if condition_priority and condition_priority_scope == "molecules_and_cards":
         # Stable sorting preserves the original Morgan order within each bucket.
@@ -327,9 +349,13 @@ def select_initial_evidence(
                 if len(cards) == card_limit:
                     break
                 cards.extend(_select_cards(
-                    (c for c in available if condition_rank(c) == rank), card_limit - len(cards)))
+                    (c for c in available if condition_rank(c) == rank), card_limit - len(cards),
+                    card_selection_policy=card_selection_policy,
+                    covered_cards=covered_cards + cards, feature_audits=feature_audits))
         else:
-            cards = _select_cards(available, card_limit)
+            cards = _select_cards(available, card_limit, card_selection_policy=card_selection_policy,
+                                  covered_cards=covered_cards, feature_audits=feature_audits)
+        covered_cards.extend(cards)
         if not cards:
             continue
         analog_id = str(analog["analog_id"])
@@ -345,6 +371,8 @@ def select_initial_evidence(
         "n_selected_new_molecules": len(selected),
         "n_selected_augmentation_molecules": 0,
         "n_selected_cards": sum(len(row["cards"]) for row in selected.values()),
+        **({"card_selection_policy": card_selection_policy, "feature_selection": feature_audits}
+           if card_selection_policy == "feature_based.v1" else {}),
     }
 
 
@@ -358,8 +386,12 @@ def select_progressive_delta(
     augmentation_molecule_limit: int = AUGMENTED_MOLECULE_LIMIT,
     card_limit: int = DELTA_CARD_LIMIT,
     prefer_distinct_endpoints: bool = False,
+    combined_molecule_limit: int | None = None,
+    card_selection_policy: str = "assay_diverse.v1",
 ) -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, Any]], dict[str, Any]]:
-    """Select independent new-molecule and active-molecule augmentation pools."""
+    """Select newly unlocked cards, optionally sharing one new/active quota."""
+    if combined_molecule_limit is not None and combined_molecule_limit < 1:
+        raise ValueError("combined molecule limit must be positive")
     new_candidates = []
     augmentation_candidates = []
     for analog_id, analog in current_cumulative.items():
@@ -378,10 +410,22 @@ def select_progressive_delta(
         else:
             new_candidates.append(candidate)
 
+    if combined_molecule_limit is not None:
+        combined = sorted(new_candidates + augmentation_candidates, key=_analog_order)
+        selected_ids = {str(a["analog_id"]) for a in combined[:combined_molecule_limit]}
+        new_candidates = [a for a in new_candidates if str(a["analog_id"]) in selected_ids]
+        augmentation_candidates = [a for a in augmentation_candidates if str(a["analog_id"]) in selected_ids]
+        new_molecule_limit = augmentation_molecule_limit = combined_molecule_limit
+
+    covered_cards = [c for a in active.values() for c in (a.get("cards") or {}).values()]
+    feature_audits: list[dict[str, Any]] = []
     selected_new: dict[str, dict[str, Any]] = {}
     for analog in sorted(new_candidates, key=_analog_order)[:new_molecule_limit]:
         cards = _select_cards(analog["delta_cards"], card_limit,
-                              prefer_distinct_endpoints=prefer_distinct_endpoints)
+                              prefer_distinct_endpoints=prefer_distinct_endpoints,
+                              card_selection_policy=card_selection_policy,
+                              covered_cards=covered_cards, feature_audits=feature_audits)
+        covered_cards.extend(cards)
         analog_id = str(analog["analog_id"])
         selected_new[analog_id] = {
             **{key: analog.get(key) for key in (
@@ -394,7 +438,10 @@ def select_progressive_delta(
     selected_augmentations: dict[str, dict[str, Any]] = {}
     for analog in sorted(augmentation_candidates, key=_analog_order)[:augmentation_molecule_limit]:
         cards = _select_cards(analog["delta_cards"], card_limit,
-                              prefer_distinct_endpoints=prefer_distinct_endpoints)
+                              prefer_distinct_endpoints=prefer_distinct_endpoints,
+                              card_selection_policy=card_selection_policy,
+                              covered_cards=covered_cards, feature_audits=feature_audits)
+        covered_cards.extend(cards)
         analog_id = str(analog["analog_id"])
         selected_augmentations[analog_id] = {
             "analog_id": analog_id,
@@ -414,6 +461,19 @@ def select_progressive_delta(
         ),
         "slot_borrowing": False,
     }
+    if combined_molecule_limit is not None:
+        audit.update(
+            molecule_pool="combined_new_and_active",
+            combined_molecule_limit=combined_molecule_limit,
+            n_new_molecule_candidates=sum(str(a["analog_id"]) not in active for a in combined),
+            n_augmentation_molecule_candidates=sum(str(a["analog_id"]) in active for a in combined),
+            unused_molecule_slots=max(0, combined_molecule_limit - len(selected_ids)),
+        )
+        audit.pop("unused_new_molecule_slots")
+        audit.pop("unused_augmentation_slots")
+        audit.pop("slot_borrowing")
+    if card_selection_policy == "feature_based.v1":
+        audit.update(card_selection_policy=card_selection_policy, feature_selection=feature_audits)
     return selected_new, selected_augmentations, audit
 
 

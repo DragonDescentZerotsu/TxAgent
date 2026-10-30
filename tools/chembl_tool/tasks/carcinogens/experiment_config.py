@@ -1,5 +1,7 @@
 """Carcinogenicity record families and shared progressive reasoning semantics."""
 
+from dataclasses import replace
+
 from tools.chembl_tool.common.experiment_retrieval import (
     SourceExperimentConfig,
     evidence_family,
@@ -96,5 +98,38 @@ def get_progressive_task_contract() -> ProgressiveTaskContract:
             "or establish that a mechanism caused a measured tumor outcome.",
             "Choose positive or negative and express uncertainty through "
             "confidence, conflicts, caveats and evidence_gaps.",
+        ),
+    )
+
+
+def get_adapted_prompt_contract(profile: str) -> ProgressiveTaskContract:
+    """Small, opt-in GPT calibration; retain the base endpoint scope and schema."""
+    if profile != "gpt_calibration.v1":
+        raise ValueError(f"unsupported Carcinogens prompt adaptation: {profile}")
+    base = get_progressive_task_contract()
+    instructions = list(base.task_instructions)
+    instructions[0] = instructions[0].replace(
+        "Predict source-supported carcinogenicity",
+        "Predict the most likely carcinogenicity label",
+    )
+    instructions[4] += (
+        " Apply the same structural, species and exposure transfer criteria to positive and negative "
+        "evidence. Weigh transferable findings together without counting related records as independent support."
+    )
+    instructions[-1] = (
+        "Compare the support for positive and negative, then predict the better-supported label; "
+        "do not substitute whether the supplied material has proven carcinogenicity. "
+        "mixed_or_unclear is uncertainty, not negative evidence. Lack of query-specific tumor data or "
+        "of an obvious structural alert does not by itself favor either label. Express remaining uncertainty "
+        "through confidence and evidence_gaps."
+    )
+    return replace(
+        base,
+        endpoint_name="carcinogenicity in the reported organism group",
+        task_instructions=tuple(instructions),
+        query_prior_instructions=(
+            "Distinguish features that favor a negative prior from a lack of information. Compare "
+            "plausible liabilities and mitigating features; use mixed_or_unclear when the structural "
+            "and property evidence does not favor either direction.",
         ),
     )

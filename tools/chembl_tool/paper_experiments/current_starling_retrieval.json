@@ -24,6 +24,40 @@
     "scaffold_identity_policy": "scaffold_disjoint",
     "random_identity_policy": "parent_disjoint"
   },
+  "candidate_index_variants": {
+    "all_distinct_cards_v1": {
+      "root": "outputs/paper/uncapped_record_indices_20260915",
+      "manifest": "outputs/paper/uncapped_record_indices_20260915/manifest.json",
+      "split_schemes": [
+        "scaffold"
+      ],
+      "max_record_examples": 0,
+      "status": "verified",
+      "progressive_cli_option": "--retrieval-index-root",
+      "source_fields_audit": "outputs/paper/analysis/source_feature_columns_20260915/REPORT.md"
+    },
+    "source_reported_fields_v1": {
+      "root": "outputs/paper/native_source_cards_20260915",
+      "manifest": "outputs/paper/native_source_cards_20260915/manifest.json",
+      "tasks": [
+        "skin_reaction",
+        "bioavailability_ma"
+      ],
+      "split_schemes": [
+        "scaffold"
+      ],
+      "max_record_examples": 0,
+      "status": "verified",
+      "progressive_cli_option": "--retrieval-index-root",
+      "source_fields_audit": "outputs/paper/analysis/source_feature_columns_20260915/REPORT.md",
+      "task_roots": {
+        "skin_reaction": "outputs/paper/native_source_cards_20260917"
+      },
+      "task_revision_receipts": {
+        "skin_reaction": "data/starling_data/skin_reaction/trace_review_20260917/native_candidate_index_verification.json"
+      }
+    }
+  },
   "tasks": {
     "bbb_martins": {
       "canonical_records_sha256": "79d648e5e69826a581164a214718779042388c51ae176cb93ec19ff0a492c6c1",
@@ -70,27 +104,28 @@
       }
     },
     "skin_reaction": {
-      "canonical_records_sha256": "85b464d5ff7d89480b2cea4342d2f039515edf13d8840b33a254dd6db2f5df76",
-      "overlay": "source_overlays/source_family_purity_v7/skin_reaction",
-      "overlay_records_sha256": "999453952793d890209968a659d8a13cf43dd5c2b97892a96e76546353ee2945",
-      "catalog": "family_catalogs_mechanism_tagged_v1/skin_reaction_source_purity_v7",
+      "canonical_records_sha256": "6a5cbe4be20c67f8d99d881fadcfdcde02257873ee0e72990f69e802a16ed59a",
+      "overlay": "source_overlays/source_family_purity_v8/skin_reaction",
+      "overlay_records_sha256": "e0e2872beb55565700a3761522c6855afcf975f75e881443be7b50cf8bc1bf90",
+      "catalog": "family_catalogs_mechanism_tagged_v1/skin_reaction_source_purity_v8",
       "catalog_config": "STARLING",
       "catalog_sha256": "728c046848b84347b86f72f841410dc4c37d529f1590fec427b8e1d7b13b65a0",
       "direct_group": "Direct.skin_reaction",
       "indices": {
         "scaffold": {
-          "path": "indices/skin_reaction/mechanism_tagged_v4_source_purity_v7",
-          "index_sha256": "0dda1a2a67ad50f76ff6eb653f1d0a98a97a82a3d9f5f0b0e1719481060e6349",
-          "evidence_sha256": "ba8f5304f86de123ca03fe45bc5afb38506dad2a116b61f97d3a87ed3b972a22"
+          "path": "indices/skin_reaction/mechanism_tagged_v4_source_purity_v8",
+          "index_sha256": "1fc3d1dfc9ad6bf48aacd45670b9846e751bec2ded991ea11cfa47e456dc2f6e",
+          "evidence_sha256": "c16f5565e0c61e0726e83f884529c79cbefecee7639adf9ab3d7309ff95bab7a"
         },
         "random": {
-          "path": "indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v7",
-          "index_sha256": "c61c8e6e54c8cd8b9ec187da847fea68a2c6c5c60fd4938e3faf73b8e417b06c",
-          "evidence_sha256": "2a38280a96230500ecc697513fdf17c199f8ae25aa9a20864286ce3800d72956"
+          "path": "indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v8",
+          "index_sha256": "f24641ae6f8f378a5460900ec4e15b92fa5e56ad4c66aacd5c1475e93c2412b7",
+          "evidence_sha256": "cce556e59f270cb648e050401c2bbc2bd32d0609b4776cc97cbf369dc763aa0a"
         }
       },
       "source_review": "data/starling_data/skin_reaction/trace_review_20260914/decisions_rebound.json",
-      "identity_rebinding": "data/starling_data/skin_reaction/trace_review_20260914/rebindings.json"
+      "identity_rebinding": "data/starling_data/skin_reaction/trace_review_20260917/rebindings.json",
+      "previous_identity_rebinding": "data/starling_data/skin_reaction/trace_review_20260914/rebindings.json"
     },
     "ames": {
       "canonical_records_sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a",
@@ -145,9 +180,9 @@
       "source_review": "data/starling_data/dili/retrieval_final/source_changes.jsonl"
     },
     "carcinogens": {
-      "canonical_records_sha256": "245b9da971016595f9f85ef45fec68096fcc1990097348a9ca8342761be7b534",
+      "canonical_records_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
       "overlay_is_canonical": true,
-      "overlay_records_sha256": "245b9da971016595f9f85ef45fec68096fcc1990097348a9ca8342761be7b534",
+      "overlay_records_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
       "source_records": "data/starling_data/carcinogens/retrieval_final/source/records.parquet",
       "catalog": "family_catalogs/carcinogens",
       "catalog_config": "STARLING",

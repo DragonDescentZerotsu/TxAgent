@@ -11,6 +11,7 @@ import argparse
 import csv
 import json
 from collections import Counter, defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -435,9 +436,154 @@ def _parse_task_roots(
     return {task: roots[task] for task in tasks}
 
 
+def citation_role_metrics(content, cards):
+    """Distinct-record citations grouped by saved retrieval parent, not polarity labels."""
+    roles = {}
+    for role in ('supportive', 'contradictory'):
+        refs = content.get(role + '_card_ids')
+        if refs is None:
+            refs = [ref for claim in content.get('claims', [])
+                    if claim.get('evidence_role') == role for ref in claim.get('card_ids', [])]
+        if not isinstance(refs, list) or any(not isinstance(ref, str) for ref in refs):
+            raise ValueError('citation roles must contain card-ID arrays')
+        roles[role] = set(refs)
+        if roles[role] - cards.keys():
+            raise ValueError('citation refers to a card absent from the visible context')
+    roles['combined'] = roles['supportive'] | roles['contradictory']
+    metrics = {}
+    for role, ids in roles.items():
+        metrics[role] = {}
+        for kind in ('all', 'direct', 'indirect'):
+            visible = {key for key, card in cards.items() if kind == 'all' or card['kind'] == kind}
+            counts = Counter(cards[key]['parent'] for key in ids & visible)
+            n = sum(counts.values())
+            metrics[role][kind] = {
+                'records': n, 'parents': len(counts),
+                'effective_parents': n * n / sum(c*c for c in counts.values()) if n else None,
+                'visible_records': len(visible),
+                'record_fraction': n / len(visible) if visible else None,
+            }
+    return {
+        'roles': metrics,
+        'citations': {role: sorted(ids) for role, ids in roles.items()},
+        'overlap_records': len(roles['supportive'] & roles['contradictory']),
+        'overlap_parents': len({cards[k]['parent'] for k in roles['supportive']}
+                               & {cards[k]['parent'] for k in roles['contradictory']}),
+    }
+
+
+def _budgeted_citation_row(job):
+    import hashlib
+    import ijson
+    from tools.chembl_tool.common.budgeted_evidence import content_hash
+
+    task, setting, index, root, manifest_hash = job
+    query = root/'runs'/task/f'query_{index:05d}'
+    prepared_bytes = (query/'prepared.json').read_bytes()
+    output_bytes = (query/'output.json').read_bytes()
+    prepared, output = json.loads(prepared_bytes), json.loads(output_bytes)
+    if (output.get('status') != 'ok' or prepared['manifest_hash'] != manifest_hash
+            or output['request_hash'] != prepared['request_hash']
+            or content_hash(prepared['messages']) != prepared['request_hash']
+            or output['card_alias_map'] != prepared['card_alias_map']):
+        raise ValueError(f'unverified prediction/request binding: {query}')
+    # Stop before the much larger unselected candidate ledger. No new retrieval.
+    selected = {}
+    with (query/'selection.json').open('rb') as handle:
+        for key, value in ijson.kvitems(handle, ''):
+            if key in ('direct', 'selected'):
+                selected[key] = value
+            if len(selected) == 2:
+                break
+    if set(selected) != {'direct', 'selected'}:
+        raise ValueError(f'missing selected evidence: {query}')
+    if (sorted(r['id'] for r in selected['direct']) != sorted(prepared['direct_ids'])
+            or sorted(r['id'] for r in selected['selected']) != sorted(prepared['indirect_ids'])):
+        raise ValueError(f'selection differs from prepared record IDs: {query}')
+    records = {r['id']: {'parent': r['molecule_id'], 'kind': r['kind']}
+               for group in selected.values() for r in group}
+    aliases = prepared['card_alias_map']
+    if set(records) != set(aliases.values()) or len(set(aliases.values())) != len(aliases):
+        raise ValueError(f'incomplete or duplicate card mapping: {query}')
+    cards = {alias: records[key] for alias, key in aliases.items()}
+    if any(not r['parent'] or r['kind'] not in ('direct', 'indirect') for r in cards.values()):
+        raise ValueError(f'invalid selected parent/kind: {query}')
+    from tools.chembl_tool.common.budgeted_reasoning import prepared_payload
+    payload = prepared_payload(prepared)
+    visible = {r['card_id']: r['evidence_kind'] for n in payload['neighbors'] for r in n['records']}
+    if visible != {alias: r['kind'] for alias, r in cards.items()}:
+        raise ValueError(f'card mapping differs from actual prompt: {query}')
+    return {'task': task, 'setting': setting, 'query_index': index,
+            **citation_role_metrics(output['llm']['content'], cards),
+            'card_parents': cards, 'selected_parent_map_sha256': content_hash(cards),
+            'prepared_sha256': hashlib.sha256(prepared_bytes).hexdigest(),
+            'output_sha256': hashlib.sha256(output_bytes).hexdigest()}
+
+
+def analyze_budgeted_citations(suite_root, output_dir, tasks=None):
+    """Role-separated final-answer citations; no label transitions or cost analysis."""
+    from statistics import mean
+    from tools.chembl_tool.common.budgeted_evidence import content_hash
+    from tools.chembl_tool.common.json_utils import sha256_file, write_json_atomic
+
+    verification_path = suite_root/'verification.json'
+    verified = _read_json(verification_path)
+    if verified['status'] != 'complete_verified':
+        raise ValueError('citation analysis requires a completely verified suite')
+    rows, sources = [], []
+    cells = [c for c in verified['cells'] if tasks is None or c['task'] in tasks]
+    if not cells or (tasks and set(tasks) - {c['task'] for c in cells}):
+        raise ValueError('requested tasks are missing from the verified suite')
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        for cell in cells:
+            task, setting = cell['task'], cell['setting']
+            root = suite_root/'runs'/setting/task
+            manifest = _read_json(root/'experiment_manifest.json')
+            digest = content_hash(manifest)
+            sources.append({'task': task, 'setting': setting, 'manifest_hash': digest})
+            rows.extend(pool.map(_budgeted_citation_row,
+                                [(task, setting, i, root, digest) for i in range(cell['n'])]))
+            print(f'[citations] {task}/{setting}: {cell["n"]} verified', flush=True)
+    groups = defaultdict(list)
+    for row in rows:
+        groups[row['task'], row['setting']].append(row)
+    summary = []
+    for (task, setting), group in groups.items():
+        for role in ('supportive', 'contradictory', 'combined'):
+            for kind in ('all', 'direct', 'indirect'):
+                values = [r['roles'][role][kind] for r in group]
+                effective = [v['effective_parents'] for v in values if v['effective_parents'] is not None]
+                fractions = [v['record_fraction'] for v in values if v['record_fraction'] is not None]
+                summary.append({'task': task, 'setting': setting, 'role': role, 'kind': kind,
+                    'queries': len(group), 'queries_with_citations': len(effective),
+                    'queries_with_visible_records': len(fractions),
+                    'mean_records': mean(v['records'] for v in values),
+                    'mean_parents': mean(v['parents'] for v in values),
+                    'mean_effective_parents_when_cited': mean(effective) if effective else None,
+                    'mean_record_fraction_when_visible': mean(fractions) if fractions else None,
+                    'mean_role_overlap_records': mean(r['overlap_records'] for r in group),
+                    'mean_role_overlap_parents': mean(r['overlap_parents'] for r in group)})
+    output_dir.mkdir(parents=True, exist_ok=True)
+    _write_jsonl(output_dir/'citations.per_query.jsonl', rows)
+    _write_tsv(output_dir/'citations.summary.tsv', summary)
+    write_json_atomic(output_dir/'manifest.json', {
+        'version': 'budgeted_citation_roles.v1', 'status': 'complete', 'suite_root': str(suite_root),
+        'verification_sha256': sha256_file(verification_path), 'cells': sources, 'queries': len(rows),
+        'analysis_code_sha256': sha256_file(Path(__file__)),
+        'semantics': 'Model-assigned final-answer roles, not gold labels or reasoning mentions. '
+                     'Deduplicate record IDs per role; combined is the union, with overlaps retained. '
+                     'Parents use saved retrieval molecule_id. Effective parents = N^2/sum(parent_count^2); '
+                     'undefined for zero citations. Means are per query within each task/setting; '
+                     'conditional denominators are explicit. Direct/indirect metrics use their own visible pools.',
+        'outputs': {name: sha256_file(output_dir/name)
+                    for name in ('citations.per_query.jsonl', 'citations.summary.tsv')}})
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-root", type=Path)
+    parser.add_argument('--budgeted-suite-root', type=Path,
+                        help='Analyze supportive/contradictory citations in a verified simple-baseline suite.')
     parser.add_argument(
         "--task-run-root",
         action="append",
@@ -458,6 +604,12 @@ def main() -> None:
     )
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args()
+
+    if args.budgeted_suite_root:
+        if args.run_root or args.task_run_root or args.none_root:
+            parser.error('--budgeted-suite-root cannot be combined with progressive run roots')
+        analyze_budgeted_citations(args.budgeted_suite_root, args.output_dir, args.task)
+        return
 
     selected_tasks = tuple(dict.fromkeys(args.task or DEFAULT_TASKS))
     run_roots = _parse_task_roots(args.task_run_root, args.run_root, selected_tasks)

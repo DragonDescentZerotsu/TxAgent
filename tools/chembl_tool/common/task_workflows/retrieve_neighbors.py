@@ -127,7 +127,9 @@ def retrieve_neighbors(
 
     retrieval_policy = policy_metadata(neighbor_identity_policy)
     if identity_contract:
+        from tools.chembl_tool.common.starling.new_task_retrieval_identity import PARENT_REFINEMENT_POLICY
         retrieval_policy['retrieval_identity_contract'] = identity_contract
+        retrieval_policy['retrieval_parent_refinement_policy'] = PARENT_REFINEMENT_POLICY
     retrieval_policy["structural_eligibility"] = structural_eligibility_metadata()
     if neighbor_selector == QUERY_FEATURE_COVERAGE_SELECTOR:
         retrieval_policy["neighbor_selector"] = selector_metadata(neighbor_selector)
@@ -198,7 +200,8 @@ def _top_neighbors_for_group(
             continue
         if identity_contract:
             from tools.chembl_tool.common.starling.new_task_retrieval_identity import decide_candidate as decide_new_candidate
-            decision = decide_new_candidate(tautomer_query, molecule, neighbor_identity_policy, identity_contract)
+            decision = decide_new_candidate(tautomer_query, molecule, neighbor_identity_policy, identity_contract,
+                                            refine_parent=True)
             if not decision.excluded:
                 # Retain existing exact/component exclusions; raw scaffold is
                 # replaced by the task's explicitly declared tautomer scaffold.

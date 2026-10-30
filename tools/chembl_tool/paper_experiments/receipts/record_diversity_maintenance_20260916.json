@@ -1,0 +1,66 @@
+{
+  "scope": "record-diversity maintenance only",
+  "retired_files": [
+    {
+      "path": "tools/chembl_tool/common/record_observation_extraction.py",
+      "sha256": "d6a0ed3a70bc0a1b4c130f1b70f2bdcd1769a7abedccecdcf92d5a2e16dda4de",
+      "lines": 125
+    },
+    {
+      "path": "tests/chembl_tool/common/test_record_observation_extraction.py",
+      "sha256": "6d483a4048e32459a409c564698eb60f880e9fcaded11bac606fbd185e0717c3",
+      "lines": 48
+    }
+  ],
+  "retirement_reason": "Standalone record_observations.v2 prototype has no maintained callers beyond its own tests. Frozen historical pilot runner is retained; snapshot restores its import contract when explicitly reproducing it. Active v2/v3 annotation schemas live in record_diversity.py.",
+  "historical_pilot": "outputs/paper/analysis/record_observation_pilot_20260915",
+  "archive": "outputs/paper/analysis/record_diversity_maintenance_20260916/retired_observation_prototype.tar.gz",
+  "archive_sha256": "f6a14aa07e9a27e2b10f2b7082c945e097d356b3b2ce347c66603e909109222d",
+  "preserved": "all completed predictions, prepared inputs, feature caches, source/index/gold artifacts and frozen runtimes",
+  "reviewed_at": "2026-09-17T00:17:31.823853+00:00",
+  "fixed_findings": [
+    {
+      "issue": "Benchmark selected thinking control by loopback address while bulk selected by provider type",
+      "resolution": "One extraction_request_body helper for probe and bulk; exact OpenRouter host, direct/proxy vLLM template controls; bounded offline regression tests."
+    },
+    {
+      "issue": "Exhausted annotation failures returned exit code zero",
+      "resolution": "Exit 1 for residual failed jobs, retain completed annotations and attempt limits; fatal provider exit remains 2."
+    },
+    {
+      "issue": "Unused feature-manifest override in suite prepare_full loaded one manifest but downstream hashed the old one and reused an existing arm root",
+      "resolution": "Removed the unused convenience flag; versioned UGT replay/overlay retained; no experiment used it. Future release preparation must pin effective manifest in a separate root."
+    },
+    {
+      "issue": "Duplicated historical/current docs and stale running/preparation statuses",
+      "resolution": "One current record-diversity guide and consolidated results; update DILI/Skin and changed12 statuses from completion artifacts."
+    }
+  ],
+  "open_scientific_issues": {
+    "status": "not changed by maintenance",
+    "report": "outputs/paper/record_diversity_six_task_valid_20260916/selector_repair/final_review/REPORT.md",
+    "items": [
+      "species/system attribution versus incidental human mentions",
+      "hepatic model applicability",
+      "special-formulation and relative measurement applicability",
+      "near-duplicate semantic records"
+    ]
+  },
+  "documentation": {
+    "record_guide_lines_before": 649,
+    "record_guide_lines_after": 233
+  },
+  "tests": {
+    "baseline": "397 passed, 5 skipped",
+    "post_fix": "99 passed, 5 skipped",
+    "skip_reason": "Optional apricot library is absent; five lexical-ablation tests skipped. No dependency installed. Semantic Numba selector tests passed."
+  },
+  "verification": {
+    "metrics_and_predictions_unchanged": 66,
+    "retained_review_artifact_hashes_unchanged": 13,
+    "selector_context_hash_unchanged": true,
+    "retired_archive_hashes_verified": true,
+    "entrypoint_help_checks": "all three maintained preprocessing CLIs passed",
+    "git_diff_check": "passed"
+  }
+}

@@ -69,6 +69,25 @@ DEFAULT_RETRIEVAL_PREFIXES = (10, 100, 400)
 DIRECT_ONLY_HELDOUT_FILTERED = "direct_only_heldout_filtered"
 RECORD_CARD_SELECTION_VERSION = "assay_spanning_even_then_round_robin.v1"
 MECHANISM_AWARE_RECORD_CARD_SELECTION_VERSION = "mechanism_diverse_informative.v1"
+# Source-reported observations only: never gold votes or inferred directions.
+# These additions apply to fresh uncapped builds; capped historical replay is
+# byte-compatible. Names stay visible so a category cannot masquerade as a value.
+NATIVE_CARD_FIELDS = {
+    "skin_reaction": {
+        "reported_value": ("outcome_label", "result_label"),
+        "qualifying_conditions": ("assay_or_test", "species_or_population",
+            "dose_or_concentration", "assay_type", "aop_event", "experimental_conditions"),
+    },
+    "bioavailability_ma": {
+        "qualifying_conditions": ("statistic_type", "oral_dose", "study_context",
+            "comparator_exposure", "assay_system", "condition_medium",
+            "formulation_or_solid_form", "biological_context", "transporter_or_enzyme",
+            "substrate_status", "intestinal_site", "species", "molecular_form",
+            "enzyme_or_pathway", "bioavailability_report_type", "species_or_population",
+            "dose", "oral_exposure_mode", "comparator"),
+    },
+}
+_NATIVE_MISSING = re.compile(r"_*(?:unknown|unspecified|none|null|nan|not[ _]reported|not[ _]applicable|n/?a)_*", re.I)
 RECORD_CARD_SELECTIONS = (
     RECORD_CARD_SELECTION_VERSION,
     MECHANISM_AWARE_RECORD_CARD_SELECTION_VERSION,
@@ -107,11 +126,13 @@ def _clean(value: Any) -> str:
 
 def _unique_text(values: Iterable[Any], *, limit: int) -> list[str]:
     output: list[str] = []
+    seen: set[str] = set()
     for value in values:
         text = _clean(value)
-        if text and text not in output:
+        if text and text not in seen:
+            seen.add(text)
             output.append(text)
-            if len(output) >= limit:
+            if limit > 0 and len(output) >= limit:
                 break
     return output
 
@@ -279,6 +300,9 @@ def _representative_records(
     limit: int,
     assay_metadata: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
+    """Keep all distinct cards when limit=0; positive caps replay old indices."""
+    if limit < 0:
+        raise ValueError("max_record_examples must be nonnegative (0 keeps all cards)")
     # Canonical confidence is numeric. Match pandas' stable ordering and put
     # missing values last for each key, without creating a DataFrame per group.
     def order(row):
@@ -293,7 +317,7 @@ def _representative_records(
 
     ordered = sorted(group, key=order)
     examples = []
-    seen: set[tuple[str, str, str, str]] = set()
+    seen: set[tuple[Any, ...]] = set()
     family_by_group = _source_family_map(assay_metadata)
     for row in ordered:
         family = family_by_group.get(str(row.get("group_id") or ""), {})
@@ -308,18 +332,27 @@ def _representative_records(
             "evidence_family": _clean(family.get("endpoint_group")),
             "evidence_family_level": family.get("level", ""),
         }
+        if limit == 0:
+            for field in ("reported_value", "qualifying_conditions"):
+                additions = _clean(row.get("_native_" + field))
+                if additions:
+                    example[field] = " | ".join(filter(None, (example[field], additions)))
         key = (
             example["endpoint_type"],
             example["reported_value"],
             example["reported_units"],
             example["support_text"],
         )
+        if limit == 0:
+            # A different condition, species or family is a different card.
+            # Keep the legacy key for explicitly capped historical rebuilds.
+            key = tuple(example.values())
         if key in seen:
             continue
         seen.add(key)
         examples.append(example)
     if not family_by_group:
-        return examples[:limit]
+        return examples[:limit] if limit else examples
 
     selected = []
     selected_families: set[str] = set()
@@ -328,11 +361,11 @@ def _representative_records(
         if family and family not in selected_families:
             selected.append(example)
             selected_families.add(family)
-            if len(selected) >= limit:
+            if limit > 0 and len(selected) >= limit:
                 return selected
     selected_keys = {id(example) for example in selected}
     selected.extend(example for example in examples if id(example) not in selected_keys)
-    return selected[:limit]
+    return selected[:limit] if limit else selected
 
 
 def _aggregate_assay_molecule(
@@ -542,7 +575,7 @@ def build_assay_evidence_rows(
     records_path: Path,
     membership_path: Path | None,
     ranked_assays_path: Path,
-    max_record_examples: int = 3,
+    max_record_examples: int = 0,
     max_support_text_chars: int = 0,
     max_assays: int = 0,
     allowed_molecules_path: Path | None = None,
@@ -597,7 +630,19 @@ def build_assay_evidence_rows(
     if family_catalog and not allowed_source_groups:
         raise ValueError("family assay catalog contains no source_groups")
 
-    records = pq.read_table(local_input(records_path), columns=columns).to_pandas()
+    native_fields = NATIVE_CARD_FIELDS.get(task, {}) if max_record_examples == 0 else {}
+    available = set(pq.read_schema(local_input(records_path)).names)
+    native_columns = [c for fields in native_fields.values() for c in fields if c in available]
+    records = pq.read_table(local_input(records_path), columns=list(dict.fromkeys(columns + native_columns))).to_pandas()
+    for destination, fields in native_fields.items():
+        present = [c for c in fields if c in available]
+        if present:
+            def native_text(values):
+                pairs = [(key, _clean(value)) for key, value in zip(present, values)]
+                return " | ".join(f"{key}={value}" for key, value in pairs
+                                  if value and not _NATIVE_MISSING.fullmatch(value))
+            records["_native_" + destination] = [native_text(values)
+                for values in records[present].itertuples(index=False, name=None)]
     if membership_path is not None:
         member_ids = set(
             pq.read_table(local_input(membership_path), columns=["canonical_record_id"])
@@ -732,6 +777,10 @@ def build_assay_evidence_rows(
         **allowed_stats,
         "family_catalog": family_catalog,
         "allowed_source_groups": sorted(allowed_source_groups),
+        **({"native_card_fields_policy": "source_reported_fields.v1",
+            "native_card_fields": {field: [c for c in fields if c in available]
+                                   for field, fields in native_fields.items()}}
+           if native_columns else {}),
     }
     return evidence_rows, ranking, stats
 
@@ -745,7 +794,7 @@ def build_assay_index(
     workers: int = 1,
     identity_contract: str = '',
     identity_cache_path: Path | None = None,
-    max_record_examples: int = 3,
+    max_record_examples: int = 0,
     max_support_text_chars: int = 0,
     max_assays: int = 0,
     allowed_molecules_path: Path | None = None,
@@ -821,6 +870,9 @@ def build_assay_index(
             else "legacy_compact_excerpt"
         ),
     }
+    if max_record_examples == 0:
+        index["source"]["record_example_policy"] = "all_distinct_cards.v1"
+        index["source"]["max_record_examples"] = 0
     if identity_contract:
         from tools.chembl_tool.common.starling.new_task_retrieval_identity import annotate_index
         annotate_index(index, task, identity_cache, identity_contract, source_smiles_by_id)
@@ -920,7 +972,7 @@ def _cap_neighbor_record_cards_even(
             example
             for example in row.get("source_record_examples") or []
             if isinstance(example, dict)
-        ][:3]
+        ]
         candidates.append(examples or [None])
 
     selected: list[tuple[int, Any]] = []
@@ -1058,7 +1110,7 @@ def _cap_neighbor_record_cards_mechanism_aware(
             example
             for example in row.get("source_record_examples") or []
             if isinstance(example, dict)
-        ][:3] or [None]
+        ] or [None]
         for example in examples:
             key = _record_card_key(row, example)
             if key in seen:
@@ -1650,6 +1702,9 @@ def _build_command(args: argparse.Namespace) -> None:
         for key, value in vars(args).items()
         if key not in {"workers", "output_dir", "func", "command"}
     }
+    if args.max_record_examples == 0 and args.task in NATIVE_CARD_FIELDS:
+        option_values["native_card_fields_policy"] = "source_reported_fields.v1"
+        option_values["native_card_fields"] = NATIVE_CARD_FIELDS[args.task]
     signature_paths = [Path(args.records), Path(args.ranked_assays)]
     if getattr(args, 'identity_cache', ''):
         signature_paths.extend([Path(args.identity_cache), Path(args.identity_cache).with_suffix('.manifest.json')])
@@ -1775,7 +1830,7 @@ def _build_preaggregated_command(args: argparse.Namespace) -> None:
         )
         assay_metadata = family_by_assay.get(assay_key, {})
         raw_examples = []
-        for original in (row.get("source_record_examples") or [])[:3]:
+        for original in row.get("source_record_examples") or []:
             example = dict(original)
             example.pop("support_summary", None)
             if args.evidence_prompt_profile == ASSAY_MECHANISM_TAGGED_PROMPT_PROFILE:
@@ -2001,7 +2056,10 @@ def build_parser() -> argparse.ArgumentParser:
         default="parent_disjoint",
         help="Document the intended query-time identity policy in the index manifest.",
     )
-    build.add_argument("--max-record-examples", type=int, default=3)
+    build.add_argument(
+        "--max-record-examples", type=int, default=0,
+        help="Maximum distinct cards per assay/molecule; 0 keeps all (default). Positive caps replay historical indices.",
+    )
     build.add_argument(
         "--max-support-text-chars",
         type=int,

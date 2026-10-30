@@ -1,0 +1,160 @@
+{
+  "schema": "paper_maintenance.v1",
+  "date": "2026-09-29",
+  "status": "complete_with_documented_open_items",
+  "scope": "Current TxAgent paper baseline sources, registered artifacts, maintained entrypoints/docs and local analog manuscript; no inference/training or external literature audit.",
+  "fixes": [
+    "Reused eight identical activity-transfer plotting helpers from the existing single-run module; removed 97 net production lines without adding an entrypoint.",
+    "Updated Ames test doubles for required provider settings, functional-group tool receipts and client shutdown; also checked that changed temperature rejects cached priors.",
+    "Added six missing Gemini source-method means and corrected 120/186 current baseline-cell counts in the registry.",
+    "Updated obsolete two-backbone metadata annotations and their dependent receipt hashes; images and numerical sources unchanged.",
+    "Rebound two historical index-publication paths to a byte-identical archived gold-v3 receipt.",
+    "Corrected the 198-cell retention policy, archived-summary-script guidance and separate task/mean figure documentation.",
+    "Replaced the manuscript TDC panel, whose MiniMol+indirect training-pool bars were reversed, with the registered PDF; archived the old panel and preprint, then rebuilt the 26-page preprint."
+  ],
+  "code": {
+    "python_files_ast_checked": 540,
+    "syntax_errors": 0,
+    "production_lines_delta": -97,
+    "test_lines_delta": 12,
+    "new_runners": 0,
+    "new_plotters": 0,
+    "retained_duplicate_boundaries": [
+      "Independent zero-dependency dili_score package schema helpers.",
+      "Task-specific typed report adapters over an existing shared renderer.",
+      "Legacy task pipeline orchestration has identical bodies but different task-local callbacks and defaults; not refactored in this maintenance pass."
+    ],
+    "limits": "AST syntax and exact-body duplication inventory plus regression tests, not a proof that every implementation is minimal."
+  },
+  "results": {
+    "baseline_cells": 306,
+    "ml_cells": 198,
+    "naive_llm_cells": 108,
+    "metrics_recomputed": [
+      "macro_f1",
+      "accuracy",
+      "ML auroc"
+    ],
+    "unique_prediction_files_hashed": 299,
+    "metric_or_current_receipt_hash_mismatches": 0,
+    "manuscript_ours_task_values": 72,
+    "manuscript_ours_means": 12,
+    "manuscript_naive_llm_task_values": 108,
+    "manuscript_naive_llm_means": 18,
+    "manuscript_ml_metric_values": 396,
+    "manuscript_baseline_means": 33,
+    "consistent_panel_receipts": 6,
+    "plotted_means": 45,
+    "ours_validation": "Transcription and arithmetic only; not prediction provenance."
+  },
+  "registry": {
+    "artifact_path_references_checked_before_review_link": 1498,
+    "rebound_references": 2,
+    "rebound_sha256": "a9de260639f0e6d5e174bf90fbe0c470b6d5f33356cfcce02a60d84ce34268f4",
+    "unavailable_historical_references": [
+      [
+        ".replicate_suites.dili_carcinogens_scaffold_4_2.dili_split_rename_receipt",
+        "data/conditioned_benchmark/DILI/provenance/scaffold_valid_test_swap_20260908.json"
+      ],
+      [
+        ".replicate_suites.dili_scaffold_swapped_4_2.split_rename_receipt",
+        "data/conditioned_benchmark/DILI/provenance/scaffold_valid_test_swap_20260908.json"
+      ],
+      [
+        ".matched_baselines.dili_carcinogens_scaffold.tasks.DILI.valid.split_rename_receipt",
+        "data/conditioned_benchmark/DILI/provenance/scaffold_valid_test_swap_20260908.json"
+      ],
+      [
+        ".matched_baselines.dili_carcinogens_scaffold.tasks.DILI.test.split_rename_receipt",
+        "data/conditioned_benchmark/DILI/provenance/scaffold_valid_test_swap_20260908.json"
+      ],
+      [
+        ".matched_baselines.dili_carcinogens_scaffold.dili_split_rename_receipt",
+        "data/conditioned_benchmark/DILI/provenance/scaffold_valid_test_swap_20260908.json"
+      ],
+      [
+        ".matched_baselines.dili_carcinogens_starling_only_scaffold.dili_split_rename_receipt",
+        "data/conditioned_benchmark/DILI/provenance/scaffold_valid_test_swap_20260908.json"
+      ],
+      [
+        ".matched_baselines.dili_starling_only_scaffold_swapped.split_rename_receipt",
+        "data/conditioned_benchmark/DILI/provenance/scaffold_valid_test_swap_20260908.json"
+      ]
+    ],
+    "unavailable_unique_files": 1
+  },
+  "manuscript": {
+    "root": "/path/to/manuscript",
+    "tex_sources_changed": false,
+    "pages": 26,
+    "compiled_preprint": "/path/to/manuscript/iclr2027_preprint.pdf",
+    "compiled_preprint_sha256": "8029b0ef9285ff8315ef8d5ebaf821e11479d864a8e129f9d389bbc1d9602201",
+    "tdc_figure_source": "outputs/paper/llm_vs_standard_baselines_20260924/tdc/baseline_bars_mixed.pdf",
+    "tdc_figure_sha256": "89bed7c6ff6eedb81482f0c8b342e63320c9bd20d6fa852ab5cb7ba41fa0e4a6",
+    "prior_figures_archive": "outputs/paper/llm_vs_standard_baselines_20260924/design_snapshots/manuscript_tdc_before_20260929.zip",
+    "prior_figures_archive_sha256": "ed22b4eac6e14295a4f84ea19d27a3d786dbb989dddb53dcec260f98be7c44fa",
+    "mean_figure": "PDF bytes differ but rasterized page pixels are identical at 1800px width.",
+    "literature_figure": "Byte-identical to current registered source.",
+    "undefined_references": 0,
+    "overfull_boxes": 0,
+    "table_source_hashes": {
+      "/path/to/manuscript/sections/appendix_baselines.tex": "77d1761728abe63661017eabad231c4eda9bbcd83783115529974b28b5926264",
+      "/path/to/manuscript/sections/appendix_llm.tex": "8ebd62e82c850c6f9ab78139f84f797f56f81d53739ed3557d681ab7b0026f13",
+      "/path/to/manuscript/sections/appendix_methods.tex": "8099233c9308214f8b5efed221f840f2f731060bc8c6970cf0ea39f15ed5a053",
+      "/path/to/manuscript/sections/appendix_ours.tex": "c7056803526309169f4feb8d95b315684134d86623c45d7124e5ed8b5e2013a8"
+    }
+  },
+  "open_items": [
+    {
+      "item": "Direct budget",
+      "status": "deferred_by_user",
+      "evidence": "Manuscript says 10 molecules/pairs; current naive manifests, metadata and registry specify 50 records. Ours supplied scores do not pin a runtime configuration. User explicitly requested preserving this difference pending review."
+    },
+    {
+      "item": "Component ablation and Ours provenance",
+      "status": "not_locally_verified",
+      "evidence": "The four component-ablation absolute means 0.704/0.714/0.711/0.714 lack a registered local run source. Ours task scores remain user-reported; do not infer local trained-model or prediction provenance from matching table values."
+    },
+    {
+      "item": "MiniMol matched-control wording",
+      "status": "interpretation_needs_clarification",
+      "evidence": "Literature finetuned direct=0.5897018025046044; matched indirect=0.5923300733564586. Displayed MM Direct upper bound=0.6173436905394967. The manuscript decrease is true against the displayed upper bound but not the matched finetuned control."
+    },
+    {
+      "item": "Historical DILI split-swap receipt",
+      "status": "missing",
+      "evidence": "Seven gold-v3 historical references share the missing receipt. Existing run reuse receipts preserve their own mappings; no replacement original receipt was invented."
+    }
+  ],
+  "preserved_boundaries": [
+    "All canonical prediction files and scores unchanged.",
+    "No resumed Joint/quality/extraction work.",
+    "Gemini extra provenance/cost reconciliation remains deferred.",
+    "Pre-existing worktree modifications preserved; no commit or push."
+  ],
+  "validation_archive": "outputs/paper/llm_vs_standard_baselines_20260924/maintenance_validation_20260929.zip",
+  "validation_archive_sha256": "8c1bfd612c2a12e5e39d92d51a85734327139ad182784f17ed81d644deb2e752",
+  "validation": {
+    "pytest": {
+      "passed": 2720,
+      "skipped": 5,
+      "warnings": 19,
+      "seconds": 138.69,
+      "skip_reason": "Optional apricot dependency absent; record-feature-selection tests explicitly skip. No dependency installed.",
+      "sandbox_note": "Async wakeup tests stall in the restricted sandbox; final full suite ran successfully outside it."
+    },
+    "active_guides_link_checked": 18,
+    "broken_local_links": 0,
+    "git_diff_check": "passed",
+    "helper_parity": "Exact-AST eight-function comparison before deduplication; mixed-label baseline metric/group output parity and row rendering smoke checks passed."
+  },
+  "source_hashes": {
+    "tools/chembl_tool/activity_transfer_benchmark/plot_llm_multi_run_comparison.py": "99ddbad41b7ac84b49140ec7aca6ca762b5fec704af0526209cec5f74ea4da6d",
+    "tests/chembl_tool/tasks/ames/test_query_prior.py": "e771c942605c5b75c0f21a26e12acff17d60b0d8a868c3944b94eaa043f8bcff",
+    "tools/chembl_tool/paper_experiments/current_conditioned_results.json": "67a63c5510ff52e72d21f9c4aae0961d6d15f4a1e40b44b33f32299eeef10063",
+    "outputs/paper/llm_vs_standard_baselines_20260924/comparison.json": "4a5a96d6bf9557789f55b4dc64b5e829109ab7c52539eb3f7108bfcfd24b9f87",
+    "outputs/paper/llm_vs_standard_baselines_20260924/ml_appendix.csv": "7336791a202e45d665ded9c7375f25b5d06516e6431231e68844191b75a8cb05",
+    "outputs/paper/llm_vs_standard_baselines_20260924/ours_reported_results_20260925_three_backbones.json": "a1615fdbdb60c10522e383a3fe68c13613f26af4384b7d0b44914cbb50f7a7e2"
+  },
+  "storage_followup": "tools/chembl_tool/paper_experiments/receipts/local_storage_maintenance_20260929.json"
+}

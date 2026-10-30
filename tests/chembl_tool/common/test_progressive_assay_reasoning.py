@@ -42,6 +42,39 @@ def test_opt_in_endpoint_diversity_retains_complementary_assays_with_same_budget
     assert [c["card_id"] for c in _select_cards(cards[:2], 2, prefer_distinct_endpoints=True)] == ["a", "b"]
 
 
+def test_combined_molecule_budget_competes_by_similarity_and_keeps_only_new_cards():
+    def analog(aid, similarity, ids):
+        return {"analog_id": aid, "similarity": similarity,
+                "cards": {cid: {"card_id": cid, "_assay_key": cid} for cid in ids}}
+    previous = {"active": analog("active", .9, ["kept", "skipped"]),
+                "stale": analog("stale", .99, ["old"])}
+    active, _ = select_initial_evidence({"active": previous["active"]}, card_limit=1)
+    current = {**previous, "active": analog("active", .9, ["kept", "skipped", "new_a", "new_b"]),
+               "near": analog("near", .8, ["near_card"]),
+               "far": analog("far", .7, ["far_card"])}
+    new, aug, audit = select_progressive_delta(
+        previous, current, active, level=2, combined_molecule_limit=2, card_limit=5)
+    assert set(new) == {"near"} and set(aug) == {"active"}
+    assert set(aug["active"]["cards"]) == {"new_a", "new_b"}
+    merged = append_evidence(active, new, aug)
+    assert set(merged["active"]["cards"]) == {"kept", "new_a", "new_b"}
+    assert audit["n_new_molecule_candidates"] == 2
+    assert audit["n_augmentation_molecule_candidates"] == 1
+    assert audit["unused_molecule_slots"] == 0
+    with pytest.raises(ValueError, match="positive"):
+        select_progressive_delta(previous, current, active, level=2, combined_molecule_limit=0)
+
+
+def test_combined_pool_can_select_ten_new_molecules_and_five_cards_each():
+    pool = {str(i): {"analog_id": str(i), "similarity": 1 - i / 100,
+                    "cards": {f"{i}_{j}": {"card_id": f"{i}_{j}", "_assay_key": str(j)}
+                              for j in range(7)}} for i in range(12)}
+    new, aug, audit = select_progressive_delta({}, pool, {}, level=2,
+                                               combined_molecule_limit=10, card_limit=5)
+    assert set(new) == {str(i) for i in range(10)}
+    assert not aug and audit["n_selected_cards"] == 50
+
+
 def test_initial_condition_priority_retains_fallback_and_default_order():
     def analog(name, similarity, cards):
         return {"analog_id": name, "similarity": similarity, "cards": {

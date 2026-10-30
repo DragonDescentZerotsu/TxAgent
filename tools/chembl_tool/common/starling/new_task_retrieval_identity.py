@@ -6,12 +6,15 @@ import fcntl
 from functools import lru_cache
 from pathlib import Path
 
-from rdkit import rdBase
+from rdkit import Chem, rdBase
 
 from tools.chembl_tool.common.build_runtime import local_input, worker_pool
 from tools.chembl_tool.common.json_utils import read_jsonl, sha256_file, write_json_atomic, write_jsonl_atomic
+from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
 from tools.chembl_tool.common.retrieval_policy import CandidateDecision, MoleculeRelation
 from tools.chembl_tool.common.starling import new_task_identity as adapter
+
+PARENT_REFINEMENT_POLICY = 'complete_stereo_free_tautomer_within_legacy_group.v1'
 
 
 def validate_contract(task, contract):
@@ -111,8 +114,35 @@ def query_identity(task, smiles, contract):
     return adapter.leakage_identity(task, smiles)
 
 
-def decide_candidate(query, candidate, policy, contract):
-    """Compare precomputed keys before ranking; no per-candidate RDKit work."""
+@lru_cache(maxsize=16384)
+def _canonical_parent(smiles):
+    """Return a completed stereo-free tautomer representative, or unresolved.
+
+    Only queried for matching legacy parent groups, never during index builds.
+    Incomplete enumeration must not release a potentially equivalent candidate.
+    """
+    if not smiles:
+        return None
+    try:
+        parent = normalize_molecule_identity(smiles).parent_smiles
+        if not parent:
+            return None
+        mol = Chem.MolFromSmiles(parent)
+        Chem.RemoveStereochemistry(mol)
+        canonical, info = adapter._canonicalize(mol)
+        if info['status'] != 'Completed':
+            return None
+        return Chem.MolToSmiles(canonical, canonical=True, isomericSmiles=True)
+    except (ValueError, RuntimeError):
+        return None
+
+
+def decide_candidate(query, candidate, policy, contract, *, refine_parent=False):
+    """Compare before ranking; runtime may refine a matching coarse parent key.
+
+    Builds and audits retain the frozen group contract by default. Refinement
+    never merges different old groups or changes the recorded scaffold rule.
+    """
     if candidate.get('retrieval_identity_contract') != contract:
         raise ValueError('Missing or mixed candidate retrieval identity contract')
     if policy not in {'parent_disjoint', 'scaffold_disjoint'}:
@@ -121,10 +151,23 @@ def decide_candidate(query, candidate, policy, contract):
         raise ValueError('Candidate lacks a scaffold leakage identity')
     if not candidate.get('retrieval_leakage_group'):
         raise ValueError('Candidate lacks a reliable leakage identity')
-    if query['leakage_group'] == candidate['retrieval_leakage_group']:
+    same_parent = query['leakage_group'] == candidate['retrieval_leakage_group']
+    same_scaffold = (policy == 'scaffold_disjoint' and query['scaffold_leakage_group']
+                     and query['scaffold_leakage_group'] == candidate.get('retrieval_scaffold_leakage_group'))
+    if same_parent and not refine_parent:
         return CandidateDecision(MoleculeRelation.SAME_PARENT, True, policy + ':same_tautomer_leakage_group')
-    if policy == 'scaffold_disjoint' and query['scaffold_leakage_group'] and query['scaffold_leakage_group'] == candidate.get('retrieval_scaffold_leakage_group'):
+    if same_scaffold:
         return CandidateDecision(MoleculeRelation.SAME_SCAFFOLD, True, policy + ':same_tautomer_scaffold_group')
+    if same_parent:
+        query_parent = _canonical_parent(query.get('source_parent_smiles'))
+        candidate_parent = _canonical_parent(
+            candidate.get('retrieval_identity_source_smiles')
+            or (candidate.get('molecule_identity') or {}).get('parent_smiles')
+            or candidate.get('canonical_smiles'))
+        if query_parent is None or candidate_parent is None:
+            return CandidateDecision(MoleculeRelation.SAME_PARENT, True, policy + ':unresolved_legacy_parent_group')
+        if query_parent == candidate_parent:
+            return CandidateDecision(MoleculeRelation.SAME_PARENT, True, policy + ':same_completed_tautomer_parent')
     return CandidateDecision(MoleculeRelation.STRUCTURAL_ANALOG, False, 'retained')
 
 

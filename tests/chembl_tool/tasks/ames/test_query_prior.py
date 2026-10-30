@@ -1,4 +1,5 @@
 import json
+from dataclasses import replace
 from types import SimpleNamespace
 
 import pytest
@@ -35,6 +36,9 @@ def test_fresh_priors_resume_and_reject_changed_inputs(tmp_path, monkeypatch, ra
             content={k: [] if isinstance(v,list) else 'text' for k,v in payload['required_json_schema'].items()}
             content.update(confidence='low', ames_prior='mixed_or_unclear', ames_prediction='negative')
             return {'content':content, 'messages':messages}
+
+        def close(self):
+            pass
     races=[]
     class Pool:
         async def async_chat_json(self, messages):
@@ -54,11 +58,15 @@ def test_fresh_priors_resume_and_reject_changed_inputs(tmp_path, monkeypatch, ra
         return client
     monkeypatch.setattr(runner, '_make_client', make_client)
     def prefetch(retrieval, *a, **kw):
-        retrieval['query']['prefetched_molecule_properties']={'status':'ok','tool_name':'molecule_properties','text':'MW: 30.07'}
+        retrieval['query']['prefetched_molecule_properties']={
+            'status':'ok', 'tool_name':'molecule_properties',
+            'content':'[molecule_properties]\nMW: 30.07\n[functional_group_tree]\nNo matched functional groups.'}
         return retrieval
     monkeypatch.setattr(identity_blind,'prepare_reasoning_retrieval',prefetch)
     specs={'ames':SimpleNamespace(input_jsonl=source)}
-    assert runner._prepare_fresh_query_priors(args,specs,None)==0
+    provider = runner.ProviderSpec('test', args.base_url, args.model, 'UNUSED_TEST_KEY', 2)
+    provider_config = runner.ProviderPoolConfig((provider,))
+    assert runner._prepare_fresh_query_priors(args,specs,provider_config)==0
     count = len(calls)
     assert count >= 2
     if race_width > 1:
@@ -67,10 +75,11 @@ def test_fresh_priors_resume_and_reject_changed_inputs(tmp_path, monkeypatch, ra
         assert all(not client.thread.is_alive() for client in races)
     manifest_path = tmp_path / 'run/single_cache/ames/none/manifest.json'
     manifest = json.loads(manifest_path.read_text())
+    assert manifest['temperature'] == 0.0 and manifest['reasoning_effort'] == 'omitted'
     manifest['runner_sha256'] = 'previous operational runner'
     manifest_path.write_text(json.dumps(manifest))
     args.parallelism, args.endpoint_concurrency_budget = 4, 8
-    assert runner._prepare_fresh_query_priors(args,specs,None)==0
+    assert runner._prepare_fresh_query_priors(args,specs,provider_config)==0
     assert len(calls)==count
     resumed = json.loads(manifest_path.read_text())
     assert (resumed['parallelism'], resumed['endpoint_concurrency_budget']) == (4, 8)
@@ -83,15 +92,18 @@ def test_fresh_priors_resume_and_reject_changed_inputs(tmp_path, monkeypatch, ra
     single_bytes = single.read_bytes()
     final.unlink()
     args.parallelism, args.endpoint_concurrency_budget = 8, 16
-    assert runner._prepare_fresh_query_priors(args,specs,None)==0
+    assert runner._prepare_fresh_query_priors(args,specs,provider_config)==0
     assert len(calls) == count + 1
     assert single.read_bytes() == single_bytes
     assert json.loads(final.read_text())['status'] == 'ok'
     args.max_tokens += 1
     with pytest.raises(ValueError,match='changed fresh prior'):
-        runner._prepare_fresh_query_priors(args,specs,None)
+        runner._prepare_fresh_query_priors(args,specs,provider_config)
     args.max_tokens -= 1
+    with pytest.raises(ValueError,match='changed fresh prior'):
+        runner._prepare_fresh_query_priors(
+            args, specs, replace(provider_config, providers=(replace(provider, temperature=0.5),)))
     assert all('Y' not in p and 'Y' not in p['query'] for p in calls)
     source.write_text(source.read_text().replace('"Y": 1','"Y": 0'))
     with pytest.raises(ValueError,match='changed fresh prior'):
-        runner._prepare_fresh_query_priors(args,specs,None)
+        runner._prepare_fresh_query_priors(args,specs,provider_config)

@@ -1,0 +1,53 @@
+{
+  "status": "complete_verified",
+  "date": "2026-09-23",
+  "scope": "GPT-6 Luna paper-baseline adoption, bounded code review, documentation cleanup, and two-model/all-ML comparison figures",
+  "paper_baseline": "budgeted_evidence_protocol.gpt6_luna_batch_b50",
+  "comparison": "budgeted_evidence_protocol.llm_vs_standard_baselines",
+  "findings_resolved": [
+    "Reject --baseline-settings without --baseline-suite instead of silently ignoring it; scaling/KNN conflicts already rejected.",
+    "Keep the shared OpenRouter Batch transport at /api/v1/batches; update stale operating documentation.",
+    "Archive completed hardcoded-PID launcher and startup logs; retain exact shared CLI commands, remote billing journals and an audit-only script.",
+    "Replace current conditioned figure source with aligned full-budget DeepSeek, preserve old tool-visible/Direct-3 figures as historical.",
+    "Draw all adopted ML methods through metadata in the existing renderer; reject undeclared points rather than silently omitting methods.",
+    "Correct stale 126-cell appendix count to 162 and label TDC original external test cohorts explicitly."
+  ],
+  "retained_entrypoints": {
+    "inference": "tools.chembl_tool.paper_experiments.run_conditioned_assay_family_curve --baseline-suite --baseline-settings none direct_fill both_fill",
+    "plotter": "tools.chembl_tool.paper_experiments.plot_assay_retrieval_curve --baseline-curves-csv ... --baseline-curves-metadata ...",
+    "audit_export": "outputs/paper/llm_vs_standard_baselines_20260921/build.py --neighbor-fill-output outputs/paper/llm_vs_standard_baselines_20260923",
+    "luna_output_audit": "outputs/paper/gpt6_luna_batch_b50_20260922/verify_results.py"
+  },
+  "new_formal_runners": 0,
+  "new_model_calls": 0,
+  "new_training_runs": 0,
+  "cleanup_archive": "outputs/paper/gpt6_luna_batch_b50_20260922/execution_receipts.zip",
+  "audit_only_refactor": "verify() is AST-identical to the completed original audit; launcher/PID/network-client imports removed.",
+  "validation": {
+    "focused_tests_passed": 93,
+    "final_plot_tests_rerun_passed": 51,
+    "git_diff_check": "passed",
+    "paired_queries": 12819,
+    "conditioned_identical_messages": 6144,
+    "tdc_identical_messages": 2225,
+    "tdc_identical_after_v2_rendering": 6675,
+    "plotted_cells": {
+      "conditioned": 90,
+      "tdc": 144
+    },
+    "ml_appendix_cells_unchanged": 162,
+    "visual_review": "Both PNGs inspected; explicit TDC cohort subtitle checked in final SVG."
+  },
+  "limitation": "TDC DeepSeek evidence arms were inferred with adapter v1; Luna uses v2 exact-field deduplication. Records/prior match, but this is not identical original rendering. Generation settings remain model-specific.",
+  "artifacts": {
+    "outputs/paper/llm_vs_standard_baselines_20260923/verification.json": "645b20f5565b310c2ad9ea91a50240aa2d9e0d45e79fd561dfe7dbd1fdde9ee8",
+    "outputs/paper/llm_vs_standard_baselines_20260923/figure_verification.json": "dac2b633336fc0d650bddddd4192131b4ade8184d9aa347fe1310e1e02d1c19e",
+    "outputs/paper/gpt6_luna_batch_b50_20260922/execution_receipts.zip": "90efa7f31e8b2f50bdca2cc9dbdd3bcd62d6f784102aa5f9de6bf257ff5fd718",
+    "outputs/paper/gpt6_luna_batch_b50_20260922/verify_results.py": "d928e45154531bff731fd0a4500a5a0cee2be8a361e83a2ecfa8001b1f6e177c"
+  },
+  "figure_snapshot": {
+    "status": "historical_before_grouping_and_ours_overlay",
+    "note": "Figure counts and artifact hashes in this adoption receipt describe its original snapshot. Current figure audit is linked below.",
+    "current_verification": "outputs/paper/llm_vs_standard_baselines_20260923/figure_verification.json"
+  }
+}

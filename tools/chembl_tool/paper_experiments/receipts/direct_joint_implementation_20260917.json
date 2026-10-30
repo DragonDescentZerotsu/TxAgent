@@ -1,0 +1,132 @@
+{
+  "schema_version": "direct_joint_implementation_verification.v1",
+  "status": "verified_preparation_not_prediction_benchmark",
+  "smoke_root": "outputs/paper/analysis/direct_joint_implementation_20260917/real_tool_smoke",
+  "manifest_sha256": "809c8d37012bdd1e6455a71901b6424d2f3094bcde2992eff80b5771d06e4dec",
+  "default_budget": 64,
+  "budget_grid": [
+    16,
+    64,
+    128
+  ],
+  "transfer": "constant_one",
+  "indirect_identity_policy": "parent_disjoint",
+  "task_count": 6,
+  "real_tool_prefetch": true,
+  "llm_prediction_calls": 0,
+  "new_pipeline_unit_and_integration_tests": 19,
+  "checks": [
+    "current_code_hashes",
+    "manifest_and_request_hashes",
+    "all_indirect_L2_plus",
+    "fixed_64_indirect_records",
+    "all_candidate_parent_disjoint",
+    "direct_scaffold_disjoint",
+    "objective_recomputed",
+    "zero_tool_failures"
+  ],
+  "tasks": [
+    {
+      "task": "ames",
+      "query_index": 0,
+      "candidate_records": 30291,
+      "direct_records": 22,
+      "indirect_records": 64,
+      "selected_indirect_parents": 51,
+      "selected_groups": 4,
+      "tool_neighbors": 57,
+      "tool_failures": 0,
+      "prompt_characters": 388914,
+      "request_sha256": "e458b5be06fcb9ab686483ddf8bdd6d82aa932c8aaffee0ec0f103c185ffd7b0",
+      "selection_objective": 51.65802527955944
+    },
+    {
+      "task": "bbb_martins",
+      "query_index": 0,
+      "candidate_records": 2222,
+      "direct_records": 5,
+      "indirect_records": 64,
+      "selected_indirect_parents": 40,
+      "selected_groups": 4,
+      "tool_neighbors": 41,
+      "tool_failures": 0,
+      "prompt_characters": 219645,
+      "request_sha256": "58ea9d42c325dd763621fa2305f6153152927802e14d547d6fe8b7c745606eb1",
+      "selection_objective": 50.27024879209175
+    },
+    {
+      "task": "bioavailability_ma",
+      "query_index": 0,
+      "candidate_records": 185,
+      "direct_records": 4,
+      "indirect_records": 64,
+      "selected_indirect_parents": 8,
+      "selected_groups": 5,
+      "tool_neighbors": 9,
+      "tool_failures": 0,
+      "prompt_characters": 136078,
+      "request_sha256": "f0e67c3e9914981fa547f02e863dda4c24f01cc9d67ef9dd001534677723e536",
+      "selection_objective": 45.98119399475751
+    },
+    {
+      "task": "carcinogens",
+      "query_index": 0,
+      "candidate_records": 1684,
+      "direct_records": 24,
+      "indirect_records": 64,
+      "selected_indirect_parents": 30,
+      "selected_groups": 6,
+      "tool_neighbors": 31,
+      "tool_failures": 0,
+      "prompt_characters": 352255,
+      "request_sha256": "bacc291b22ffdc1f2565079753bf6e372b40d2e2b02503069a8fa1fb01df99a4",
+      "selection_objective": 50.833951963981484
+    },
+    {
+      "task": "dili",
+      "query_index": 0,
+      "candidate_records": 877,
+      "direct_records": 14,
+      "indirect_records": 64,
+      "selected_indirect_parents": 13,
+      "selected_groups": 6,
+      "tool_neighbors": 14,
+      "tool_failures": 0,
+      "prompt_characters": 305555,
+      "request_sha256": "a2e03fe51fbd103b458987a5f32d661367fb273b9c5caa4ea7e7d851604d27f7",
+      "selection_objective": 42.748312621585086
+    },
+    {
+      "task": "skin_reaction",
+      "query_index": 0,
+      "candidate_records": 81,
+      "direct_records": 11,
+      "indirect_records": 64,
+      "selected_indirect_parents": 10,
+      "selected_groups": 2,
+      "tool_neighbors": 12,
+      "tool_failures": 0,
+      "prompt_characters": 153966,
+      "request_sha256": "f2950d03660f89e5cff33ebd504caca66357cdc68a69c72e5ec5a6ddeb36a958",
+      "selection_objective": 43.24668484670142
+    }
+  ],
+  "regression_tests": {
+    "passed": 365,
+    "skipped": 5,
+    "failed": 0,
+    "warnings": 6,
+    "warning_kind": "existing multiprocessing fork deprecation",
+    "test_files": [
+      "test_budgeted_evidence.py",
+      "test_budgeted_pipeline.py",
+      "test_record_selection_context.py",
+      "test_record_diversity.py",
+      "test_record_numeric_features.py",
+      "test_record_feature_selection.py",
+      "test_assay_retrieval.py",
+      "test_progressive_assay_reasoning.py",
+      "test_new_task_runner_contracts.py"
+    ]
+  }
+}

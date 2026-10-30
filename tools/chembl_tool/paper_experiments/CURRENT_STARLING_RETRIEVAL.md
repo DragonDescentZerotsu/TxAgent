@@ -1,6 +1,6 @@
 # Current Starling retrieval and collaborator data
 
-更新时间：2026-09-14。
+更新时间：2026-09-17。
 
 本页是 BBB、Bioavailability、Skin、Ames、DILI 和 Carcinogens progressive retrieval 的唯一当前数据说明。它同时说明如何恢复、重建、
 验证和分享每个 level 的 records。日常复现不需要另一个 TxAgent checkout，也不需要在旧的 `v1`、`v2`、
@@ -48,10 +48,12 @@ Ames 的 source adapter 在 `data/starling_data/ames/canonical_v1/` 生成带审
 交给协作者阅读的“分享包”。协作者实际浏览和交换的是下文 `current_level_records/` 中直接由 Git 跟踪的普通
 Parquet 文件，不需要解压，也不需要安装 Git LFS。
 
-Skin 当前 v7 使用单独发布的 identity-rebound canonical snapshot：7 条记录按原研究修复分子绑定，
+Skin 当前 v8 接续 v7 的 identity-rebound canonical snapshot：此前 7 条记录按原研究修复分子绑定，
 其中 INF 重复项保留源记录并由已有正确记录代表；M16/M17 两条仍待结构核验。Overlay 保持只改 family，
-并保留 3 条整体结果由 L3→L2 的修复。Gold/split 不变，旧 v5/v6 索引保留给冻结实验。
-源重绑入口、文献、计数和复用边界见 `data/starling_data/skin_reaction/trace_review_20260914/README.md`。
+并保留 3 条整体结果由 L3→L2 的修复。2026-09-17 又纠正 PMID31006869 的 17 条名称—结构错配；
+只改变审定的身份字段，全部为 nonvoters。Gold/split 字节不变，旧 v7 索引保留给冻结实验。
+源重绑、证据边界和验证见 `data/starling_data/skin_reaction/trace_review_20260917/README.md`；
+此前修复仍见 `trace_review_20260914/README.md`。旧预测需要 selected-surface 复用证明或重跑。
 
 ## Restore, rebuild, and verify
 
@@ -163,8 +165,23 @@ BBB/Bioavailability/Skin 删除 direct family；Ames 删除 `heldout_filter_scop
 DILI gold_v4 只删除 `group_id=Group.dili_actual_voter` 的 L1；Carcinogens gold_v4 只删除
 `group_id=Group.carcinogenicity_direct` 的 L1。两者都保留 L2，并使用冻结 tautomer identity cache，
 所有层在 query-time 应用 scaffold/parent disjoint。
-其余机制 records 仍可保留。随后按 physical assay×molecule 聚合，每组最多
-确定性保留 3 张 representative record cards。`support_text` 完整保留，`max_support_text_chars=0` 表示不截断。
+2026-10-21 起，新检索在 DILI/Carcinogens 的旧 parent 组内追加完整、去立体构型的
+RDKit canonical-tautomer 比较，避免仅因粗分组相同而排除位置异构体；未完成或身份未解时
+仍保守排除。冻结 split/index、建库 heldout L1 预排除、record-budget 组号及环拓扑
+scaffold 规则保持不变。新规则不追溯认证旧预测；范围及版本见
+`identity-policy correction` (local-only historical record)。
+其余机制 records 仍可保留。冻结实验及本文件原有 hash 恢复合同按 physical assay×molecule 聚合，
+每组确定性保留最多 3 张 representative cards。`support_text` 完整保留，`max_support_text_chars=0` 表示不截断。
+
+2026-09-15 起，新建 assay index 默认 `--max-record-examples 0`，保留全部不同的原始 cards；
+去重同时考虑 species、conditions 和 family，避免把不同实验条件或层的证据合并。
+原有显式 `3` 的恢复合同继续用于复现冻结实验，不覆盖它的索引或修改已有预测。
+六任务 scaffold 的无截取索引（valid/test 共用）单独位于
+`outputs/paper/uncapped_record_indices_20260915/<task>/scaffold/`；根 `manifest.json`
+记录完整新旧卡片对比与输入/index hashes。共享 progressive runner 用
+`--retrieval-index-root outputs/paper/uncapped_record_indices_20260915` 指向它，保留输入和 heldout 校验。
+该目录不包含 random 索引。Raw-card renderer 和候选选择器不再额外截为每 assay 三条；
+实际 prompt 仍遵循 runner 指定的 molecule/card budgets，历史 summary-v2 的三条限制不变。
 
 这是某个 split 实际可供 retrieval 的候选池，不是 overlay 所有行的副本。Git 分享表用
 `molecule_id + card_fingerprint_sha256` 保存紧凑 card 引用，并连接到 source membership 取得 endpoint、value、
@@ -233,7 +250,7 @@ python -m tools.chembl_tool.paper_experiments.export_current_starling_level_reco
 仓库的 `artifacts/`，以便换 checkout 恢复。仅修正清单路径不改变 records 或 archive 字节，也不产生新实验。
 
 Stage-03 之前的 raw ingestion 与 normalized-v7 历史实现来自
-`source_snapshot@70750c42035d6bde5ce9504211c4e22ac57e27f8`，只说明 frozen snapshot 的来源，不是运行依赖。
+`origin/upstream@70750c42035d6bde5ce9504211c4e22ac57e27f8`，只说明 frozen snapshot 的来源，不是运行依赖。
 若以后从新 raw run 重新生成 Stage-03，必须作为 source-ingestion migration 审查。
 
 早期流程从 source-specific 列名逐步发展到 canonical records；随后从 assay-level earliest-level assignment 改为
@@ -252,6 +269,15 @@ matched baselines 仍为 current；scaffold-valid 2/1、4/2、8/4 分别有 1/2/
 大型输入校验复用 `common/build_runtime.py` 的 inode/size/mtime/ctime 与同一启动周期绑定的
 摘要缓存；level 导出复用该模块的内容寻址 NVMe 输入缓存，避免反复读取网络盘。首次输入仍完整
 校验 SHA-256。普通 Parquet 表超过 90 MB 时自动拆成同 schema 分片，包括 split 卡片引用表。
+
+本地 build cache 同时保留输入副本和已发布输出的硬链接；内容变更会留下新旧多个哈希文件，
+当前没有自动容量/过期清理。它不要求工具服务在线，也不用于读取已完成论文的分数表。
+清理前区分共享盘重复副本、历史实验绑定与来源已丢失的旧版本；2026-09-30 的逐文件用途和
+保留边界见[本地构建缓存核查](../../../outputs/paper/local_build_cache_audit_20260930/README.md)。
+该批缓存已按上述边界归档并清空；共享归档为
+`/path/to/txagent-assets/build_history_20260930/`，其中 `reproduction/` 保存复现依赖，
+`recovery/` 保存保守恢复材料。校验和删除记录见`清理回执` (local-only historical record)；
+以后构建仍按需生成本地加速缓存。
 
 最终 DILI/Carcinogens 源的逐行修改、冻结 gold 哈希和两种索引校验统一见
 `data/starling_data/<task>/retrieval_final/publication.json`。旧 gold_v4 首次发布记录

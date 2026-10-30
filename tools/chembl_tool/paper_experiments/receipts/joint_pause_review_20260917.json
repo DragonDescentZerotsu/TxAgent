@@ -1,0 +1,80 @@
+{
+  "version": "joint_pause_review.v1",
+  "updated_at": "2026-09-17T20:36:33.549970+00:00",
+  "status": "paused_by_user",
+  "resume_requires_explicit_user_request": true,
+  "scope": "Review and organize recent Joint/source-feature code and documentation before baseline work. No scientific-rule change or new model calls.",
+  "worker": {
+    "pid": 274961,
+    "exit_code": 0,
+    "live_extraction_or_probe_processes": 0,
+    "progress_file": "outputs/paper/joint_validation_20260917/candidate_annotations_current/progress.json",
+    "jobs": {
+      "done": 6530,
+      "pending": 168270
+    },
+    "active_jobs": 0,
+    "admission_pool_observation": {
+      "capacity": 512,
+      "active": 0,
+      "waiting": 0
+    },
+    "checkpoint": "outputs/paper/joint_validation_20260917/candidate_annotations_current/extraction.checkpoint.sqlite",
+    "checkpoint_sha256": "3f9eb678c1a83480c27b99e1ee25e491fbcd19c1f3862ee19ecf2c908061ffdd",
+    "checkpoint_bytes": 356601856,
+    "sqlite_quick_check": "ok",
+    "pause_file": "outputs/paper/joint_validation_20260917/candidate_annotations_current/pause.json"
+  },
+  "review": {
+    "code_changes": [
+      "Removed unused defaultdict import from common/budgeted_reasoning.py.",
+      "Removed duplicate direct-record source provenance assignment in paper_experiments/budgeted_evidence.py; score_bound_candidate already supplies the same fields."
+    ],
+    "architecture": "Shared source assessment and scoring, retrieval/source binding, raw-context rendering, and one family-runner orchestration. Offline extraction remains the shared resumable CLI.",
+    "preserved": [
+      "Scientific scoring/objective, cache schemas and source eligibility",
+      "Five existing baselines",
+      "Frozen experiments, source repair lineage and checkpoints",
+      "Unrelated worktree edits"
+    ],
+    "documentation": [
+      "BUDGETED_EVIDENCE.md: component ownership and baseline handoff",
+      "README.md, RESULTS.md, RECORD_FEATURE_SELECTION.md: paused implementation versus historical results",
+      "AGENTS.md and paper_experiments/AGENTS.md: no automatic resume",
+      "TRACE_RETENTION.md: bounded artifact preservation",
+      "current_conditioned_results.json and local audit README/plan: one current paused status"
+    ],
+    "large_artifacts_deleted": false
+  },
+  "verification": {
+    "pytest": {
+      "passed": 276,
+      "skipped": 5,
+      "duration_seconds": 38.44,
+      "scope": [
+        "test_budgeted_evidence.py",
+        "test_budgeted_pipeline.py",
+        "test_record_diversity.py",
+        "test_record_diversity_extraction.py",
+        "test_record_feature_selection.py",
+        "test_record_numeric_features.py",
+        "test_record_selection_context.py"
+      ],
+      "skip_reason": "Optional apricot package unavailable for five historical lexical-selector cases; no dependency installation performed.",
+      "providers": "Fake/local tests only; no model API calls"
+    },
+    "baseline_cells_verified": 60,
+    "baseline_audit": "outputs/paper/joint_validation_20260917/baseline_lineage_audit.json",
+    "baseline_audit_sha256": "21b9f8ac6e8981b2959fb9c3b7b3de0c8d2b0afcfa4549766c207ac4f2163f29",
+    "baseline_scope": "Existing predictions only: current cohort identity/condition/label, KNN train references, and pinned artifact hashes. Does not independently reconstruct head training or select hyperparameters.",
+    "export_contract_hash_verified": true,
+    "export_receipt": "data/starling_data/skin_reaction/trace_review_20260917/rebinding_level_export_receipt.json"
+  },
+  "limitations": [
+    "Only 6530/174800 candidate jobs complete; formal evidence controls require complete exact-bound source annotations.",
+    "Five current real-tool contexts audited; the sixth Ames context remains pending.",
+    "Semantic/quality-rule gaps remain in context_input3_manual_review.json; valid schema/quotes do not prove scientific accuracy.",
+    "No formal current-revision prediction comparison; earlier smoke results are historical."
+  ],
+  "baseline_handoff": "tools/chembl_tool/paper_experiments/BUDGETED_EVIDENCE.md#baseline-handoff"
+}

@@ -974,8 +974,183 @@ def render(
     output.write_text("\n".join(parts) + "\n", encoding="utf-8")
 
 
+def load_budgeted_comparison(suite_root: Path, baseline_audit: Path):
+    """Recompute matched-cohort scores and audit the actual condition prompts."""
+    import json
+    from collections import Counter
+    from sklearn.metrics import accuracy_score, f1_score
+    from tools.chembl_tool.common.json_utils import read_jsonl, sha256_file
+    from tools.chembl_tool.common.reasoning_payload import external_condition_sentence
+    from tools.chembl_tool.common.starling.conditioned_benchmark import task_root
+
+    read = lambda path: json.loads(path.read_text())
+    verified = read(suite_root/'verification.json')
+    if verified['status'] != 'complete_verified':
+        raise ValueError('budgeted suite has not passed final verification')
+    cells = verified['cells']
+    tasks = list(dict.fromkeys(c['task'] for c in cells))
+    settings = list(dict.fromkeys(c['setting'] for c in cells))
+    if len(cells) != len(tasks)*len(settings) or len({(c['task'], c['setting']) for c in cells}) != len(cells):
+        raise ValueError('incomplete or duplicate task/setting cells')
+    audit = read(baseline_audit)
+    baselines = ('minimol_head', 'minimol_knn_condition', 'minimol_knn_all',
+                 'morgan_knn_condition', 'morgan_knn_all')
+    rows, sources, conditions = [], [], {}
+    contracts = set()
+    for task in tasks:
+        manifest = read(suite_root/'runs'/settings[0]/task/'experiment_manifest.json')
+        split, subset = manifest['split_scheme'], manifest['evaluation_subset']
+        canonical = task_root(task, split)/f'{subset}.jsonl'
+        gold = read_jsonl(canonical)
+        canonical_hashes = {part:sha256_file(task_root(task,split)/f'{part}.jsonl') for part in ('train','valid','test')}
+        labels = [int(r['Y']) for r in gold]
+        expected_conditions = [external_condition_sentence({'condition_group':r.get('condition_group', '')}) for r in gold]
+        conditions[task] = {'n':len(gold), 'with_external_condition':sum(bool(c) for c in expected_conditions),
+                            'condition_groups':dict(Counter(r.get('condition_group', '') for r in gold)),
+                            'prompt_checks':0, 'examples':list(dict.fromkeys(c for c in expected_conditions if c))[:3]}
+        for method in baselines:
+            matches = [c for c in audit['cells'] if c['task']==task and c['subset']==subset and c['method']==method]
+            if len(matches) != 1:
+                raise ValueError(f'{task}/{method}: baseline lineage is missing or ambiguous')
+            source = matches[0]
+            path = Path(source['predictions'])
+            if (source['status'] != 'row_and_artifact_verified' or source['errors']
+                    or sha256_file(path) != source['predictions_sha256']
+                    or canonical_hashes != source['canonical_input_sha256']):
+                raise ValueError(f'{task}/{method}: baseline or benchmark changed since the lineage audit')
+            predictions = read_jsonl(path)
+            keys = lambda records: [(r['drug'], r.get('condition_group', ''), int(r['Y'])) for r in records]
+            if keys(predictions) != keys(gold):
+                raise ValueError(f'{task}/{method}: baseline cohort/conditions/labels differ')
+            pred = [int(r['prediction']) for r in predictions]
+            rows.append({'task':task, 'method':method, 'family':'baseline', 'n':len(gold),
+                         'macro_f1':f1_score(labels,pred,average='macro'), 'accuracy':accuracy_score(labels,pred)})
+            sources.append({'path':str(path), 'sha256':sha256_file(path)})
+        for setting in settings:
+            root = suite_root/'runs'/setting/task
+            current = read(root/'experiment_manifest.json')
+            contracts.add((current['split_scheme'], current['evaluation_subset'], current['visibility_mode'],
+                           current['direct_budget'], current['selection']['budget'], current['min_similarity'], current['model'],
+                           json.dumps(current['generation'],sort_keys=True)))
+            if len(contracts) != 1:
+                raise ValueError('mixed benchmark, visibility, budget, similarity or generation contracts')
+            if (current['split_scheme'], current['evaluation_subset']) != (split, subset):
+                raise ValueError('mixed evaluation splits')
+            if current['inputs'][task]['input']['sha256'] != canonical_hashes[subset]:
+                raise ValueError(f'{task}/{setting}: stale benchmark inputs')
+            path = root/'summary'/task/'predictions.jsonl'
+            predictions = read_jsonl(path)
+            if [r['index'] for r in predictions] != list(range(len(gold))) or [r['label'] for r in predictions] != labels:
+                raise ValueError(f'{task}/{setting}: incomplete or mismatched predictions')
+            pred = [r['pred_label'] for r in predictions]
+            if any(p not in (0,1) for p in pred):
+                raise ValueError(f'{task}/{setting}: failed predictions')
+            scores = {'macro_f1':f1_score(labels,pred,average='macro'), 'accuracy':accuracy_score(labels,pred)}
+            verification = next(c for c in cells if c['task']==task and c['setting']==setting)
+            if verification['n'] != len(gold) or any(abs(scores[k]-verification[k]) > 1e-10 for k in scores):
+                raise ValueError('scores disagree with final verification')
+            for i, expected in enumerate(expected_conditions):
+                prepared = read(root/'runs'/task/f'query_{i:05d}'/'prepared.json')
+                from tools.chembl_tool.common.budgeted_reasoning import prepared_payload
+                payload = prepared_payload(prepared)
+                if payload['query'].get('external_condition', '') != expected:
+                    raise ValueError(f'{task}/{setting}/{i}: condition missing or altered in prompt')
+                conditions[task]['prompt_checks'] += 1
+            rows.append({'task':task, 'method':setting, 'family':'LLM', 'n':len(gold), **scores})
+            sources.append({'path':str(path), 'sha256':sha256_file(path)})
+        print(f'[comparison] {task}: five baselines and {len(settings)} LLM settings verified', flush=True)
+    receipt = {'suite_root':str(suite_root), 'verification_sha256':sha256_file(suite_root/'verification.json'),
+               'baseline_audit':str(baseline_audit), 'baseline_audit_sha256':sha256_file(baseline_audit),
+               'conditions':conditions, 'sources':sources, 'split_scheme':split, 'evaluation_subset':subset,
+               'visibility_mode':manifest['visibility_mode'], 'direct_budget':manifest['direct_budget'],
+               'min_similarity':manifest['min_similarity'],
+               'indirect_budget':manifest['selection']['budget'], 'tool_failures':verified['tool_failures'],
+               'aggregation':'unweighted mean across tasks; one LLM run; no significance or error bars'}
+    return rows, receipt
+
+
+def render_budgeted_comparison(suite_root: Path, baseline_audit: Path, output: Path):
+    """Compact overview of all simple LLM controls and the five frozen baselines."""
+    import json
+    import math
+    import numpy as np
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import Rectangle
+
+    rows, receipt = load_budgeted_comparison(suite_root, baseline_audit)
+    tasks = list(receipt['conditions'])
+    names = {'bbb_martins':'BBB', 'bioavailability_ma':'Bioavailability', 'skin_reaction':'Skin',
+             'ames':'Ames', 'dili':'DILI', 'carcinogens':'Carcinogens'}
+    methods = [('minimol_head','MiniMol + head'), ('minimol_knn_condition','MiniMol kNN (condition)'),
+               ('minimol_knn_all','MiniMol kNN (all)'), ('morgan_knn_condition','Morgan kNN (condition)'),
+               ('morgan_knn_all','Morgan kNN (all)'), ('none','LLM: None'),
+               ('direct_fill','Direct: Neighbor-fill'), ('both_fill','Direct + Indirect: Neighbor-fill'),
+               ('direct_cap','Direct: Molecule-cap'), ('both_cap','Direct + Indirect: Molecule-cap'),
+               ('both_group','Direct + Indirect: Group-balanced')]
+    values = {(r['task'],r['method']):r for r in rows}
+    output.parent.mkdir(parents=True, exist_ok=True)
+    stem = output.with_suffix('')
+    with stem.with_suffix('.csv').open('w') as f:
+        writer = csv.DictWriter(f, fieldnames=['task','method','family','n','macro_f1','accuracy'])
+        writer.writeheader(); writer.writerows(rows)
+    plt.rcParams.update({'font.family':'DejaVu Sans','font.size':11, 'svg.fonttype':'none'})
+    for metric, title, suffix in [('macro_f1','Macro-F1',''), ('accuracy','Accuracy','_accuracy')]:
+        matrix = np.array([[100*values[t,m][metric] for t in tasks] for m,_ in methods])
+        matrix = np.column_stack([matrix, matrix.mean(axis=1)])
+        pairs = [('both_fill','direct_fill'), ('both_cap','direct_cap'), ('both_group','direct_cap')]
+        delta = np.array([[100*(values[t,a][metric]-values[t,b][metric]) for t in tasks] for a,b in pairs])
+        delta = np.column_stack([delta,delta.mean(axis=1)])
+        fig, (ax, change) = plt.subplots(2,1,figsize=(14,9.5),gridspec_kw={'height_ratios':[11,3], 'hspace':.45})
+        fig.subplots_adjust(left=.30,right=.90,top=.85,bottom=.13)
+        fig.suptitle(f'Full-flat LLM controls vs. five baselines | {title}', x=.04,ha='left',y=.98,fontsize=20,fontweight='bold')
+        visibility = 'identity visible' if receipt['visibility_mode']=='deployment_visible_prefetched' else 'identity blind'
+        fig.text(.04,.933,f"{receipt['split_scheme'].title()} {receipt['evaluation_subset']} · condition-aware cohort · {visibility} · "
+                 f"direct ≤ {receipt['direct_budget']}, additional indirect ≤ {receipt['indirect_budget']} records",color='#475569')
+        low, high = math.floor(matrix.min()/5)*5, math.ceil(matrix.max()/5)*5
+        im = ax.imshow(matrix, cmap='YlGnBu', vmin=low, vmax=high, aspect='auto')
+        ax.set_yticks(range(len(methods)),[label for _,label in methods])
+        labels = [f"{names.get(t,t)}\nn={receipt['conditions'][t]['n']}" for t in tasks]+['Task mean\nunweighted']
+        ax.set_xticks(range(len(labels)),labels)
+        ax.tick_params(top=True,labeltop=True,bottom=False,labelbottom=False,length=0,pad=8)
+        ax.axhline(4.5,color='white',linewidth=3)
+        ax.axvline(len(tasks)-.5,color='white',linewidth=3)
+        for (i,j), value in np.ndenumerate(matrix):
+            best = np.isclose(value,matrix[:,j].max())
+            ax.text(j,i,f'{value:.1f}',ha='center',va='center',color='white' if value>(low+high)/2 else '#0f172a',
+                    fontweight='bold' if best else 'normal')
+            if best:
+                ax.add_patch(Rectangle((j-.47,i-.46),.94,.92,fill=False,edgecolor='#f6b84c',linewidth=2))
+        fig.colorbar(im,cax=fig.add_axes([.92,.395,.013,.41]),label=f'{title} (%)')
+        bound = max(1,math.ceil(abs(delta).max()))
+        dm = change.imshow(delta,cmap='RdBu',vmin=-bound,vmax=bound,aspect='auto')
+        change.set_yticks(range(3),['Neighbor-fill: +indirect','Molecule-cap: +indirect','Group-balanced vs. Direct cap'])
+        change.set_xticks(range(len(labels)),[names.get(t,t) for t in tasks]+['Task mean'])
+        change.tick_params(length=0,pad=8)
+        change.set_title('Change relative to the paired Direct setting (percentage points)',loc='left',fontsize=12,pad=12)
+        for (i,j), value in np.ndenumerate(delta):
+            value = 0.0 if abs(value)<.05 else value
+            change.text(j,i,f'{value:+.1f}',ha='center',va='center',color='white' if abs(value)>bound*.6 else '#0f172a')
+        fig.colorbar(dm,cax=fig.add_axes([.92,.13,.013,.155]),label='Δ points')
+        for axis in (ax,change):
+            for spine in axis.spines.values(): spine.set_visible(False)
+        fig.text(.04,.035,'Gold outline: best observed score in each column. One LLM run; differences are descriptive, not significance tests.\n'
+                 'kNN (condition): same condition, then unspecified fallback. kNN (all): condition-unrestricted training pool.',
+                 fontsize=10,color='#475569')
+        for extension in ('png','pdf','svg'):
+            path = stem.with_name(stem.name+suffix).with_suffix('.'+extension)
+            fig.savefig(path,dpi=180,facecolor='white')
+        plt.close(fig)
+    receipt['task_mean_macro_f1'] = {m:float(np.mean([values[t,m]['macro_f1'] for t in tasks])) for m,_ in methods}
+    stem.with_name(stem.name+'_receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
+    print(stem.with_suffix('.png'))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--budgeted-suite-root', type=Path, help='Verified six-setting budgeted baseline suite.')
+    parser.add_argument('--baseline-audit', type=Path, help='Row/hash lineage receipt for the five reference baselines.')
     parser.add_argument("--reference-metrics", type=Path, default=DEFAULT_REFERENCE)
     parser.add_argument("--candidate-metrics", type=Path, default=DEFAULT_CANDIDATE)
     parser.add_argument(
@@ -1074,6 +1249,11 @@ def main() -> None:
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--png-output", type=Path)
     args = parser.parse_args()
+    if args.budgeted_suite_root:
+        if not args.baseline_audit or args.output == DEFAULT_OUTPUT:
+            parser.error('--budgeted-suite-root requires --baseline-audit and an explicit --output')
+        render_budgeted_comparison(args.budgeted_suite_root, args.baseline_audit, args.output)
+        return
     render(
         args.reference_metrics,
         args.candidate_metrics,

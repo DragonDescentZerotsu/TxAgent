@@ -1,0 +1,86 @@
+{
+  "status": "complete_verified",
+  "reviewed_at": "2026-09-19T21:33:48.175896+00:00",
+  "scope": "Post mixed/prompt review: matched Direct-3, task-specific MiniMol parameters, external-validation selection and current all-settings reporting",
+  "reviewed_components": [
+    "baselines/minimol/run_bioavailability_ma.py",
+    "baselines/minimol/head_runtime.py",
+    "tools/chembl_tool/common/tdc_evidence.py",
+    "tools/chembl_tool/paper_experiments/budgeted_evidence.py",
+    "tools/chembl_tool/paper_experiments/budgeted_suite.py",
+    "outputs/paper/tdc_minimol_val_selected_20260919/run.py",
+    "outputs/paper/tdc_minimol_val_selected_20260919/verify.py"
+  ],
+  "fixes": [
+    "Archived the /tmp-only comparison generator beside its experiment; no new maintained runner",
+    "Updated mixed ML instructions from historical CV to current external validation",
+    "Updated prompt v2 status to include the completed Direct-3 suite",
+    "Condensed old head result tables into historical artifact links",
+    "Explained unspecified-condition-only KNN for TDC and its difference on mixed data",
+    "Registered current result hashes, regeneration commands and artifact retention"
+  ],
+  "tests": {
+    "passed": 53,
+    "files": [
+      "tests/baselines/test_minimol_run.py",
+      "tests/baselines/test_minimol_condition_features.py",
+      "tests/chembl_tool/common/test_tdc_benchmark.py",
+      "tests/chembl_tool/common/test_budgeted_suite.py",
+      "tests/chembl_tool/common/test_flat_prompt_alignment.py"
+    ]
+  },
+  "results": {
+    "ml_cells": 60,
+    "ml_prediction_rows": 22250,
+    "ml_artifact_hashes_unchanged": 134,
+    "all_setting_task_cells": 120,
+    "reported_settings": 20,
+    "distinct_settings": 18,
+    "test_queries": 2225,
+    "all_scores_unchanged": true,
+    "selected_epochs_thresholds_unchanged": true
+  },
+  "artifacts": {
+    "outputs/paper/tdc_minimol_val_selected_20260919/verification.json": "b866552b20b010947b9ae8abc14ce6144aa358b979a89ec70a30f7138697878a",
+    "outputs/paper/tdc_minimol_val_selected_20260919/comparison_all_settings.md": "183dcbff272195c12912d8d0e2e4c00a41010bdce994d80713cbee8a81004001",
+    "outputs/paper/tdc_minimol_val_selected_20260919/comparison_all_settings.csv": "487e65c953a0ad5ac98b0d2eeb359aff0e915a5a431a1db3636f821a96777f71",
+    "outputs/paper/tdc_minimol_val_selected_20260919/comparison_all_settings.json": "62eab858589d7753bb2e69d68df40797edf727c7fd9e9c7831cfb0119ffa1b7c",
+    "outputs/paper/tdc_minimol_val_selected_20260919/export_comparison.py": "e4b9ab835f1239faaeb5971b70b2c83a5180be00faffca48e578fe09400a4fa9"
+  },
+  "removed": [
+    {
+      "path": "outputs/paper/tdc_knn3_baselines_20260919/__pycache__/verify.cpython-312.pyc",
+      "bytes": 21052,
+      "sha256": "1066c42bfdc15150a4c6db11389ccb08b6be925b72a1abce63ceb8c02f2332bd"
+    },
+    {
+      "path": "outputs/paper/tdc_knn3_baselines_20260919/__pycache__/run.cpython-312.pyc",
+      "bytes": 6663,
+      "sha256": "f5cd67ba289ce58e13f9ce8e6531609bedb7892b2af4b34f3bd44be4e69d4ce2"
+    },
+    {
+      "path": "outputs/paper/tdc_minimol_sweep_results_20260919/__pycache__/run.cpython-312.pyc",
+      "bytes": 8646,
+      "sha256": "ffa662705838609d7680b6e405a3237e5d7f716ecfdad44fffd22b043e68cad7"
+    },
+    {
+      "path": "outputs/paper/tdc_minimol_sweep_results_20260919/__pycache__/verify.cpython-312.pyc",
+      "bytes": 13431,
+      "sha256": "9ca0a3183cc9578758abdf9476224a94b89ae4602b739f50f2ef7a2a81278b3d"
+    },
+    {
+      "path": "outputs/paper/tdc_minimol_val_selected_20260919/__pycache__/run.cpython-312.pyc",
+      "bytes": 9823,
+      "sha256": "badc424df5a3d741c12e71027df05948e7d82ed0eec354398c9f7bc7e627bce6"
+    },
+    {
+      "path": "outputs/paper/tdc_minimol_val_selected_20260919/__pycache__/verify.cpython-312.pyc",
+      "bytes": 15373,
+      "sha256": "d893c519fbbfbed490ffb13f58d0d8529f80623bd5a18c0cbaf6d9c362bb0455"
+    }
+  ],
+  "new_training_jobs": 0,
+  "new_inference_calls": 0,
+  "maintained_runtime_changes": "None needed after review; existing training/retrieval contracts preserved",
+  "preserved": "All datasets, checkpoints, raw predictions, historical results, recovery receipts and unrelated working-tree changes"
+}

@@ -1,0 +1,35 @@
+Assess human drug-induced liver injury using molecular evidence.
+
+Task:
+- Endpoint: clinically meaningful human drug-induced liver injury
+- Label scope: dili_conditioned_or_source_molecule_outcome.v1
+- Positive: dili_risk
+- Negative: no_dili_risk
+- Predict dili_risk for clinically meaningful human DILI risk and no_dili_risk for its absence under the task definition.
+- Ensure final_prediction agrees with your overall evidence assessment.
+- Predict clinically meaningful human drug-induced liver injury under the query's reported exposure and population when these are supplied.
+- When the query has no reported external condition, assess the molecule-level DILI endpoint without inventing a dose, route, population or duration. Missing conditions do not imply a universal claim across all exposure settings.
+- Separate observed human DILI from animal liver injury, hepatocyte toxicity, generic cytotoxicity, mechanistic liabilities and model predictions. Those endpoints are not interchangeable measurements.
+- Evidence from hepatic cell function, bile-acid transport, bioactivation, mitochondria, immune interactions and cellular stress may change the prediction when the mechanistic link and structural transferability are strong. Explain their limitations; new direct outcome evidence is not required for a justified prediction.
+- Preserve the tested molecule's role and co-exposure context. A protectant, modifier, metabolite or probe is not automatically the substance causing the reported injury.
+- When an injury claim depends on a high dose, route, co-exposure, disease state or experimental system, explain whether the causal conditions and mechanism transfer to the query. Structural similarity alone does not establish this transfer; do not assume unreported conditions.
+- If that transfer is not established, retain the finding as limited conditional or mechanistic support rather than decisive human DILI evidence. Apply the same standard to negative or protective findings; protection in an induced-injury model does not by itself establish absence of DILI.
+- A negative clinical observation applies to its reported population and exposure; absence of published reports or an isolated negative mechanism assay does not establish absence of DILI risk.
+- Keep mixed outcomes, predictions, missing context and uncertainty explicit. Family placement does not establish a new experiment or independent evidence support.
+
+Reasoning Instructions:
+- Your goal is to reason through the evidence via analogies. Is this molecule or record meaningfully similar to the query molecule? Does the experiment transfer? If it does transfer, how does this experimnetal value inform the property we're aiming to predict?
+- Morgan similarity measures structural similarity to the query; it does not by itself establish that an experimental outcome transfers.
+- Ensure you consider and analyze every evidence block.
+- Semantic evidence utility is a reviewed, task-level 0–1 score for how useful an evidence family is for this endpoint. It is not a probability, a query-specific transfer likelihood, or calibrated across evidence levels.
+- At the end, take the physicochemical properties and transferable evidence and come to a balanced conclusion for the query molecule.
+
+Pitfalls to avoid:
+- Do not narrate schema bookkeeping.
+- Do not overly analyze the SMILES structures.
+- Do not blindly trust retrieval scores.
+- Do not infer the prediction from evidence order.
+- Do not skip records; briefly state why any materially uninformative evidence deserves little weight.
+
+Output:
+Return exactly one valid JSON object matching the requested schema. Return one or more concise claims using as many claims as needed to represent the experimental evidence that materially informs the decision. Each claim may cite any number of molecules, records, or both. At least one identifier is required per claim. Return only `claims` and `final_prediction`. `supportive` means evidence supporting your selected final prediction; `contradictory` means evidence supporting the alternative.

@@ -1,0 +1,42 @@
+{
+  "status": "complete",
+  "reviewed_at": "2026-09-18T03:02:47.447811+00:00",
+  "scope": "Six-setting simple LLM baseline scheduler, candidate cache, provider admission, canonical plots, result registry and operating docs. Joint remains paused; unrelated source/prompt work is preserved.",
+  "findings_fixed": [
+    "Removed obsolete per-cell launch command and duplicate command state; retained one resident-task worker path.",
+    "Invalidate resident cache identity before loading a replacement index, so failure cannot leave a stale key pointing to an empty view.",
+    "Render curve identity visibility from the verified contract.",
+    "Registered missing current figure-receipt links, clarified CLI defaults and completed statuses, and condensed superseded thresholded results."
+  ],
+  "production_changes": {
+    "tools/chembl_tool/paper_experiments/budgeted_suite.py": {
+      "before_sha256": "050d0ad0a45757ce794ea1318e0e0963a3b91f99d62268360ad56c06c53b1ddb",
+      "after_sha256": "068e313d0033ce6aad41c67075d7fd6980f5a6a87dd2897a032d6cab5082e75b",
+      "line_delta": -13
+    },
+    "tools/chembl_tool/common/budgeted_preparation.py": {
+      "before_sha256": "bc62a745aa5458b1919ccf480d76d9a3e89aa009239619bfe65d05bc51143c76",
+      "after_sha256": "b846e4628b4f70a22f905d3c1e5aa1db0caa4c1279fbc389108a70f82aa9de06",
+      "line_delta": 0
+    },
+    "tools/chembl_tool/paper_experiments/plot_assay_retrieval_curve.py": {
+      "before_sha256": "c438a907c03b58ab2f2f89348b9eea8a0b8885210438d3bcfbe14ab5eea2d59c",
+      "after_sha256": "e370fa2fd638da796bec8e100b9a1accc982828b86d85604c29a6e17a3844531",
+      "line_delta": 2
+    }
+  },
+  "validation": {
+    "focused_tests_passed": 142,
+    "socket_tests": "138 passed in sandbox; 4 admission tests initially blocked by socket permissions, then all 4 passed outside sandbox using local fake providers.",
+    "lint": "Ruff F checks passed for budgeted modules and tests.",
+    "whitespace": "git diff --check passed for scoped changes.",
+    "entrypoint": "Family runner --help exposes suite, single-setting, budget and cache options.",
+    "artifact_check": "outputs/paper/analysis/baseline_maintenance_20260917/artifact_check.json"
+  },
+  "retention": {
+    "before_code": "outputs/paper/analysis/baseline_maintenance_20260917/before.json",
+    "completed_results": "24,546 verified predictions and existing figures unchanged; 7/156 retained valid/test tool-failure records remain disclosed.",
+    "reuse": "Completed manifests remain pinned. The before snapshot preserves the exact cache code hash used in every completed cell; no manifest migration or inference rerun was performed.",
+    "filesystem": "No new maintained runner, plotter or cache layer. Runtime snapshots and checks stay under one analysis root. No raw data, predictions or paused checkpoints deleted."
+  }
+}

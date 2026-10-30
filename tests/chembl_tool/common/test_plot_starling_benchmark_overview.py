@@ -1,4 +1,5 @@
 import csv
+import json
 
 import pytest
 
@@ -13,6 +14,76 @@ from tools.chembl_tool.paper_experiments.plot_starling_model_comparison import (
 from tools.chembl_tool.paper_experiments.starling_paired_figure import (
     _format_p_value,
 )
+
+
+def test_budgeted_comparison_checks_conditions_and_baseline_hashes(tmp_path, monkeypatch):
+    from tools.chembl_tool.common.json_utils import sha256_file
+    from tools.chembl_tool.common.reasoning_payload import external_condition_sentence
+    from tools.chembl_tool.common.starling import conditioned_benchmark as benchmark
+    from tools.chembl_tool.paper_experiments.plot_starling_model_comparison import load_budgeted_comparison
+    monkeypatch.setattr(benchmark, 'BENCHMARK_ROOT', tmp_path/'benchmark')
+    task = 'carcinogens'
+    records = [{'drug':'CC', 'Y':0, 'condition_group':'no_reported_external_condition'},
+               {'drug':'CO', 'Y':1, 'condition_group':'species=rodent'}]
+    canonical = benchmark.task_root(task)
+    canonical.mkdir(parents=True)
+    hashes = {}
+    for split in ('train','valid','test'):
+        p = canonical/f'{split}.jsonl'
+        p.write_text(''.join(json.dumps(r)+'\n' for r in records))
+        hashes[split] = sha256_file(p)
+    methods = ['minimol_head','minimol_knn_condition','minimol_knn_all','morgan_knn_condition','morgan_knn_all']
+    audit = []
+    for method in methods:
+        p = tmp_path/f'{method}.jsonl'
+        p.write_text(''.join(json.dumps({**r,'prediction':r['Y']})+'\n' for r in records))
+        audit.append({'task':task,'subset':'valid','method':method,'predictions':str(p),
+                      'status':'row_and_artifact_verified','errors':[], 'predictions_sha256':sha256_file(p),
+                      'canonical_input_sha256':hashes})
+    audit_path = tmp_path/'audit.json'
+    audit_path.write_text(json.dumps({'cells':audit}))
+    root = tmp_path/'suite'
+    cells = []
+    for setting in ('none','direct_fill','both_fill','direct_cap','both_cap','both_group'):
+        cell = root/'runs'/setting/task
+        cell.mkdir(parents=True)
+        manifest = {'split_scheme':'scaffold','evaluation_subset':'valid','visibility_mode':'deployment_visible_prefetched',
+                    'direct_budget':50,'selection':{'budget':50},'min_similarity':0,'model':'fixture','generation':{},
+                    'inputs':{task:{'input':{'sha256':hashes['valid']}}}}
+        (cell/'experiment_manifest.json').write_text(json.dumps(manifest))
+        summary = cell/'summary'/task
+        summary.mkdir(parents=True)
+        (summary/'predictions.jsonl').write_text(''.join(json.dumps({'index':i,'label':r['Y'],'pred_label':r['Y']})+'\n'
+                                                       for i,r in enumerate(records)))
+        for i,r in enumerate(records):
+            p = cell/'runs'/task/f'query_{i:05d}'/'prepared.json'
+            p.parent.mkdir(parents=True)
+            p.write_text(json.dumps({'messages':[{}, {'content':json.dumps({'query':{
+                'external_condition':external_condition_sentence(r)}})}]}))
+        cells.append({'task':task,'setting':setting,'n':2,'macro_f1':1.,'accuracy':1.})
+    (root/'verification.json').write_text(json.dumps({'status':'complete_verified','cells':cells,'tool_failures':0}))
+    rows, receipt = load_budgeted_comparison(root,audit_path)
+    assert len(rows)==11 and all(r['macro_f1']==1 for r in rows)
+    assert receipt['conditions'][task]['with_external_condition']==1
+    assert receipt['conditions'][task]['prompt_checks']==12
+    assert receipt['min_similarity']==0
+    manifest_path = root/'runs/both_fill'/task/'experiment_manifest.json'
+    original_manifest = manifest_path.read_bytes()
+    changed_manifest = json.loads(original_manifest)
+    changed_manifest['min_similarity'] = .3
+    manifest_path.write_text(json.dumps(changed_manifest))
+    with pytest.raises(ValueError, match='similarity'):
+        load_budgeted_comparison(root,audit_path)
+    manifest_path.write_bytes(original_manifest)
+    prompt = root/'runs/none'/task/'runs'/task/'query_00001/prepared.json'
+    original = prompt.read_bytes()
+    prompt.write_text(json.dumps({'messages':[{}, {'content':json.dumps({'query':{}})}]}))
+    with pytest.raises(ValueError, match='condition missing'):
+        load_budgeted_comparison(root,audit_path)
+    prompt.write_bytes(original)
+    (tmp_path/'minimol_head.jsonl').write_text('changed')
+    with pytest.raises(ValueError, match='changed since the lineage audit'):
+        load_budgeted_comparison(root,audit_path)
 
 
 def _write_metrics(

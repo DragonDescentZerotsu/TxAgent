@@ -510,6 +510,12 @@ def _copy_matched_prepared(source: Path, target: Path, expected_hash: str) -> No
 def _validate_matched_task(runtime, source, task):
     spec = runtime._progressive_task_specs(source["split_scheme"], source["evaluation_subset"])[task]
     inputs = source["inputs"][task]
+    # Rebuilt retrieval sources pin their index and family catalog explicitly.
+    # Validate those exact files and the heldout manifest below.
+    overrides = {name: Path(inputs[name]) for name in ("index", "family_manifest") if inputs.get(name)}
+    if overrides:
+        from dataclasses import replace
+        spec = replace(spec, **overrides)
     review = inputs.get("record_review_overlay")
     if review:
         if sha256_file(Path(review["path"])) != review["sha256"]:
@@ -544,6 +550,12 @@ def _matched_roots(args):
 
 
 def _validate_matched_source(runtime, args, source, *, refresh_priors=False):
+    adaptation = runtime._prompt_adaptation(getattr(args, "prompt_adaptation", ""), getattr(args, "tasks", None) or source.get("tasks", []))
+    source_adaptation = (source.get("reasoning_policy") or {}).get("prompt_adaptation") or {}
+    if not refresh_priors and adaptation != source_adaptation:
+        raise ValueError("changed prompt adaptation requires fresh query priors")
+    if adaptation and (source.get("reasoning_policy") or {}).get("evidence_grounding"):
+        raise ValueError("run prompt adaptation separately from evidence grounding")
     expected = {
         "experiment": runtime.PROGRESSIVE_PROTOCOL_VERSION,
         "visibility_mode": "deployment_visible_prefetched",
@@ -585,9 +597,13 @@ def _refresh_matched_priors(args, source_root: Path, output_root: Path) -> int:
 
     source = _read_json(source_root / "experiment_manifest.json")
     _validate_matched_source(runtime, args, source, refresh_priors=True)
+    adaptation = runtime._prompt_adaptation(getattr(args, "prompt_adaptation", ""), args.tasks or source["tasks"])
     receipt = output_root / "completion.json"
     if receipt.exists():
-        for relative, digest in _read_json(receipt)["sha256"].items():
+        completed = _read_json(receipt)
+        if (completed.get("prompt_adaptation") or {}) != adaptation:
+            raise ValueError("changed refreshed prior prompt adaptation")
+        for relative, digest in completed["sha256"].items():
             if sha256_file(output_root / relative) != digest:
                 raise ValueError(f"changed refreshed prior artifact: {relative}")
         return 0
@@ -628,10 +644,13 @@ def _refresh_matched_priors(args, source_root: Path, output_root: Path) -> int:
         prior_args.tasks = list(tasks)
         failed = runtime._prepare_fresh_query_priors(prior_args, specs, provider)
         if not failed:
-            write_json_atomic(receipt, {"model": args.model, "sha256": {
+            write_json_atomic(receipt, {"model": args.model,
+                **({"prompt_adaptation": adaptation} if adaptation else {}), "sha256": {
                 str(path.relative_to(output_root)): sha256_file(path)
                 for task in tasks for path in (output_root / task / "none").rglob("*.json")}})
         return failed
+    if adaptation:
+        raise ValueError("prompt adaptation requires native conditioned query priors")
     for task in args.tasks or source["tasks"]:
         _validate_matched_task(runtime, source, task)
         source_batch = source_root / "single_cache" / task / "none"
@@ -727,6 +746,7 @@ def _run_matched_curve(args: argparse.Namespace) -> int:
     independent = args.matched_organizations[0] == "full_flat"
     _validate_matched_source(runtime, args, source, refresh_priors=bool(getattr(args, "matched_single_root", "")))
     args.tasks = args.tasks or source["tasks"]
+    adaptation = runtime._prompt_adaptation(getattr(args, "prompt_adaptation", ""), args.tasks)
     print(f"[matched {args.matched_organizations[0]}] validating frozen inputs for {', '.join(args.tasks)}", flush=True)
     records, queries, hashes = {}, [], {}
     prior_root = Path(args.matched_single_root) if getattr(args, "matched_single_root", "") else None
@@ -736,6 +756,8 @@ def _run_matched_curve(args: argparse.Namespace) -> int:
         records[task] = runtime.read_jsonl(spec.input_jsonl)
         if prior_root is not None:
             prior_manifest = _read_json(prior_root / task / "none/manifest.json")
+            if (prior_manifest.get("prompt_adaptation") or {}) != adaptation:
+                raise ValueError(f"incompatible refreshed prior prompt adaptation: {task}")
             if prior_manifest["model"] != args.model or prior_manifest["indices"] != source["evaluation_indices_by_task"][task]:
                 raise ValueError(f"incompatible refreshed query priors: {task}")
         for index in source["evaluation_indices_by_task"][task]:
@@ -753,6 +775,12 @@ def _run_matched_curve(args: argparse.Namespace) -> int:
                     priors[str(relative)] = prior
                 hashes[str(relative)] = sha256_file(source_root / relative)
     manifest = {field: source.get(field) for field in runtime._RESUME_INVARIANT_FIELDS}
+    policy = dict(source.get("reasoning_policy") or {})
+    policy.pop("prompt_adaptation", None)
+    if adaptation:
+        policy["prompt_adaptation"] = adaptation
+    if policy or source.get("reasoning_policy"):
+        manifest["reasoning_policy"] = policy
     manifest.update(
         experiment="conditioned_assay_matched_full_flat.v1" if independent else runtime.PROGRESSIVE_PROTOCOL_VERSION,
         prompt_profile="independent_cumulative_tools_short_aliases.v1" if independent else source["prompt_profile"],
@@ -801,6 +829,8 @@ def _run_matched_curve(args: argparse.Namespace) -> int:
             if sha256_file(source_root / relative) != expected_hash:
                 raise ValueError(f"changed source prepared input: {relative}")
             refreshed = _replace_matched_prior(_read_json(source_root / relative), priors[relative])
+            if policy or "reasoning_policy" in refreshed:
+                refreshed["reasoning_policy"] = policy
             if target.exists() and _read_json(target) != refreshed:
                 raise ValueError(f"changed refreshed prepared input: {target}")
             write_json_atomic(target, refreshed)
@@ -842,6 +872,12 @@ def _run_matched_curve(args: argparse.Namespace) -> int:
 def _run_matched_suite(args: argparse.Namespace) -> int:
     """Run frozen-input replicates within the suite-wide endpoint budget."""
     source, root = _matched_roots(args)
+    from tools.chembl_tool.paper_experiments import run_conditioned_assay_progressive_curve as runtime
+    adaptation = runtime._prompt_adaptation(
+        getattr(args, "prompt_adaptation", ""), args.tasks or _read_json(source / "experiment_manifest.json").get("tasks", []),
+    )
+    if adaptation and not args.refresh_query_priors:
+        raise ValueError("--prompt-adaptation requires --refresh-query-priors")
     root.mkdir(parents=True, exist_ok=True)
     with (root / "launcher.lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -862,6 +898,8 @@ def _run_matched_suite(args: argparse.Namespace) -> int:
             config["concurrent_runs"] = args.concurrent_runs
         if args.refresh_query_priors:
             config["refresh_query_priors"] = True
+        if adaptation:
+            config["prompt_adaptation"] = adaptation
         if args.provider_pool_config:
             from tools.chembl_tool.common.openai_provider_pool import load_provider_pool_config
             config["provider_pool"] = load_provider_pool_config(args.provider_pool_config).public_dict()
@@ -928,6 +966,20 @@ def _run_matched_suite(args: argparse.Namespace) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--baseline-suite', action='store_true',
+                        help='Stream all six simple full-flat settings through one global request pool.')
+    parser.add_argument('--baseline-settings', nargs='+',
+                        choices=('none', 'direct_fill', 'both_fill', 'direct_cap', 'both_cap', 'both_group'),
+                        help='Subset of the standard baseline suite; defaults to all six settings.')
+    parser.add_argument('--baseline-record-scaling', action='store_true', help='Sweep Direct/Indirect 25/50/100; test requires frozen validation --direct-budget-selection.')
+    parser.add_argument('--baseline-phase', choices=('standard', 'direct', 'indirect', 'indirect_fixed'), default='standard',
+                        help='indirect_fixed sweeps 25/50/100 with explicit --direct-budget/--direct-selector/--indirect-selector.')
+    parser.add_argument('--direct-budget-selection', default='', help='Verified validation winner receipt for indirect scaling.')
+    parser.add_argument('--preparation-processes', type=int, default=4,
+                        help='Shared CPU preparation processes across all baseline tasks/settings.')
+    parser.add_argument('--preparation-cache-root', default='',
+                        help='Source-bound candidate cache shared across baseline settings; defaults inside the suite root.')
+    parser.add_argument('--preparation-ready-file', default='', help=argparse.SUPPRESS)
     parser.add_argument("--tasks", nargs="+", choices=(*TASKS, "ames", "dili", "carcinogens"), default=None)
     parser.add_argument("--matched-progressive-root", default="",
                         help="Run independent full-flat on this frozen run's exact cumulative cards/tools.")
@@ -983,9 +1035,29 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--python-executable",
-        default=sys.executable,
+        default="python",
     )
+    parser.add_argument("--prompt-adaptation", choices=("gpt_calibration.v1", "measurement_scope.v1"), default="",
+                        help="Opt-in Carcinogens calibration or Bioavailability measurement scope; requires a matched suite with fresh priors.")
+    from tools.chembl_tool.paper_experiments import budgeted_evidence
+    budgeted_evidence.add_arguments(parser)
     args = parser.parse_args(argv)
+    if args.baseline_settings and not args.baseline_suite:
+        parser.error('--baseline-settings requires --baseline-suite')
+    if args.baseline_suite:
+        if Path(args.output_root) == OUTPUT_ROOT:
+            parser.error('--baseline-suite requires an explicit --output-root')
+        suite_argv = list(sys.argv[1:] if argv is None else argv)
+        if not any(a == '--visibility-mode' or a.startswith('--visibility-mode=') for a in suite_argv):
+            args.visibility_mode = 'deployment_visible_prefetched'
+        from tools.chembl_tool.paper_experiments import budgeted_suite
+        return budgeted_suite.run(args, suite_argv)
+    if args.evidence_setting or args.run_prepared:
+        if Path(args.output_root) == OUTPUT_ROOT:
+            parser.error("--evidence-setting requires an explicit --output-root")
+        return budgeted_evidence.run(args)
+    if args.prompt_adaptation and not args.refresh_query_priors:
+        parser.error("--prompt-adaptation requires --refresh-query-priors")
     if args.retry_race_width is None:
         args.retry_race_width = (
             min(6, args.parallelism_per_task or args.parallelism)

@@ -26,6 +26,7 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
 from tools.chembl_tool.common.json_utils import canonical_json_bytes, sha256_file
+from tools.chembl_tool.common.progressive_assay_reasoning import PROGRESSIVE_PROMPT_PROFILE
 
 
 @dataclass(frozen=True)
@@ -576,6 +577,7 @@ def collect_conditioned_progressive_resource_data(
         task_label = CONDITIONED_TASK_SPECS[task][0]
         prepared_digests = []
         evidence_digests = []
+        prompt_comparison_digests = []
         for level_row in manifest["inputs"][task]["levels"]:
             level = int(level_row["level"])
             metrics_path = (
@@ -612,6 +614,9 @@ def collect_conditioned_progressive_resource_data(
                     key: value for key, value in prepared.items()
                     if key not in {"query_prior", "reused_none_final", "reused_single_source_index"}
                 })))
+                prompt_comparison_digests.append((query_index, level, _sha256_json(
+                    _prompt_comparison_evidence(prepared)
+                )))
                 if output.get("status") not in {"ok", "carried_forward", "reused_none"}:
                     raise ValueError(f"Unsuccessful level output: {level_dir}")
                 n_molecules = int(prepared["n_active_molecules"])
@@ -682,6 +687,7 @@ def collect_conditioned_progressive_resource_data(
             "progressive_root": str(task_root),
             "prepared_inputs_sha256": _sha256_json(prepared_digests),
             "prepared_evidence_sha256": _sha256_json(evidence_digests),
+            "prompt_comparison_evidence_sha256": _sha256_json(prompt_comparison_digests),
             "experiment": manifest["experiment"],
             "evaluation_subset": manifest["evaluation_subset"],
             "visibility_mode": manifest["visibility_mode"],
@@ -694,6 +700,7 @@ def collect_conditioned_progressive_resource_data(
             "candidate_generation": manifest.get("candidate_generation"),
             "min_similarity": manifest.get("min_similarity"),
             "prompt_profile": manifest.get("prompt_profile"),
+            "reasoning_policy": manifest.get("reasoning_policy") or {},
             "condition_policy": manifest.get("condition_policy"),
             "max_tokens": manifest.get("max_tokens"),
             "temperature": manifest.get("temperature"),
@@ -840,16 +847,28 @@ def _replicate_bounds(row: dict[str, Any], field: str, interval: str) -> tuple[f
     raise ValueError(f"Unknown replicate interval: {interval}")
 
 
+def _prompt_comparison_evidence(prepared: dict) -> dict:
+    """Exclude generated priors and the declared adaptation, retaining other policy."""
+    evidence = {key: value for key, value in prepared.items()
+                if key not in {"query_prior", "reused_none_final", "reused_single_source_index"}}
+    policy = dict(evidence.get("reasoning_policy") or {})
+    policy.pop("prompt_adaptation", None)
+    evidence["reasoning_policy"] = policy
+    return evidence
+
+
 def _matched_organization_comparison(reference: dict, comparison: dict, *, cross_model: bool = False) -> bool:
-    """Allow only the frozen full-flat/v8 prompt contrast over identical inputs."""
+    """Validate current or legacy matched organizations over identical inputs."""
     profiles = {
-        "conditioned_assay_progressive_visible.v8": "progressive_compact_tools_short_aliases.v2",
-        "conditioned_assay_matched_full_flat.v1": "independent_cumulative_tools_short_aliases.v1",
+        "conditioned_assay_progressive_visible.v8": {
+            "progressive_compact_tools_short_aliases.v2", PROGRESSIVE_PROMPT_PROFILE,
+        },
+        "conditioned_assay_matched_full_flat.v1": {"independent_cumulative_tools_short_aliases.v1"},
     }
     if {reference["experiment"], comparison["experiment"]} != set(profiles):
         return False
     for contract in (reference, comparison):
-        if contract["prompt_profile"] != profiles[contract["experiment"]]:
+        if contract["prompt_profile"] not in profiles[contract["experiment"]]:
             raise ValueError("Unsupported prompt profile for matched full-flat comparison")
     prepared_field = "prepared_evidence_sha256" if cross_model else "prepared_inputs_sha256"
     for field in ("selection", prepared_field, "index_sha256", "family_manifest_sha256"):
@@ -870,10 +889,11 @@ def collect_conditioned_progressive_configuration_data(
     configuration_roots: dict[str, dict[str, Path | list[Path]]],
     lineage_receipts_by_task: dict[str, Path] | None = None,
     allow_model_comparison: bool = False,
+    allow_prompt_comparison: bool = False,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Collect configurations, averaging only exact-contract replicate roots."""
-    if len(configuration_roots) < 2:
-        raise ValueError("At least two progressive configurations are required")
+    if not configuration_roots:
+        raise ValueError("At least one progressive configuration is required")
 
     invariant_fields = (
         "experiment",
@@ -951,6 +971,8 @@ def collect_conditioned_progressive_configuration_data(
 
             reference_contract = replicate_contracts[0]
             for replicate_index, contract in enumerate(replicate_contracts[1:], start=2):
+                if (contract.get("reasoning_policy") or {}) != (reference_contract.get("reasoning_policy") or {}):
+                    raise ValueError(f"Incompatible progressive replicate reasoning_policy: {configuration}/{task}")
                 mismatches = {
                     field: {
                         "reference": reference_contract[field],
@@ -1018,19 +1040,43 @@ def collect_conditioned_progressive_configuration_data(
         model_references = {reference_contract["model_identity"]: reference_contract}
         for configuration in present_configurations[1:]:
             contract = contracts_by_configuration[configuration]["task_contracts"][task]
+            prompt_difference = (contract.get("reasoning_policy") or {}) != (reference_contract.get("reasoning_policy") or {})
+            if prompt_difference:
+                if not allow_prompt_comparison:
+                    raise ValueError(f"Prompt-policy ablations require a separate comparison: {task}")
+                policies = [dict(c.get("reasoning_policy") or {}) for c in (reference_contract, contract)]
+                adaptations = [policy.pop("prompt_adaptation", None) for policy in policies]
+                if policies[0] != policies[1]:
+                    raise ValueError(f"Prompt comparison differs beyond prompt_adaptation: {task}")
+                for field in ("prompt_comparison_evidence_sha256", "selection", "index_sha256", "family_manifest_sha256"):
+                    if not contract.get(field) or contract[field] != reference_contract.get(field):
+                        raise ValueError(f"Prompt comparison differs in {field}: {task}")
+                task_audit.setdefault("prompt_comparisons", {})[configuration] = {
+                    "reference": adaptations[0], "comparison": adaptations[1],
+                    "evidence_and_tools_equal": True,
+                }
             same_model_reference = model_references.setdefault(contract["model_identity"], contract)
+            for field in ("temperature", "reasoning_effort"):
+                if same_model_reference[field] != contract[field]:
+                    raise ValueError(f"Same-model comparison differs in {field}: {task}")
             _matched_organization_comparison(same_model_reference, contract)
             cross_model = allow_model_comparison and reference_contract["model_identity"] != contract["model_identity"]
             if cross_model:
-                for field in ("prepared_evidence_sha256", "selection", "index_sha256", "family_manifest_sha256"):
+                evidence_field = "prompt_comparison_evidence_sha256" if prompt_difference else "prepared_evidence_sha256"
+                for field in (evidence_field, "selection", "index_sha256", "family_manifest_sha256"):
                     if not contract.get(field) or contract[field] != reference_contract.get(field):
                         raise ValueError(f"Cross-model comparison differs in {field}: {task}")
                 task_audit.setdefault("model_comparisons", []).append(configuration)
+                task_audit.setdefault("model_generation_differences", {})[configuration] = {
+                    field: {"reference": reference_contract[field], "comparison": contract[field]}
+                    for field in ("temperature", "reasoning_effort")
+                    if reference_contract[field] != contract[field]
+                }
             organization_comparison = _matched_organization_comparison(reference_contract, contract, cross_model=cross_model)
             compared_fields = tuple(
                 field for field in invariant_fields
                 if not (organization_comparison and field in {"experiment", "prompt_profile"})
-                and not (cross_model and field == "model_identity")
+                and not (cross_model and field in {"model_identity", "temperature", "reasoning_effort"})
             )
             mismatches = {
                 field: {
@@ -1155,7 +1201,7 @@ def collect_conditioned_progressive_configuration_data(
             "allow_model_comparison": allow_model_comparison,
             "model_comparison_exception": (
                 "Explicit model comparisons retain identical prepared evidence/tools and selection; "
-                "only model identity, endpoint and model-derived query_prior/reused_none_final/"
+                "model identity, endpoint, recorded temperature/reasoning_effort and model-derived query_prior/reused_none_final/"
                 "reused_single_source_index may differ. Replicate aggregation remains strict."
                 if allow_model_comparison else None
             ),
@@ -1175,17 +1221,20 @@ def collect_conditioned_progressive_configuration_reference_data(
     baseline_roots_by_task: dict[str, Path] | None = None,
     omit_mismatched_baselines: bool = False,
     allow_model_comparison: bool = False,
+    allow_prompt_comparison: bool = False,
     omit_baseline_tasks: tuple[str, ...] = (),
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Collect one shared None point and task-matched baseline references."""
-    if allow_model_comparison:
+    if allow_model_comparison or allow_prompt_comparison:
         from tools.chembl_tool.paper_experiments.run_conditioned_assay_progressive_curve import _model_identity
-        groups = {}
+        groups, group_models = {}, {}
         for name, tasks in configuration_roots.items():
             for task, paths in tasks.items():
                 manifest = _load_json(_configuration_root_replicates(paths)[0] / "experiment_manifest.json")
                 model = _model_identity(manifest.get("model_identity", manifest["model"]))
-                groups.setdefault(model, {}).setdefault(name, {})[task] = paths
+                group = name if allow_prompt_comparison else model
+                groups.setdefault(group, {}).setdefault(name, {})[task] = paths
+                group_models[(group, task)] = model
         rows, audits, baselines = [], {}, {}
         for model, configs in groups.items():
             model_rows, audit = collect_conditioned_progressive_configuration_reference_data(
@@ -1197,13 +1246,15 @@ def collect_conditioned_progressive_configuration_reference_data(
             audits[model] = audit
             for row in model_rows:
                 if row["result_type"] == "none":
-                    rows.append({**row, "model_identity": model, "plot_label": "None · " + _model_plot_label(model)})
+                    rows.append({**row, "model_identity": group_models[(model, row["task"])], "configuration": model if allow_prompt_comparison else "",
+                                 "plot_label": "None · " + (model if allow_prompt_comparison else _model_plot_label(model))})
                 else:
                     key = (row["task"], row["method"])
                     if key in baselines and baselines[key] != row:
                         raise ValueError(f"Baseline differs between models: {key}")
                     baselines[key] = row
-        return rows + list(baselines.values()), {"none_shared_within_model": True, "model_audits": audits}
+        return rows + list(baselines.values()), {"none_shared_within_model": not allow_prompt_comparison,
+                                                "none_per_configuration": allow_prompt_comparison, "model_audits": audits}
     if not configuration_roots:
         raise ValueError("At least one progressive configuration is required")
     configurations = list(configuration_roots)
@@ -2041,26 +2092,34 @@ def plot_conditioned_progressive_configuration_comparison(
     retrieval_lineage_matched: bool = True,
     evaluation_subset: str = "valid",
     organization_comparison: bool = False,
+    prompt_comparison: bool = False,
     performance_only: bool = False,
     replicate_interval: str = "range",
     figure_note: str = "",
     macro_f1_limits: tuple[float, float] | None = None,
 ) -> None:
-    """Plot multiple progressive configurations with full resource panels."""
-    if len(configurations) < 2:
-        raise ValueError("At least two configurations are required for comparison")
+    """Plot progressive configurations with optional resource panels."""
+    if not configurations:
+        raise ValueError("At least one configuration is required")
     styles = (("--", "white", 0.72), ("-", "color", 1.0), (":", "white", 1.0), ("-.", "color", 1.0))
     models = list(dict.fromkeys(str(row.get("model_identity", "")) for row in rows))
     cross_model = len(models) > 1
     model_colors = dict(zip(models, ("#2679B5", "#D47A1F"), strict=False))
+    configuration_colors = dict(zip(configurations, ("#2679B5", "#B57B40", "#25946A", "#9257A6")))
     if cross_model and len(models) > 2:
         raise ValueError("Use a separate figure for more than two models")
     def series_style(index, configuration):
+        if prompt_comparison:
+            return styles[1], configuration_colors[configuration], ("o", "s", "D", "^")[index]
         if cross_model:
             row = next(row for row in rows if row["configuration"] == configuration)
             model = str(row["model_identity"])
             return styles[0 if row["organization"] == "full_flat" else 1], model_colors[model], ("o" if models.index(model) == 0 else "D")
-        return styles[index], None, None
+        return (
+            styles[1 if len(configurations) == 1 else index],
+            configuration_colors[configuration],
+            ("o", "s", "D", "^")[index],
+        )
     if len(configurations) > len(styles):
         raise ValueError(f"At most {len(styles)} configurations can be plotted")
     resource_fields = (
@@ -2087,7 +2146,7 @@ def plot_conditioned_progressive_configuration_comparison(
         ("mean_reasoning_tokens_per_call", "E  Reasoning tokens/call (k)", 1000.0),
     ]
     if performance_only:
-        panel_specs = panel_specs[:1]
+        panel_specs = [("macro_f1", "Macro-F1", 1.0)]
     plt.rcParams.update(
         {
             "font.family": "DejaVu Sans",
@@ -2098,13 +2157,20 @@ def plot_conditioned_progressive_configuration_comparison(
         }
     )
     n_rows = len(panel_specs)
+    panel_columns = min(3, len(tasks)) if performance_only else len(tasks)
+    task_grid_rows = math.ceil(len(tasks) / panel_columns) if performance_only else 1
     fig, axes = plt.subplots(
-        n_rows,
-        len(tasks),
-        figsize=(max(8.5, 5.7 * len(tasks)), 6.5 if performance_only else 4.15 * n_rows + 1.1),
+        task_grid_rows if performance_only else n_rows,
+        panel_columns,
+        figsize=(max(8.5, 5.7 * panel_columns),
+                 6.5 + 4.15 * (task_grid_rows - 1) if performance_only else 4.15 * n_rows + 1.1),
         squeeze=False,
         sharex=False,
     )
+    if performance_only:
+        for ax in axes.flat[len(tasks):]:
+            ax.set_axis_off()
+        axes = axes.reshape(1, -1)[:, :len(tasks)]
     reference_rows = reference_rows or []
     has_baselines = any(row.get("result_type") == "baseline" for row in reference_rows)
     baseline_order = {
@@ -2130,9 +2196,7 @@ def plot_conditioned_progressive_configuration_comparison(
             if not config_rows:
                 continue
             levels = [int(row["level"]) for row in config_rows]
-            (linestyle, fill, alpha), series_color, series_marker = series_style(config_index, configuration)
-            color = series_color or TASK_SPECS[task].color
-            marker = series_marker or TASK_SPECS[task].marker
+            (linestyle, fill, alpha), color, marker = series_style(config_index, configuration)
             for row_index, (field, _, divisor) in enumerate(panel_specs):
                 values = [float(row[field]) / divisor for row in config_rows]
                 axes[row_index, column].plot(
@@ -2185,13 +2249,13 @@ def plot_conditioned_progressive_configuration_comparison(
                         if performance_only or len(configurations) == 2:
                             point_index = levels.index(x)
                             label_y = upper[point_index] if offset > 0 else lower[point_index]
-                        if cross_model:
-                            continue  # Four endpoint labels collide; exact values remain in the TSV.
+                        if cross_model or len(configurations) > 2:
+                            continue  # Crowded curve labels are omitted; exact values remain in the TSV.
                         axes[0, column].annotate(
                             f"{y:.3f}", (x, label_y), xytext=(0, offset),
                             textcoords="offset points", ha="center",
                             va="bottom" if offset > 0 else "top",
-                            fontsize=7.1, color=TASK_SPECS[task].color,
+                            fontsize=7.1, color=color,
                         )
         missing_configurations = [
             configuration
@@ -2213,7 +2277,7 @@ def plot_conditioned_progressive_configuration_comparison(
         levels = sorted({int(row["level"]) for row in task_rows})
         task_reference_rows = [row for row in reference_rows if row["task"] == task]
         none_rows = [row for row in task_reference_rows if row["result_type"] == "none"]
-        if len(none_rows) > 1 and not cross_model:
+        if len(none_rows) > 1 and not (cross_model or prompt_comparison):
             raise ValueError(f"Multiple no-retrieval references for {task}")
         baseline_rows = sorted(
             (row for row in task_reference_rows if row["result_type"] == "baseline"),
@@ -2225,8 +2289,12 @@ def plot_conditioned_progressive_configuration_comparison(
             none_value = float(none_row["macro_f1"])
             none_x = 0.0 if len(none_rows) == 1 else -0.12 + 0.24 * none_index
             none_color = model_colors.get(none_row.get("model_identity"), "#444444") if cross_model else "#444444"
+            if prompt_comparison:
+                none_color = configuration_colors[none_row["configuration"]]
+            none_marker = (("o", "s", "D", "^")[configurations.index(none_row["configuration"])]
+                           if prompt_comparison else "D" if cross_model and none_index else "o")
             axes[0, column].scatter(
-                [none_x], [none_value], marker="D" if cross_model and none_index else "o", s=46, facecolor=none_color,
+                [none_x], [none_value], marker=none_marker, s=46, facecolor=none_color,
                 edgecolor="white", linewidth=0.7, zorder=5,
             )
             axes[0, column].annotate(
@@ -2330,6 +2398,9 @@ def plot_conditioned_progressive_configuration_comparison(
             ha="right", fontsize=7.0, color="#777777"
         )
     axes[0, 0].set_ylabel(panel_specs[0][1])
+    if performance_only:
+        for column in range(panel_columns, len(tasks), panel_columns):
+            axes[0, column].set_ylabel(panel_specs[0][1])
 
     for row_index, (field, ylabel, divisor) in enumerate(panel_specs[1:], start=1):
         maximum = max(
@@ -2339,9 +2410,17 @@ def plot_conditioned_progressive_configuration_comparison(
             axes[row_index, column].set_ylim(0, maximum * 1.16 if maximum else 1.0)
         axes[row_index, 0].set_ylabel(ylabel)
 
+    organizations = {row.get("organization", "progressive") for row in rows}
+    organization_label = " and ".join(
+        label for key, label in (("full_flat", "full-flat"), ("progressive", "progressive"))
+        if key in organizations
+    )
     fig.suptitle(
-        " vs ".join(_model_plot_label(model) for model in models) + " · full-flat and progressive" if cross_model else
+        "Model and prompt comparison · progressive" if prompt_comparison else
+        " vs ".join(_model_plot_label(model) for model in models) + " · " + organization_label if cross_model else
         "Full-flat vs progressive · matched evidence" if organization_comparison
+        else "Full-flat and progressive configuration comparison" if "full_flat" in organizations
+        else "Progressive performance and baselines" if len(configurations) == 1
         else "Progressive configuration comparison",
         fontsize=16,
         fontweight="bold",
@@ -2358,19 +2437,20 @@ def plot_conditioned_progressive_configuration_comparison(
     )
     if all(row.get("n_replicates") == 1 for row in rows):
         interval_note = "single run per setting · no estimated uncertainty interval"
-    if cross_model:
+    if cross_model and not prompt_comparison:
         model_intervals = []
+        interval_label = "mean ± SD" if replicate_interval != "range" else "mean, observed min–max"
         for model in models:
             counts = sorted({int(row.get("n_replicates", 1)) for row in rows
                              if row.get("model_identity") == model})
             if counts == [1]:
-                description = "1 run, no SD"
+                description = "1 run, no interval"
             elif len(counts) == 1:
-                description = f"{counts[0]} runs, mean ± SD"
+                description = f"{counts[0]} runs, {interval_label}"
             else:
-                description = f"{'/'.join(map(str, counts))} runs by task; SD only for repeated runs"
+                description = f"{'/'.join(map(str, counts))} runs by task; {interval_label} for repeats"
             model_intervals.append(_model_plot_label(model) + ": " + description)
-        interval_note = " · ".join(model_intervals) + " · default 4/2 card budget"
+        interval_note = " · ".join(model_intervals)
     fig.text(
         0.055,
         0.935 if performance_only else 0.965,
@@ -2382,17 +2462,16 @@ def plot_conditioned_progressive_configuration_comparison(
     handles = []
     for index, configuration in enumerate(configurations):
         (linestyle, fill, alpha), color, marker = series_style(index, configuration)
-        color = color or "#333333"
         handles.append(
             Line2D(
-                [0], [0], color=color, linestyle=linestyle, marker=marker or "o",
+                [0], [0], color=color, linestyle=linestyle, marker=marker,
                 markerfacecolor=color if fill == "color" else "white",
                 markeredgecolor=color, linewidth=2.2, alpha=alpha,
                 label=configuration,
             )
         )
     if reference_rows:
-        if not cross_model:
+        if not (cross_model or prompt_comparison):
             handles.append(
                 Line2D(
                     [0], [0], marker="o", linestyle="none", markerfacecolor="#444444",
@@ -2409,7 +2488,7 @@ def plot_conditioned_progressive_configuration_comparison(
                     markerfacecolor=face, markeredgecolor=edge, label=label,
                 )
             )
-    fig.legend(
+    legend = fig.legend(
         handles=handles, loc="lower center", bbox_to_anchor=(0.5, 0.015 if performance_only else 0.025),
         ncol=5 if cross_model else 4, frameon=False, fontsize=8.0,
     )
@@ -2440,13 +2519,26 @@ def plot_conditioned_progressive_configuration_comparison(
     if cross_model:
         reference_note = "None is model-specific; matched baselines are shared.\n"
         transport_note = "Models and providers differ; token panels show observed usage, not a controlled transport comparison."
+    model_notes = [
+        f"All curves use the same {evaluation_subset} cohort, cumulative evidence and tools. "
+        + ("None and query priors are model/prompt-specific." if prompt_comparison else "None and query priors are model-specific.")
+    ]
+    if cross_model and not prompt_comparison and "full_flat" in organizations:
+        model_notes.append("Dashed/open: full-flat; solid/filled: progressive.")
+    if has_baselines:
+        model_notes.append("Right-side baselines are unchanged; KNN references are train-only.")
+    if repeat_counts != [1]:
+        model_notes.append(
+            "Whiskers show observed min–max across repeated runs (not a confidence interval)."
+            if replicate_interval == "range" else
+            "Whiskers show ±1 sample SD across repeated runs (not a confidence interval)."
+        )
+    model_notes.append("Single-run curves have no estimated uncertainty interval.")
     footnote = fig.text(
         0.055,
-        0.175 if performance_only else 0.072,
-        (f"All curves use the same {evaluation_subset} cohort, cumulative evidence and tools. None and query priors are model-specific.\n"
-         "Dashed/open: full-flat; solid/filled: progressive. Right-side baselines are unchanged; KNN references are train-only.\n"
-         "Whiskers show ±1 sample SD across repeated runs (not a confidence interval). Single-run curves have no estimated uncertainty interval."
-         if cross_model and performance_only else
+        (0.12 if task_grid_rows > 1 else 0.175) if performance_only else 0.072,
+        ("\n".join(model_notes)
+         if (cross_model or prompt_comparison) and performance_only else
          "Each level uses identical cumulative evidence and tools; full-flat reasons independently, "
          "progressive carries prior state.\nNone is shared. "
          + (f"Right-side baselines use the same {evaluation_subset} cohort; KNN references are train-only.\n"
@@ -2475,10 +2567,20 @@ def plot_conditioned_progressive_configuration_comparison(
         left=0.075,
         right=0.985,
         top=0.82 if performance_only else 0.94,
-        bottom=0.34 if performance_only else 0.145,
+        bottom=(0.23 if task_grid_rows > 1 else 0.34) if performance_only else 0.145,
         hspace=0.42,
         wspace=0.19,
     )
+    if performance_only:
+        fig.canvas.draw()
+        renderer = fig.canvas.get_renderer()
+        note_box = footnote.get_window_extent(renderer).transformed(fig.transFigure.inverted())
+        legend_box = legend.get_window_extent(renderer).transformed(fig.transFigure.inverted())
+        if legend_box.y1 > note_box.y0 - 0.015:
+            legend.set_bbox_to_anchor(
+                (0.5, note_box.y0 - legend_box.height - 0.025),
+                transform=fig.transFigure,
+            )
     output_svg.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_svg, bbox_inches="tight")
     fig.savefig(output_png, dpi=220, bbox_inches="tight")
@@ -2868,7 +2970,7 @@ def plot_assay_retrieval_curves(
         0.06,
         0.025,
         "No-retrieval and group-level references reuse historical OpenRouter DeepSeek-V4-Flash runs; "
-        "assay-level points use Hosted DeepSeek-V4-Flash-0731. This is a descriptive, not endpoint-matched, comparison. "
+        "assay-level points use PARCC DeepSeek-V4-Flash-0731. This is a descriptive, not endpoint-matched, comparison. "
         "Panel E uses frozen Codex GPT-5.6 Sol assay-relevance scores.",
         fontsize=8.2,
         color="#555555",
@@ -2888,9 +2990,178 @@ def plot_assay_retrieval_curves(
     plt.close(fig)
 
 
+def plot_record_candidate_distribution(
+    census_path: Path, analysis_dir: Path, *, output_stem: str, figure_note: str = ""
+) -> dict[str, Any]:
+    """Summarize a per-analog/level census, retaining exact retrieval frequencies.
+
+    Counts describe newly unlocked, deduplicated candidates before the card cap.
+    Frequency weights count query-neighbor appearances, not distinct molecules.
+    """
+    import numpy as np
+    from matplotlib.patches import Patch
+
+    with census_path.open() as handle:
+        source = list(csv.DictReader(handle))
+    if not source:
+        raise ValueError("Empty record candidate census")
+    grouped: dict[tuple[str, int], list[dict]] = {}
+    seen = set()
+    for raw in source:
+        row = dict(raw)
+        for name in ("level", "candidate_cards", "valid_occurrences", "test_occurrences"):
+            row[name] = int(row[name])
+        key = (row["task"], row["level"], row["analog_id"])
+        if key in seen or row["candidate_cards"] < 1:
+            raise ValueError("Duplicate molecule/level or nonpositive candidate count")
+        seen.add(key)
+        if min(row["valid_occurrences"], row["test_occurrences"]) < 0:
+            raise ValueError("Negative retrieval frequency")
+        if row["valid_occurrences"] + row["test_occurrences"] < 1:
+            raise ValueError("Census contains an unselected molecule")
+        grouped.setdefault((row["task"], row["level"]), []).append(row)
+
+    def describe(values, weights):
+        order = np.argsort(values)
+        values, weights = values[order], weights[order]
+        cumulative = np.cumsum(weights)
+        total = int(cumulative[-1])
+        # Exactly matches linear quantiles on an expanded occurrence vector,
+        # without allocating one entry for each repeated retrieval.
+        def quantile(q):
+            rank = q * (total - 1)
+            lo, hi = int(math.floor(rank)), int(math.ceil(rank))
+            a = values[np.searchsorted(cumulative, lo, side="right")]
+            b = values[np.searchsorted(cumulative, hi, side="right")]
+            return float(a + (rank - lo) * (b - a))
+
+        bins = np.searchsorted([5, 10, 25, 100], values, side="left")
+        return {
+            "n": total,
+            "over_10": int(weights[values > 10].sum()),
+            "pct_over_10": float(weights[values > 10].sum() / total * 100),
+            "mean": float(np.dot(values, weights) / total),
+            "median": quantile(.5), "p90": quantile(.9),
+            "p95": quantile(.95), "p99": quantile(.99),
+            "maximum": int(values[-1]),
+            "mean_capped_at_5": float(np.dot(np.minimum(values, 5), weights) / total),
+            **{f"bin_{i}_pct": float(weights[bins == i].sum() / total * 100) for i in range(5)},
+        }
+
+    summaries = []
+    for (task, level), rows in grouped.items():
+        values = np.array([r["candidate_cards"] for r in rows], dtype=np.int64)
+        for subset in ("valid", "test", "union"):
+            frequency = np.array([
+                r["valid_occurrences"] + r["test_occurrences"] if subset == "union"
+                else r[subset + "_occurrences"] for r in rows
+            ], dtype=np.int64)
+            mask = frequency > 0
+            if not mask.any():
+                continue
+            result = {"task": task, "level": level, "subset": subset}
+            for label, weights in (("unique", np.ones(mask.sum(), dtype=np.int64)),
+                                   ("retrieval", frequency[mask])):
+                result.update({label + "_" + k: v for k, v in describe(values[mask], weights).items()})
+            summaries.append(result)
+    tasks = [t for t in TASK_SPECS if any(k[0] == t for k in grouped)]
+    tasks.extend(sorted({k[0] for k in grouped} - set(tasks)))
+    summaries.sort(key=lambda r: (tasks.index(r["task"]), r["level"], r["subset"]))
+    analysis_dir.mkdir(parents=True, exist_ok=True)
+    stats_path = analysis_dir / f"{output_stem}_statistics.csv"
+    with stats_path.open("w") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(summaries[0]))
+        writer.writeheader()
+        writer.writerows(summaries)
+
+    colors = ["#D8DEE5", "#4C78A8", "#D7B24A", "#D97938", "#624A73"]
+    labels = ["1–5", "6–10", "11–25", "26–100", ">100"]
+    paths = {"statistics": str(stats_path)}
+    for weighting, title in (("retrieval", "Weighted by actual retrieval appearances"),
+                             ("unique", "Each distinct molecule counted once per task / level")):
+        ncols = min(3, len(tasks))
+        nrows = math.ceil(len(tasks) / ncols)
+        fig, axes = plt.subplots(nrows, ncols, figsize=(17, 4.8 * nrows), squeeze=False)
+        for ax, task in zip(axes.flat, tasks):
+            rows = [r for r in summaries if r["task"] == task and r["subset"] == "union"]
+            positions = np.arange(len(rows))
+            left = np.zeros(len(rows))
+            for i, color in enumerate(colors):
+                widths = np.array([r[f"{weighting}_bin_{i}_pct"] for r in rows])
+                ax.barh(positions, widths, left=left, color=color, height=.62,
+                        edgecolor="white", linewidth=.5)
+                for y, start, width in zip(positions, left, widths):
+                    if width >= 10:
+                        ax.text(start + width / 2, y, f"{width:.0f}%", ha="center", va="center",
+                                fontsize=10, color="white" if i in (1, 4) else "#222222")
+                left += widths
+            for y, row in zip(positions, rows):
+                ax.text(103, y, f"{row[weighting + '_mean']:.1f} / {row[weighting + '_median']:g}",
+                        ha="left", va="center", fontsize=10, color="#333333")
+            ax.text(103, -.9, "Mean / median", fontsize=10, color="#555555")
+            ax.set_yticks(positions, [f"L{r['level']}" for r in rows])
+            ax.set_ylim(len(rows) - .4, -1.3)
+            ax.set_xlim(0, 142)
+            ax.set_xticks([0, 25, 50, 75, 100], ["0%", "25%", "50%", "75%", "100%"])
+            ax.set_title(TASK_SPECS[task].label if task in TASK_SPECS else task,
+                         loc="left", fontsize=14, fontweight="bold", pad=12)
+            ax.set_axisbelow(True)
+            ax.grid(axis="x", color="#E9E9E9", linewidth=.7)
+            ax.spines[["top", "right", "left"]].set_visible(False)
+            ax.spines["bottom"].set_bounds(0, 100)
+            ax.tick_params(axis="y", length=0, labelsize=11)
+        for ax in list(axes.flat)[len(panel_tasks):]:
+            ax.set_visible(False)
+        fig.suptitle("Candidate records per retrieved molecule", x=.045, ha="left",
+                     y=.985, fontsize=20, fontweight="bold")
+        fig.text(.045, .941, title + "  |  validation + test", fontsize=12, color="#444444")
+        fig.legend([Patch(facecolor=c) for c in colors], labels, title="Candidate records",
+                   loc="upper right", bbox_to_anchor=(.972, .993), ncol=5, frameon=False,
+                   fontsize=11, title_fontsize=10)
+        note = "Newly unlocked, deduplicated candidate cards BEFORE the 5-record cap. Bands cover all candidates, including the full >100 tail."
+        fig.text(.045, .03, note + ("\n" + figure_note if figure_note else ""),
+                 fontsize=10, color="#555555", va="bottom")
+        fig.subplots_adjust(left=.045, right=.98, top=.855, bottom=.13, hspace=.38, wspace=.2)
+        for suffix in ("png", "pdf"):
+            path = analysis_dir / f"{output_stem}_{weighting}.{suffix}"
+            fig.savefig(path, dpi=180, facecolor="white")
+            paths[f"{weighting}_{suffix}"] = str(path)
+        plt.close(fig)
+    receipt = {
+        "source": str(census_path), "source_sha256": sha256_file(census_path),
+        "population": "selected neighbors in the supplied valid/test census; newly unlocked candidate cards",
+        "unique_unit": "task x level x analog_id; valid/test union deduplicated",
+        "retrieval_unit": "query x level x selected analog_id",
+        "quantiles": "linear interpolation, identical to expanded integer-frequency samples",
+        "bands": labels, "figure_note": figure_note, "outputs": paths,
+    }
+    (analysis_dir / f"{output_stem}_manifest.json").write_text(json.dumps(receipt, indent=2) + "\n")
+    return paths
+
+
+def plot_budgeted_baseline_curves(
+    suite_root: Path, baseline_audit: Path, analysis_dir: Path, *,
+    output_stem: str, macro_f1_limits: tuple[float, float] | None = None,
+) -> dict[str, str]:
+    """Plot independent None/direct/indirect arms with matched ML references."""
+    from tools.chembl_tool.paper_experiments.plot_starling_model_comparison import (
+        load_budgeted_comparison,
+    )
+
+    rows, receipt = load_budgeted_comparison(suite_root, baseline_audit)
+    return plot_baseline_curve_points(rows, receipt, analysis_dir,
+        output_stem=output_stem, macro_f1_limits=macro_f1_limits)
+
+
 def plot_baseline_curves_csv(points: Path, metadata: Path, analysis_dir: Path, *,
-                            output_stem: str, macro_f1_limits=None) -> dict[str, str]:
-    """Portable verified-score input; no private prediction directories required."""
+                            output_stem: str, macro_f1_limits=None, bar_layout: str | None = None,
+                            bar_content: str | None = None) -> dict[str, str]:
+    """Load audited baseline CSV and plotting metadata, including reported curves.
+
+    Rendering validates the table shape; prediction auditing belongs to the
+    exporter. Metadata carries grouped selections and inline or referenced
+    user-reported scores.
+    """
     with points.open(newline='') as handle:
         rows = list(csv.DictReader(handle))
     seen = set()
@@ -2905,114 +3176,521 @@ def plot_baseline_curves_csv(points: Path, metadata: Path, analysis_dir: Path, *
             if not math.isfinite(row[metric]) or not 0 <= row[metric] <= 1:
                 raise ValueError(f'invalid {metric}: {key}')
     receipt = json.loads(metadata.read_text())
+    reported_source = receipt.get('reported_curves_source')
+    if reported_source:
+        if 'reported_curves' in receipt:
+            raise ValueError('use either inline reported_curves or reported_curves_source')
+        source_path = (metadata.parent / reported_source['path']).resolve()
+        source = json.loads(source_path.read_text())
+        receipt['reported_curves'] = source['curves'][reported_source['benchmark']]
+        receipt['reported_curves_source'] = {
+            **reported_source, 'resolved_path': str(source_path), 'sha256': sha256_file(source_path),
+        }
     receipt['point_source'] = {'path': str(points), 'sha256': sha256_file(points)}
+    receipt['metadata_source'] = {'path': str(metadata), 'sha256': sha256_file(metadata)}
+    if bar_layout is not None:
+        receipt.update(chart_style='bars', bar_layout=bar_layout)
+    if bar_content is not None:
+        receipt.update(chart_style='bars', bar_content=bar_content)
     return plot_baseline_curve_points(rows, receipt, analysis_dir,
         output_stem=output_stem, macro_f1_limits=macro_f1_limits)
 
+
+def _baseline_group_maxima(rows, baselines, conditions):
+    """Collapse declared ML groups, retaining each winner's paired metrics.
+
+    This is a descriptive test upper bound, not a validation-selected model.
+    Exact ties follow the declared member order and remain explicit in the audit.
+    """
+    by_key = {(r['task'], r['method']): r for r in rows}
+    if len(by_key) != len(rows):
+        raise ValueError('duplicate task/method in baseline group input')
+    if {r['task'] for r in rows} != set(conditions):
+        raise ValueError('baseline group tasks must match the declared cohorts')
+    consumed, selected, audit = set(), [], []
+    for baseline in baselines:
+        members = baseline.get('members')
+        if members is None:
+            continue
+        if not members or len(set(members)) != len(members) or consumed.intersection(members):
+            raise ValueError('baseline group members must be nonempty and disjoint')
+        consumed.update(members)
+        if baseline['method'] not in members and any(r['method'] == baseline['method'] for r in rows):
+            raise ValueError('baseline group output collides with an input method')
+        for task, cohort in conditions.items():
+            if any((task, member) not in by_key for member in members):
+                raise ValueError(f'missing baseline group candidate for {task}')
+            candidates = [by_key[task, member] for member in members]
+            if any(r['family'] != 'baseline' or r['n'] != cohort['n'] for r in candidates):
+                raise ValueError('baseline groups require ML candidates on the same cohort')
+            winner = max(candidates, key=lambda r: r['macro_f1'])
+            selected.append(dict(winner, method=baseline['method']))
+            audit.append(dict(task=task, group=baseline['method'], selected_method=winner['method'],
+                tied_methods=[r['method'] for r in candidates if r['macro_f1'] == winner['macro_f1']],
+                candidates=[dict(method=r['method'], macro_f1=r['macro_f1'], accuracy=r['accuracy'])
+                            for r in candidates]))
+    return [r for r in rows if r['method'] not in consumed] + selected, audit
+
+
+# Palette B: settings keep their colours when another backbone is added.
+_BASELINE_BAR_STYLES = (
+    ('None', 'N', '#DCE1E7', '#AAB2BD'),
+    ('Naive · Direct', 'Naive D', '#BCD6ED', '#759CBA'),
+    ('Naive · Direct + Indirect', 'Naive D+I', '#D9CFEB', '#A48DBD'),
+    ('Ours · Direct', 'Ours D', '#F6DFD1', '#C99B81'),
+    ('Ours · Direct + Indirect', 'Ours D+I', '#EEC8B4', '#B88064'),
+)
+
+
+def _baseline_bar_rows(tasks, curve_values, scores, baselines, receipt):
+    """Bind reported scores to explicit backbones; never average partial task sets."""
+    backbones = list(receipt['curve_settings'])
+    bindings = receipt.get('reported_curve_backbones', {})
+    reported = {c['label']: c for c in receipt.get('reported_curves', [])}
+    if set(bindings) != set(reported) or any(b not in backbones for b in bindings.values()):
+        raise ValueError('reported_curve_backbones must bind every reported curve to a declared backbone')
+    if len(set(bindings.values())) != len(bindings):
+        raise ValueError('only one reported method per backbone is supported')
+    for curve in reported.values():
+        if any(points[0] is not None for points in curve['scores'].values()):
+            raise ValueError('reported None must be null: the backbone None is shared, not duplicated')
+    rows = []
+
+    def append(group, setting, label, values, **extra):
+        complete = all(v is not None for v in values.values())
+        rows.append(dict(group=group, setting=setting, label=label, values=values,
+                         mean=mean(values.values()) if complete else None,
+                         n_tasks=sum(v is not None for v in values.values()), **extra))
+
+    for backbone in backbones:
+        reported_label = next((k for k, v in bindings.items() if v == backbone), None)
+        for stage, (setting, label, face, edge) in enumerate(_BASELINE_BAR_STYLES):
+            values = {}
+            for task in tasks:
+                value = (curve_values[backbone, task][stage] if stage < 3 else
+                         curve_values[reported_label, task][stage - 2] if reported_label else math.nan)
+                values[task] = float(value) if math.isfinite(value) else None
+            append(backbone, setting, label, values, kind='llm', stage=stage,
+                   face=face, edge=edge, hatch=None)
+    for b in baselines:
+        pool = b.get('pool', 'mixed' if b['face'] == 'white' else 'train')
+        group = b.get('pool_label', 'ML · TDC + Starling' if pool == 'mixed' else 'ML baselines')
+        append(group, b['method'], b['tick'].replace('\n', ' '),
+               {task: scores[task, b['method']] for task in tasks}, kind='ml',
+               tick=b['tick'], pool=pool, face='white' if pool == 'mixed' else '#748396',
+               edge='#748396', hatch='////' if pool == 'mixed' else None)
+    exclusions = receipt.get('excluded_bar_settings', {})
+    excluded = {(group, setting) for group, settings in exclusions.items() for setting in settings}
+    if excluded - {(r['group'], r['setting']) for r in rows if r['kind'] == 'llm'}:
+        raise ValueError('excluded_bar_settings must name existing group/setting pairs for LLM backbones; configure ML groups with baseline_settings')
+    if exclusions:
+        receipt['excluded_bar_scores'] = [r for r in rows if (r['group'], r['setting']) in excluded]
+        rows = [r for r in rows if (r['group'], r['setting']) not in excluded]
+    return rows
+
+
+def _bar_axis(ax, low, high, *, horizontal):
+    """Keep exact score endpoints, visible lower ticks and explicit axis breaks."""
+    from matplotlib.ticker import MaxNLocator, FormatStrFormatter
+
+    tick_values = MaxNLocator(nbins=3 if horizontal else 4, steps=[1, 2, 2.5, 5, 10]).tick_values(low, high)
+    ticks = sorted({low} | {float(t) for t in tick_values if low < t < high})
+    if horizontal:
+        ticks = [low] + [t for t in ticks[1:] if t-low >= .25*(high-low)]
+        ax.set_xlim(low, high)
+        ax.set_xticks(ticks)
+        ax.xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+        ax.set_xlabel('Macro-F1', fontsize=26, color='#4D596B')
+    else:
+        ax.set_ylim(low, high)
+        ax.set_yticks(ticks)
+        ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+    ax.tick_params(axis='both', length=0, labelsize=26, pad=6, colors='#4D596B')
+    ax.grid(axis='x' if horizontal else 'y', color='#E9EDF2', linewidth=.65)
+    ax.set_axisbelow(True)
+    ax.spines[['top', 'right'] + (['left'] if horizontal else [])].set_visible(False)
+    for side in ('left', 'bottom'):
+        ax.spines[side].set_color('#C7CFD9')
+        ax.spines[side].set_linewidth(.65 * 1.15)
+    if low > 0:
+        for offset in (.02, .045):
+            ax.plot([-.007, .007], [offset-.005, offset+.005], transform=ax.transAxes,
+                    color='#657184', lw=.9, clip_on=False)
+
+
+def _horizontal_bar_panel(ax, rows, headers, task, limits, *, show_labels, group_labels):
+    """Used by both the mixed layout's mean column and the all-horizontal layout."""
+    low, high = limits
+    for row in rows:
+        value = row['mean'] if task == 'mean' else row['values'][task]
+        if value is None:
+            ax.text(low, row['y'], '—', va='center', color='#B7BCC4', fontsize=26)
+            continue
+        ax.barh(row['y'], value-low, left=low, height=.52, facecolor=row['face'],
+                edgecolor=row['edge'], linewidth=1.1, hatch=row['hatch'], zorder=3)
+        ours = row['setting'].startswith('Ours')
+        ax.annotate(f'{value:.4f}', (value, row['y']), xytext=(3, 0), textcoords='offset points',
+                    va='center', fontsize=20, color='#9F674F' if ours else '#667387',
+                    fontweight='semibold' if ours else 'normal')
+    ax.set_yticks([r['y'] for r in rows], [r['label'] for r in rows])
+    ax.set_ylim(max(r['y'] for r in rows)+.6, -.35)
+    _bar_axis(ax, low, high, horizontal=True)
+    ax.tick_params(axis='y', labelleft=show_labels, labelsize=26, pad=8)
+    for y, group in headers:
+        if group_labels:
+            outside = group_labels == 'outside'
+            ax.text(-.05 if outside else 0, y, group, transform=ax.get_yaxis_transform(),
+                    ha='right' if outside else 'left', va='center', fontsize=26,
+                    fontweight='semibold', color='#566274')
+        if group_labels != 'inside':
+            ax.axhline(y+.35, color='#EDF0F4', lw=.65, zorder=0)
+
+
+def _baseline_bar_figure(tasks, baselines, curve_values, scores, receipt,
+                         stage_labels, shared_limits):
+    """Pastel-B task/mean panels; content='all' retains the legacy combined layout."""
+    from matplotlib.patches import Patch
+
+    if len(stage_labels) != 3:
+        raise ValueError('backbone bar layouts require None / Direct / Direct + Indirect')
+    layout = receipt.get('bar_layout', 'mixed')
+    if layout not in ('mixed', 'horizontal'):
+        raise ValueError('bar_layout must be mixed or horizontal')
+    content = receipt.get('bar_content', 'all')
+    if content not in ('all', 'tasks', 'mean'):
+        raise ValueError('bar_content must be all, tasks or mean')
+    if content == 'mean' and layout != 'mixed':
+        raise ValueError('standalone means use vertical bars: --bar-layout mixed')
+    show_mean = content == 'all'
+    mean_only = content == 'mean'
+    rows = _baseline_bar_rows(tasks, curve_values, scores, baselines, receipt)
+    backbones = list(receipt['curve_settings'])
+    active = [r for r in rows if r['n_tasks']]
+    headers, y = [], 0
+    for group in dict.fromkeys(r['group'] for r in active):
+        headers.append((y, group)); y += .8
+        for row in active:
+            if row['group'] == group:
+                row['y'] = y; y += .8
+        y += .5
+    limits = {}
+    for task in tasks:
+        values = [r['values'][task] for r in active if r['values'][task] is not None]
+        span = max(max(values)-min(values), .08)
+        limits[task] = list(shared_limits) if shared_limits else [
+            max(0., math.floor((min(values)-.1*span)*20)/20),
+            min(1., math.ceil((max(values)+.22*span)*20)/20)]
+    means = [r['mean'] for r in active if r['mean'] is not None]
+    mean_limits = list(shared_limits) if shared_limits else [
+        max(0., math.floor((min(means)-.025)*20)/20),
+        min(1., math.ceil((max(means)+.06)*20)/20)]
+    mean_title = 'Six-task mean' if len(tasks) == 6 else f'{len(tasks)}-task mean'
+    panel_tasks = ['mean'] if mean_only else tasks
+    task_labels = {task: receipt.get('task_labels', {}).get(task, CONDITIONED_TASK_SPECS[task][0])
+                   for task in tasks}
+    if mean_only:
+        limits['mean'] = mean_limits
+    if layout == 'horizontal':
+        panels = tasks + (['mean'] if show_mean else [])
+        fig, axes = plt.subplots(1, len(panels), figsize=(3.25*(len(tasks)+2), 16), sharey=True, squeeze=False)
+        axes = axes[0]
+        for j, (ax, task) in enumerate(zip(axes, panels)):
+            _horizontal_bar_panel(ax, active, headers, task, mean_limits if task == 'mean' else limits[task],
+                                  show_labels=j == 0, group_labels='outside' if j == 0 else None)
+            ax.set_title(mean_title if task == 'mean' else task_labels[task].replace('_', '_\n'),
+                         loc='left', fontsize=28, fontweight='bold' if task == 'mean' else 'normal',
+                         pad=42, color='#263348')
+            if task != 'mean':
+                ax.text(0, 1.012, f"n = {receipt['conditions'][task]['n']:,}",
+                        transform=ax.transAxes, fontsize=26, color='#657184')
+        fig.subplots_adjust(left=.16, right=.955,
+                            top=.67 if any('_' in label for label in task_labels.values()) else .72,
+                            bottom=.12, wspace=.32)
+        divider = (axes[-2].get_position().x1 + axes[-1].get_position().x0)/2 if show_mean else None
+        header_left = .16
+    else:
+        columns = min(2, len(panel_tasks))
+        size = (16, 9) if mean_only else (28.5+max(0, len(backbones)-2)*4, 18)
+        fig, axes = plt.subplots(math.ceil(len(panel_tasks)/columns), columns, squeeze=False, figsize=size)
+        ticks = list(dict.fromkeys(b['tick'] for b in baselines))
+        backbone_step = 4.5
+        ml_start = len(backbones)*backbone_step
+        ml_x = [ml_start+.8*i for i in range(len(ticks))]
+        for panel_index, (ax, task) in enumerate(zip(axes.flat, panel_tasks)):
+            low, high = limits[task]
+            x_ticks, x_labels, x_stages = [], [], []
+            for i, backbone in enumerate(backbones):
+                model_rows = [r for r in rows if r['kind'] == 'llm' and r['group'] == backbone]
+                if not model_rows:
+                    continue
+                xs = [i*backbone_step + 1.6 + .8*(j-(len(model_rows)-1)/2)
+                      for j in range(len(model_rows))]
+                for x, row in zip(xs, model_rows):
+                    value = row['mean'] if mean_only else row['values'][task]
+                    if value is None:
+                        ax.text(x, low+.018*(high-low), '—', ha='center', va='bottom',
+                                fontsize=26, color='#B7BCC4')
+                    else:
+                        ax.bar(x, value-low, bottom=low, width=.58, facecolor=row['face'],
+                               edgecolor=row['edge'], linewidth=1.1, zorder=3)
+                x_ticks.extend(xs)
+                x_labels.extend(['N', 'D', 'D+I', 'D', 'D+I'][r['stage']] for r in model_rows)
+                x_stages.extend(r['stage'] for r in model_rows)
+                ax.text(mean(xs), 1.035, backbone, transform=ax.get_xaxis_transform(),
+                        ha='center', fontsize=28, color='#566274')
+                ax.plot([xs[0]-.3, xs[-1]+.3], [1.005, 1.005], transform=ax.get_xaxis_transform(),
+                        color='#D4DAE2', lw=1.8, clip_on=False)
+            for tick, x in zip(ticks, ml_x):
+                peers = [r for r in rows if r['kind'] == 'ml' and r['tick'] == tick]
+                for i, row in enumerate(peers):
+                    value = row['mean'] if mean_only else row['values'][task]
+                    offset = (i-(len(peers)-1)/2)*.35
+                    if value is None:
+                        ax.text(x+offset, low+.018*(high-low), '—', ha='center', color='#B7BCC4')
+                        continue
+                    ax.bar(x+offset, value-low, bottom=low,
+                           width=.31 if len(peers)>1 else .55, facecolor=row['face'],
+                           edgecolor=row['edge'], linewidth=1.1, hatch=row['hatch'], zorder=3)
+            ax.text(mean(ml_x), 1.035, 'ML baselines', transform=ax.get_xaxis_transform(),
+                    ha='center', fontsize=28, color='#566274')
+            ax.plot([ml_x[0]-.4, ml_x[-1]+.4], [1.005, 1.005], transform=ax.get_xaxis_transform(),
+                    color='#D4DAE2', lw=1.8, clip_on=False)
+            short_ticks = [t.replace('MM\nDirect', 'MM\nD').replace('MM\n+ Indirect', 'MM\n+I')
+                           .replace('RASAR\n+indirect', 'R+I').replace('RASAR', 'R') for t in ticks]
+            ax.set_xticks(x_ticks+ml_x, x_labels+short_ticks)
+            ax.set_xlim(-.55, ml_x[-1]+.56)
+            _bar_axis(ax, low, high, horizontal=False)
+            ax.tick_params(axis='x', labelsize=26, pad=10)
+            for i, label in enumerate(ax.get_xticklabels()):
+                if i < len(x_stages) and x_stages[i] >= 3:
+                    label.set_color('#AA775D')
+            if mean_only:
+                ax.tick_params(axis='both', labelsize=28)
+            else:
+                ax.set_title(task_labels[task], loc='left', fontsize=38,
+                             fontweight='normal', color='#263348', pad=64)
+                ax.text(1, 1.32, f"n = {receipt['conditions'][task]['n']:,}",
+                        transform=ax.transAxes, ha='right', fontsize=28, color='#657184')
+            if len(backbones) > 2:
+                for label in ax.get_xticklabels()[len(x_stages):]:
+                    label.set_fontsize(22)
+            if not mean_only and panel_index + columns < len(panel_tasks):
+                ax.tick_params(axis='x', labelbottom=False)
+        for ax in list(axes.flat)[len(tasks):]:
+            ax.set_visible(False)
+        fig.subplots_adjust(left=.065 if mean_only else .06,
+                            right=.756 if show_mean else .98,
+                            top=.62 if mean_only else .69, bottom=.12 if mean_only else .07,
+                            hspace=.95 if mean_only else .65, wspace=.23)
+        if show_mean:
+            avg = fig.add_axes([.846, .08, .134, .655])
+            _horizontal_bar_panel(avg, active, headers, 'mean', mean_limits,
+                                  show_labels=True, group_labels='inside')
+            fig.text(.809, .80, mean_title, fontsize=38, fontweight='bold', color='#263348')
+        header_left, divider = (.065 if mean_only else .06), (.790 if show_mean else None)
+    visible_settings = {r['setting'] for r in active if r['kind'] == 'llm'}
+    handles = [Patch(facecolor=c, edgecolor=e, linewidth=.7, label=name)
+               for name, _, c, e in _BASELINE_BAR_STYLES if name in visible_settings]
+    naive_handles = [h for h in handles if h.get_label() in {s[0] for s in _BASELINE_BAR_STYLES[:3]}]
+    other_handles = [h for h in handles if h not in naive_handles]
+    for group in dict.fromkeys(r['group'] for r in rows if r['kind'] == 'ml'):
+        row = next(r for r in rows if r['group'] == group)
+        label = 'ML · Main-task train' if mean_only and not row['hatch'] else group
+        handle = Patch(facecolor=row['face'], edgecolor=row['edge'], hatch=row['hatch'], label=label)
+        handles.append(handle)
+        other_handles.append(handle)
+    fig.text(header_left, .963, receipt.get('title', 'Benchmark comparison'),
+             fontsize=38 if mean_only else 46, fontweight='bold', color='#263348', va='top')
+    if mean_only:
+        for row_handles, y in ((naive_handles, .89), (other_handles, .835)):
+            if not row_handles:
+                continue
+            fig.legend(handles=row_handles, loc='upper left',
+                       bbox_to_anchor=(header_left-.003, y), ncol=len(row_handles),
+                       frameon=False, fontsize=20, handlelength=1.3, columnspacing=1.6)
+    else:
+        fig.legend(handles=handles, loc='upper left', bbox_to_anchor=(header_left-.003, .925),
+                   ncol=4, frameon=False, fontsize=28, handlelength=1.45, columnspacing=1.7)
+    abbreviations = 'N = None   ·   D = Direct   ·   I = Indirect   ·   MM = MiniMol   ·   R = RASAR'
+    fig.text(header_left, .73 if mean_only else .80, abbreviations,
+             fontsize=22 if mean_only else 28, color='#748093' if mean_only else '#4D596B')
+    if divider is not None:
+        fig.add_artist(Line2D([divider, divider], [.07, .80], transform=fig.transFigure,
+                             color='#CAD2DE', lw=.9))
+    receipt['rendered_counts'] = {
+        'task_bars': 0 if mean_only else sum(r['n_tasks'] for r in rows),
+        'mean_bars': len(means) if (show_mean or mean_only) else 0,
+    }
+    receipt.update(bar_layout=layout, bar_content=content, bar_scores=rows, mean_macro_f1_limits=mean_limits,
+                   mean_aggregation='Equal task weights; missing tasks yield null, never a partial-task mean. ML averages use per-task display-group maxima.',
+                   task_means=[{k: r[k] for k in ('group', 'setting', 'mean', 'n_tasks')} for r in rows])
+    return fig, limits
 
 
 def plot_baseline_curve_points(rows, receipt, analysis_dir, *, output_stem, macro_f1_limits=None):
     """Shared renderer for full trace audits and portable CSV handoffs."""
     tasks = list(receipt["conditions"])
+    stage_labels = receipt.get("stage_labels", ["None", "Direct", "Direct +\nIndirect"])
+    stage_x = list(range(len(stage_labels)))
+    if len(stage_x) < 2:
+        raise ValueError("a curve requires at least two stages")
     series = list((
         ("Neighbor-fill", ("none", "direct_fill", "both_fill"), "#0072B2", "o", "-"),
         ("Molecule-cap", ("none", "direct_cap", "both_cap"), "#D55E00", "s", "-"),
         ("Group-balanced", ("none", "direct_cap", "both_group"), "#009E73", "^", "--"),
     ))
+    colors = ('#0072B2', '#D55E00', '#009E73', '#CC79A7', '#E69F00', '#56B4E9')
     if receipt.get('curve_settings'):
-        colors = ('#0072B2', '#D55E00', '#009E73', '#CC79A7', '#E69F00', '#56B4E9')
         series = [(name, methods, colors[i % len(colors)], ('o', 's', '^', 'D')[i % 4], '-' if i != 2 else '--')
                   for i, (name, methods) in enumerate(receipt['curve_settings'].items())]
-        if any(len(methods) != 3 for _, methods, *_ in series):
-            raise ValueError('each curve must contain None, Direct and Indirect method IDs')
+    if any(len(methods) != len(stage_labels) for _, methods, *_ in series):
+        raise ValueError('each curve must match the declared stage labels')
+    baselines = receipt.get('baseline_settings') or [
+        dict(method=m, label=label, tick=CONDITIONED_BASELINE_TICKS[m],
+             marker=CONDITIONED_BASELINE_STYLES[m][0], face=CONDITIONED_BASELINE_STYLES[m][1],
+             edge=CONDITIONED_BASELINE_STYLES[m][2]) for m, label, _ in CONDITIONED_BASELINES]
+    if len({b['method'] for b in baselines}) != len(baselines):
+        raise ValueError('duplicate ML baseline method')
+    if any('members' in b for b in baselines):
+        if receipt.get('baseline_selection') != 'max_test_macro_f1' or receipt['evaluation_subset'] != 'test':
+            raise ValueError('baseline groups require explicit max_test_macro_f1 display selection')
+        receipt['source_scores'] = rows
+        rows, receipt['baseline_selections'] = _baseline_group_maxima(rows, baselines, receipt['conditions'])
+    baseline_ticks = list(dict.fromkeys(b['tick'] for b in baselines))
     scores = {(row["task"], row["method"]): row["macro_f1"] for row in rows}
-    required = {method for _, methods, *_ in series for method in methods} | {m for m, _, _ in CONDITIONED_BASELINES}
+    required = {method for _, methods, *_ in series for method in methods} | {b['method'] for b in baselines}
     for task in tasks:
         if required - {r['method'] for r in rows if r['task'] == task}:
             raise ValueError(f'missing curve or ML baseline points for {task}')
         if any(r['n'] != receipt['conditions'][task]['n'] for r in rows if r['task'] == task):
             raise ValueError(f'mixed cohort sizes for {task}')
+    if set(scores) != {(task, method) for task in tasks for method in required}:
+        raise ValueError('undeclared task/method points would be omitted from the figure')
     values = list(scores.values())
+    curve_values = {(label, task): [scores[task, m] for m in methods]
+                    for label, methods, *_ in series for task in tasks}
+    # Reported summaries have no prediction-level audit or inferred accuracy/n.
+    # Explicit nulls break lines; they never borrow another model's None score.
+    for curve in receipt.get('reported_curves', []):
+        label = curve['label']
+        if label in {s[0] for s in series} or not curve.get('source'):
+            raise ValueError('reported curves require a unique label and source')
+        if set(curve['scores']) != set(tasks):
+            raise ValueError('reported curve tasks must match the declared cohorts')
+        for task, points in curve['scores'].items():
+            if len(points) != len(stage_labels) or not any(p is not None for p in points):
+                raise ValueError('reported curves require stage-aligned scores with explicit nulls')
+            if any(p is not None and (not math.isfinite(p) or not 0 <= p <= 1) for p in points):
+                raise ValueError('invalid reported Macro-F1')
+            curve_values[label, task] = [math.nan if p is None else p for p in points]
+            values.extend(p for p in points if p is not None)
+        i = len(series)
+        series.append((label, (), colors[i % len(colors)], ('o', 's', '^', 'D')[i % 4], '--'))
     limits = macro_f1_limits or (
         max(0, math.floor((min(values) - 0.025) * 20) / 20),
         min(1, math.ceil((max(values) + 0.025) * 20) / 20),
     )
     if not (0 <= limits[0] <= min(values) <= max(values) <= limits[1] <= 1):
         raise ValueError("Macro-F1 limits must contain every plotted value within [0, 1]")
-    columns = min(3, len(tasks))
-    grid_rows = math.ceil(len(tasks) / columns)
-    fig, axes = plt.subplots(
-        grid_rows, columns, figsize=(6.2 * columns, 3.6 * grid_rows + 1.6),
-        sharey=True, squeeze=False,
-    )
-    baseline_x = [3.15 + 0.62 * i for i in range(len(CONDITIONED_BASELINES))]
-    for ax, task in zip(axes.flat, tasks):
-        ax.axvspan(2.65, baseline_x[-1] + 0.4, color="#F4F4F4", zorder=0)
-        ax.axvline(2.65, color="#BBBBBB", linewidth=0.8)
-        for label, methods, color, marker, linestyle in series:
-            ax.plot(
-                [0, 1, 2], [scores[task, method] for method in methods],
-                color=color, marker=marker, linestyle=linestyle, linewidth=2,
-                markersize=6, markerfacecolor="white" if linestyle == "--" else color,
-                label=label, zorder=3,
+    chart_style = receipt.get('chart_style', 'curves')
+    if chart_style not in ('curves', 'bars'):
+        raise ValueError('chart_style must be curves or bars')
+    if receipt.get('y_scale', 'shared') not in ('shared', 'task'):
+        raise ValueError('y_scale must be shared or task')
+    task_limits = {task: list(limits) for task in tasks}
+    if chart_style == 'bars':
+        fig, task_limits = _baseline_bar_figure(
+            tasks, baselines, curve_values, scores, receipt, stage_labels,
+            None if receipt.get('y_scale') == 'task' and macro_f1_limits is None else limits)
+    else:
+        columns = min(3, len(tasks))
+        grid_rows = math.ceil(len(tasks) / columns)
+        legend_rows = math.ceil((len(series) + len(baselines)) / 4)
+        extra_footer = max(0, legend_rows - 2) * 0.24
+        height = 3.6 * grid_rows + 1.6 + extra_footer
+        footer = (0.23 * (3.6 * grid_rows + 1.6) + extra_footer) / height
+        fig, axes = plt.subplots(
+            grid_rows, columns, figsize=((6.2 + max(0, len(baseline_ticks) - 5) * 0.45) * columns, height),
+            sharey=True, squeeze=False,
+        )
+        baseline_start = stage_x[-1] + 0.65
+        baseline_x = [stage_x[-1] + 1.15 + 0.62 * i for i in range(len(baseline_ticks))]
+        for ax, task in zip(axes.flat, tasks):
+            ax.axvspan(baseline_start, baseline_x[-1] + 0.4, color="#F4F4F4", zorder=0)
+            ax.axvline(baseline_start, color="#BBBBBB", linewidth=0.8)
+            for label, methods, color, marker, linestyle in series:
+                ax.plot(
+                    stage_x, curve_values[label, task],
+                    color=color, marker=marker, linestyle=linestyle, linewidth=2,
+                    markersize=6, markerfacecolor="white" if linestyle == "--" else color,
+                    label=label, zorder=3,
+                )
+            none_methods = {methods[0] for _, methods, *_ in series if methods}
+            if len(none_methods) == 1:
+                ax.plot(0, scores[task, next(iter(none_methods))], "o", color="#444444", markersize=6, zorder=4)
+            for b in baselines:
+                method = b['method']
+                peers = [p for p in baselines if p['tick'] == b['tick']]
+                offset = (peers.index(b) - (len(peers) - 1) / 2) * 0.18
+                x = baseline_x[baseline_ticks.index(b['tick'])] + offset
+                marker, face, edge = b['marker'], b['face'], b['edge']
+                ax.plot(x, scores[task, method], marker=marker, linestyle="none",
+                        markerfacecolor=face, markeredgecolor=edge, markersize=7, zorder=3)
+            ax.set_title(
+                f"{CONDITIONED_TASK_SPECS[task][0]}  ·  n = {receipt['conditions'][task]['n']}",
+                loc="left", fontsize=12, fontweight="bold", pad=22,
             )
-        none_methods = {methods[0] for _, methods, *_ in series}
-        if len(none_methods) == 1:
-            ax.plot(0, scores[task, next(iter(none_methods))], "o", color="#444444", markersize=6, zorder=4)
-        for x, (method, _, _) in zip(baseline_x, CONDITIONED_BASELINES):
-            marker, face, edge = CONDITIONED_BASELINE_STYLES[method]
-            ax.plot(x, scores[task, method], marker=marker, linestyle="none",
-                    markerfacecolor=face, markeredgecolor=edge, markersize=7, zorder=3)
-        ax.set_title(
-            f"{CONDITIONED_TASK_SPECS[task][0]}  ·  n = {receipt['conditions'][task]['n']}",
-            loc="left", fontsize=12, fontweight="bold", pad=22,
-        )
-        ax.text(1, 1.025, "LLM evidence", transform=ax.get_xaxis_transform(),
-                ha="center", fontsize=9, color="#666666")
-        ax.text(sum(baseline_x) / len(baseline_x), 1.025, "ML baselines",
-                transform=ax.get_xaxis_transform(), ha="center", fontsize=9, color="#666666")
-        ax.set_xticks([0, 1, 2] + baseline_x)
-        ax.set_xticklabels(
-            ["None", "Direct", "Direct +\nIndirect"]
-            + [CONDITIONED_BASELINE_TICKS[method] for method, _, _ in CONDITIONED_BASELINES],
-            fontsize=8,
-        )
-        ax.set_xlim(-0.3, baseline_x[-1] + 0.4)
-        ax.set_ylim(*limits)
-        ax.grid(axis="y", color="#E0E0E0", linewidth=0.7)
-        ax.set_axisbelow(True)
-        ax.spines[["top", "right"]].set_visible(False)
-    for ax in list(axes.flat)[len(tasks):]:
-        ax.set_visible(False)
-    for ax in axes[:, 0]:
-        ax.set_ylabel("Macro-F1", fontsize=11)
-    handles = [Line2D([0], [0], color=color, marker=marker, linestyle=style,
-                      label=label, markerfacecolor="white" if style == "--" else color)
-               for label, _, color, marker, style in series]
-    for method, label, _ in CONDITIONED_BASELINES:
-        marker, face, edge = CONDITIONED_BASELINE_STYLES[method]
-        handles.append(Line2D([0], [0], marker=marker, linestyle="none",
-                              markerfacecolor=face, markeredgecolor=edge, label=label))
-    fig.suptitle("None → Direct → Direct + Indirect", x=0.055, y=0.985,
-                 ha="left", fontsize=19, fontweight="bold")
-    subset_label = 'validation' if receipt['evaluation_subset'] == 'valid' else receipt['evaluation_subset']
-    visibility_label = ('identity visible' if receipt['visibility_mode'] == 'deployment_visible_prefetched'
-                        else 'identity blind')
-    similarity_label = ('no similarity cutoff' if receipt['min_similarity'] == 0
-                        else f"similarity ≥ {receipt['min_similarity']:g}")
-    fig.text(0.055, 0.943,
-             f"{receipt['split_scheme'].title()} {subset_label} · {similarity_label} · {visibility_label} · "
-             f"direct budget {receipt['direct_budget']} + indirect budget {receipt['indirect_budget']} records · "
-             "shared Macro-F1 scale", fontsize=10, color="#555555")
-    fig.legend(handles=handles, loc="lower center", bbox_to_anchor=(0.5, 0.018),
-               ncol=4, frameon=False, fontsize=9)
-    fig.text(0.055, 0.12,
-             "Each point is an independent full-flat setting. Curves use the None/Direct references specified in their metadata.\n"
-             f"Right-side ML baselines use the same {subset_label} rows. One run per setting; no uncertainty intervals. "
-             f"Recorded tool failures: {receipt['tool_failures']}.",
-             fontsize=9, color="#555555", linespacing=1.5)
-    fig.subplots_adjust(left=0.055, right=0.99, top=0.86, bottom=0.23,
-                        hspace=0.55, wspace=0.14)
+            ax.text(stage_x[-1] / 2, 1.025, "LLM evidence", transform=ax.get_xaxis_transform(),
+                    ha="center", fontsize=9, color="#666666")
+            ax.text(sum(baseline_x) / len(baseline_x), 1.025, "ML baselines",
+                    transform=ax.get_xaxis_transform(), ha="center", fontsize=9, color="#666666")
+            ax.set_xticks(stage_x + baseline_x)
+            ax.set_xticklabels(
+                stage_labels
+                + [tick.replace("MM KNN", "MM\nKNN") if len(stage_labels) > 3 else tick
+                   for tick in baseline_ticks],
+                fontsize=8,
+            )
+            ax.set_xlim(-0.3, baseline_x[-1] + 0.4)
+            ax.set_ylim(*limits)
+            ax.grid(axis="y", color="#E0E0E0", linewidth=0.7)
+            ax.set_axisbelow(True)
+            ax.spines[["top", "right"]].set_visible(False)
+        for ax in list(axes.flat)[len(tasks):]:
+            ax.set_visible(False)
+        for ax in axes[:, 0]:
+            ax.set_ylabel("Macro-F1", fontsize=11)
+        handles = [Line2D([0], [0], color=color, marker=marker, linestyle=style,
+                          label=label, markerfacecolor="white" if style == "--" else color)
+                   for label, _, color, marker, style in series]
+        for b in baselines:
+            label = b['label']
+            marker, face, edge = b['marker'], b['face'], b['edge']
+            handles.append(Line2D([0], [0], marker=marker, linestyle="none",
+                                  markerfacecolor=face, markeredgecolor=edge, label=label))
+        fig.suptitle(receipt.get("title", "None → Direct → Direct + Indirect"), x=0.055, y=0.985,
+                     ha="left", fontsize=19, fontweight="bold")
+        subset_label = 'validation' if receipt['evaluation_subset'] == 'valid' else receipt['evaluation_subset']
+        visibility_label = ('identity visible' if receipt['visibility_mode'] == 'deployment_visible_prefetched'
+                            else 'identity blind')
+        similarity_label = ('no similarity cutoff' if receipt['min_similarity'] == 0
+                            else f"similarity ≥ {receipt['min_similarity']:g}")
+        budget_label = receipt.get("budget_label",
+            f"direct budget {receipt['direct_budget']} + indirect budget {receipt['indirect_budget']} records")
+        cohort_label = receipt.get('cohort_label', f"{receipt['split_scheme'].title()} {subset_label}")
+        fig.text(0.055, 0.943,
+                 receipt.get('subtitle', f"{cohort_label} · {similarity_label} · {visibility_label} · "
+                 f"{budget_label} · "
+                 "shared Macro-F1 scale"), fontsize=10, color="#555555")
+        fig.legend(handles=handles, loc="lower center", bbox_to_anchor=(0.5, 0.018),
+                   ncol=4, frameon=False, fontsize=9)
+        fig.text(0.055, footer - 0.105,
+                 receipt.get("caption", "Each point is an independent full-flat setting. Curves use the None/Direct references specified in their metadata.\n"
+                 f"Right-side ML baselines use the same {subset_label} rows. One run per setting; no uncertainty intervals. "
+                 f"Recorded tool failures: {receipt['tool_failures']}."),
+                 fontsize=9, color="#555555", linespacing=1.5)
+        fig.subplots_adjust(left=0.055, right=0.99, top=0.86, bottom=footer,
+                            hspace=0.55, wspace=0.14)
     analysis_dir.mkdir(parents=True, exist_ok=True)
     paths = {}
     for extension in ("png", "pdf", "svg"):
@@ -3026,19 +3704,170 @@ def plot_baseline_curve_points(rows, receipt, analysis_dir, *, output_stem, macr
         writer.writeheader()
         writer.writerows(rows)
     paths['csv'] = str(csv_path)
-    receipt.update({"curve_settings": {label: methods for label, methods, *_ in series},
-                    "macro_f1_limits": limits, "scores": rows, "outputs": paths})
+    receipt.update({"point_counts": {"audited_baselines": len(rows),
+                                     "reported": len(values) - len(rows), "total": len(values)},
+                    "curve_settings": {label: methods for label, methods, *_ in series if methods},
+                    "baseline_settings": baselines, "macro_f1_limits": limits,
+                    "chart_style": chart_style, "task_macro_f1_limits": task_limits,
+                    "scores": rows, "outputs": paths})
     receipt_path = analysis_dir / f"{output_stem}_receipt.json"
     receipt_path.write_text(json.dumps(receipt, indent=2) + "\n")
     return {**paths, "receipt": str(receipt_path)}
 
 
+def _read_indirect_budget_csv(source: Path) -> tuple[list[int], dict[str, list[float]]]:
+    """Read a complete six-task wide CSV (task, budget...)."""
+    with source.open(newline="") as handle:
+        reader = csv.DictReader(handle)
+        fields = reader.fieldnames or []
+        if len(fields) < 3 or fields[0] != "task":
+            raise ValueError("Expected CSV columns: task,<budget>,<budget>,...")
+        budgets = [int(field) for field in fields[1:]]
+        if budgets != sorted(set(budgets)) or budgets[0] < 0:
+            raise ValueError("Budgets must be unique, increasing nonnegative integers")
+        scores = {}
+        for row in reader:
+            task = row["task"]
+            if task in scores:
+                raise ValueError(f"Duplicate task: {task}")
+            values = [float(row[field]) for field in fields[1:]]
+            if not all(math.isfinite(value) and 0 <= value <= 1 for value in values):
+                raise ValueError(f"Invalid score for {task}: expected finite values in [0, 1]")
+            scores[task] = values
+    if set(scores) != set(TASK_SPECS):
+        raise ValueError("Expected all six paper tasks; partial means are not supported")
+    return budgets, scores
+
+
+def _save_budget_figure(fig, analysis_dir: Path, output_stem: str) -> dict[str, str]:
+    paths = {}
+    for extension in ("png", "svg", "pdf"):
+        path = analysis_dir / f"{output_stem}.{extension}"
+        fig.savefig(path, dpi=300)
+        paths[extension] = str(path)
+    plt.close(fig)
+    return paths
+
+
+def plot_indirect_budget_comparison(
+    source: Path, baseline: Path, analysis_dir: Path, *, output_stem: str,
+) -> dict[str, str]:
+    """Square paper panel: equal-task mean of Ours versus the naive baseline."""
+    budgets, ours = _read_indirect_budget_csv(source)
+    baseline_budgets, naive = _read_indirect_budget_csv(baseline)
+    if baseline_budgets != budgets:
+        raise ValueError("Ours and baseline CSVs must share the same budgets")
+    means = {name: [mean(rows[task][i] for task in TASK_SPECS) for i in range(len(budgets))]
+             for name, rows in (("ours", ours), ("naive", naive))}
+    # Palette B: Ours D+I apricot and the neutral gray used for the None bars.
+    styles = {"ours": ("Ours", "#E0A27F", "#EEC8B4", "#B88064"),
+              "naive": ("Naive LLM", "#A3ABB5", "#DCE1E7", "#7F8894")}
+    analysis_dir.mkdir(parents=True, exist_ok=True)
+    with plt.rc_context({"font.family": "DejaVu Sans", "font.size": 9,
+                         "axes.spines.top": False, "axes.spines.right": False,
+                         "axes.edgecolor": "#8A929C", "axes.linewidth": 0.8,
+                         "xtick.color": "#4A525C", "ytick.color": "#4A525C",
+                         "xtick.major.size": 3, "ytick.major.size": 3, "svg.fonttype": "none"}):
+        fig, ax = plt.subplots(figsize=(3.3, 3.3))
+        fig.subplots_adjust(left=0.22, right=0.96, bottom=0.20, top=0.94)
+        for name in ("naive", "ours"):
+            label, line, fill, edge = styles[name]
+            ax.plot(budgets, means[name], color=line, linewidth=2.2, zorder=2 + (name == "ours"),
+                    marker="o", markersize=6.5, markerfacecolor=fill, markeredgecolor=edge,
+                    markeredgewidth=1.3, label=label, solid_capstyle="round")
+        values = means["ours"] + means["naive"]
+        padding = max((max(values) - min(values)) * 0.18, 0.01)
+        ax.set_ylim(max(0, min(values) - padding), min(1, max(values) + padding))
+        ax.set_xlim(budgets[0] - 6, budgets[-1] + 6)
+        ax.set_xticks(budgets)
+        ax.yaxis.set_major_formatter(plt.FormatStrFormatter("%.2f"))
+        ax.set_xlabel("Indirect records", color="#2E343B")
+        ax.set_ylabel("Mean Macro-F1 (6 tasks)", color="#2E343B")
+        ax.grid(axis="y", color="#E6E9ED", linewidth=0.7)
+        ax.set_axisbelow(True)
+        handles, labels = ax.get_legend_handles_labels()  # Ours first, matching line order.
+        ax.legend(handles[::-1], labels[::-1], loc="center right", frameon=False,
+                  handlelength=1.8, labelcolor="#2E343B")
+        ax.set_box_aspect(1)
+        paths = _save_budget_figure(fig, analysis_dir, output_stem)
+    receipt = {
+        "source": str(source), "source_sha256": sha256_file(source),
+        "baseline": str(baseline), "baseline_sha256": sha256_file(baseline),
+        "budgets": budgets, "mean": means, "mean_weighting": "equal task weights (1/6)",
+        "figure_size_inches": [3.3, 3.3], "point_count_per_method": sum(map(len, ours.values())),
+        "plotter_sha256": sha256_file(Path(__file__)),
+        "output_sha256": {key: sha256_file(Path(path)) for key, path in paths.items()},
+        "outputs": paths,
+    }
+    receipt_path = analysis_dir / f"{output_stem}_receipt.json"
+    receipt_path.write_text(json.dumps(receipt, indent=2) + "\n")
+    return {**paths, "receipt": str(receipt_path)}
+
+
+def plot_indirect_budget_csv(
+    source: Path, analysis_dir: Path, *, output_stem: str,
+) -> dict[str, str]:
+    """Plot a complete six-task wide CSV (task, budget...) and equal-task mean."""
+    budgets, scores = _read_indirect_budget_csv(source)
+    averages = [mean(scores[task][i] for task in TASK_SPECS) for i in range(len(budgets))]
+    analysis_dir.mkdir(parents=True, exist_ok=True)
+    with plt.rc_context({"font.size": 11, "axes.spines.top": False,
+                         "axes.spines.right": False, "svg.fonttype": "none"}):
+        fig = plt.figure(figsize=(16, 7), layout="constrained")
+        grid = fig.add_gridspec(2, 4, width_ratios=[1, 1, 1, 1.15])
+        panels = [(fig.add_subplot(grid[i // 3, i % 3]), TASK_SPECS[task].label, scores[task])
+                  for i, task in enumerate(TASK_SPECS)]
+        panels.append((fig.add_subplot(grid[:, 3]), "Mean (6 tasks)", averages))
+        for ax, label, values in panels:
+            color = "#233B53" if label.startswith("Mean") else "#397DA8"
+            ax.plot(budgets, values, color=color, marker="o", linewidth=2, markersize=6)
+            best = max(values)
+            for budget, value in zip(budgets, values):
+                if value == best:
+                    ax.scatter(budget, value, s=75, color="#C18A25", zorder=3)
+                ax.annotate(f"{value:.4f}", (budget, value), xytext=(0, 10),
+                            textcoords="offset points", ha="center", fontsize=10)
+            padding = max((max(values) - min(values)) * 0.4, 0.012)
+            ax.set_ylim(max(0, min(values) - padding), min(1, max(values) + 1.5 * padding))
+            ax.set_xlim(budgets[0] - 12, budgets[-1] + 12)
+            ax.set_xticks(budgets)
+            ax.set_title(label, fontweight="bold", pad=14)
+            ax.set_ylabel("Score")
+            ax.set_xlabel("Indirect records budget")
+            ax.grid(axis="y", color="#E4E8EC", linewidth=0.8)
+            ax.set_axisbelow(True)
+        fig.suptitle("Ours: indirect budget scaling with fixed Direct", fontsize=17)
+        paths = {}
+        for extension in ("png", "svg", "pdf"):
+            path = analysis_dir / f"{output_stem}.{extension}"
+            fig.savefig(path, dpi=200, bbox_inches="tight")
+            paths[extension] = str(path)
+        plt.close(fig)
+    receipt = {
+        "source": str(source), "source_sha256": sha256_file(source),
+        "budgets": budgets, "mean": averages, "mean_weighting": "equal task weights (1/6)",
+        "point_count": sum(map(len, scores.values())),
+        "y_axes": "independent panel ranges", "highlight": "observed maximum per panel",
+        "outputs": paths,
+    }
+    receipt_path = analysis_dir / f"{output_stem}_receipt.json"
+    receipt_path.write_text(json.dumps(receipt, indent=2) + "\n")
+    return {**paths, "receipt": str(receipt_path)}
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--indirect-budget-csv', type=Path,
+                        help='Six-task wide score CSV: task,10,25,...; plots tasks and equal-task mean.')
+    parser.add_argument('--indirect-budget-baseline-csv', type=Path,
+                        help='Same-format baseline CSV; draws a square Ours-vs-baseline mean panel.')
+    parser.add_argument('--bar-content', choices=('all', 'tasks', 'mean'),
+                        help='Task-only panels, standalone vertical means, or the original combined view.')
+    parser.add_argument('--bar-layout', choices=('mixed', 'horizontal'),
+                        help='Final comparison bars: vertical task panels plus mean, or all horizontal.')
     parser.add_argument('--baseline-curves-csv', type=Path, help='Portable task/method score CSV.')
-    parser.add_argument('--baseline-curves-metadata', type=Path, help='Cohort/context metadata and optional curve_settings.')
+    parser.add_argument('--baseline-curves-metadata', type=Path,
+                        help='Cohorts, curve_settings, ML baseline_settings and optional reported_curves.')
     parser.add_argument(
         "--output-root",
         default=(
@@ -3056,6 +3885,14 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument("--analysis-dir", default="")
+    parser.add_argument("--budgeted-suite-root", type=Path,
+                        help="Plot verified None/direct/indirect baseline curves with ML references.")
+    parser.add_argument("--baseline-audit", type=Path,
+                        help="Current five-baseline lineage audit for budgeted curves.")
+    parser.add_argument(
+        "--record-candidate-census", type=Path,
+        help="Plot pre-cap card distributions from a molecule/level CSV with valid/test retrieval frequencies.",
+    )
     parser.add_argument("--output-stem", default="assay_retrieval_scaling")
     parser.add_argument("--figure-note", default="", help="Additional provenance note on configuration figures.")
     parser.add_argument("--macro-f1-limits", nargs=2, type=float, metavar=("LOWER", "UPPER"),
@@ -3078,6 +3915,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--allow-model-comparison", action="store_true",
                         help="Compare models only with identical prepared evidence/tools; keep model-specific None references.")
+    parser.add_argument("--allow-prompt-comparison", action="store_true",
+                        help="Compare declared prompt adaptations over identical evidence/tools; keep configuration-specific None references.")
     parser.add_argument(
         "--allow-incomplete",
         action="store_true",
@@ -3198,11 +4037,42 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     output_root = Path(args.output_root)
     analysis_dir = Path(args.analysis_dir) if args.analysis_dir else output_root / "analysis"
+    if args.indirect_budget_baseline_csv and not args.indirect_budget_csv:
+        raise ValueError('--indirect-budget-baseline-csv requires --indirect-budget-csv')
+    if args.indirect_budget_csv and args.indirect_budget_baseline_csv:
+        paths = plot_indirect_budget_comparison(
+            args.indirect_budget_csv, args.indirect_budget_baseline_csv, analysis_dir,
+            output_stem=args.output_stem)
+        print(json.dumps(paths, indent=2))
+        return 0
+    if args.indirect_budget_csv:
+        paths = plot_indirect_budget_csv(args.indirect_budget_csv, analysis_dir,
+                                         output_stem=args.output_stem)
+        print(json.dumps(paths, indent=2))
+        return 0
     if args.baseline_curves_csv:
         if not args.baseline_curves_metadata:
             raise ValueError('--baseline-curves-csv requires --baseline-curves-metadata')
         paths = plot_baseline_curves_csv(args.baseline_curves_csv, args.baseline_curves_metadata, analysis_dir,
-            output_stem=args.output_stem, macro_f1_limits=tuple(args.macro_f1_limits) if args.macro_f1_limits else None)
+            output_stem=args.output_stem, macro_f1_limits=tuple(args.macro_f1_limits) if args.macro_f1_limits else None,
+            bar_layout=args.bar_layout, bar_content=args.bar_content)
+        print(json.dumps(paths, indent=2))
+        return 0
+    if args.budgeted_suite_root:
+        if not args.baseline_audit:
+            raise ValueError("--budgeted-suite-root requires --baseline-audit")
+        paths = plot_budgeted_baseline_curves(
+            args.budgeted_suite_root, args.baseline_audit, analysis_dir,
+            output_stem=args.output_stem,
+            macro_f1_limits=tuple(args.macro_f1_limits) if args.macro_f1_limits else None,
+        )
+        print(json.dumps(paths, indent=2))
+        return 0
+    if args.record_candidate_census:
+        paths = plot_record_candidate_distribution(
+            args.record_candidate_census, analysis_dir, output_stem=args.output_stem,
+            figure_note=args.figure_note,
+        )
         print(json.dumps(paths, indent=2))
         return 0
     if args.conditioned_progressive_config_comparison:
@@ -3216,6 +4086,7 @@ def main(argv: list[str] | None = None) -> int:
             configuration_roots=configuration_roots,
             lineage_receipts_by_task=lineage_receipts_by_task,
             allow_model_comparison=args.allow_model_comparison,
+            allow_prompt_comparison=args.allow_prompt_comparison,
         )
         baseline_roots_by_task = _parse_task_path_overrides(
             args.conditioned_progressive_baseline_root
@@ -3230,6 +4101,7 @@ def main(argv: list[str] | None = None) -> int:
                     args.omit_mismatched_progressive_baselines
                 ),
                 allow_model_comparison=args.allow_model_comparison,
+                allow_prompt_comparison=args.allow_prompt_comparison,
                 omit_baseline_tasks=tuple(args.omit_baseline_tasks),
             )
         )
@@ -3284,6 +4156,7 @@ def main(argv: list[str] | None = None) -> int:
             split_scheme=str(comparison_contract["split_scheme"]),
             evaluation_subset=next(iter(evaluation_subsets)),
             organization_comparison=any("organization_comparison" in audit for audit in task_audits.values()),
+            prompt_comparison=args.allow_prompt_comparison,
             performance_only=args.performance_only,
             replicate_interval=args.replicate_interval,
             figure_note=args.figure_note,

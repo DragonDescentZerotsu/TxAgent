@@ -1,3 +1,5 @@
+import pytest
+
 from tools.chembl_tool.common.molecule_identity import (
     bemis_murcko_scaffold,
     normalize_molecule_identity,
@@ -25,6 +27,36 @@ def test_stereoisomers_are_connectivity_variants_not_the_same_parent():
 
     assert left.parent_inchi_key != right.parent_inchi_key
     assert classify_molecule_relation(left, right) is MoleculeRelation.SAME_CONNECTIVITY_VARIANT
+
+
+@pytest.mark.parametrize("policy", ["parent_disjoint", "scaffold_disjoint"])
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize("stored", [False, True])
+def test_salt_and_stereo_changes_cannot_bypass_parent_exclusion(policy, reverse, stored):
+    forms = ["C[C@H](O)C(=O)O", "C[C@@H](O)C(=O)[O-].[Na+]"]
+    if reverse:
+        forms.reverse()
+    query, candidate = map(normalize_molecule_identity, forms)
+    record = {"canonical_smiles": forms[1]}
+    if stored:
+        record["molecule_identity"] = candidate.to_dict()
+
+    decision = decide_candidate(query, record, policy)
+
+    assert decision.excluded
+    assert decision.relation is MoleculeRelation.SAME_CONNECTIVITY_VARIANT
+
+
+@pytest.mark.parametrize("policy", ["parent_disjoint", "scaffold_disjoint"])
+@pytest.mark.parametrize("query,candidate", [
+    ("CCCCCCCCCCCCCCCCCC.NC(=O)c1ccccc1", "CCCCCCCCCCCCCCCCCCC.NC(=O)c1ccccc1"),
+    ("CCCCCCCCCCCCCCCCCC.NC(=O)c1ccccc1", "CC(=O)Nc1ccccc1"),
+    ("C=CCC", "CC=CC"),
+])
+def test_parent_connectivity_fix_does_not_expand_component_or_bond_position_matching(policy, query, candidate):
+    assert not decide_candidate(
+        normalize_molecule_identity(query), {"canonical_smiles": candidate}, policy
+    ).excluded
 
 
 def test_covalent_analog_is_not_collapsed_into_the_same_parent():

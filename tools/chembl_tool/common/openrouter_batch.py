@@ -36,7 +36,7 @@ class OpenRouterBatchClient(OpenAICompatibleClient):
     def __init__(self, *, batch_dir, batch_options=None, **kwargs):
         super().__init__(**kwargs)
         options = dict(batch_options or {})
-        unknown = options.keys() - {"max_requests", "max_bytes", "flush_seconds", "poll_seconds"}
+        unknown = options.keys() - {"max_requests", "max_bytes", "flush_seconds", "poll_seconds", "submit_interval_seconds"}
         if unknown:
             raise ValueError(f"Unknown batch options: {sorted(unknown)}")
         if self.enable_group_tools or self.enable_thinking or kwargs.get("transport_max_retries", 0):
@@ -46,15 +46,18 @@ class OpenRouterBatchClient(OpenAICompatibleClient):
             raise ValueError("openrouter_batch requires https://openrouter.ai")
         if self.model.endswith(":batch"):
             raise ValueError("Batch submissions use the base model ID, without :batch")
-        self.batch_url = "https://openrouter.ai/api/beta/batches"
+        self.batch_url = "https://openrouter.ai/api/v1/batches"
         self.directory = Path(batch_dir)
         self.directory.mkdir(parents=True, exist_ok=True)
         self.max_requests = int(options.get("max_requests", 128))
         self.max_bytes = int(options.get("max_bytes", 16 * 1024 * 1024))
         self.flush_seconds = float(options.get("flush_seconds", 2))
         self.poll_seconds = float(options.get("poll_seconds", 15))
+        self.submit_interval_seconds = float(options.get("submit_interval_seconds", 0))
         if min(self.max_requests, self.max_bytes, self.flush_seconds, self.poll_seconds) <= 0:
             raise ValueError("Batch limits and intervals must be positive")
+        if self.submit_interval_seconds < 0:
+            raise ValueError("Batch submission interval must be nonnegative")
         self._lock_file = (self.directory / ".lock").open("a")
         try:
             fcntl.flock(self._lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -64,10 +67,12 @@ class OpenRouterBatchClient(OpenAICompatibleClient):
         self._condition = threading.Condition()
         self._pending = deque()
         self._recoverable = defaultdict(deque)
+        self._prefetched = defaultdict(deque)
         self._futures = {}
         self._jobs = {}
         self._closed = False
         self._fatal = None
+        self._submit_after = 0.0
         self._session = requests.Session()
         self._session.headers.update(Authorization=f"Bearer {self.client.api_key}", **{"Content-Type": "application/json"})
         try:
@@ -94,13 +99,15 @@ class OpenRouterBatchClient(OpenAICompatibleClient):
     def _key(body):
         return hashlib.sha256(canonical_json_bytes(body)).hexdigest()
 
-    def chat_json(self, messages):
+    def _request_future(self, messages, *, prefetch=False):
         body = self._completion_kwargs(messages)
         body.update(body.pop("extra_body", {}))
         key = self._key(body)
         with self._condition:
             if self._closed or self._fatal:
                 raise RuntimeError(self._fatal or "Batch client is closed")
+            if not prefetch and self._prefetched[key]:
+                return self._prefetched[key].popleft()
             recovered = self._recoverable[key]
             was_recovered = bool(recovered)
             if recovered:
@@ -117,6 +124,21 @@ class OpenRouterBatchClient(OpenAICompatibleClient):
                     raise ValueError("A request exceeds the configured batch byte limit")
                 self._pending.append((time.monotonic(), row))
             self._condition.notify_all()
+            if prefetch:
+                self._prefetched[key].append((future, was_recovered))
+        return future, was_recovered
+
+    def prefetch_json(self, messages):
+        """Queue one independent call without occupying a result-waiting thread.
+
+        Each call reserves one response for a later chat_json with the same body;
+        repeated identical bodies retain their multiplicity. Restart recovery
+        still uses the durable submission journal, including remote jobs in flight.
+        """
+        self._request_future(messages, prefetch=True)
+
+    def chat_json(self, messages):
+        future, was_recovered = self._request_future(messages)
         raw, receipt = future.result()
         result = self._json_response(ChatCompletion.model_validate(raw), messages)
         result["batch"] = {**receipt, "recovered": was_recovered}
@@ -135,14 +157,43 @@ class OpenRouterBatchClient(OpenAICompatibleClient):
                "request": {"endpoint": "/v1/chat/completions", "model": self.model, "requests": rows}}
         self._jobs[job["journal"]] = job
         self._save(job)  # Write before POST; never blindly repeat an uncertain submission.
-        response = self._session.post(self.batch_url, data=canonical_json_bytes(job["request"]), timeout=60)
+        response = self._session.post(self.batch_url, data=canonical_json_bytes(job["request"]), timeout=60,
+                                      stream=True)
+        self._submit_after = time.time() + self.submit_interval_seconds
+        if response.status_code == 429:
+            # An explicit rejection has no remote job. Keep the same futures and
+            # custom IDs queued; unlike an uncertain POST, it is safe to retry.
+            headers = {k.lower(): v for k, v in getattr(response, "headers", {}).items()}
+            try:
+                metadata = response.json().get("error", {}).get("metadata", {}).get("headers", {})
+                headers.update({k.lower(): v for k, v in metadata.items()})
+            except (ValueError, AttributeError, requests.RequestException):
+                pass
+            now, delay = time.time(), 60.0
+            try:
+                delay = max(delay, float(headers.get("retry-after", 0)),
+                            float(headers.get("x-ratelimit-reset", 0)) / 1000 - now)
+            except (TypeError, ValueError):
+                pass
+            self._submit_after = now + delay
+            job.update(status="rejected", error="HTTP 429: submission rate limit; no remote job accepted",
+                       retry_after=self._submit_after)
+            response.close()
+            self._save(job)
+            with self._condition:
+                self._pending.extendleft((time.monotonic(), row) for row in reversed(rows))
+            return
         if 400 <= response.status_code < 500 and response.status_code not in {408, 409}:
             job.update(status="rejected", error=f"HTTP {response.status_code}: {response.text[:1000]}")
+            response.close()
             self._save(job)
             self._deliver(job)
             return
-        response.raise_for_status()
-        remote = response.json()
+        try:
+            response.raise_for_status()
+            remote = response.json()
+        finally:
+            response.close()
         if not remote.get("id"):
             raise ValueError("Batch submission returned no ID; reconcile the submitting journal")
         job.update(status=remote["status"], remote=remote, next_poll_at=0)
@@ -207,7 +258,7 @@ class OpenRouterBatchClient(OpenAICompatibleClient):
                 with self._condition:
                     if self._closed:
                         return
-                    ready = self._pending and (
+                    ready = self._pending and time.time() >= self._submit_after and (
                         len(self._pending) >= self.max_requests
                         or time.monotonic() - self._pending[0][0] >= self.flush_seconds
                     )
@@ -223,12 +274,20 @@ class OpenRouterBatchClient(OpenAICompatibleClient):
                             size += length
                 if rows:
                     self._submit(rows)
+                    # Drain ready submissions before polling existing jobs. Batch
+                    # completion latency must not throttle independent submissions.
+                    continue
                 for job in list(self._jobs.values()):
+                    if self._pending:
+                        break
                     if (job["status"] not in TERMINAL | {"rejected", "submitting"}
                             and time.time() >= job.get("next_poll_at", 0)):
                         self._poll(job)
                 with self._condition:
-                    self._condition.wait(timeout=min(self.flush_seconds, self.poll_seconds))
+                    delay = min(self.flush_seconds, self.poll_seconds)
+                    if self._pending and self._submit_after > time.time():
+                        delay = min(delay, self._submit_after - time.time())
+                    self._condition.wait(timeout=max(.01, delay))
         except Exception as exc:
             with self._condition:
                 self._fatal = f"Batch transport stopped: {type(exc).__name__}: {exc}"

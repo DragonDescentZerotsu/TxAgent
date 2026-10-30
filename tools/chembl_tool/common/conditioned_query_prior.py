@@ -15,6 +15,7 @@ def build_query_prior_messages(
             "Explain plausible structural and mechanistic liabilities, exposure limitations and uncertainty.",
             "A structural alert is a hypothesis, not an observed endpoint. Absence of an alert does not establish a negative result.",
             "Do not invent exposure, species or population conditions; the final branch applies the reported condition.",
+            *contract.query_prior_instructions,
         ]
         schema = {
             "endpoint_prior": f"{contract.positive_prediction} | {contract.negative_prediction} | mixed_or_unclear",

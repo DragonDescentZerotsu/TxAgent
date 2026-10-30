@@ -406,6 +406,7 @@ def main() -> None:
 
     best_models: list[nn.Module] = []
     run_results: list[RunResult] = []
+    validation_history: list[dict[str, int | float]] = []
 
     for member_idx in range(args.ensemble_size):
         seed = args.seed + member_idx
@@ -434,6 +435,9 @@ def main() -> None:
                 )
             else:
                 valid_loss = evaluate_loss(model, valid_loader, loss_fn, device)
+                validation_history.append(
+                    {"seed": seed, "epoch": epoch + 1, "valid_bce": valid_loss}
+                )
                 if valid_loss < best_valid_loss:
                     best_epoch = epoch + 1
                     best_valid_loss = valid_loss
@@ -544,6 +548,7 @@ def main() -> None:
             ),
         },
         "members": [asdict(result) for result in run_results],
+        "validation_history": validation_history,
         "valid_metrics": valid_metrics,
         "test_metrics": test_metrics,
         "valid_metrics_fixed_0.5": valid_metrics_fixed,
@@ -560,14 +565,18 @@ def main() -> None:
     with metrics_path.open("w") as f:
         json.dump(output, f, indent=2)
         f.write("\n")
-    with predictions_path.open("w") as f:
-        for index, (smiles, label, score) in enumerate(
-            zip(test.smiles, test.labels, test_scores, strict=True)
-        ):
-            row = {"drug": smiles, "Y": label, "score": float(score), "prediction": int(score >= threshold)}
-            if args.condition_field is not None and test.conditions is not None:
-                row[args.condition_field] = test.conditions[index]
-            f.write(json.dumps(row) + "\n")
+    prediction_splits = [(args.evaluation_split, test, test_scores)]
+    if valid is not None:
+        prediction_splits.append(("valid", valid, valid_scores))
+    for split_name, split, scores in prediction_splits:
+        with (args.output_dir / f"{split_name}_predictions.jsonl").open("w") as f:
+            for index, (smiles, label, score) in enumerate(
+                zip(split.smiles, split.labels, scores, strict=True)
+            ):
+                row = {"drug": smiles, "Y": label, "score": float(score), "prediction": int(score >= threshold)}
+                if args.condition_field is not None and split.conditions is not None:
+                    row[args.condition_field] = split.conditions[index]
+                f.write(json.dumps(row) + "\n")
     torch.save(
         {
             "model_state_dicts": [model.state_dict() for model in best_models],

@@ -29,6 +29,7 @@ class NeighborIdentityPolicy(str, Enum):
 
 
 NEIGHBOR_IDENTITY_POLICIES = tuple(policy.value for policy in NeighborIdentityPolicy)
+RELATION_POLICY_VERSION = "fragment_parent_connectivity.v2"
 
 
 @dataclass(frozen=True)
@@ -58,6 +59,10 @@ def classify_molecule_relation(query: MoleculeIdentity, candidate: MoleculeIdent
         or bool(candidate.parent_inchi_key and candidate.parent_inchi_key in query_components)
     ):
         return MoleculeRelation.SAME_PARENT
+    # Compare the selected parents as well as whole records: changing both the
+    # counterion and stereo must not hide an otherwise identical connectivity.
+    if _same_nonempty(_connectivity_key(query.parent_inchi_key), _connectivity_key(candidate.parent_inchi_key)):
+        return MoleculeRelation.SAME_CONNECTIVITY_VARIANT
     return MoleculeRelation.STRUCTURAL_ANALOG
 
 
@@ -96,6 +101,7 @@ def policy_metadata(policy: str | NeighborIdentityPolicy) -> dict[str, Any]:
     normalized = NeighborIdentityPolicy(policy)
     return {
         "neighbor_identity_policy": normalized.value,
+        "relation_policy_version": RELATION_POLICY_VERSION,
         "excluded_relations": _excluded_relation_values(normalized),
         "threshold_preserving_backfill": True,
     }

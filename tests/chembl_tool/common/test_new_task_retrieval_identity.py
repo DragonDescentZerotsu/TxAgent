@@ -11,7 +11,8 @@ from tools.chembl_tool.common.assay_retrieval import _filter_heldout_direct_reco
 
 def candidate(smiles):
     value = leakage_identity('dili', smiles)
-    return {'retrieval_identity_contract': VERSION,
+    return {'retrieval_identity_source_smiles': smiles,
+            'retrieval_identity_contract': VERSION,
             'retrieval_leakage_group': value['leakage_group'],
             'retrieval_scaffold_leakage_group': value['scaffold_leakage_group']}
 
@@ -146,6 +147,86 @@ def test_annotation_uses_original_evidence_identity_after_native_smiles_reserial
     retrieval.annotate_index(index,'dili',cache,VERSION,{'source1':'CCO'})
     assert index['molecules'][0]['retrieval_identity_source_smiles'] == 'CCO'
     assert index['molecules'][0]['retrieval_leakage_group'] == cache['CCO']['leakage_group']
+
+
+@pytest.mark.parametrize('task', ['dili', 'carcinogens'])
+@pytest.mark.parametrize('reverse', [False, True])
+@pytest.mark.parametrize('left,right,excluded', [
+    ('C=CCC', 'CC=CC', False),
+    ('C=C=CC', 'C=CC=C', False),
+    ('CC(=O)C', 'C=C(C)O', True),
+    ('O=c1cccc[nH]1', 'Oc1ccccn1', True),
+    ('CN(C)/N=N/c1[nH]cnc1C(N)=O', 'CN(C)NN=C1N=CN=C1C(N)=O', True),
+    ('C[C@H](O)C(=O)O', 'C[C@@H](O)C(=O)[O-].[Na+]', True),
+])
+def test_runtime_parent_refinement(task, reverse, left, right, excluded):
+    if reverse:
+        left, right = right, left
+    query, row = retrieval.query_identity(task, left, VERSION), candidate(right)
+    # Frozen split/build grouping still has the original conservative semantics.
+    assert retrieval.decide_candidate(query, row, 'parent_disjoint', VERSION).excluded
+    decision = retrieval.decide_candidate(query, row, 'parent_disjoint', VERSION, refine_parent=True)
+    assert decision.excluded is excluded
+
+
+@pytest.mark.parametrize('unresolved_side', ['query', 'candidate'])
+def test_incomplete_enumeration_cannot_release_coarse_parent(unresolved_side, monkeypatch):
+    from rdkit import Chem
+
+    original = retrieval.adapter._canonicalize
+    target = 'C=CCC' if unresolved_side == 'query' else 'CC=CC'
+    def incomplete(mol):
+        if Chem.MolToSmiles(mol) == target:
+            return mol, {'status': 'MaxTransformsReached'}
+        return original(mol)
+    retrieval._canonical_parent.cache_clear()
+    monkeypatch.setattr(retrieval.adapter, '_canonicalize', incomplete)
+    try:
+        decision = retrieval.decide_candidate(leakage_identity('dili', 'C=CCC'), candidate('CC=CC'),
+                                              'parent_disjoint', VERSION, refine_parent=True)
+        assert decision.excluded
+        assert decision.reason.endswith(':unresolved_legacy_parent_group')
+    finally:
+        retrieval._canonical_parent.cache_clear()
+
+
+def test_refinement_requires_structure_and_prefers_original_input():
+    row = candidate('CC=CC')
+    row['canonical_smiles'] = 'C=CCC'  # serialized display must not override source identity
+    query = leakage_identity('dili', 'C=CCC')
+    assert not retrieval.decide_candidate(query, row, 'parent_disjoint', VERSION, refine_parent=True).excluded
+    row.pop('retrieval_identity_source_smiles')
+    row.pop('canonical_smiles')
+    assert retrieval.decide_candidate(query, row, 'parent_disjoint', VERSION, refine_parent=True).excluded
+
+
+def test_refinement_preserves_nonempty_scaffold_exclusion(monkeypatch):
+    query, row = leakage_identity('dili', 'C1=CCC=CC1'), candidate('C1=CC=CCC1')
+    assert not retrieval.decide_candidate(query, row, 'parent_disjoint', VERSION, refine_parent=True).excluded
+    monkeypatch.setattr(retrieval, '_canonical_parent', lambda _: pytest.fail('Scaffold already excludes'))
+    decision = retrieval.decide_candidate(query, row, 'scaffold_disjoint', VERSION, refine_parent=True)
+    assert decision.excluded
+    assert decision.reason.endswith(':same_tautomer_scaffold_group')
+
+
+@pytest.mark.parametrize('policy', ['parent_disjoint', 'scaffold_disjoint'])
+def test_runtime_refinement_allows_distinct_acyclic_isomer_before_top_k(policy):
+    from tools.chembl_tool.common.task_workflows.evidence_library import build_neighbor_index
+    from tools.chembl_tool.common.task_workflows.retrieve_neighbors import retrieve_neighbors
+
+    rows = [{'molecule_chembl_id': mid, 'canonical_smiles': smiles,
+             'assay_chembl_id': 'a', 'assay_tier': 'Assay', 'endpoint_group': 'test',
+             'group_id': 'Assay.test', 'standard_type': 'endpoint', 'standard_value': '1',
+             'standard_units': 'unit', 'evidence_source': 'Starling', 'assay_description': 'endpoint'}
+            for mid, smiles in [('same', 'C=CCC'), ('isomer', 'CC=CC')]]
+    index = build_neighbor_index(rows, index_version='test', workers=1)
+    index['source'] = {}
+    retrieval.annotate_index(index, 'dili', {r['canonical_smiles']: leakage_identity('dili', r['canonical_smiles'])
+                                           for r in rows}, VERSION)
+    result = retrieve_neighbors('C=CCC', index, top_k_per_group=1, min_similarity=0,
+                                neighbor_identity_policy=policy)
+    assert [r['molecule_chembl_id'] for r in result['groups'][0]['neighbors']] == ['isomer']
+    assert result['retrieval_policy']['retrieval_parent_refinement_policy'] == retrieval.PARENT_REFINEMENT_POLICY
 
 
 def test_builder_captures_input_before_native_builder_mutates_evidence(tmp_path, monkeypatch):

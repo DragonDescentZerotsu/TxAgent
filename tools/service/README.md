@@ -63,6 +63,44 @@ regenerate its old reasoning when the service changes.
 
 ## Production launch on node002
 
+The service was stopped for post-paper cleanup on 2026-09-29. Its SQLite files
+are preserved offline at `/path/to/txagent-assets/tool_service/20260929/`;
+the copy and integrity checks are recorded in
+`/path/to/txagent-assets/migration_20260929.json`. Reading existing paper
+results and regenerating figures does not require starting this service.
+
+When tool computation is needed again, restore the two production caches to local
+disk **before** the launch command below (with the service still stopped). This
+refuses to overwrite an existing database or its WAL/SHM files:
+
+```bash
+python - <<'PY'
+import hashlib
+import shutil
+from pathlib import Path
+
+archive = Path('/path/to/txagent-assets/tool_service/20260929')
+checksums = dict(line.split()[::-1] for line in (archive / 'SHA256SUMS').read_text().splitlines())
+names = ['txagent-tool-cache.sqlite3', 'txagent-tool-cache-mmp-fragments.sqlite3']
+for name in names:
+    dst = Path('/local/tmp') / name
+    assert all(not Path(str(dst) + suffix).exists() for suffix in ('', '-wal', '-shm')), dst
+for name in names:
+    dst = Path('/local/tmp') / name
+    with (archive / name).open('rb') as source, dst.open('xb') as target:
+        shutil.copyfileobj(source, target, length=8 * 1024 * 1024)
+    with dst.open('rb') as restored:
+        digest = hashlib.file_digest(restored, 'sha256').hexdigest()
+    assert digest == checksums[name], dst
+PY
+```
+
+The shared copies are archives. SQLite WAL coordinates concurrent readers/writers
+through local shared memory; keep the live `TXAGENT_TOOL_CACHE_PATH` on local disk.
+The caches contain computed molecular tool outputs and MMP fragments, not paper
+predictions or benchmark labels. A fresh local cache can also be rebuilt by the
+service if reuse is unnecessary. Restarting is a separate, explicit operation.
+
 ```bash
 env \
   TXAGENT_TOOL_NATIVE_THREADS=1 \

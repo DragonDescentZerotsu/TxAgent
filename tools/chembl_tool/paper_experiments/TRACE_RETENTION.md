@@ -1,6 +1,6 @@
 # Paper trace and artifact retention
 
-Updated: 2026-09-14.
+Updated: 2026-10-18.
 
 Retain evidence needed to reproduce the paper result families, not every smoke,
 retry, or abandoned method branch. The canonical allowlist of result roots is
@@ -10,7 +10,194 @@ Current retrieval inputs are independently locked by
 `artifacts/chembl_tool/starling/current_records/manifest.json` and
 `current_starling_retrieval.json`.
 
+## Offline archives after storage cleanup
+
+The [storage completion record](RESULTS.md#storage-cleanup-2026-09-30) links the
+runtime migration and build-cache cleanup receipts. Retain their shared archives,
+manifests, checksums, provenance and removal journals. `reproduction/` contains
+historical experiment dependencies; `recovery/` conservatively preserves source
+material and unresolved versions. Recovery status does not establish current use
+or permit deletion without resolving those preservation reasons.
+
+The deleted local build cache was an acceleration layer. Future builds recreate
+it from available published inputs; they cannot recover a missing historical
+input merely from its old pathname. Restore exact historical hashes and companion
+files from the archive using the [restoration guide](../../../outputs/paper/local_build_cache_audit_20260930/README.md#restore-retained-inputs).
+Keep original paths/hashes in frozen run receipts. Prepared prompts, cached priors,
+predictions and selected-model dependencies remain covered by the rules below.
+
 ## Retain
+
+For `budgeted_evidence_protocol.indirect_scaffold_disjoint` and
+`indirect_scaffold_disjoint_luna`, retain all prepared/selection/evaluation/output
+records, retry receipts, frozen priors/references, run plans, provider configs,
+scores and verification receipts. Luna's scaffold identity verification depends
+on the exact DeepSeek selections and its complete verification receipt; the
+DeepSeek candidate cache is also a documented preparation dependency.
+Keep the single experiment-local `verify.py` and both source snapshots. The
+DeepSeek snapshot contains the original auditor; Luna's snapshot pins the later
+`--root`/audit-reuse extension. Do not mistake that deliberate change or finalized
+run-plan metadata for inference source drift. Historical ZIP member paths may
+include the original absolute checkout prefix; restore into a scratch checkout
+with that prefix mapped to the checkout root, never over current files blindly.
+
+The Luna figure variant is the latest combined scaffold comparison; the earlier
+DeepSeek-only variant is historical. Both keep their inputs, per-panel receipts,
+PDF/PNG/SVG files and hashes. Preserve original parent-disjoint paper figures.
+Completed top-level console logs live under their original basenames inside each
+experiment's `execution_history.zip`; structured launch/status/verification JSON
+remains in place. Temporary controllers are archived, not maintained entrypoints.
+The [maintenance receipt](receipts/indirect_scaffold_maintenance_20261018.json)
+records member hashes and exact-path cleanup. No prediction or source dependency
+is removed by this cleanup.
+
+For `diagnostics.tdc_dili_prompt_20260924`, retain the pinned upstream v2 source
+requests/retrievals, retained prompt and all 288 replay requests/responses, retry
+and invocation receipts, scores, paired comparisons and maintenance receipt.
+A/B variants are rejected diagnostics, not active prompt options; keep their
+frozen system files and `reproduction_source.zip` for provenance. Do not remove
+failed-attempt traces or overwrite the historical controls. The registry owns
+local paths; the shared TDC handoff owns collaborator integration and scope.
+
+For `budgeted_evidence_protocol.llm_vs_standard_baselines`, retain the complete
+`comparison.json`, per-benchmark `all_scores.csv`, paired `ML_APPENDIX.md` and
+full-precision `ml_appendix.csv`, together with `build.py` and both verification
+receipts. Keep every referenced prediction and source-suite receipt. The appendix
+has 198 ML cells across conditioned and two TDC training pools; its CSV is the
+manuscript table source. Preserve raw scores for AUROC and validation-selected
+thresholds for Macro-F1; rounded Markdown cells are presentation only. Existing
+figures retain their separately documented scope. Retain each current figure's
+`points.csv`, `metadata.json`, its referenced Ours result record, and
+`baseline_bars_{mixed,horizontal}_receipt.json`: metadata owns group membership and the source
+pointer; the shared Ours record owns supplied scores and task versions. Receipts preserve
+source hashes, winners/ties and explicit missing points. The audited baseline
+CSV does not contain Ours. Both final bar layouts share inputs and calculations;
+retain their task/mean receipts and explicit backbone bindings. Keep the user-requested
+`design_snapshots/20260925_backbone_pastel_mixed` frozen source and results.
+Superseded designs and temporary preview code are retained in the verified
+`design_snapshots/retired_designs_20260925.zip`, not as active entrypoints. See [plotting instructions](README.md#current-comparison-figures).
+
+For `budgeted_evidence_protocol.retrieval_forest`, retain prepared features and donor
+indices, source-cache bindings, all candidate forests/validation scores, selections
+and final predictions. Keep `verify.py`, data/result audits, resource
+samples, manifest and source ZIP; the execution-only matrix launcher is archived
+inside that ZIP. Superseded RF and MiniMol summary scripts are retained in
+`skin_indirect_level_mapped_20260925/superseded_reporting.zip`; the shared comparison
+exporter owns current tables. The six TDC-only condition-policy symlinks reuse all-train models.
+
+For `budgeted_evidence_protocol.minimol_indirect_assay`, retain both source suites,
+the six-task comparison and all candidate checkpoints/validation histories,
+including non-selected λ values needed to reproduce validation selection.
+Keep source Parquet/import hashes, prepared targets/graphs, selected predictions,
+source snapshots, verification and resource receipts. The four-task frozen-control
+symlinks depend on `conditioned_minimol_val_selected`; preserve their targets.
+Execution-only launch/preflight scripts may live in the source ZIP at their
+original repository paths. Keep local result auditors/renderers and the maintenance
+receipt; duplicate console dumps of structured JSON audits are disposable.
+The `llm_vs_standard_baselines` table includes all six encoder comparisons;
+its current figures group ML variants as declared in their metadata.
+
+For `budgeted_evidence_protocol.tdc_minimol_val_selected`, retain the manifest,
+per-cell commands, train/valid/test input bindings, embedding provenance and caches,
+five-member checkpoints, validation histories, selected epochs/thresholds and
+valid/test predictions. The current all-settings Markdown/CSV/JSON and its
+experiment-local `export_comparison.py` share this root. Retain referenced older
+KNN and LLM predictions plus their verification receipts: reused inputs are
+dependencies, not disposable duplicates. Earlier CV heads remain explicitly
+historical; current scores are never replaced by per-task test-score winners.
+
+For `budgeted_evidence_protocol.tdc_minimol_indirect_assay`, retain both main
+training pools, all 240 candidate checkpoints/validation histories and 36 ensemble
+cells. Keep prepared targets/graphs, input hashes, auxiliary exclusion audit,
+selection/threshold receipts and resource samples. The 12 frozen-control symlinks
+depend on `tdc_minimol_val_selected`; preserve their targets. Launch/preflight
+receipts live in `training_source_snapshot.zip`; local `verify.py [data]` and
+`summarize.py` audit/render the completed suite. Its maintenance receipt binds
+the source archive and confirms existing conditioned/TDC results are unchanged.
+
+For `budgeted_evidence_protocol.tdc_knn3_baselines`, retain the referenced original
+Morgan KNN neighbors and TDC train rows, prepared selections/messages, independent
+Direct/Indirect equivalence checks, None reuse receipt, final outputs and command.
+Preserve the original ML/None references; do not copy their artifacts into this run.
+
+For `budgeted_evidence_protocol.tdc_scaffold_baselines`, retain the manifest-bound
+TDC splits/indices and acquisition receipts, cached priors, selected records,
+actual prepared prompts/predictions, ML outputs/checkpoints and full verification.
+Keep the four-output Ames recovery receipt and its quarantined unreadable files.
+For `tdc_starling_mixed_baselines`, retain the mixed input manifest, exclusion and
+CV audits, frozen build/command receipts, embedding provenance, fitted models,
+predictions, comparison CSV and verification. For `record_rendering_deduplication`,
+retain the audit script/receipt and before/after examples; this is offline
+verification, not a new prediction suite. These entries are all under
+`budgeted_evidence_protocol`; do not maintain a second result-root list here.
+Generated Python bytecode and a byte-identical completed builder's partial
+manifest are disposable once the final manifest is verified and the builder
+resumes from that final manifest.
+
+For `budgeted_evidence_protocol.aligned_record_scaling` and
+`budgeted_evidence_protocol.aligned_record_scaling_test` and the independent
+`aligned_record_scaling_test_direct100_fill` follow-up, retain the Direct/Indirect
+manifests, prepared prompts, selected records, actual outputs, evaluation rows,
+per-cell summaries, the validated Direct-budget selection and final verification.
+Keep cached-prior provenance/snapshots and referenced source/ML lineage. Keep all
+four figure exports, portable CSV/metadata, receipts and the local audit replay
+script. Audit scripts under an experiment root are provenance, not maintained
+runner entrypoints. Retain both filesystem-outage recovery/quarantine receipts
+and preparation-upgrade originals: these explain preserved checkpoints and code
+hash boundaries. Do not move linked files merely to shorten a directory listing.
+Temporary `/tmp` editing scripts and symlink test overlays may be removed after
+verifying no live process depends on them; raw predictions and cached priors are
+not disposable scratch files.
+
+For `budgeted_evidence_protocol.baseline_pilot`, retain verified per-query
+prepared prompts, selections, tools, outputs and evaluation rows; frozen runtime,
+completion verification and paired direct-set checks; and the registered figures,
+score CSV and source-hash/condition comparison receipt. Keep the five baseline
+prediction files and lineage audit referenced by that receipt. Earlier blind
+outputs are separate provenance and must not count as visible predictions.
+Retain the same inputs/traces for the completed `baseline_no_threshold` valid/test
+suites, including launch, preflight, final progress, full verification and verifier
+provenance. Keep both current curve figures (PNG/PDF/SVG), CSV scores and figure
+receipts; historical thresholded figures must stay in their own roots.
+Retain registered `citations/` per-query role/parent mappings, summary TSV and
+manifest alongside the completed suites. These are offline final-answer citation
+statistics; they do not imply a upstream-prompt rerun or reasoning-mention analysis. The old `baseline_test` 0.3
+run is stopped; retain its stop receipt and partial outputs separately. Neither
+the stopped test nor the completed 0.3 validation supplies predictions to the
+fresh no-threshold runs.
+Retain the registered preparation-upgrade parity/test/migration receipts and
+prior manifests, plus the pre-review code snapshots and artifact checks linked by
+`receipts/baseline_maintenance_20260917.json`. Node-local candidate-cache entries are disposable acceleration
+artifacts; prepared prompts and recorded request hashes remain authoritative.
+
+For the paused `budgeted_evidence_protocol`, retain the current source input scope,
+`candidate_annotations_current` SQLite checkpoint, manifest, progress and
+`pause.json`, plus the frozen donor checkpoint and exact migration receipt.
+Retain source/selected-context audits and their frozen input/example references,
+baseline lineage audit, and the Skin 2026-09-17 identity/source/index/export
+receipts. The earlier extraction rounds are provenance dependencies, not extra
+current releases; do not delete them merely because the job is paused.
+`receipts/joint_pause_review_20260917.json` pins the stopped state and checkpoint.
+Completed preparation and valid JSON are not completed or scientifically validated
+prediction results. No large artifact deletion is authorized by this cleanup.
+
+For `replicate_suites.fixed25_no_threshold_progressive_full_flat_20260915`, retain
+the predecessor completion barrier, retrieval census and native card-selection
+parity checks, per-level molecule shortfalls, and explicit unavailable-tool
+receipts, alongside the frozen contracts, prepared inputs and actual traces.
+
+For `replicate_suites.expanded_budget_progressive_full_flat_20260915`, retain the
+budget census, frozen run contract/plan/runtime hashes, all-query card-ID checks,
+prepared inputs, actual requests/results and matched-input verification. Keep
+HAProxy/admission configuration and endpoint preflight receipts. The coordinator
+must finish progressive verification before starting matched full-flat; live
+execution status is separate from completed results.
+
+Both 2026-09-15 budget suites are paused by user as of 2026-09-16 01:11 UTC.
+Retain successful partial full-flat checkpoints, fixed-25 progressive checkpoints,
+prepared inputs, and the fixed-25 pause receipt/checkpoint hash inventory for resume. Also
+retain the registered completed-pair comparison, its prediction/input verification
+and pause receipt; do not classify incomplete full-flat runs as completed results.
 
 For `replicate_suites.l3_parent_disjoint_progressive_test_20260914`, retain the
 retrieval diagnostic, mixed-policy prepared contexts, exact prefix-reuse receipts,
@@ -34,11 +221,13 @@ local directory only after matching remote/custom IDs, exact requests and frozen
 retrievals to the retained run. Keep the small handoff and cleanup receipts;
 the smoke is not a separate replicate or a second billing item.
 
-For the running L3+ parent-disjoint matched full-flat suite, retain its coordinator,
+For the completed L3+ parent-disjoint matched full-flat suite, retain its coordinator,
 run plan, frozen runtimes, prepared inputs and all successful checkpoints. Keep the
 admission/rebalance receipts and failed-attempt traces: local admission precedes the
-HTTP deadline and retry races share the same limits. Read `execution_status.json`
-for live progress; preparation completion is not inference completion.
+HTTP deadline and retry races share the same limits. Keep all six valid/test
+verification receipts and the registered figures with hashed TSVs and render
+commands. Temporary rendering scripts are redundant once receipt-based reproduction
+is verified; frozen runtime files and historical comparison dependencies are not.
 
 For `replicate_suites.dili_v5_trace_source_replay_20260913`, retain the source
 decision ledger, publication/restore checks, all-804-row selected-input audit,
@@ -140,7 +329,7 @@ For registered Carcinogens source-cleanup diagnostics, retain the hash-bound
 review overlay, source proposals and adjudication overrides, unresolved-concern
 ledger, all-query input comparison, replacement-card audit and prefix-reuse
 receipts. Round 3 also records opt-in endpoint diversity. Its completed round-2
-Hosted source is a provenance dependency; partial or changed-input outputs cannot
+PARCC source is a provenance dependency; partial or changed-input outputs cannot
 be substituted for a matched full-flat result or an independent replicate.
 
 ### Paper result cells
@@ -259,6 +448,16 @@ remain preserved; they are not current paper results or maintained entrypoints.
 
 ## Safe cleanup
 
+For record-diversity comparisons, retain registered old/new selected lists,
+source-bound annotation snapshots, feature manifests and reviewed overlays,
+prepared/request/output traces, reuse receipts and the canonical comparison
+figure. A newer selector with no inference is not a replacement for the completed
+arm. The six-task suite's `molecule_local_replay` registry entry pins both stages.
+Suite-local scripts and runtime snapshots are provenance, not maintained CLI
+entrypoints. The unused standalone observation prototype was retired from active
+code with a source/test archive; see
+`receipts/record_diversity_maintenance_20260916.json`.
+
 1. Resolve exact retained paths from `current_conditioned_results.json`.
 2. Verify predictions, metrics, zero-failure gates, and semantic hashes.
 3. Produce an explicit deletion list; never use a broad wildcard on
@@ -311,3 +510,16 @@ experiment-local execution snapshots, valid source preflights, strict legacy
 reference repair for Skin #193/#206, unchanged-prefix receipts and fresh actual
 request traces. It completed after the registered test suite; both policy arms and
 their baseline-verified comparison figures remain retained.
+
+## BBB indirect test development (2026-09-24)
+
+Retain all six local arms, prepared inputs, source selections, cached priors, actual outputs, retries and verification under the registered `tdc_bbb_indirect_test_iteration_20260924` root. Its original preparation scripts are hash-bound historical provenance, not the maintained entrypoint. Share only the compact frozen input bundle, checksum/source manifest, per-query final labels, comparison and output-hash receipts in `artifacts/chembl_tool/bbb_indirect_20260924/`; raw reasoning and API traces remain local. Maintained preparation and usage: [BBB guide](../tasks/bbb_martins/INDIRECT_ABLATION.md).
+
+## Matched seed-42 Skin/Carcinogens naive baselines (2026-09-24)
+
+Retain `outputs/paper/tdc_seed42_neighbor_fill_20260924/`: source-bound benchmark
+manifest/indices, shared prior analyses, prepared requests/evaluation labels,
+model outputs, predictions, provider snapshots and retry-race receipts. Four
+OpenRouter suites use the existing family entrypoint. Registry
+`budgeted_evidence_protocol.tdc_seed42_neighbor_fill` owns completion status.
+Original seed-1 traces remain historical; they cannot fill missing seed-42 cells.

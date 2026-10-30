@@ -15,12 +15,132 @@ from tools.chembl_tool.paper_experiments import run_conditioned_assay_progressiv
 TEST_PROVIDER = SimpleNamespace(providers=[SimpleNamespace(temperature=0.0, reasoning_effort="")])
 
 
+@pytest.mark.parametrize("independent", [False, True])
+def test_gpt_adaptation_only_changes_instructions_and_is_opt_in(tmp_path, independent):
+    from dataclasses import asdict
+    from tools.chembl_tool.common.progressive_assay_reasoning import build_progressive_messages
+
+    base = runner._task_contract("carcinogens")
+    adapted = runner._task_contract("carcinogens", "gpt_calibration.v1")
+    changed = {k for k, v in asdict(base).items() if v != asdict(adapted)[k]}
+    assert changed == {"endpoint_name", "task_instructions", "query_prior_instructions"}
+    assert base == runner._task_contract("carcinogens")
+    payloads = []
+    for contract in (base, adapted):
+        messages = build_progressive_messages(
+            contract=contract, levels=runner._levels("carcinogens"), current_level=1,
+            query_smiles="CCO", condition_sentence="rodent", query_prior={"endpoint_prior": "mixed_or_unclear"},
+            query_tool_summary={"content": "frozen tools"}, active={}, prior_state=None, independent=independent,
+        )
+        payloads.append(json.loads(messages[1]["content"]))
+    assert {k for k in payloads[0] if payloads[0][k] != payloads[1][k]} == {"task_definition"}
+    assert any("mixed_or_unclear is uncertainty" in s for s in payloads[1]["task_definition"]["instructions"])
+    for branch in ("single", "final"):
+        original, changed = [json.loads(build_query_prior_messages(c, branch, {"properties": "frozen"})[1]["content"])
+                             for c in (base, adapted)]
+        assert {k for k in original if original[k] != changed[k]} == {"task", "instructions"}
 
 
+def test_adaptation_rejects_unsupported_tasks_and_old_priors_before_inference(monkeypatch):
+    monkeypatch.setattr(runner, "_resolve_provider_pool_config", lambda *_: pytest.fail("no provider work"))
+    for tasks in (["dili"], ["carcinogens", "ames"]):
+        with pytest.raises(ValueError, match="unsupported prompt adaptation"):
+            runner._prompt_adaptation("gpt_calibration.v1", tasks)
+    with pytest.raises(ValueError, match="requires --fresh-query-priors"):
+        runner.main(["--tasks", "carcinogens", "--prompt-adaptation", "gpt_calibration.v1"])
+    with pytest.raises(SystemExit):
+        family.main(["--tasks", "carcinogens", "--prompt-adaptation", "gpt_calibration.v1"])
+    policy = {"prompt_adaptation": runner._prompt_adaptation("gpt_calibration.v1", ["carcinogens"])}
+    for old, new in (({}, policy), (policy, {})):
+        with pytest.raises(ValueError, match="reasoning_policy"):
+            runner._merge_resume_manifest({"reasoning_policy": old}, {"reasoning_policy": new})
+        with pytest.raises(ValueError, match="reasoning_policy"):
+            family._merge_matched_resume_manifest(runner, {"reasoning_policy": old}, {"reasoning_policy": new})
 
 
+def test_progressive_runner_uses_and_validates_prepared_adaptation(tmp_path):
+    from copy import deepcopy
+
+    frozen = Path("outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/run/replicate_01/progressive/carcinogens/queries/query_idx00005/levels/level_1/prepared.json")
+    if not frozen.exists():
+        pytest.skip("Requires frozen Carcinogens inputs")
+    prepared = json.loads(frozen.read_text())
+    original = deepcopy(prepared)
+    prepared["reasoning_policy"] = {"prompt_adaptation": runner._prompt_adaptation("gpt_calibration.v1", ["carcinogens"])}
+    level = tmp_path / "levels/level_1"
+    level.mkdir(parents=True)
+    target = level / "prepared.json"
+    target.write_text(json.dumps(prepared))
+    args = SimpleNamespace(prepare_only=True, max_level=1)
+    runner._run_query(args, runner.PreparedQuery("carcinogens", 5, tmp_path), None)
+    request = json.loads((level / "request.json").read_text())
+    text = request["messages"][1]["content"]
+    assert "mixed_or_unclear is uncertainty" in text
+    assert json.loads(target.read_text())["active_evidence"] == original["active_evidence"]
+    prepared["reasoning_policy"]["prompt_adaptation"]["task_contract_sha256"]["carcinogens"] = "stale"
+    target.write_text(json.dumps(prepared))
+    with pytest.raises(ValueError, match="changed prepared prompt adaptation"):
+        runner._run_query(args, runner.PreparedQuery("carcinogens", 5, tmp_path), None)
 
 
+def test_matched_adaptation_materializes_same_cards_and_resumes_without_calls(tmp_path, monkeypatch):
+    from copy import deepcopy
+
+    frozen = Path("outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/run/replicate_01/progressive")
+    if not frozen.exists():
+        pytest.skip("Requires frozen Carcinogens inputs")
+    task, profile = "carcinogens", "gpt_calibration.v1"
+    source, output, priors = [tmp_path / name for name in ("source", "output", "single_cache")]
+    source.mkdir()
+    manifest = json.loads((frozen / "experiment_manifest.json").read_text())
+    manifest["tasks"] = [task]
+    manifest["evaluation_indices_by_task"] = {task: [5]}
+    (source / "experiment_manifest.json").write_text(json.dumps(manifest))
+    originals = {}
+    for level in range(1, 8):
+        relative = Path(f"{task}/queries/query_idx00005/levels/level_{level}/prepared.json")
+        prepared = json.loads((frozen / relative).read_text())
+        originals[relative] = prepared
+        (source / relative).parent.mkdir(parents=True, exist_ok=True)
+        (source / relative).write_text(json.dumps(prepared))
+    sample = next(iter(originals.values()))
+    new_prior = (dict(endpoint_prior="mixed_or_unclear"), sample["query_tool_summary"], sample["reused_none_final"], 5)
+    prior_manifest = priors / task / "none/manifest.json"
+    prior_manifest.parent.mkdir(parents=True)
+    prior_manifest.write_text(json.dumps({"model": manifest["model"], "indices": [5],
+        "prompt_adaptation": runner._prompt_adaptation(profile, [task])}))
+    monkeypatch.setattr(runner, "_load_reused_query_prior", lambda *a: deepcopy(new_prior))
+    monkeypatch.setattr(runner, "_make_client", lambda *a: pytest.fail("no inference in preparation"))
+    run_matched = family._run_matched_curve
+    monkeypatch.setattr(family, "_run_matched_curve", lambda args: args)
+    args = family.main(["--tasks", task, "--matched-progressive-root", str(source),
+        "--output-root", str(output), "--matched-organizations", "progressive", "--prepare-only",
+        "--model", manifest["model"], "--max-tokens", str(manifest["max_tokens"])])
+    args.prompt_adaptation, args.matched_single_root = profile, str(priors)
+    assert run_matched(args) == 0
+    assert run_matched(args) == 0
+    for relative, original in originals.items():
+        current = json.loads((output / relative).read_text())
+        assert current["active_evidence"] == original["active_evidence"]
+        assert current["query_tool_summary"] == original["query_tool_summary"]
+        assert current["query_prior"] == new_prior[0]
+        assert current["reasoning_policy"]["prompt_adaptation"]["profile"] == profile
+    requests = list(output.rglob("request.json"))
+    assert requests and all("mixed_or_unclear is uncertainty" in p.read_text() for p in requests)
+    args.prompt_adaptation = ""
+    with pytest.raises(ValueError, match="incompatible refreshed prior prompt adaptation"):
+        run_matched(args)
+
+
+def test_alternate_retrieval_indices_preserve_benchmark_and_catalog(tmp_path):
+    for scheme in ("scaffold", "random"):
+        for subset in ("valid", "test"):
+            old = runner._progressive_task_specs(scheme, subset)
+            new = runner._progressive_task_specs(scheme, subset, tmp_path)
+            for task, spec in new.items():
+                assert spec.input_jsonl == old[task].input_jsonl
+                assert spec.family_manifest == old[task].family_manifest
+                assert spec.index == tmp_path / task / scheme / "assay_neighbor_index.pkl"
 
 
 @pytest.mark.parametrize("task", ["dili", "carcinogens"])
@@ -152,6 +272,7 @@ def test_prior_resume_transport_migration_preserves_history(prior_resume):
 
 @pytest.mark.parametrize("task,profile", [
     ("bbb_martins", ""), ("bioavailability_ma", ""), ("skin_reaction", ""),
+    ("carcinogens", "gpt_calibration.v1"),
 ])
 def test_fresh_native_priors_reuse_messages_and_race_validation_retries(task, profile, monkeypatch, tmp_path):
     import importlib
@@ -161,6 +282,7 @@ def test_fresh_native_priors_reuse_messages_and_race_validation_retries(task, pr
 
     monkeypatch.setattr(runner, "run", lambda args: args)
     args = runner.main(["--tasks", task, "--output-root", str(tmp_path / "priors"), "--retry-race-width", "6"])
+    args.prompt_adaptation = profile
     source = tmp_path / "valid.jsonl"
     source.write_text('{"drug":"CCO","Y":0}\n')
     directory = runner._source_run_dir(task, 0, tmp_path / "priors/single_cache")
@@ -198,6 +320,18 @@ def test_fresh_native_priors_reuse_messages_and_race_validation_retries(task, pr
                         0 if run_query(a, queries[0], client)["status"] == "ok" else 1)
     assert runner._prepare_fresh_query_priors(args, {task: SimpleNamespace(input_jsonl=source)}, TEST_PROVIDER) == 0
     assert client.widths == [1, 6, 1]
+    if profile:
+        single_payload = json.loads(client.messages[0][1]["content"])
+        final_payload = json.loads(client.messages[-1][1]["content"])
+        assert "Distinguish features" in single_payload["instructions"][-1]
+        assert any("mixed_or_unclear is uncertainty" in s for s in final_payload["instructions"])
+        manifest = directory.parent.parent / "manifest.json"
+        assert json.loads(manifest.read_text())["prompt_adaptation"] == runner._prompt_adaptation(profile, [task])
+        args.prompt_adaptation = ""
+        with pytest.raises(ValueError, match="changed fresh prior inputs/settings"):
+            runner._prepare_fresh_query_priors(args, {task: SimpleNamespace(input_jsonl=source)}, TEST_PROVIDER)
+        assert len(client.messages) == 3
+        return
     native = importlib.import_module(f"tools.chembl_tool.tasks.{task}.run_reasoning_pipeline")
     direct_client = SimpleNamespace(chat_json=response)
     single = native._reason_single_molecule(direct_client, llm_query_payload(retrieval["query"]))
@@ -327,3 +461,41 @@ def test_matched_reuse_needs_no_retired_alias_guard(tmp_path):
     inputs['heldout_direct_alias_guard'] = {'legacy': True}
     with pytest.raises(ValueError, match='heldout direct-alias guard'):
         family._validate_matched_task(runtime, source, 'dili')
+
+
+def test_matched_rebuilt_index_is_hash_checked_and_heldout_validated(tmp_path):
+    from types import SimpleNamespace
+    from tools.chembl_tool.common.json_utils import sha256_file
+
+    original = tmp_path / 'original.pkl'
+    original.write_text('old index')
+    rebuilt = tmp_path / 'rebuilt' / 'index.pkl'
+    rebuilt.parent.mkdir()
+    rebuilt.write_text('uncapped records')
+    (rebuilt.parent / 'manifest.json').write_text('{"rebuilt":true}')
+    spec = runner.ProgressiveTaskSpec(original, original, original)
+    checks = []
+    runtime = SimpleNamespace(
+        _progressive_task_specs=lambda *_: {'ames': spec},
+        _levels=lambda _: [1],
+        _heldout_filter_validation=lambda **kwargs: checks.append(kwargs),
+        task_root=lambda *_: tmp_path,
+    )
+    inputs = {'index': str(rebuilt), 'index_sha256': sha256_file(rebuilt),
+              'input_sha256': sha256_file(original),
+              'family_manifest_sha256': sha256_file(original), 'levels': [1]}
+    source = {'split_scheme': 'scaffold', 'evaluation_subset': 'valid',
+              'inputs': {'ames': inputs}}
+    assert family._validate_matched_task(runtime, source, 'ames').index == rebuilt
+    assert checks[0]['index_manifest'] == {'rebuilt': True}
+    catalog = rebuilt.parent / 'family_manifest.json'
+    catalog.write_text('{"corrected_source":true}')
+    inputs.update(family_manifest=str(catalog), family_manifest_sha256=sha256_file(catalog))
+    assert family._validate_matched_task(runtime, source, 'ames').family_manifest == catalog
+    catalog.write_text('{"changed":true}')
+    with pytest.raises(ValueError, match='family_manifest_sha256'):
+        family._validate_matched_task(runtime, source, 'ames')
+    catalog.write_text('{"corrected_source":true}')
+    rebuilt.write_text('changed')
+    with pytest.raises(ValueError, match='index_sha256'):
+        family._validate_matched_task(runtime, source, 'ames')

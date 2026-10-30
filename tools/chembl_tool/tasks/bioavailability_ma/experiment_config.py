@@ -159,3 +159,21 @@ def get_progressive_task_contract() -> ProgressiveTaskContract:
             if not instruction.startswith("You must choose exactly one")
         ),
     )
+
+
+def get_adapted_prompt_contract(profile: str) -> ProgressiveTaskContract:
+    """Optional measurement-scope correction, pinned by the shared runner."""
+    from dataclasses import replace
+
+    if profile != "measurement_scope.v1":
+        raise ValueError(f"Unknown Bioavailability prompt adaptation: {profile}")
+    contract = get_progressive_task_contract()
+    return replace(contract, task_instructions=contract.task_instructions + (
+        "Before comparing any reported percentage with the absolute oral F threshold, identify "
+        "the administered entity, measured analyte, reference treatment and formulation. "
+        "A relative bioavailability percentage, metabolite exposure after dosing a prodrug, "
+        "or an oral-parent versus IV-metabolite comparison is not that parent's absolute F. "
+        "Retain such observations as contextual evidence, explain their limited transferability, "
+        "and do not use their numerical magnitude as a parent F threshold measurement. "
+        "Unknown measurement scope stays unknown; a neighbor's measured F is not a measurement of the query.",
+    ))

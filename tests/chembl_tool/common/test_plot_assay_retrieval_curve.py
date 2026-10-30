@@ -8,6 +8,75 @@ from tools.chembl_tool.paper_experiments import plot_assay_retrieval_curve as pl
 from tools.chembl_tool.paper_experiments import run_assay_retrieval_curve as runner
 
 
+def test_indirect_comparison_means_and_square_export(tmp_path):
+    from PIL import Image
+    source, baseline = tmp_path/'ours.csv', tmp_path/'naive.csv'
+    source.write_text('task,10,25\n' + ''.join(
+        f'{task},{0.1 * i},0.8\n' for i, task in enumerate(plotter.TASK_SPECS)))
+    baseline.write_text('task,10,25\n' + ''.join(
+        f'{task},0.2,0.2\n' for task in plotter.TASK_SPECS))
+    paths = plotter.plot_indirect_budget_comparison(source, baseline, tmp_path, output_stem='test')
+    receipt = json.loads(Path(paths['receipt']).read_text())
+    assert receipt['mean']['ours'] == pytest.approx([0.25, 0.8])
+    assert receipt['mean']['naive'] == pytest.approx([0.2, 0.2])
+    assert Image.open(paths['png']).size == (990, 990)
+    assert receipt['point_count_per_method'] == 12
+    for key in ('png', 'pdf', 'svg'):
+        assert plotter.sha256_file(Path(paths[key])) == receipt['output_sha256'][key]
+    source.write_text(baseline.read_text())  # Flat equal curves must retain a valid y range.
+    plotter.plot_indirect_budget_comparison(source, baseline, tmp_path, output_stem='flat')
+
+
+def test_indirect_comparison_rejects_missing_or_mismatched_inputs(tmp_path):
+    with pytest.raises(ValueError, match='requires --indirect-budget-csv'):
+        plotter.main(['--indirect-budget-baseline-csv', str(tmp_path/'missing.csv')])
+    source, baseline = tmp_path/'ours.csv', tmp_path/'naive.csv'
+    rows = ''.join(f'{task},0.5,0.6\n' for task in plotter.TASK_SPECS)
+    source.write_text('task,10,25\n'+rows)
+    baseline.write_text('task,10,50\n'+rows)
+    with pytest.raises(ValueError, match='same budgets'):
+        plotter.plot_indirect_budget_comparison(source, baseline, tmp_path, output_stem='bad')
+
+
+@pytest.mark.parametrize('subset,visibility,label', [
+    ('valid', 'deployment_visible_prefetched', 'identity visible'),
+    ('test', 'identity_blind', 'identity blind'),
+])
+def test_budgeted_curve_labels_follow_contract(tmp_path, monkeypatch, subset, visibility, label):
+    from tools.chembl_tool.paper_experiments import plot_starling_model_comparison as overview
+    methods = [m for m, _, _ in plotter.CONDITIONED_BASELINES]
+    methods += ['none', 'direct_fill', 'both_fill', 'direct_cap', 'both_cap', 'both_group']
+    rows = [{'task': 'ames', 'method': m, 'family': 'fixture', 'n': 2,
+             'macro_f1': .65, 'accuracy': .7} for m in methods]
+    receipt = {'conditions': {'ames': {'n': 2}}, 'split_scheme': 'scaffold',
+               'evaluation_subset': subset, 'visibility_mode': visibility,
+               'min_similarity': 0, 'direct_budget': 50, 'indirect_budget': 50, 'tool_failures': 0}
+    monkeypatch.setattr(overview, 'load_budgeted_comparison', lambda *a: (rows, receipt))
+    paths = plotter.plot_budgeted_baseline_curves(
+        tmp_path, tmp_path/'audit.json', tmp_path, output_stem='curves')
+    svg = Path(paths['svg']).read_text()
+    assert label in svg and 'no similarity cutoff' in svg
+    assert f"same {'validation' if subset == 'valid' else 'test'} rows" in svg
+    assert len(Path(paths['csv']).read_text().splitlines()) == 12
+
+
+def test_scaling_curve_uses_declared_budget_stages(tmp_path):
+    methods = [m for m, _, _ in plotter.CONDITIONED_BASELINES] + ['none','d25','d50','d100']
+    rows = [dict(task='ames',method=m,family='fixture',n=2,macro_f1=.65,accuracy=.7) for m in methods]
+    receipt = dict(conditions={'ames':{'n':2}}, split_scheme='scaffold',evaluation_subset='valid',
+        visibility_mode='deployment_visible_prefetched',min_similarity=0,direct_budget='25/50/100',
+        indirect_budget=0,tool_failures=0,title='Direct record scaling',
+        stage_labels=['None','D25','D50','D100'],curve_settings={'Fill':['none','d25','d50','d100']},
+        budget_label='Direct sweep; no indirect records')
+    paths = plotter.plot_baseline_curve_points(rows,receipt,tmp_path,output_stem='scaling')
+    svg = Path(paths['svg']).read_text()
+    assert 'Direct record scaling' in svg and 'D100' in svg
+    assert 'Direct sweep; no indirect records' in svg
+    receipt['stage_labels'] = ['None','Direct']
+    with pytest.raises(ValueError,match='stage labels'):
+        plotter.plot_baseline_curve_points(rows,receipt,tmp_path,output_stem='invalid')
+
+
 def test_prefix_manifest_supports_legacy_and_task_specific_schedules():
     assert plotter._prefixes_by_task(
         {"tasks": ["a", "b"], "prefixes": [5, 20]}
@@ -973,12 +1042,75 @@ def test_progressive_configuration_comparison_validates_lineage(monkeypatch):
             lineage_receipts_by_task={"bbb_martins": Path("/tmp/receipt.json")},
         )
 
+    changed_prepared = False
+    drift = {}
+    def cross_model_collect(*, progressive_roots_by_task=None, **kwargs):
+        rows, summary = fake_collect(progressive_roots_by_task=progressive_roots_by_task, **kwargs)
+        contract = summary["comparison_contract"]["task_contracts"]["bbb_martins"]
+        contract["prepared_evidence_sha256"] = "same-evidence"
+        contract["prompt_comparison_evidence_sha256"] = "same-tools-cards"
+        root = str(next(iter(progressive_roots_by_task.values())))
+        if "gpt" in root:
+            contract.update(model_identity="gpt", temperature=None, reasoning_effort="medium")
+            if "changed" in root:
+                contract.update(drift)
+        return rows, summary
+
+    monkeypatch.setattr(plotter, "collect_conditioned_progressive_resource_data", cross_model_collect)
+    roots = {"reference": {"bbb_martins": Path('/tmp/4_2')},
+             "gpt": {"bbb_martins": Path('/tmp/gpt_4_2')}}
+    with pytest.raises(ValueError, match="Incompatible progressive configurations"):
+        plotter.collect_conditioned_progressive_configuration_data(configuration_roots=roots)
+    _, summary = plotter.collect_conditioned_progressive_configuration_data(
+        configuration_roots=roots, allow_model_comparison=True)
+    audit = summary["comparison_contract"]["task_audits"]["bbb_martins"]
+    assert audit["model_generation_differences"]["gpt"]["reasoning_effort"]["comparison"] == "medium"
+    roots["gpt_changed"] = {"bbb_martins": Path('/tmp/gpt_changed_4_2')}
+    for field, value in (("temperature", 0), ("reasoning_effort", "high")):
+        drift.clear()
+        drift[field] = value
+        with pytest.raises(ValueError, match=f"Same-model comparison differs in {field}"):
+            plotter.collect_conditioned_progressive_configuration_data(
+                configuration_roots=roots, allow_model_comparison=True)
+    roots.pop("gpt")
+    drift.clear()
+    drift["prepared_evidence_sha256"] = "changed"
+    with pytest.raises(ValueError, match="Cross-model comparison differs in prepared_evidence_sha256"):
+        plotter.collect_conditioned_progressive_configuration_data(
+            configuration_roots=roots, allow_model_comparison=True)
+    drift.clear()
+    drift["reasoning_policy"] = {"prompt_adaptation": {"profile": "gpt_calibration.v1"}}
+    with pytest.raises(ValueError, match="Prompt-policy ablations"):
+        plotter.collect_conditioned_progressive_configuration_data(
+            configuration_roots=roots, allow_model_comparison=True)
+    _, summary = plotter.collect_conditioned_progressive_configuration_data(
+        configuration_roots=roots, allow_model_comparison=True, allow_prompt_comparison=True)
+    assert summary["comparison_contract"]["task_audits"]["bbb_martins"]["prompt_comparisons"]["gpt_changed"]["evidence_and_tools_equal"]
+    drift["prompt_comparison_evidence_sha256"] = "changed-cards"
+    with pytest.raises(ValueError, match="Prompt comparison differs in prompt_comparison_evidence_sha256"):
+        plotter.collect_conditioned_progressive_configuration_data(
+            configuration_roots=roots, allow_model_comparison=True, allow_prompt_comparison=True)
+    drift["prompt_comparison_evidence_sha256"] = "same-tools-cards"
+    drift["reasoning_policy"]["unrelated_policy"] = True
+    with pytest.raises(ValueError, match="beyond prompt_adaptation"):
+        plotter.collect_conditioned_progressive_configuration_data(
+            configuration_roots=roots, allow_model_comparison=True, allow_prompt_comparison=True)
+
+
+def test_prompt_comparison_preserves_evidence_and_unrelated_policy():
+    prepared = {"query_prior": "generated", "cards": ["card-a"],
+                "reasoning_policy": {"prompt_adaptation": {"profile": "new"}, "grounding": True}}
+    expected = {"cards": ["card-a"], "reasoning_policy": {"grounding": True}}
+    assert plotter._prompt_comparison_evidence(prepared) == expected
+    assert "prompt_adaptation" in prepared["reasoning_policy"]
+
 
 @pytest.mark.parametrize("mismatch", [None, "prepared_inputs_sha256", "selection", "index_sha256", "prompt_profile"])
-def test_matched_full_flat_comparison_requires_same_evidence_and_frozen_profiles(mismatch):
+@pytest.mark.parametrize("profile", ["progressive_compact_tools_short_aliases.v2", "progressive_evidence_revision.v5"])
+def test_matched_full_flat_comparison_requires_same_evidence_and_frozen_profiles(mismatch, profile):
     progressive = {
         "experiment": "conditioned_assay_progressive_visible.v8",
-        "prompt_profile": "progressive_compact_tools_short_aliases.v2",
+        "prompt_profile": profile,
         "selection": {"level_1": {"card_limit_per_molecule": 4}},
         "prepared_inputs_sha256": "same-cards-tools-and-query-priors",
         "index_sha256": "same-index",
@@ -1018,6 +1150,7 @@ def test_progressive_configuration_references_require_shared_none_and_baselines(
             json.dumps(
                 {
                     "evaluation_indices_by_task": {"bbb_martins": [0, 1]},
+                    "model": "same-model",
                 }
             ),
             encoding="utf-8",
@@ -1071,6 +1204,11 @@ def test_progressive_configuration_references_require_shared_none_and_baselines(
             none_root=tmp_path / "fallback_none",
             baseline_root=baseline_root,
         )
+    prompt_rows, prompt_audit = plotter.collect_conditioned_progressive_configuration_reference_data(
+        configuration_roots=configuration_roots, none_root=tmp_path / "fallback_none",
+        baseline_root=baseline_root, allow_prompt_comparison=True)
+    assert sorted(row["macro_f1"] for row in prompt_rows if row["result_type"] == "none") == [0.54, 0.55]
+    assert prompt_audit["none_shared_within_model"] is False
 
     for model, tasks in configuration_roots.items():
         path = tasks["bbb_martins"] / "experiment_manifest.json"
@@ -1120,7 +1258,8 @@ def test_cross_model_organization_requires_identical_tools_and_evidence():
         plotter._matched_organization_comparison(a, {**b, "prepared_evidence_sha256": "changed"}, cross_model=True)
 
 
-def test_four_model_method_curves_keep_separate_none_and_mixed_run_counts(tmp_path):
+@pytest.mark.parametrize("interval", ["range", "sd_if_repeated"])
+def test_four_model_method_curves_keep_separate_none_and_mixed_run_counts(tmp_path, interval):
     rows, references = [], []
     for model, count in [("flash", 3), ("pro", 1)]:
         for organization in ["full_flat", "progressive"]:
@@ -1138,10 +1277,15 @@ def test_four_model_method_curves_keep_separate_none_and_mixed_run_counts(tmp_pa
         rows=rows, output_svg=svg, output_png=tmp_path / "models.png",
         tasks=("bbb_martins",), configurations=tuple(row["configuration"] for row in rows),
         reference_rows=references, organization_comparison=True, performance_only=True,
-        replicate_interval="sd_if_repeated",
+        replicate_interval=interval,
     )
     text = svg.read_text()
-    assert "1 run, no SD" in text and "3 runs, mean" in text
+    assert "1 run, no interval" in text and "3 runs, mean" in text
+    assert "default 4/2 card budget" not in text
+    if interval == "range":
+        assert "observed min–max" in text and "sample SD" not in text
+    else:
+        assert "sample SD" in text
     assert "0.500" in text and "0.600" in text
 
 
@@ -1236,3 +1380,185 @@ def test_split_scoped_baselines_do_not_mix_equal_sized_valid_and_test(tmp_path):
             [], task="dili", task_label="DILI", baseline_task="DILI",
             baseline_root=tmp_path, expected_n=103,
         )
+
+
+@pytest.mark.parametrize('benchmark', ['conditioned', 'tdc'])
+def test_reported_curve_source_resolves_relative_to_metadata(tmp_path, monkeypatch, benchmark):
+    source = tmp_path / 'ours.json'
+    curves = {
+        'conditioned': [dict(label='Ours', source='user table', scores={'ames': [None, .7, .8]})],
+        'tdc': [dict(label='Ours', source='user table', scores={'ames': [None, .6, .9]})],
+    }
+    source.write_text(json.dumps({'curves': curves}))
+    folder = tmp_path / benchmark
+    folder.mkdir()
+    metadata = folder / 'metadata.json'
+    config = {'reported_curves_source': {'path': '../ours.json', 'benchmark': benchmark}}
+    metadata.write_text(json.dumps(config))
+    points = folder / 'points.csv'
+    points.write_text('task,method,family,n,macro_f1,accuracy\names,none,LLM,2,0.5,0.5\n')
+    monkeypatch.setattr(plotter, 'plot_baseline_curve_points',
+                        lambda rows, receipt, *args, **kwargs: receipt)
+    receipt = plotter.plot_baseline_curves_csv(points, metadata, folder, output_stem='test')
+    assert receipt['reported_curves'] == curves[benchmark]
+    assert receipt['reported_curves_source']['sha256'] == plotter.sha256_file(source)
+    assert receipt['reported_curves_source']['resolved_path'] == str(source)
+    assert receipt['metadata_source']['sha256'] == plotter.sha256_file(metadata)
+    # A stale inline copy must never silently override the shared result record.
+    metadata.write_text(json.dumps({**config, 'reported_curves': curves[benchmark]}))
+    with pytest.raises(ValueError, match='either inline'):
+        plotter.plot_baseline_curves_csv(points, metadata, folder, output_stem='test')
+
+
+def test_metadata_baselines_include_both_training_pools(tmp_path):
+    rows = [dict(task='ames', method=m, family='fixture', n=2, macro_f1=.5+i*.03, accuracy=.7)
+            for i,m in enumerate(['none','direct','both','rf','mixed_rf'])]
+    receipt = dict(conditions={'ames':{'n':2}}, split_scheme='scaffold',evaluation_subset='test',
+        visibility_mode='deployment_visible_prefetched',min_similarity=0,direct_budget=50,
+        indirect_budget=50,tool_failures=0,cohort_label='Original TDC test',curve_settings={'Model':['none','direct','both']},
+        baseline_settings=[dict(method=m,label=label,tick='RF',marker='v',face=face,edge='#333333')
+                           for m,label,face in [('rf','RF train','#333333'),('mixed_rf','RF mixed','white')]])
+    paths = plotter.plot_baseline_curve_points(rows,receipt,tmp_path,output_stem='all_ml')
+    saved=json.loads(Path(paths['receipt']).read_text())
+    assert {r['method'] for r in saved['scores']} == {r['method'] for r in rows}
+    svg=Path(paths['svg']).read_text()
+    assert 'RF train' in svg and 'RF mixed' in svg and 'Original TDC test' in svg
+    with pytest.raises(ValueError,match='missing curve or ML'):
+        plotter.plot_baseline_curve_points(rows[:-1],receipt,tmp_path,output_stem='missing')
+    with pytest.raises(ValueError,match='omitted'):
+        plotter.plot_baseline_curve_points(rows+[dict(rows[0],method='unlisted')],receipt,tmp_path,output_stem='extra')
+
+
+def test_grouped_test_maxima_keep_training_pools_metrics_and_ties_separate(tmp_path, monkeypatch):
+    rows=[]
+    for task in ['ames','dili']:
+        for method,f1,accuracy in [('none',.4,.5),('direct',.5,.6),('both',.6,.7),
+                                  ('head',.6,.9),('finetuned',.7,.5),
+                                  ('mixed_head',.8,.7),('mixed_finetuned',.8,.99)]:
+            rows.append(dict(task=task,method=method,family='LLM' if method in ['none','direct','both'] else 'baseline',n=2,macro_f1=f1,accuracy=accuracy))
+    receipt=dict(conditions={t:{'n':2} for t in ['ames','dili']},split_scheme='scaffold',evaluation_subset='test',
+        visibility_mode='deployment_visible_prefetched',min_similarity=0,direct_budget=50,indirect_budget=50,
+        tool_failures=0,curve_settings={'Model':['none','direct','both']},baseline_selection='max_test_macro_f1',
+        baseline_settings=[dict(method=prefix+'mm_direct',members=[prefix+'head',prefix+'finetuned'],
+            label=prefix+'MM Direct',tick='MM Direct',marker='D',face=face,edge='#333333')
+            for prefix,face in [('', '#333333'),('mixed_', 'white')]])
+    receipt['reported_curves']=[dict(label='Ours',source='User supplied final scores',
+        scores={'ames':[None,.91,None],'dili':[None,.85,.92]})]
+    reported_lines=[]
+    original_plot=plotter.plt.Axes.plot
+    def capture_reported(ax, *args, **kwargs):
+        if kwargs.get('label')=='Ours':
+            reported_lines.append(args[1])
+        return original_plot(ax, *args, **kwargs)
+    monkeypatch.setattr(plotter.plt.Axes,'plot',capture_reported)
+    paths=plotter.plot_baseline_curve_points(rows,receipt,tmp_path,output_stem='grouped')
+    saved=json.loads(Path(paths['receipt']).read_text())
+    assert len(saved['scores'])==10 and len(saved['source_scores'])==14
+    assert saved['point_counts']=={'audited_baselines':10,'reported':3,'total':13}
+    assert saved['reported_curves']==receipt['reported_curves']
+    assert 'Ours' not in saved['curve_settings']
+    assert saved['macro_f1_limits'][1]>=.92
+    assert str(reported_lines[0][0])=='nan' and str(reported_lines[0][2])=='nan'
+    assert reported_lines[0][1]==.91 and reported_lines[1][1:]==[.85,.92]
+    with pytest.raises(ValueError,match='invalid reported'):
+        plotter.plot_baseline_curve_points(rows,{**receipt,'reported_curves':[
+            dict(label='Ours',source='test',scores={'ames':[None,1.1,None],'dili':[None,.85,.92]})]},tmp_path,output_stem='bad_reported')
+    selected={r['group']:r for r in saved['baseline_selections'] if r['task']=='ames'}
+    assert selected['mm_direct']['selected_method']=='finetuned'
+    assert selected['mixed_mm_direct']['selected_method']=='mixed_head'
+    assert selected['mixed_mm_direct']['tied_methods']==['mixed_head','mixed_finetuned']
+    winners={r['method']:r for r in saved['scores'] if r['task']=='ames'}
+    assert winners['mm_direct']['accuracy']==.5  # Preserve the F1 winner, not a separate accuracy maximum.
+    assert winners['mixed_mm_direct']['accuracy']==.7
+    assert [r for r in saved['scores'] if r['family']=='LLM']==[r for r in rows if r['family']=='LLM']
+    with pytest.raises(ValueError,match='explicit max_test'):
+        plotter.plot_baseline_curve_points(rows,{**receipt,'baseline_selection':'validation'},tmp_path,output_stem='invalid')
+    bad=[dict(r,n=3) if r['method']=='head' else r for r in rows]
+    with pytest.raises(ValueError,match='same cohort'):
+        plotter._baseline_group_maxima(bad,receipt['baseline_settings'],receipt['conditions'])
+    with pytest.raises(ValueError,match='missing baseline group candidate'):
+        plotter._baseline_group_maxima(rows[1:], [dict(method='group',members=['none','direct'])],receipt['conditions'])
+    with pytest.raises(ValueError,match='disjoint'):
+        plotter._baseline_group_maxima(rows,[dict(method='a',members=['head']),dict(method='b',members=['head'])],receipt['conditions'])
+    with pytest.raises(ValueError,match='declared cohorts'):
+        plotter._baseline_group_maxima(rows+[dict(rows[3],task='undeclared')],receipt['baseline_settings'],receipt['conditions'])
+
+
+@pytest.mark.parametrize('layout,content', [('mixed', 'all'), ('horizontal', 'all'),
+    ('mixed', 'tasks'), ('horizontal', 'tasks'), ('mixed', 'mean')])
+@pytest.mark.parametrize('exclude_indirect', [False, True])
+def test_bar_comparison_preserves_scores_missing_stages_and_local_scales(tmp_path, monkeypatch, layout, content, exclude_indirect):
+    rows = [dict(task=task, method=method, family='LLM' if method != 'ml' else 'baseline',
+                 n=2 if task == 'ames' else 200, macro_f1=score, accuracy=score)
+            for task, offset in [('ames', 0), ('dili', .3)]
+            for method, score in [('none', .2+offset), ('direct', .3+offset),
+                                  ('both', .4+offset), ('ml', .25+offset)]]
+    receipt = dict(conditions={'ames': {'n': 2}, 'dili': {'n': 200}},
+        chart_style='bars', bar_layout=layout, bar_content=content, y_scale='task', curve_settings={'Model': ['none', 'direct', 'both']},
+        reported_curve_backbones={'Ours': 'Model'},
+        baseline_settings=[dict(method='ml', label='ML', tick='ML', face='#748396')],
+        reported_curves=[dict(label='Ours', source='User supplied',
+                             scores={'ames': [None, .35, .45], 'dili': [None, .65, .75]})])
+    if exclude_indirect:
+        receipt['excluded_bar_settings'] = {'Model': ['Ours · Direct + Indirect']}
+    captured = []
+    original_close = plotter.plt.close
+    monkeypatch.setattr(plotter.plt, 'close', lambda fig: captured.append(fig))
+    paths = plotter.plot_baseline_curve_points(rows, receipt, tmp_path, output_stem='bars')
+    saved = json.loads(Path(paths['receipt']).read_text())
+    assert saved['point_counts'] == {'audited_baselines': 8, 'reported': 4, 'total': 12}
+    assert saved['task_macro_f1_limits']['ames'] != saved['task_macro_f1_limits']['dili']
+    fig = captured[-1]
+    assert len(fig.axes) == (1 if content == 'mean' else 2 if content == 'tasks' else 3)
+    assert saved['rendered_counts'] == {'task_bars': 0 if content == 'mean' else 10 if exclude_indirect else 12,
+                                       'mean_bars': 0 if content == 'tasks' else 5 if exclude_indirect else 6}
+    for ax, task in zip(fig.axes, ('mean',) if content == 'mean' else ('ames', 'dili')):
+        expected = [r['macro_f1'] for r in rows if r['task'] == task]
+        reported = receipt['reported_curves'][0]['scores'].get(task, [])
+        expected += [v for v in (reported[:2] if exclude_indirect else reported) if v is not None]
+        if task == 'mean':
+            expected = [.35, .45, .55, .4, .5] + ([] if exclude_indirect else [.6])
+        endpoints = [p.get_y()+p.get_height() if layout == 'mixed' else p.get_x()+p.get_width() for p in ax.patches]
+        assert sorted(endpoints) == pytest.approx(sorted(expected))
+    audited_means = saved['excluded_bar_scores'] if exclude_indirect else saved['task_means']
+    ours_mean = next(r for r in audited_means if r['setting'] == 'Ours · Direct + Indirect')
+    assert ours_mean['mean'] == pytest.approx(.6)  # Equal tasks, not sample-size weighting.
+    legend_labels = [t.get_text() for legend in fig.legends for t in legend.get_texts()]
+    assert ('Ours · Direct + Indirect' in legend_labels) is not exclude_indirect
+    if layout == 'mixed':
+        labels = fig.axes[-1 if content == 'tasks' else 0].get_xticklabels()
+        if content != 'tasks' or labels:
+            assert [t.get_text() for t in labels] == ['N', 'D', 'D+I', 'D'] + ([] if exclude_indirect else ['D+I']) + ['ML']
+            assert labels[3].get_color() == '#AA775D'
+    assert len([r for r in saved['bar_scores'] if r['setting'] == 'None']) == 1
+    svg = Path(paths['svg']).read_text()
+    for removed in ('Independent task scales', 'Grouped by backbone', 'shared starting point', 'not reported'):
+        assert removed not in svg
+    original_close(fig)
+
+
+def test_bar_backbone_binding_and_missing_means_are_explicit():
+    tasks = ['ames', 'dili']
+    receipt = dict(curve_settings={'DeepSeek': ['n', 'd', 'i'], 'Gemini': ['gn', 'gd', 'gi']},
+                   reported_curves=[dict(label='Ours', scores={'ames': [None, .7, .8], 'dili': [None, None, .9]})],
+                   reported_curve_backbones={'Ours': 'DeepSeek'})
+    values = {(name, task): [.3, .4, .5] for name in receipt['curve_settings'] for task in tasks}
+    values.update({('Ours','ames'): [float('nan'), .7, .8], ('Ours','dili'): [float('nan'), float('nan'), .9]})
+    rows = plotter._baseline_bar_rows(tasks, values, {}, [], receipt)
+    assert next(r for r in rows if r['group']=='DeepSeek' and r['stage']==3)['mean'] is None
+    assert next(r for r in rows if r['group']=='DeepSeek' and r['stage']==4)['mean'] == pytest.approx(.85)
+    assert all(r['mean'] is None for r in rows if r['group']=='Gemini' and r['stage']>=3)
+    with pytest.raises(ValueError, match='bind every'):
+        plotter._baseline_bar_rows(tasks, values, {}, [], {**receipt, 'reported_curve_backbones': {}})
+    with pytest.raises(ValueError, match='existing group/setting'):
+        plotter._baseline_bar_rows(tasks, values, {}, [], {**receipt,
+            'excluded_bar_settings': {'unknown': ['Ours · Direct + Indirect']}})
+    # ML positions come from baseline_settings; accepting this option for ML
+    # would remove the bars while leaving their ticks and group heading behind.
+    with pytest.raises(ValueError, match='configure ML groups with baseline_settings'):
+        plotter._baseline_bar_rows(tasks, values, {(task, 'ml'): .4 for task in tasks},
+            [dict(method='ml', tick='ML', face='#748396')], {**receipt,
+                'excluded_bar_settings': {'ML baselines': ['ml']}})
+    receipt['reported_curves'][0]['scores']['ames'][0] = .3
+    with pytest.raises(ValueError, match='shared, not duplicated'):
+        plotter._baseline_bar_rows(tasks, values, {}, [], receipt)

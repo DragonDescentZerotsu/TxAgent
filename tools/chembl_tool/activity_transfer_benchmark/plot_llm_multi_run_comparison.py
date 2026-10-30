@@ -13,9 +13,17 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+from tools.chembl_tool.activity_transfer_benchmark.plot_llm_run_comparison import (
+    annotate_bars,
+    full_validation_baselines,
+    group_count_label,
+    metric_for_group,
+    metric_for_method,
+    metric_row,
+    read_json,
+)
 from tools.chembl_tool.activity_transfer_benchmark.run_llm_benchmark import (
     compute_metrics,
-    prepare_input_records,
     read_jsonl,
 )
 
@@ -143,86 +151,11 @@ def parse_runs(values: list[str]) -> list[tuple[str, str]]:
     return runs
 
 
-def read_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
 def load_run_metrics(run_dir: Path) -> dict[str, Any]:
     metrics = read_json(run_dir / "metrics.json")
     if metrics.get("per_eval_subset") or not (run_dir / "predictions.jsonl").exists():
         return metrics
     return compute_metrics(read_jsonl(run_dir / "predictions.jsonl"))
-
-
-def full_validation_baselines(input_jsonl: Path) -> dict[str, Any]:
-    records = prepare_input_records(read_jsonl(input_jsonl))
-    rows = []
-    for record in records:
-        rows.append(
-            {
-                "status": "ok",
-                "prediction": record["baseline_tanimoto_0_50_prediction"],
-                "label": record["label"],
-                "input_record": {"tanimoto": record["tanimoto"], "hf_metadata": record["metadata"]},
-                "baseline_tanimoto_0_50_prediction": record["baseline_tanimoto_0_50_prediction"],
-                "baseline_tanimoto_0_48_prediction": record["baseline_tanimoto_0_48_prediction"],
-                "baseline_similarity_bucket_majority_prediction": record[
-                    "baseline_similarity_bucket_majority_prediction"
-                ],
-                "baseline_assay_type_tanimoto_0_50_prediction": record[
-                    "baseline_assay_type_tanimoto_0_50_prediction"
-                ],
-                "usage": {},
-                "tool_count": 0,
-            }
-        )
-    return compute_metrics(rows)
-
-
-def metric_for_method(metrics: dict[str, Any], baseline_metrics: dict[str, Any], method: str, metric: str) -> float:
-    if method in metrics:
-        return float(metrics[method]["llm"][metric])
-    if method == "Tanimoto >= 0.5":
-        return float(baseline_metrics["baselines"]["tanimoto_0_50"][metric])
-    if method == "Bucket majority":
-        return float(baseline_metrics["baselines"]["similarity_bucket_majority"][metric])
-    raise KeyError(method)
-
-
-def metric_for_group(
-    metrics: dict[str, Any],
-    baseline_metrics: dict[str, Any],
-    scope: str,
-    group: str,
-    method: str,
-) -> dict[str, Any]:
-    if scope == "overall":
-        if method in metrics:
-            return metrics[method]["llm"]
-        if method == "Tanimoto >= 0.5":
-            return baseline_metrics["baselines"]["tanimoto_0_50"]
-        if method == "Bucket majority":
-            return baseline_metrics["baselines"]["similarity_bucket_majority"]
-    if method in metrics:
-        return metrics[method][f"per_{scope}"][group]["llm"]
-    if method == "Tanimoto >= 0.5":
-        return baseline_metrics[f"per_{scope}"][group]["baselines"]["tanimoto_0_50"]
-    if method == "Bucket majority":
-        return baseline_metrics[f"per_{scope}"][group]["baselines"]["similarity_bucket_majority"]
-    raise KeyError((scope, group, method))
-
-
-def true_label_n(metric: dict[str, Any], label: str) -> int:
-    if label == "similar":
-        return int(metric.get("tp", 0)) + int(metric.get("fn", 0))
-    if label == "different":
-        return int(metric.get("tn", 0)) + int(metric.get("fp", 0))
-    raise KeyError(label)
-
-
-def group_count_label(baseline_metrics: dict[str, Any], scope: str, group: str) -> str:
-    metric = baseline_metrics[f"per_{scope}"][group]["baselines"]["tanimoto_0_50"]
-    return f"{group}\nS={true_label_n(metric, 'similar')}\nD={true_label_n(metric, 'different')}"
 
 
 def bar_offsets(n_methods: int) -> tuple[float, list[float]]:
@@ -365,36 +298,6 @@ def plot_label_recalls(
     fig.savefig(svg_path)
     fig.savefig(png_path, dpi=180)
     plt.close(fig)
-
-
-def annotate_bars(ax: Any, bars: Any, values: list[float]) -> None:
-    for bar, value in zip(bars, values):
-        ax.text(
-            bar.get_x() + bar.get_width() / 2,
-            bar.get_height() + 0.012,
-            f"{value:.3f}",
-            ha="center",
-            va="bottom",
-            fontsize=8,
-        )
-
-
-def metric_row(scope: str, group: str, method: str, metric: dict[str, Any]) -> list[str]:
-    return [
-        scope,
-        group,
-        method,
-        str(metric.get("n", "")),
-        str(true_label_n(metric, "similar")),
-        str(true_label_n(metric, "different")),
-        f"{float(metric.get('accuracy', 0.0)):.6f}",
-        f"{float(metric.get('balanced_accuracy', 0.0)):.6f}",
-        f"{float(metric.get('macro_f1', 0.0)):.6f}",
-        f"{float(metric.get('recall_similar', 0.0)):.6f}",
-        f"{float(metric.get('recall_different', 0.0)):.6f}",
-        f"{float(metric.get('precision_similar', 0.0)):.6f}",
-        f"{float(metric.get('precision_different', 0.0)):.6f}",
-    ]
 
 
 def iter_metric_rows(

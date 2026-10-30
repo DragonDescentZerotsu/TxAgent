@@ -1,0 +1,43 @@
+{
+  "status": "complete",
+  "reviewed_at": "2026-09-18T18:40:30.148061+00:00",
+  "scope": "Shared-process baseline preparation, aligned 25/50/100 validation results, portable scale curves, maintained entrypoints and retention documentation; unrelated Skin/source work preserved.",
+  "findings_fixed": [
+    "Replaced obsolete per-task coordinator launch wrapper and group queue with one suite preparation coordinator.",
+    "Create an isolated coordinator process group and stop its spawned CPU workers on failure/cancellation; reap coordinator.",
+    "Keep the preparation audit-cache closure bound while releasing its index after registration; remove an unused plotting f-string prefix.",
+    "Correct README claim that aligned inference has not run, its broken prompt anchor, stale prompt registry status, and unsafe historical resume guidance.",
+    "Distinguish active 25/50/100 baseline scaling from paused 16/64/128 Joint defaults; document run, CSV plot, audit and retention entrypoints."
+  ],
+  "production_changes": {
+    "tools/chembl_tool/paper_experiments/budgeted_suite.py": {
+      "before_sha256": "41b1068e523c6a409b2524a6e0ffaab64f69043c4694eb3b6abdb1ef45723823",
+      "after_sha256": "09c83e9ec03de0b467e19743a61750447349f11699930b3c4256559fb6ba0197",
+      "line_delta": 3
+    },
+    "tools/chembl_tool/paper_experiments/plot_assay_retrieval_curve.py": {
+      "before_sha256": "017a0ca7a561f632bb75afa4cfd4021e723da5f4a482f0fc4ecf20ec3af6d16c",
+      "after_sha256": "6c6109174cfbcde4229c7fd1a1f4bdcca639defaf4f65e2d4987d4b8285419e2",
+      "line_delta": 0
+    }
+  },
+  "production_net_line_delta": 3,
+  "validation": {
+    "focused_tests_passed": 162,
+    "final_suite_recheck_passed": 17,
+    "ruff_F": "passed",
+    "git_diff_check": "passed",
+    "real_process_group_smoke": "outputs/paper/analysis/aligned_scaling_maintenance_20260918/process_group_smoke.json",
+    "artifact_check": "outputs/paper/analysis/aligned_scaling_maintenance_20260918/artifact_check.json",
+    "entrypoints": "Family --help and plot --help verified; portable CSV plot replay produced byte-identical PNG and CSV."
+  },
+  "retention": {
+    "before_code": "outputs/paper/analysis/aligned_scaling_maintenance_20260918/before.json",
+    "cleanup": "outputs/paper/analysis/aligned_scaling_maintenance_20260918/cleanup.json",
+    "preserved": "All completed results, prior dependencies, frozen manifests, recovery/quarantine evidence and historical runtime originals retained.",
+    "new_maintained_modules": 0,
+    "inference_calls": 0,
+    "joint_remains_paused": true,
+    "git_publish_performed": false
+  }
+}

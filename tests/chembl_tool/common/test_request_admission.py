@@ -25,12 +25,13 @@ def status(path):
 
 
 @contextmanager
-def broker(capacity):
+def broker(capacity, requests_per_minute=0):
     with tempfile.TemporaryDirectory(prefix="admission-") as directory:
         path = str(Path(directory) / "pool.sock")
         process = subprocess.Popen([
             sys.executable, "-m", "tools.chembl_tool.common.request_admission",
             "--socket", path, "--capacity", str(capacity),
+            "--requests-per-minute", str(requests_per_minute),
         ], stdout=subprocess.DEVNULL)
         try:
             deadline = time.monotonic() + 10
@@ -191,3 +192,65 @@ with admitted_sync(sys.argv[1]):
 
     with broker(1) as (path, process):
         asyncio.run(run(path, process))
+
+
+def test_grow_admits_waiters_without_interrupting_holders():
+    async def run(path):
+        async def request():
+            await asyncio.Event().wait()
+
+        calls = [asyncio.create_task(admitted_call(
+            path, request, timeout=None, on_admitted=lambda: None)) for _ in range(3)]
+        try:
+            await settled(path, active=1, waiting=2)
+            def grow(value):
+                with socket.socket(socket.AF_UNIX) as connection:
+                    connection.settimeout(2)
+                    connection.connect(path)
+                    connection.sendall(f"grow {value}\n".encode())
+                    return json.loads(connection.recv(4096))
+            assert grow(2)["capacity"] == 2
+            await settled(path, active=2, waiting=1)
+            assert grow(2)["capacity"] == 2  # Idempotent, no extra permits.
+            assert "error" in grow(1)
+            assert "error" in grow("invalid")
+            await settled(path, active=2, waiting=1)
+            assert not any(call.done() for call in calls)
+            assert grow(3)["capacity"] == 3
+            await settled(path, active=3, waiting=0)
+        finally:
+            for call in calls:
+                call.cancel()
+            await asyncio.gather(*calls, return_exceptions=True)
+        await settled(path, active=0, waiting=0)
+
+    with broker(1) as (path, _):
+        asyncio.run(run(path))
+
+
+def test_pacing_spaces_grants_and_cancelled_waiter_returns_permit():
+    async def run(path):
+        grants = []
+
+        async def request():
+            return None
+
+        async def call():
+            await admitted_call(path, request, timeout=1,
+                                on_admitted=lambda: grants.append(time.monotonic()))
+
+        await call()
+        cancelled = asyncio.create_task(call())
+        await settled(path, waiting=1)
+        cancelled.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await cancelled
+        await settled(path, active=0, waiting=0)
+        await asyncio.wait_for(asyncio.gather(call(), call(), call()), 3)
+        assert len(grants) == 4
+        assert all(b - a >= 0.08 for a, b in zip(grants, grants[1:]))
+        await settled(path, active=0, waiting=0)
+        assert status(path)["granted"] == 4
+
+    with broker(1, requests_per_minute=600) as (path, _):
+        asyncio.run(run(path))

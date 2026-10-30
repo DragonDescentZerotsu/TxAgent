@@ -1,0 +1,123 @@
+{
+  "status": "complete_verified",
+  "date": "2026-09-25",
+  "documentation": "tools/chembl_tool/paper_experiments/README.md#current-comparison-figures",
+  "verification": "outputs/paper/llm_vs_standard_baselines_20260924/figure_verification.json",
+  "registry_key": "budgeted_evidence_protocol.llm_vs_standard_baselines",
+  "maintained_entrypoint": "tools/chembl_tool/paper_experiments/plot_assay_retrieval_curve.py",
+  "layouts": [
+    "mixed",
+    "horizontal"
+  ],
+  "retired_archive": {
+    "path": "outputs/paper/llm_vs_standard_baselines_20260924/design_snapshots/retired_designs_20260925.zip",
+    "sha256": "2a80476042718e142416705b96f34ef8f5fea3b22a93d2049bb4465ef4edad88"
+  },
+  "preserved_snapshot": "outputs/paper/llm_vs_standard_baselines_20260924/design_snapshots/20260925_backbone_pastel_mixed/snapshot.json",
+  "numerical_sources_unchanged": true,
+  "task_marks": 270,
+  "complete_means": 45,
+  "plotting_tests_passed": 60,
+  "maintained_compositor": "outputs/paper/llm_vs_standard_baselines_20260924/main_results.tex",
+  "panel_variants": [
+    "mixed/tasks",
+    "horizontal/tasks",
+    "mixed/mean"
+  ],
+  "panels": 6,
+  "composites": 3,
+  "reported_scores": 72,
+  "ml_cells": 198,
+  "gemini_layout_check_required": false,
+  "exporter_template_smoke_checks": 2,
+  "current_style_status": "Three-backbone extension of accepted mean design",
+  "renderer_sha256": "4b1f5fba8820b6061d5cd7a4029ad133a50fa371a66d6beafc39851e4aad4b20",
+  "exporter_sha256": "1fb4c1aa66a2884562a2925fa53469206ab51799c9f650514d6970a1ba1dcebc",
+  "compositor_sha256": "73e87a8f463a28ad4e2abbac0d85f148c42cf67ea41a60abf3112cfeeb7b9b36",
+  "gemini_inclusion": "outputs/paper/llm_vs_standard_baselines_20260924/gemini_inclusion_verification.json",
+  "gemini_maintenance_review": {
+    "status": "complete_verified",
+    "scope": "Gemini figure integration and repeatable reporting; no new inference, training, or deferred cost/provenance audit.",
+    "fixes": [
+      "Removed stale pending-integration and 48-score descriptions from current docs and registry.",
+      "Existing exporter regenerates additional baseline links and SHA256/cell-count provenance in comparison and verification records."
+    ],
+    "full_export_runs": 2,
+    "repeat_export_no_duplicates": true,
+    "baseline_rows_unchanged": 306,
+    "ml_cells_unchanged": 198,
+    "panel_pngs_byte_identical": 6,
+    "panel_score_csvs_byte_identical": 6,
+    "reported_scores_unchanged": 72,
+    "reported_means_unchanged": 12,
+    "plotting_tests_passed": 60,
+    "new_maintained_entrypoints": 0,
+    "temporary_validation_outputs": "/tmp only",
+    "approved_figures_and_manuscript_unchanged": true
+  },
+  "tdc_title_update": {
+    "labels": {
+      "bbb_martins": "BBB_Martins",
+      "bioavailability_ma": "Bioavailability_Ma",
+      "skin_reaction": "Skin_Reaction",
+      "ames": "AMES",
+      "dili": "DILI",
+      "carcinogens": "Carcinogens_Lagunin"
+    },
+    "official_source": "https://tdc.readthedocs.io/en/main/_modules/tdc/metadata.html",
+    "scores_and_means_unchanged": true,
+    "both_layouts_visually_checked": true,
+    "plotting_tests_passed": 62
+  },
+  "task_title_style_update": {
+    "weight": "normal",
+    "scope": "Both benchmarks and both task layouts",
+    "scores_and_means_unchanged": true,
+    "font_sizes_unchanged": true,
+    "visual_check": "TDC mixed PNG checked after rendering"
+  },
+  "task_axis_layout_update": {
+    "x_tick_labels": "bottom panel of each column only",
+    "row_spacing": 0.65,
+    "panel_height_increase_percent": 14.0,
+    "scope": "mixed task panels; both benchmarks",
+    "scores_means_scales_unchanged": true,
+    "both_benchmarks_bottom_label_visibility_and_axes_height_checked": true,
+    "visual_check": "TDC mixed PNG checked after rendering"
+  },
+  "maintenance_20260929": {
+    "date": "2026-09-29",
+    "gemini_baseline_cells": 36,
+    "gemini_prediction_hashes_unchanged": true,
+    "ours_task_values_checked": 72,
+    "ours_means_checked": 12,
+    "naive_llm_appendix_task_values_checked": 108,
+    "naive_llm_appendix_means_checked": 18,
+    "baseline_mean_appendix_values_checked": 33,
+    "all_plotted_means_checked": 45,
+    "manuscript_table_files_sha256": {
+      "/path/to/manuscript/sections/appendix_ours.tex": "c7056803526309169f4feb8d95b315684134d86623c45d7124e5ed8b5e2013a8",
+      "/path/to/manuscript/sections/appendix_llm.tex": "8ebd62e82c850c6f9ab78139f84f797f56f81d53739ed3557d681ab7b0026f13",
+      "/path/to/manuscript/sections/appendix_baselines.tex": "77d1761728abe63661017eabad231c4eda9bbcd83783115529974b28b5926264"
+    },
+    "scope": "Numeric tables only; not a current manuscript compilation or protocol-prose audit. Gemini deeper provenance/cost reconciliation remains deferred.",
+    "gemini_predictions_checked": 12819,
+    "gemini_metric_cells_recomputed": 36,
+    "status": "complete_verified",
+    "plotting_tests_passed": 62,
+    "full_export_verified": true,
+    "six_panel_pngs_and_csvs_unchanged": true,
+    "raw_baseline_rows": 306,
+    "ml_cells": 198,
+    "new_maintained_entrypoints": 0,
+    "exporter_cleanup": "Removed obsolete new-output caption override; current metadata is preserved.",
+    "corrections": [
+      "Gemini integrated state in root AGENTS.md",
+      "Gemini conditioned indirect gains: six of six, with decline only on TDC Carcinogens",
+      "Caption includes all three backbones",
+      "Documented independent panels, normal title weight, bottom-row x labels and exact mean-table source",
+      "Later manuscript edits invalidate old current-compilation claim; snapshot retained as historical"
+    ],
+    "current_compilation_status": "not performed; later analog manuscript edits preserved"
+  }
+}

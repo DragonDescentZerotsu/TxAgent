@@ -233,6 +233,16 @@ class OpenAIProviderPool:
             for spec in config.providers
         ]
 
+    @property
+    def supports_batch_prefetch(self) -> bool:
+        return len(self._states) == 1 and self._states[0].spec.transport == "openrouter_batch"
+
+    def prefetch_batch_json(self, messages: list[dict[str, Any]]) -> None:
+        """Submit independent Batch work ahead of bounded response consumers."""
+        if not self.supports_batch_prefetch:
+            raise ValueError("Batch prefetch requires exactly one Batch provider")
+        self._states[0].client.prefetch_json(messages)
+
     def chat_json(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
         attempts: list[dict[str, Any]] = []
         excluded: set[str] = set()

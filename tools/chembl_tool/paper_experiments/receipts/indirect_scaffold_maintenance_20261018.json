@@ -1,0 +1,883 @@
+{
+  "status": "complete_verified",
+  "experiments": {
+    "indirect_scaffold_disjoint": {
+      "status": "complete_verified",
+      "predictions": 4273,
+      "cells": [
+        {
+          "benchmark": "conditioned",
+          "task": "bbb_martins",
+          "n": 393,
+          "macro_f1": 0.7045654565456545
+        },
+        {
+          "benchmark": "conditioned",
+          "task": "bioavailability_ma",
+          "n": 269,
+          "macro_f1": 0.7800337526314873
+        },
+        {
+          "benchmark": "conditioned",
+          "task": "skin_reaction",
+          "n": 241,
+          "macro_f1": 0.6323417238749046
+        },
+        {
+          "benchmark": "conditioned",
+          "task": "ames",
+          "n": 274,
+          "macro_f1": 0.7268740031897927
+        },
+        {
+          "benchmark": "conditioned",
+          "task": "dili",
+          "n": 402,
+          "macro_f1": 0.580331976197933
+        },
+        {
+          "benchmark": "conditioned",
+          "task": "carcinogens",
+          "n": 469,
+          "macro_f1": 0.5211295508922721
+        },
+        {
+          "benchmark": "tdc",
+          "task": "bbb_martins",
+          "n": 406,
+          "macro_f1": 0.7439362031919783
+        },
+        {
+          "benchmark": "tdc",
+          "task": "bioavailability_ma",
+          "n": 128,
+          "macro_f1": 0.7789291882556131
+        },
+        {
+          "benchmark": "tdc",
+          "task": "ames",
+          "n": 1457,
+          "macro_f1": 0.7492086158007952
+        },
+        {
+          "benchmark": "tdc",
+          "task": "dili",
+          "n": 96,
+          "macro_f1": 0.6267232237539766
+        },
+        {
+          "benchmark": "tdc",
+          "task": "skin_reaction",
+          "n": 82,
+          "macro_f1": 0.6265452179570592
+        },
+        {
+          "benchmark": "tdc",
+          "task": "carcinogens",
+          "n": 56,
+          "macro_f1": 0.6813008130081301
+        }
+      ],
+      "scores_sha256": "2e281d080b2aa94e56839d8718a41c8f6ec9f0864955909e5c2e7486bfde660a",
+      "verification_sha256": "f6d8f4d985a70c0c6241d0c76a3727b9dd7b960e89a7275d3f725e6970f38984",
+      "source_archive_sha256": "658d294d297a47ea3489f655d73033486ee09953c1591ad7a2e2cddbe4a52512",
+      "figure_artifacts_verified": 30
+    },
+    "indirect_scaffold_disjoint_luna": {
+      "status": "complete_verified",
+      "predictions": 4273,
+      "cells": [
+        {
+          "benchmark": "conditioned",
+          "task": "bbb_martins",
+          "n": 393,
+          "macro_f1": 0.6829482948294829
+        },
+        {
+          "benchmark": "conditioned",
+          "task": "bioavailability_ma",
+          "n": 269,
+          "macro_f1": 0.7452651515151515
+        },
+        {
+          "benchmark": "conditioned",
+          "task": "skin_reaction",
+          "n": 241,
+          "macro_f1": 0.5521342596563457
+        },
+        {
+          "benchmark": "conditioned",
+          "task": "ames",
+          "n": 274,
+          "macro_f1": 0.685838966372893
+        },
+        {
+          "benchmark": "conditioned",
+          "task": "dili",
+          "n": 402,
+          "macro_f1": 0.6083307262569833
+        },
+        {
+          "benchmark": "conditioned",
+          "task": "carcinogens",
+          "n": 469,
+          "macro_f1": 0.5035931145897165
+        },
+        {
+          "benchmark": "tdc",
+          "task": "bbb_martins",
+          "n": 406,
+          "macro_f1": 0.7760908353609084
+        },
+        {
+          "benchmark": "tdc",
+          "task": "bioavailability_ma",
+          "n": 128,
+          "macro_f1": 0.6947117361625134
+        },
+        {
+          "benchmark": "tdc",
+          "task": "ames",
+          "n": 1457,
+          "macro_f1": 0.7556576402321082
+        },
+        {
+          "benchmark": "tdc",
+          "task": "dili",
+          "n": 96,
+          "macro_f1": 0.6015625
+        },
+        {
+          "benchmark": "tdc",
+          "task": "skin_reaction",
+          "n": 82,
+          "macro_f1": 0.5121536630970593
+        },
+        {
+          "benchmark": "tdc",
+          "task": "carcinogens",
+          "n": 56,
+          "macro_f1": 0.6467532467532467
+        }
+      ],
+      "scores_sha256": "95bfa67ab63a19b2b367f6bbaab03d6f51714f4818eca2ab04610552ea0924e0",
+      "verification_sha256": "7aa66f2341bf1e536069ce825ecb7cc9200d23748fa2f0c45942d84d69ff6738",
+      "source_archive_sha256": "a0e2b2c34ddd027d2bd46bb100b576e5509294db6b88cc4d46b42d07a21d01a9",
+      "figure_artifacts_verified": 31
+    }
+  },
+  "reviewed_at": "2026-10-18T19:44:36.962040+00:00",
+  "scope": "2026-10-13/14 scaffold-disjoint DeepSeek/Luna follow-up only; unrelated working-tree changes preserved.",
+  "entrypoints": {
+    "prepare_infer": "tools.chembl_tool.paper_experiments.run_conditioned_assay_family_curve",
+    "plot": "tools.chembl_tool.paper_experiments.plot_assay_retrieval_curve",
+    "saved_result_audit": "outputs/paper/indirect_scaffold_disjoint_20261013/verify.py --root <experiment-root> --require-complete",
+    "admission": "tools.chembl_tool.common.request_admission",
+    "new_maintained_entrypoints": 0
+  },
+  "fixes": [
+    "Reject excluded_bar_settings for ML groups; those positions are configured through baseline_settings. Existing LLM exclusions and figure values unchanged.",
+    "Mark the DeepSeek-only figure historical and link the completed DeepSeek+Luna successor.",
+    "Document shared CLI flags, audit reuse dependencies, archived logs/controllers and dated balance snapshots."
+  ],
+  "tests": [
+    {
+      "command": "PYTHONPATH=. MPLCONFIGDIR=/tmp/txagent-review-mpl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python -m pytest -q tests/chembl_tool/common/test_budgeted_pipeline.py tests/chembl_tool/common/test_budgeted_preparation.py tests/chembl_tool/common/test_budgeted_suite.py tests/chembl_tool/common/test_plot_assay_retrieval_curve.py",
+      "passed": 136,
+      "seconds": 61.51,
+      "phase": "review baseline"
+    },
+    {
+      "command": "PYTHONPATH=. MPLCONFIGDIR=/tmp/txagent-review-mpl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python -m pytest -q tests/chembl_tool/common/test_plot_assay_retrieval_curve.py -k 'bar_comparison or bar_backbone'",
+      "passed": 11,
+      "deselected": 56,
+      "seconds": 23.13,
+      "phase": "after bounded exclusion-validation fix"
+    }
+  ],
+  "figure_checks": "All saved figure artifact and input source hashes match. Both current task/mean receipts match verified DeepSeek/Luna scores; all retained bars equal the previous figure; complete six-task equal means; unavailable arms omitted.",
+  "source_snapshot_notes": "Both frozen ZIP contents verified against their manifests. DeepSeek live auditor and finalized run plan intentionally differ from its first snapshot; Luna snapshot pins the shared auditor extension. The maintenance plotter change only rejects unsupported ML exclusions and is archived here; frozen figure/source snapshots are unchanged.",
+  "archives": [
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "sha256": "eb32231ed2e9bdb16484b10f8c91d9b2bc2f7f74fd3788c6d89c53d5ee9c89ca",
+      "members": {
+        "conditioned_inference_ames.log": {
+          "sha256": "34fad8ee6cd14495fdaabe8e20778ba230118805bfca3010cea1fdd2d36931df",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_inference_ames.log"
+        },
+        "conditioned_inference_bbb_martins.log": {
+          "sha256": "22ae08f7e4d8c0ccde8f91f8ff33a5c4eb8023a927069fba4f4fc4762c0eaa6e",
+          "bytes": 120,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_inference_bbb_martins.log"
+        },
+        "conditioned_inference_bioavailability_ma.log": {
+          "sha256": "3c3d8a49258da524c210c0430a2f6fa1fa911fe40d034ca9210ea509d5685950",
+          "bytes": 201,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_inference_bioavailability_ma.log"
+        },
+        "conditioned_inference_carcinogens.log": {
+          "sha256": "7adec0f74c8730ead565cf77fa017f191eb8e632189b2d8ea09adb1e8804c55c",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_inference_carcinogens.log"
+        },
+        "conditioned_inference_dili.log": {
+          "sha256": "9c7eb1ac27c0468987b90ae3a7c857fa1683b6953de45dffaea59b888687b2a6",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_inference_dili.log"
+        },
+        "conditioned_inference_skin_reaction.log": {
+          "sha256": "88f9097d9c2c54ff93cc38be25f8d80e5d655ba404b116d93cdc112d3398c581",
+          "bytes": 159,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_inference_skin_reaction.log"
+        },
+        "conditioned_preflight.log": {
+          "sha256": "fb4abbbbd27554febe9af8359e98bcc15ab696db6f20bbd9e038cc876ec04c4e",
+          "bytes": 2403,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_preflight.log"
+        },
+        "conditioned_prepare.log": {
+          "sha256": "04294bf6cd4fea2a6387dc3d8a143f69ef68468dc7580d758da7f3a1efbd4df1",
+          "bytes": 111452,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_prepare.log"
+        },
+        "conditioned_smoke.log": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_smoke.log"
+        },
+        "conditioned_verification.log": {
+          "sha256": "8a6c574f4debbd33b202fc79aebb7387806e6aff4d507e1dbbdd0fb19c499d06",
+          "bytes": 2539,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_verification.log"
+        },
+        "detached_pipeline.log": {
+          "sha256": "c6e70f2496560bea093d904aaacff2f18b22ac95f4d55e3773142b4ec671c2c4",
+          "bytes": 327,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/detached_pipeline.log"
+        },
+        "preflight.log": {
+          "sha256": "91d50ff639cfe2705a13c838373be69bab91040e47936202d87bbcd85fa8bf81",
+          "bytes": 400,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/preflight.log"
+        },
+        "preflight.tdc_seed42.log": {
+          "sha256": "41badff601422c2e47bbeabb61b2a24528ef860b12625e858ef5c5f797c9c2c3",
+          "bytes": 796,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/preflight.tdc_seed42.log"
+        },
+        "tdc_main_inference_ames.log": {
+          "sha256": "b93dbde99a7e747d45bd4b001a045b696b6f107a3387533a55c234012b8bdac7",
+          "bytes": 203,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main_inference_ames.log"
+        },
+        "tdc_main_inference_bbb_martins.log": {
+          "sha256": "aab0fd457ccf10255084c9576a8234eb462edfea06fc57fe28cca0bcb8ed7dbb",
+          "bytes": 81,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main_inference_bbb_martins.log"
+        },
+        "tdc_main_inference_bioavailability_ma.log": {
+          "sha256": "d7b9cf4416494677078f64f4c4755fee9ef7eaaa37d86ab15801f85e35e34cb6",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main_inference_bioavailability_ma.log"
+        },
+        "tdc_main_inference_dili.log": {
+          "sha256": "b893fa1307ecb76bf1b5d83cfbb94d1c1a28fcbb7201ad3474dc842bba6bb5cc",
+          "bytes": 120,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main_inference_dili.log"
+        },
+        "tdc_main_preflight.log": {
+          "sha256": "bac40ffa2be7f3da43a6d232b11517a10414d1830c8b7db37a5c1ceb08cf23dc",
+          "bytes": 1585,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main_preflight.log"
+        },
+        "tdc_main_prepare.log": {
+          "sha256": "c99626d8b39ce7c974ab4cc76a365890590b92fd3250ac1fd87d90223e4a5a41",
+          "bytes": 106981,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main_prepare.log"
+        },
+        "tdc_main_smoke.log": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main_smoke.log"
+        },
+        "tdc_main_verification.log": {
+          "sha256": "cbd5c4ea0a717454c7a10f11d4769c8987f104b5a51fba54bf1daf5cb62064df",
+          "bytes": 1679,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main_verification.log"
+        },
+        "tdc_seed42_inference.log": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_seed42_inference.log"
+        },
+        "tdc_seed42_inference_carcinogens.log": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_seed42_inference_carcinogens.log"
+        },
+        "tdc_seed42_inference_skin_reaction.log": {
+          "sha256": "6ae7b41d8422f253d60312c65d0d7e3a7ffb1f45ca0d4a21699128973b68ae2a",
+          "bytes": 39,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_seed42_inference_skin_reaction.log"
+        },
+        "tdc_seed42_preflight.log": {
+          "sha256": "2444f3c1d16c37e68bf6c36231de8500332644d4f596a6e4773cc2305ae75b88",
+          "bytes": 796,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_seed42_preflight.log"
+        },
+        "tdc_seed42_prepare.log": {
+          "sha256": "4a893573fcfbfdc3c615c6e68f590ac0f1e565b64b90270d8ca6a8248a38776b",
+          "bytes": 7701,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_seed42_prepare.log"
+        },
+        "tdc_seed42_smoke.log": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_seed42_smoke.log"
+        },
+        "tdc_seed42_verification.log": {
+          "sha256": "9e870dd0aaba3e8ed1f77da0e2a6dc20705134fe6a0eded26f5b987016df3dca",
+          "bytes": 821,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_seed42_verification.log"
+        },
+        "temporary/txagent_scaffold_resume_20261013.py": {
+          "sha256": "aeea977e9a4d3d897bc71bd7363ad9a6706980e4c8ee23de3ccf8e367c2b61ad",
+          "bytes": 5165,
+          "original_path": "/tmp/txagent_scaffold_resume_20261013.py"
+        }
+      }
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "sha256": "c0b5c263b5324c7e2e6133d771b5f12a46149abffd5d440f43b6353334c97a8d",
+      "members": {
+        "admission.log": {
+          "sha256": "4ea019de2ac2e6b74c33f63dd8c8f96164f5d246741e5cd3c90cdca0ad01cb63",
+          "bytes": 157,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/admission.log"
+        },
+        "conditioned_inference_ames.log": {
+          "sha256": "55f6ec62e90ec49030236cf51fd691b2045527a4ca8ab7463daa4adf4f5881a1",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_inference_ames.log"
+        },
+        "conditioned_inference_bbb_martins.log": {
+          "sha256": "dc2e9305943153815d223d32bffc32f3442d6b6266f897fa79339ff54b823a6c",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_inference_bbb_martins.log"
+        },
+        "conditioned_inference_bioavailability_ma.log": {
+          "sha256": "7dc53cdf128921db73a65c4bd0aacf7563e59b1b37e32f8cacb30e1a38a3113c",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_inference_bioavailability_ma.log"
+        },
+        "conditioned_inference_carcinogens.log": {
+          "sha256": "64061517c6d0518155154096dadce5faaab43354eeced426da364ebc34185e11",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_inference_carcinogens.log"
+        },
+        "conditioned_inference_dili.log": {
+          "sha256": "4bc8e5cd6e154a3a85915e2a7ff96a62a6a241ff9d30ca1a43be9eef9fa8383b",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_inference_dili.log"
+        },
+        "conditioned_inference_skin_reaction.log": {
+          "sha256": "657f6473d924a76b42e259211110e97228406c6a2bde583f3ed05abd54246e75",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_inference_skin_reaction.log"
+        },
+        "conditioned_preflight.log": {
+          "sha256": "2856ca16464c126237307675f7915767f0a72b22d7569aca6b940a1702349ae3",
+          "bytes": 2438,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_preflight.log"
+        },
+        "conditioned_prepare.log": {
+          "sha256": "dd50b0e658a6963b3cd8eae58022afdda94ceefc8185785435230a07f570fa84",
+          "bytes": 111452,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_prepare.log"
+        },
+        "conditioned_smoke.log": {
+          "sha256": "3466a5986f8124c78cb6b2d4dad3a05d0ea6dd969517d1b3e2d1f765181b9a94",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_smoke.log"
+        },
+        "conditioned_verification.log": {
+          "sha256": "da4bc481618294d6ec5aa15823b0dd4aba8876343bfb35baf55cd80af0130fc0",
+          "bytes": 2532,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_verification.log"
+        },
+        "figures_conditioned_mean.log": {
+          "sha256": "519d244c5c21220c25d4e69f6b2de554065a78309e126ae762a7470fdb6b7e88",
+          "bytes": 608,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/figures_conditioned_mean.log"
+        },
+        "figures_conditioned_tasks.log": {
+          "sha256": "9ae59c818ae680e79d957f029d488c088727fe1e4da570c91a54ed1b3f343f7e",
+          "bytes": 613,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/figures_conditioned_tasks.log"
+        },
+        "figures_tdc_mean.log": {
+          "sha256": "fe5ae87a87948081c52a3428d3dc6680ee953641c158acc04bddcb136b568c51",
+          "bytes": 568,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/figures_tdc_mean.log"
+        },
+        "figures_tdc_tasks.log": {
+          "sha256": "ca68f04782ceb653b8ec64e068ec39f64ad199663585944ddea4b99a1f0ab3cd",
+          "bytes": 573,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/figures_tdc_tasks.log"
+        },
+        "pipeline.log": {
+          "sha256": "c552b1160ac8d78a2ee0ba2d5d4a33b15d41082a44c173cb123ff3871f2e8ef2",
+          "bytes": 324,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/pipeline.log"
+        },
+        "tdc_main_inference_ames.log": {
+          "sha256": "ff7f3d33fec66790284b865155d6808468805e0f5b671f51221fcebc68cf180b",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_main_inference_ames.log"
+        },
+        "tdc_main_inference_bbb_martins.log": {
+          "sha256": "bd08b45853c265d8835b8eef4faf55f44f6f674af6a45658fe43c5c20f3a68ed",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_main_inference_bbb_martins.log"
+        },
+        "tdc_main_inference_bioavailability_ma.log": {
+          "sha256": "bf3edbd86cc202f31af09d3c42ef0346915bb66bc719666974b5754cbb248408",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_main_inference_bioavailability_ma.log"
+        },
+        "tdc_main_inference_dili.log": {
+          "sha256": "a0f4ce1a848b85e0e17b5c6f1960d7446727e25d0eb09832d274b8b91543994a",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_main_inference_dili.log"
+        },
+        "tdc_main_preflight.log": {
+          "sha256": "c6d132deae7629f6a1aeb25f343a3c6ffdeb34efe7deb1863ae46eb5a1fcff98",
+          "bytes": 1619,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_main_preflight.log"
+        },
+        "tdc_main_prepare.log": {
+          "sha256": "7ed88192de7dc8558a901ea31959136d608450dd35260c54ab2ebd87e951b8cc",
+          "bytes": 106981,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_main_prepare.log"
+        },
+        "tdc_main_smoke.log": {
+          "sha256": "795ba534d836870a19c5b0beb4c4c30bfb78e761678c56a845a5144f11a307a8",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_main_smoke.log"
+        },
+        "tdc_main_verification.log": {
+          "sha256": "6f494ad065dfe2667cadc75c91fdb34b5a6aa9b6f31d545e37a0334630203d0f",
+          "bytes": 1680,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_main_verification.log"
+        },
+        "tdc_seed42_inference_carcinogens.log": {
+          "sha256": "9651b991034b918e7e61d20a1f0b8d8a0f6c9305420c56761c3e83f5d8078729",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_seed42_inference_carcinogens.log"
+        },
+        "tdc_seed42_inference_skin_reaction.log": {
+          "sha256": "98347d9bc54e9eca65ee80f3e8bf0b7846fcdf6d4e6afcf12a1c21627e0d6d98",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_seed42_inference_skin_reaction.log"
+        },
+        "tdc_seed42_preflight.log": {
+          "sha256": "b68fdc53db1608fd95e1cfa9a1d7a3f934ebb40153fad88949aee57f92230f4a",
+          "bytes": 831,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_seed42_preflight.log"
+        },
+        "tdc_seed42_prepare.log": {
+          "sha256": "0ef88d29ec6bb0c65cfef9177c97b312dd6cd2f5594bcdcab69750ac1a795bfb",
+          "bytes": 7701,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_seed42_prepare.log"
+        },
+        "tdc_seed42_smoke.log": {
+          "sha256": "be9d327ae9e9fcc9659ed57366747054de37fb122192c64822a7336f3522de33",
+          "bytes": 42,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_seed42_smoke.log"
+        },
+        "tdc_seed42_verification.log": {
+          "sha256": "02ab1dbee7bd507a59ccfca89d2706744336dc9c951c0ebbc664293ff46c1ba8",
+          "bytes": 865,
+          "original_path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_seed42_verification.log"
+        },
+        "maintenance/txagent_scaffold_review_20261018.py": {
+          "sha256": "a83f32ecb5f1cca0af5f1c895cb90c1dd750186e497b6e0cb3cd031c6ebfc5f1",
+          "bytes": 5052,
+          "original_path": "/tmp/txagent_scaffold_review_20261018.py"
+        },
+        "maintenance/txagent_scaffold_review_20261018.log": {
+          "sha256": "abd8de6f087f9d5469c22a43e7d8766ad64be332310cef5d0f1278fe2682dd34",
+          "bytes": 1489,
+          "original_path": "/tmp/txagent_scaffold_review_20261018.log"
+        },
+        "maintenance/txagent_scaffold_review_20261018.json": {
+          "sha256": "b2ce9a10434240fb9bde3eeacbd455c5abd1830dd4e8779a08f4254bafd1a318",
+          "bytes": 4519,
+          "original_path": "/tmp/txagent_scaffold_review_20261018.json"
+        },
+        "maintenance/tools/chembl_tool/paper_experiments/plot_assay_retrieval_curve.py": {
+          "sha256": "9ca715b6b5824a6af44ddbb02479f5fd50d352b3c3fd0be41324153236b4bc1d",
+          "bytes": 198891,
+          "original_path": "tools/chembl_tool/paper_experiments/plot_assay_retrieval_curve.py"
+        },
+        "maintenance/tests/chembl_tool/common/test_plot_assay_retrieval_curve.py": {
+          "sha256": "96c7b7483ee1f33c246114c11ee3a45db388abcd1e761015384975c8b0e1064d",
+          "bytes": 70514,
+          "original_path": "tests/chembl_tool/common/test_plot_assay_retrieval_curve.py"
+        }
+      }
+    }
+  ],
+  "removed_files": [
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_inference_ames.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "conditioned_inference_ames.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_inference_bbb_martins.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "conditioned_inference_bbb_martins.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_inference_bioavailability_ma.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "conditioned_inference_bioavailability_ma.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_inference_carcinogens.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "conditioned_inference_carcinogens.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_inference_dili.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "conditioned_inference_dili.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_inference_skin_reaction.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "conditioned_inference_skin_reaction.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_preflight.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "conditioned_preflight.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_prepare.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "conditioned_prepare.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_smoke.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "conditioned_smoke.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/conditioned_verification.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "conditioned_verification.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/detached_pipeline.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "detached_pipeline.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/preflight.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "preflight.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/preflight.tdc_seed42.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "preflight.tdc_seed42.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main_inference_ames.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "tdc_main_inference_ames.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main_inference_bbb_martins.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "tdc_main_inference_bbb_martins.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main_inference_bioavailability_ma.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "tdc_main_inference_bioavailability_ma.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main_inference_dili.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "tdc_main_inference_dili.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main_preflight.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "tdc_main_preflight.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main_prepare.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "tdc_main_prepare.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main_smoke.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "tdc_main_smoke.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_main_verification.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "tdc_main_verification.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_seed42_inference.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "tdc_seed42_inference.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_seed42_inference_carcinogens.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "tdc_seed42_inference_carcinogens.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_seed42_inference_skin_reaction.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "tdc_seed42_inference_skin_reaction.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_seed42_preflight.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "tdc_seed42_preflight.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_seed42_prepare.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "tdc_seed42_prepare.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_seed42_smoke.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "tdc_seed42_smoke.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_20261013/tdc_seed42_verification.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "tdc_seed42_verification.log"
+    },
+    {
+      "path": "/tmp/txagent_scaffold_resume_20261013.py",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_20261013/execution_history.zip",
+      "member": "temporary/txagent_scaffold_resume_20261013.py"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/admission.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "admission.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_inference_ames.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "conditioned_inference_ames.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_inference_bbb_martins.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "conditioned_inference_bbb_martins.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_inference_bioavailability_ma.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "conditioned_inference_bioavailability_ma.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_inference_carcinogens.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "conditioned_inference_carcinogens.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_inference_dili.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "conditioned_inference_dili.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_inference_skin_reaction.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "conditioned_inference_skin_reaction.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_preflight.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "conditioned_preflight.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_prepare.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "conditioned_prepare.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_smoke.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "conditioned_smoke.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/conditioned_verification.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "conditioned_verification.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/figures_conditioned_mean.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "figures_conditioned_mean.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/figures_conditioned_tasks.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "figures_conditioned_tasks.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/figures_tdc_mean.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "figures_tdc_mean.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/figures_tdc_tasks.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "figures_tdc_tasks.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/pipeline.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "pipeline.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_main_inference_ames.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "tdc_main_inference_ames.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_main_inference_bbb_martins.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "tdc_main_inference_bbb_martins.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_main_inference_bioavailability_ma.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "tdc_main_inference_bioavailability_ma.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_main_inference_dili.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "tdc_main_inference_dili.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_main_preflight.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "tdc_main_preflight.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_main_prepare.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "tdc_main_prepare.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_main_smoke.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "tdc_main_smoke.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_main_verification.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "tdc_main_verification.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_seed42_inference_carcinogens.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "tdc_seed42_inference_carcinogens.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_seed42_inference_skin_reaction.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "tdc_seed42_inference_skin_reaction.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_seed42_preflight.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "tdc_seed42_preflight.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_seed42_prepare.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "tdc_seed42_prepare.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_seed42_smoke.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "tdc_seed42_smoke.log"
+    },
+    {
+      "path": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/tdc_seed42_verification.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "tdc_seed42_verification.log"
+    },
+    {
+      "path": "/tmp/txagent_scaffold_review_20261018.py",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "maintenance/txagent_scaffold_review_20261018.py"
+    },
+    {
+      "path": "/tmp/txagent_scaffold_review_20261018.log",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "maintenance/txagent_scaffold_review_20261018.log"
+    },
+    {
+      "path": "/tmp/txagent_scaffold_review_20261018.json",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_history.zip",
+      "member": "maintenance/txagent_scaffold_review_20261018.json"
+    },
+    {
+      "path": "/tmp/txagent_luna_scaffold_20261014.py",
+      "archive": "outputs/paper/indirect_scaffold_disjoint_luna_20261014/execution_receipts.zip",
+      "member": "txagent_luna_scaffold_20261014.py"
+    }
+  ],
+  "cleanup_summary": {
+    "top_level_logs_archived": 58,
+    "temporary_controllers_removed": 2,
+    "new_inference_calls": 0,
+    "predictions_or_source_dependencies_removed": 0
+  },
+  "limitations": [
+    "Historical parent comparisons retain serving/transport and inference variation.",
+    "Ours values remain user-reported; ML indirect contracts unchanged.",
+    "Gemini scaffold run not launched; only 2026-10-14 cost estimate exists.",
+    "Broader release preparation and independent environment reproduction remain pending."
+  ],
+  "reviewed_files_sha256": {
+    "README.md": "9ceed7555993d278e5cfaf4675f16eff95bc22757617856d438cae78ef758040",
+    "tools/chembl_tool/paper_experiments/README.md": "4ebc144dbc4cf8916b4e7f8023dbc2f4731a05520e22a13c3848f3b15eb11100",
+    "tools/chembl_tool/paper_experiments/RESULTS.md": "ba4bf9b0d2d2cbce96a3fe1241ebc5d889a260be0d18383d5b269b75395b10f6",
+    "tools/chembl_tool/paper_experiments/BUDGETED_EVIDENCE.md": "e90290f8c434009a8cec81c034584a6feaf9f8a2af89b4c5ff95c5b355493536",
+    "tools/chembl_tool/paper_experiments/TRACE_RETENTION.md": "38050f27ce80e2d110b344e9cc83bd24038cd8c770fb8e907c3c176e2ca44251",
+    "tools/chembl_tool/paper_experiments/current_conditioned_results.json": "0b20e7e327d01fe09deb6529161ea77e0809e80d59a72a651bf626a3595c094e",
+    "tools/chembl_tool/paper_experiments/plot_assay_retrieval_curve.py": "9ca715b6b5824a6af44ddbb02479f5fd50d352b3c3fd0be41324153236b4bc1d",
+    "tests/chembl_tool/common/test_plot_assay_retrieval_curve.py": "96c7b7483ee1f33c246114c11ee3a45db388abcd1e761015384975c8b0e1064d",
+    "outputs/paper/indirect_scaffold_disjoint_20261013/README.md": "4a177a9276673c7f3a79b7e8209e2bbbeefe0e871313c3fd95d3ce3395e1f30f",
+    "outputs/paper/indirect_scaffold_disjoint_20261013/RESULTS.md": "f44cc6cf5fd3ae6803661d79488323d7af798ee2bf5183d22e2021e3bfcf8ef1",
+    "outputs/paper/indirect_scaffold_disjoint_20261013/figures/README.md": "bfc780c59371930841264a48adb37f6044df9b3d884c892d707e73c6981567bf",
+    "outputs/paper/indirect_scaffold_disjoint_luna_20261014/README.md": "bad053568b84541770245541a7c864f60bf55172dde71e0b02b679c74b9b5f16"
+  },
+  "final_checks": {
+    "archives_and_removals": "passed",
+    "frozen_scores_verification_and_figure_hashes": "unchanged",
+    "registry_maintenance_pointers": "passed",
+    "git_diff_check": "passed"
+  }
+}

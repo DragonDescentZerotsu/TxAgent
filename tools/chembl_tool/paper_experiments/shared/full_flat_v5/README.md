@@ -1,23 +1,29 @@
-# Reference v5 task handoff
+# Shared prompt bundle provenance
 
-Upstream: `3c36c2640ada12119f4a74a9bdf8511b0d7b8f6e`.
+For labels and integration, use the [prompt handoff](../README.md#task-prompts).
+`provenance.json` is authoritative for the bundle version, file hashes and label
+mappings; `tasks.yaml` defines the six task contracts.
 
-The task file adds Skin_Reaction, Ames, DILI and Carcinogens to BBB/Bioavailability.
-It preserves the latest upstream two-field output and output instructions.
-`provenance.json` records source contracts and pass/fail-to-local-label mappings.
-In risk tasks, pass denotes the positive/risk class, not safety.
-The user template also displays task-specific cached prior fields for added tasks.
+The templates originate from upstream v5 commit
+`3c36c2640ada12119f4a74a9bdf8511b0d7b8f6e`. The native-label revision changes only
+the four risk tasks' label instructions, allowed values and mappings; templates,
+scientific evidence rules and BBB/Bioavailability remain unchanged. Each revised
+task also asks that the final label agree with the overall evidence assessment.
+The original pass/fail bundle is at `945380eb`, and the DILI-only revision is at
+`3f1e7b27`; historical assets and predictions are not overwritten.
 
-Use these templates in the existing full-flat prompt directory. This bundle does
-not copy a runner or change retrieval. To run the four added tasks on the reference
-branch, register their task/data modules and task level counts in the existing
-runner/retrieval registries (the inspected flat.py TASKS currently lists only
-BBB and Bioavailability). Dataset and index provisioning remains necessary.
-No remote branch was modified or six-task Reference experiment launched.
+`task_contract_sha256` identifies the original local source contracts, not the
+edited YAML blocks. `files` contains hashes of the current bundle assets.
+The legacy portable exporter emits the old contract and is not a regeneration
+entrypoint for this maintained bundle.
 
-Our local adapter separately keeps our existing JSON response contract, uses
-cached single-molecule analysis, and omits raw tools. It does not adopt the reference
-molecule-role exclusivity or explicit molecule-citation statistics.
+upstream's inspected `5c3a6ae2` branch already has six-task integration, but its
+system/user templates have evolved. Apply the small task/mapping changes there
+without replacing those templates. Our local runtime retains task-specific
+prediction fields; this bundle retains `final_prediction`. The prior renderer
+supports six tasks and excludes `exact_chembl_evidence_assessment`.
 
-The obsolete exact_chembl_evidence_assessment prior field is excluded from the
-portable template and local prior projection; historical source caches remain intact.
+The retained [TDC DILI system override](../TDC_DILI_HANDOFF.md) is a separate,
+benchmark-specific asset. Its hash and evaluated scores live in
+`diagnostics.tdc_dili_prompt_20260924`, not this general bundle's `provenance.json`.
+The six task contracts and template hashes above remain unchanged.

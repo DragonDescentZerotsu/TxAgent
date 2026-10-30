@@ -43,6 +43,26 @@ one-shot cumulative full-flat、append-only progressive 和 4x assay-prefix scal
 
 ## Record and family contract
 
+### Cross-task direct/indirect reporting convention
+
+跨任务的 level 统计、结果解释和论文表述统一采用以下口径：
+
+| Evidence family level | Reporting category |
+|---|---|
+| L1 | direct evidence |
+| L2 and above | indirect evidence |
+
+L2 的 nonvoter outcomes、near-direct proxies、预测、泛化断言及混合记录均计入 indirect。
+这是汇总分类，不是逐条科学语义判定，也不声称所有 L2 都是跨 endpoint 的机制实验证据。
+保留各 task 的具体 family 名称、完整源结局、对象角色和限定条件。
+
+累计曲线的 L2 阶段表示 L1 direct evidence 加上 L2 indirect evidence，不能将整个累计输入称为
+indirect-only；L1 之后的新增 families 统一属于 indirect。None 仍是无检索证据的参考点。
+该表述口径不改 source placement、actual-voter membership、gold/splits、LLM prompt 或检索过滤；
+已有 L1/L2 scaffold-disjoint、heldout containment 等约束仍按各自实验合同执行。
+
+### Source and family identity
+
 Starling run 的列名差异在 normalization 阶段由逐 source mapping 处理，retrieval 不猜 alias。当前输入是仓库
 冻结的 Stage-03 canonical Parquet，不是 raw run。Stage-03 保留 endpoint、measurement、unit、molecule、assay、
 context 和 `support_text`；purity overlay 只重写 `group_id` 并增加审计列。
@@ -61,9 +81,11 @@ source_group_id -> family_key -> progressive level
 新配置通过 `evidence_family()` 声明 mapping。若一个 source group 被映射到多个 progressive families，catalog
 builder 直接失败，防止 silent membership drift。
 
-当前 `assay_compact.raw_v3` 在每个 assay×molecule 最多保留三张 representative cards，包含完整 raw card
-fields 和 `support_text`；`max_support_text_chars=0` 表示不做字段级截断。Card selection 仍然意味着不是每条
-source record 都会进入 index。静态 membership、split index cards 和 per-query visible cards 的区别与分享表
+冻结实验的索引曾在每个 assay×molecule 最多保留三张 representative cards。新建索引默认
+`--max-record-examples 0`，在资格过滤后保留全部不同的 cards，包含完整 raw fields 和 `support_text`；
+`max_support_text_chars=0` 表示不做字段级截断。Raw renderer 不再额外限制每 assay 三条，
+prompt 数量由 query-time budgets 控制。旧索引仍需独立重建才能补回未收录的 cards。
+静态 membership、无截取索引入口、split index cards 和 per-query visible cards 的区别与分享表
 见 `CURRENT_STARLING_RETRIEVAL.md`。
 
 ## Append-only progressive protocol
@@ -81,6 +103,14 @@ source record 都会进入 index。静态 membership、split index cards 和 per
 每层只调用一次模型，不按 assay/card 单独调用。默认不启用 flip verifier。Prompt profile 是
 `progressive_evidence_revision.v5`（历史 v2/v3/v4 保留各自实验合同），每层展示完整 level plan；已否决的 prefix-only 分支不保留 alternate
 CLI。completion cap 为 20,480 tokens，API `reasoning_effort` 参数省略，provider 自身 reasoning 保持默认。
+
+2026-09-15 的独立扩预算实验使用 `--initial-card-limit 5 --delta-card-limit 5`
+和 `--combined-molecule-limit 10`：L1 仍最多 10 个分子，后续各层新/已有分子合并按
+similarity 排序并共用 10 个名额，只追加本层新解锁且未选过的 cards；既有 cards 全部保留。
+`--combined-molecule-limit 0` 保留默认分组配额。该实验的 mixed-policy prepared inputs
+另行冻结 L1/L2 scaffold-disjoint、L3+ parent-disjoint，并将所有任务 similarity 设为 0.3；
+matched full-flat 直接读取完成的 progressive inputs。注册入口为
+`replicate_suites.expanded_budget_progressive_full_flat_20260915`。
 
 正式 4/2 是默认 card budget。2/1 和 8/4 只通过同一 runner 的 `--initial-card-limit` 与
 `--delta-card-limit` 改变 card limits；molecule quotas、candidate ranking、prompt、identity policy 和 append-only
@@ -131,6 +161,17 @@ so this targeted diagnostic is not a blind or full-cohort benchmark result.
 prediction。`--progressive-reuse-source-root` 只有在完整 selection 和 inference contract 相同时才可复用逐 query
 完全相同的 visible prefix，并在首个不同 level 永久停止。跨 retrieval lineage 的 prediction 复用必须有逐 split
 selected-surface zero-change receipt。
+
+## Optional record selection
+
+共享 progressive 另提供可选 `--card-selection-policy feature_based.v1`，用 apricot
+对统一 card 字段做稀疏词／词组覆盖选择；分子集合、预算及 append-only 规则不变。
+默认仍为 assay diversity；输入输出、历史覆盖、缓存、依赖及语义局限见
+[RECORD_FEATURE_SELECTION.md](RECORD_FEATURE_SELECTION.md)。这是独立 selector ablation，尚无效果结论。
+
+上述 lexical 选项不同于已完成六任务 valid 实验的 `molecule_local.v1` semantic selector。
+后者通过已登记的 prepared arms 接入共享 inference runner；当前流程和版本边界统一见该文档，
+实验结果统一见 `RESULTS.md`，不在本协议中维护逐轮状态。
 
 ## Matched independent full-flat control
 
@@ -227,7 +268,7 @@ cards，独立重算各遍的 level 输出；progressive 只携带本遍的状�
 
 ```text
 provider_pools/deepseek_v4_flash_mixture.json
-provider_pools/deepseek_v4_flash_hosted_openrouter.json
+provider_pools/deepseek_v4_flash_parcc_openrouter.json
 provider_pools/deepseek_v4_flash_openrouter.json
 ```
 

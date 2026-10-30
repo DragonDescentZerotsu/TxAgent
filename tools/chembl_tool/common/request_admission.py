@@ -3,6 +3,8 @@
 A connection owns one permit until it closes. Waiting happens before the HTTP
 deadline; cancellation and process exit release permits without lease timers.
 Run one broker for the lifetime of all participating launchers.
+Send ``grow N`` over its socket to increase capacity without interrupting holders.
+Optional ``--requests-per-minute`` spaces grants across all clients and retries.
 """
 
 from __future__ import annotations
@@ -12,6 +14,7 @@ import asyncio
 from contextlib import contextmanager
 import fcntl
 import json
+import math
 from pathlib import Path
 import socket
 
@@ -59,16 +62,36 @@ async def admitted_call(path, call, *, timeout, on_admitted):
 
 
 class AdmissionBroker:
-    def __init__(self, capacity: int):
+    def __init__(self, capacity: int, requests_per_minute: float = 0):
         if capacity < 1:
             raise ValueError("admission capacity must be positive")
+        if not math.isfinite(requests_per_minute) or requests_per_minute < 0:
+            raise ValueError("requests per minute must be finite and nonnegative")
         self.capacity = capacity
+        self.requests_per_minute = requests_per_minute
+        self._interval = 60 / requests_per_minute if requests_per_minute else 0
+        self._next_grant = 0.0
+        self._grant_lock = asyncio.Lock()
         self.permits = asyncio.Semaphore(capacity)
         self.active = self.waiting = self.peak_active = self.granted = 0
 
     def snapshot(self):
         return {key: getattr(self, key) for key in
-                ("capacity", "active", "waiting", "peak_active", "granted")}
+                ("capacity", "requests_per_minute", "active", "waiting", "peak_active", "granted")}
+
+    async def _acquire(self):
+        if not self._interval:
+            await self.permits.acquire()
+            return
+        async with self._grant_lock:
+            await self.permits.acquire()
+            try:
+                loop = asyncio.get_running_loop()
+                await asyncio.sleep(max(0, self._next_grant - loop.time()))
+                self._next_grant = loop.time() + self._interval
+            except BaseException:
+                self.permits.release()
+                raise
 
     async def handle(self, reader, writer):
         acquire = disconnected = None
@@ -80,11 +103,25 @@ class AdmissionBroker:
                 writer.write(json.dumps(self.snapshot()).encode() + b"\n")
                 await writer.drain()
                 return
+            if command.startswith(b"grow "):
+                try:
+                    capacity = int(command[5:].strip())
+                    if capacity < self.capacity:
+                        raise ValueError("capacity can only increase")
+                    for _ in range(capacity - self.capacity):
+                        self.permits.release()
+                    self.capacity = capacity
+                    result = self.snapshot()
+                except ValueError as exc:
+                    result = {"error": str(exc)}
+                writer.write(json.dumps(result).encode() + b"\n")
+                await writer.drain()
+                return
             if command != b"acquire\n":
                 return
             self.waiting += 1
             waiting = True
-            acquire = asyncio.create_task(self.permits.acquire())
+            acquire = asyncio.create_task(self._acquire())
             disconnected = asyncio.create_task(reader.read(1))
             done, _ = await asyncio.wait((acquire, disconnected), return_when=asyncio.FIRST_COMPLETED)
             if disconnected in done:
@@ -120,12 +157,12 @@ class AdmissionBroker:
                 pass
 
 
-async def serve(path: Path, capacity: int):
+async def serve(path: Path, capacity: int, requests_per_minute: float = 0):
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.with_suffix(".lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         path.unlink(missing_ok=True)
-        broker = AdmissionBroker(capacity)
+        broker = AdmissionBroker(capacity, requests_per_minute)
         server = await asyncio.start_unix_server(broker.handle, path=str(path), backlog=8192)
         path.chmod(0o600)
         print(json.dumps({"socket": str(path), **broker.snapshot()}), flush=True)
@@ -140,5 +177,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--socket", type=Path, required=True)
     parser.add_argument("--capacity", type=int, required=True)
+    parser.add_argument("--requests-per-minute", type=float, default=0,
+                        help="Shared paced request rate; 0 disables pacing.")
     args = parser.parse_args()
-    asyncio.run(serve(args.socket, args.capacity))
+    asyncio.run(serve(args.socket, args.capacity, args.requests_per_minute))

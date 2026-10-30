@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 from tools.chembl_tool.common.assay_retrieval import (
     FLAT_GROUP_ID,
@@ -24,6 +25,72 @@ from tools.chembl_tool.common.starling.assay_catalog import assay_id
 from tools.chembl_tool.common.task_workflows.evidence_library import (
     build_neighbor_index,
 )
+
+
+@pytest.mark.parametrize("with_families", [False, True])
+def test_unlimited_index_cards_keep_late_results_and_distinct_contexts(with_families):
+    from tools.chembl_tool.common.assay_retrieval import _aggregate_assay_molecule
+
+    base = {
+        "molecule_id": "M", "canonical_smiles": "CCO", "molecule_name": "ethanol",
+        "canonical_endpoint_name": "outcome", "canonical_unit_text": "",
+        "canonical_assay_context": "assay", "canonical_species_context": "rat",
+        "qualifying_conditions": "dose A", "group_id": "L1", "source_name": "source",
+    }
+    records = [dict(base, canonical_record_id=str(i), confidence=1-i/10,
+                    canonical_measurement_text="positive" if i < 4 else "negative",
+                    support_text=f"study {i}") for i in range(6)]
+    records.extend([
+        dict(records[0], canonical_record_id="duplicate"),
+        dict(records[0], canonical_record_id="different-dose", qualifying_conditions="dose B"),
+        dict(records[0], canonical_record_id="different-species", canonical_species_context="human"),
+        dict(records[0], canonical_record_id="different-family", group_id="L2"),
+    ])
+    metadata = {"source_families": [
+        {"source_group_id": "L1", "endpoint_group": "direct", "level": 1},
+        {"source_group_id": "L2", "endpoint_group": "mechanism", "level": 2},
+    ]} if with_families else None
+    full = _aggregate_assay_molecule("ames", "assay", "A", records,
+        max_record_examples=0, max_support_text_chars=0, assay_metadata=metadata)
+    cards = full["source_record_examples"]
+    assert len(cards) == (9 if with_families else 8)
+    assert {c["reported_value"] for c in cards} == {"positive", "negative"}
+    assert {c["qualifying_conditions"] for c in cards} == {"dose A", "dose B"}
+    assert {c["species_context"] for c in cards} == {"rat", "human"}
+    assert set(full["source_support_texts"]) == {f"study {i}" for i in range(6)}
+    capped = _aggregate_assay_molecule("ames", "assay", "A", records,
+        max_record_examples=3, max_support_text_chars=0, assay_metadata=metadata)
+    assert len(capped["source_record_examples"]) == 3
+    assert {c["reported_value"] for c in capped["source_record_examples"]} == {"positive"}
+
+
+def test_unlimited_index_default_and_invalid_cap():
+    from tools.chembl_tool.common.assay_retrieval import build_parser, _representative_records
+    args = build_parser().parse_args([
+        "build-index", "--task", "ames", "--records", "records.parquet",
+        "--ranked-assays", "assays.jsonl", "--output-dir", "index",
+    ])
+    assert args.max_record_examples == 0
+    with pytest.raises(ValueError, match="nonnegative"):
+        _representative_records([], limit=-1)
+
+
+@pytest.mark.parametrize("selection", [
+    "assay_spanning_even_then_round_robin.v1", MECHANISM_AWARE_RECORD_CARD_SELECTION_VERSION,
+])
+def test_uncapped_candidates_reach_explicit_prompt_budget(selection):
+    from tools.chembl_tool.common.assay_retrieval import _cap_neighbor_record_cards
+
+    row = _row("shared", "CCCO", "a1", "endpoint")
+    row["source_record_examples"] = [dict(endpoint_type="endpoint", reported_value=str(i),
+        support_text=f"study {i}", evidence_family="direct", evidence_family_level=1)
+        for i in range(8)]
+    neighbor = _cap_neighbor_record_cards({"evidence_rows": [row]}, limit=5, selection=selection)
+    group = {"evidence_prompt_profile": ASSAY_MECHANISM_TAGGED_PROMPT_PROFILE}
+    cards = [card for r in neighbor["evidence_rows"]
+             for card in evidence_for_group_llm(r, group)["records"]]
+    assert len(cards) == 5
+    assert len({card["support"] for card in cards}) == 5
 
 
 def _row(molecule_id, smiles, assay_id, endpoint):
@@ -800,3 +867,50 @@ def test_parallel_aggregation_and_prepared_index_match_serial(tmp_path, monkeypa
     ]
     smiles = ["OCC", "CCO.Cl", "CCN"] * 334
     assert retrieval._parent_keys(smiles, 1) == retrieval._parent_keys(smiles, 2)
+
+
+@pytest.mark.parametrize('task,native,expected_result,expected_context', [
+    ('skin_reaction', {'result_label': 'positive', 'outcome_label': '__unknown__',
+                       'experimental_conditions': 'human microsomes'},
+     'result_label=positive', 'experimental_conditions=human microsomes'),
+    ('bioavailability_ma', {'oral_dose': '1000 mg/kg', 'study_context': 'Day 14',
+                           'comparator_exposure': '__unknown__'},
+     '37', 'oral_dose=1000 mg/kg'),
+])
+def test_native_source_fields_reach_index_progressive_features_and_keep_legacy(
+        tmp_path, task, native, expected_result, expected_context):
+    from tools.chembl_tool.common.progressive_assay_reasoning import _card_surface, _public_card
+    from tools.chembl_tool.common.record_feature_selection import record_features
+    source = tmp_path / 'records.parquet'
+    ranked = tmp_path / 'ranked.jsonl'
+    context = 'assay'
+    base = dict(canonical_record_id='r', molecule_id='m', canonical_smiles='CCO',
+                canonical_endpoint_name='protein adduct formation' if task == 'skin_reaction' else 'Cmax',
+                canonical_measurement_text='' if task == 'skin_reaction' else '37',
+                canonical_unit_text='' if task == 'skin_reaction' else 'ug/ml',
+                canonical_assay_context=context, canonical_species_context='',
+                qualifying_conditions='', support_text='source passage', confidence=.9,
+                source_name='Starling', molecule_name='example', group_id='G',
+                retrieval_eligible=True, **native)
+    pd.DataFrame([base]).to_parquet(source, index=False)
+    write_jsonl_atomic(ranked, [{'assay_id': assay_id(task, context), 'assay_context':context,
+                              'selection_rank':1}])
+    def build(cap):
+        rows, _, _ = build_assay_evidence_rows(task=task, records_path=source,
+            membership_path=None, ranked_assays_path=ranked, max_record_examples=cap)
+        return rows[0], rows[0]['source_record_examples'][0]
+    row, example = build(0)
+    assert example['reported_value'] == expected_result
+    assert expected_context in example['qualifying_conditions']
+    assert '__unknown__' not in str(example)
+    assert example['reported_units'] == base['canonical_unit_text']
+    public = _public_card(_card_surface(example, row), level=3)
+    features = record_features(public)
+    assert features
+    if task == 'skin_reaction':
+        assert 'reported_value/result_label:positive' in features
+    else:
+        assert 'qualifying_conditions/study_context:day' in features
+    _, legacy = build(3)
+    assert legacy['reported_value'] == base['canonical_measurement_text']
+    assert legacy['qualifying_conditions'] == ''
