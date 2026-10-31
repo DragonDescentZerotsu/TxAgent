@@ -1,0 +1,15 @@
+Predict {{ endpoint }} from the molecular structure{% if conditioned %} and reported condition{% endif %}.
+(A) {{ negative }}
+(B) {{ positive }}
+{% if scope %}Label scope: {{ scope }}
+{% endif %}Return only A or B. Do not explain or reason.
+{% for example in examples %}
+Example {{ loop.index }}:
+SMILES: {{ example.drug }}
+{% if conditioned and example.condition_group != 'no_reported_external_condition' %}Condition: {{ example.condition_group }}
+{% endif %}Answer: {{ 'B' if example.Y == 1 else 'A' }}
+{% endfor %}
+Query:
+SMILES: {{ query.drug }}
+{% if conditioned and query.condition_group != 'no_reported_external_condition' %}Condition: {{ query.condition_group }}
+{% endif %}Answer:

@@ -103,6 +103,7 @@ python -m predict.baselines.selected_direct_knn --help
 python -m predict.baselines.structure_knn.run --help
 python -m predict.baselines.minimol.run_embedding_knn --help
 python -m predict.baselines.minimol.run_bioavailability_ma --help
+python -m predict.baselines.tinker_sft --help
 bash predict/traces/viewer/start_viewer.sh 8776
 ```
 
@@ -115,6 +116,11 @@ The [conditioned baseline recipe](../experiments/baselines/conditioned.sh) runs
 the shared Morgan KNN, MiniMol KNN and MiniMol head commands. Its
 [settings and output contract](baselines/minimol/README.md#paper-baseline-recipe)
 apply to supplied task splits, including Oral; there is no separate Oral runner.
+
+The [Tinker SFT baseline](baselines/TINKER_SFT.md) provides supervised A/B label
+prediction with train-only examples, validation selection and held-out test
+evaluation. Its [paper recipe](../experiments/baselines/tinker_sft.sh) explicitly
+pins the original paper splits, including the TDC seed-42 corrections.
 
 New raw runs: `outputs/predictions/<harness>/<prompt>/<run-name>/<benchmark>/<task>/<split>/<profile>/`.
 Supply `--run-name semantic-mixed-top50` and optionally `--output-root PATH` to

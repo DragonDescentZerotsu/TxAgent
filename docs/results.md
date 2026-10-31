@@ -1,5 +1,16 @@
 # Results and reproduction sources
 
+## New supervised label baseline
+
+The [Tinker SFT experiment](../predict/baselines/TINKER_SFT.md) adds independent
+DeepSeek-V4.1-Flash-1017 adapters for the two frozen paper benchmarks. It follows
+the documented TxGemma-style label-prediction protocol and uses validation-only
+selection. Run artifacts live under
+`outputs/predictions/tinker_sft/txgemma_style_label_v1/deepseek_v41_flash_1017_paper_20261031/`.
+Only completed `test_metrics.json` files are results; prepared datasets and
+validation scores are not test results. The final `results.json` requires all
+12 tasks. This new experiment does not alter the 306 frozen cells below.
+
 ## Frozen paper comparison
 
 [Full-precision baseline results](paper/baselines.csv) contain **306 cells**:

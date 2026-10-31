@@ -6,6 +6,14 @@ preparation, training and validation. They do not download or select benchmark
 releases. Current sources and migration checks are in
 [发布整合状态](../../docs/release_refactor.md).
 
+## Tinker supervised label prediction
+
+`tinker_sft.sh` runs independent DeepSeek-V4.1-Flash-1017 LoRA sweeps for both
+paper benchmarks, with train-only examples, validation selection and final test
+evaluation. The [SFT contract and run guide](../../predict/baselines/TINKER_SFT.md)
+documents the frozen source manifest, TxGemma-style settings and differences,
+cost estimation, credentials, checkpoint resume and result artifacts.
+
 ## Morgan KNN, MiniMol KNN and frozen-encoder head
 
 ```bash

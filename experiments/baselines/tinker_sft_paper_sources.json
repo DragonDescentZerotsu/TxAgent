@@ -1,0 +1,222 @@
+{
+  "release": "paper_frozen_scaffold_seed42_20260925",
+  "description": "Paper ML/naive baseline cohorts explicitly selected by user on 2026-10-31. TDC Skin and Carcinogens use the corrected seed-42 export. This is not Joseph default TDC.",
+  "datasets": [
+    {
+      "benchmark": "tdc",
+      "task": "bbb_martins",
+      "splits": {
+        "train": {
+          "path": "data/tdc_benchmark/bbb_martins/scaffold/train.jsonl",
+          "sha256": "88a932d3e814f1757bc25c7dd741076155f14446f86049c0c3ecd9996998494b"
+        },
+        "valid": {
+          "path": "data/tdc_benchmark/bbb_martins/scaffold/valid.jsonl",
+          "sha256": "5ab31f79dba6bd3c9c0ca83c901ad5372d4a6b5a7edc8f8018b1eba460249218"
+        },
+        "test": {
+          "path": "data/tdc_benchmark/bbb_martins/scaffold/test.jsonl",
+          "sha256": "40d1226f882f903f4a4b4fb9365cf05c90c30eff694730e0de346351874d8388"
+        }
+      }
+    },
+    {
+      "benchmark": "tdc",
+      "task": "bioavailability_ma",
+      "splits": {
+        "train": {
+          "path": "data/tdc_benchmark/bioavailability_ma/scaffold/train.jsonl",
+          "sha256": "1ab668221431856a1bc9238aa4f7d313b98ff9cb79b890f50cc69e6af0c48335"
+        },
+        "valid": {
+          "path": "data/tdc_benchmark/bioavailability_ma/scaffold/valid.jsonl",
+          "sha256": "aeb87d241a1a8655b835c4d4a054b9fa94c36eab3bbf1f1f4fe6f884081dec67"
+        },
+        "test": {
+          "path": "data/tdc_benchmark/bioavailability_ma/scaffold/test.jsonl",
+          "sha256": "5eb2f3bbc5268c33fb2d958b09362a3dfdb4db75858b595dd2f3b21fe5074457"
+        }
+      }
+    },
+    {
+      "benchmark": "tdc",
+      "task": "skin_reaction",
+      "splits": {
+        "train": {
+          "path": "outputs/paper/tdc_seed42_neighbor_fill_20260924/data/skin_reaction/scaffold/train.jsonl",
+          "sha256": "a6eed7b63e1d331cad8a47628db22c27993fa103d5aa0caa427905acd24bc434"
+        },
+        "valid": {
+          "path": "outputs/paper/tdc_seed42_neighbor_fill_20260924/data/skin_reaction/scaffold/valid.jsonl",
+          "sha256": "9d739097049a50e022c9294995497b2ebdfc043d6be68b71d9cc1afb24064179"
+        },
+        "test": {
+          "path": "outputs/paper/tdc_seed42_neighbor_fill_20260924/data/skin_reaction/scaffold/test.jsonl",
+          "sha256": "f63b7190a4ba8632dfc72f2941fcd387f2770fcc5edb6460305149255c1ab106"
+        }
+      }
+    },
+    {
+      "benchmark": "tdc",
+      "task": "ames",
+      "splits": {
+        "train": {
+          "path": "data/tdc_benchmark/ames/scaffold/train.jsonl",
+          "sha256": "380fe7966afff5b21c2283106a2348ba2ea7bc59b03e6bb3e169c1888fd549b4"
+        },
+        "valid": {
+          "path": "data/tdc_benchmark/ames/scaffold/valid.jsonl",
+          "sha256": "27262dfd66e7c733dc2cf08bab66e2b90c4faeae373e646e0974ef9947bccae0"
+        },
+        "test": {
+          "path": "data/tdc_benchmark/ames/scaffold/test.jsonl",
+          "sha256": "427bdc74b135204ee8c6f59192aed98570d15eb8dea9a67f6723a58b77ee20ee"
+        }
+      }
+    },
+    {
+      "benchmark": "tdc",
+      "task": "dili",
+      "splits": {
+        "train": {
+          "path": "data/tdc_benchmark/dili/scaffold/train.jsonl",
+          "sha256": "63adc6bc4c7503f0be116c33ae8fac76f277030811f0dc723f42968adef643b0"
+        },
+        "valid": {
+          "path": "data/tdc_benchmark/dili/scaffold/valid.jsonl",
+          "sha256": "0c399a321030fcd948365037005f1fefe6bd050ab97af0e468160510f615b1f0"
+        },
+        "test": {
+          "path": "data/tdc_benchmark/dili/scaffold/test.jsonl",
+          "sha256": "32315845a9d992a97355d1729f4bfe5e39c7635fda022950be52dfb43d4ca244"
+        }
+      }
+    },
+    {
+      "benchmark": "tdc",
+      "task": "carcinogens",
+      "splits": {
+        "train": {
+          "path": "outputs/paper/tdc_seed42_neighbor_fill_20260924/data/carcinogens/scaffold/train.jsonl",
+          "sha256": "37b708d6b34c70ac4ca396baf44f1bf1d64c87f743993e08e1fe69eae8badb4d"
+        },
+        "valid": {
+          "path": "outputs/paper/tdc_seed42_neighbor_fill_20260924/data/carcinogens/scaffold/valid.jsonl",
+          "sha256": "a2f490575b0601bf5ace4b53906cac06882f88615fc23803468b1a2e5b45bac9"
+        },
+        "test": {
+          "path": "outputs/paper/tdc_seed42_neighbor_fill_20260924/data/carcinogens/scaffold/test.jsonl",
+          "sha256": "82a2f3ce63c6f77d520439251da70a4df70dabdfc140a61385ffbae9b0cc1d08"
+        }
+      }
+    },
+    {
+      "benchmark": "conditioned",
+      "task": "bbb_martins",
+      "splits": {
+        "train": {
+          "path": "data/conditioned_benchmark/BBB_Martins/scaffold/train.jsonl",
+          "sha256": "f1a00fcf943303d73b0ba4eec04b88fc53bf68847a3849869b11be319489ff43"
+        },
+        "valid": {
+          "path": "data/conditioned_benchmark/BBB_Martins/scaffold/valid.jsonl",
+          "sha256": "acef8e37518581e166b16454681607ab50d9b45e63b4494f4a803902dacae187"
+        },
+        "test": {
+          "path": "data/conditioned_benchmark/BBB_Martins/scaffold/test.jsonl",
+          "sha256": "ba340d019c4f49a4708e93ffc4388771efc8d11dbb3158bf7c06a311cf290088"
+        }
+      }
+    },
+    {
+      "benchmark": "conditioned",
+      "task": "bioavailability_ma",
+      "splits": {
+        "train": {
+          "path": "data/conditioned_benchmark/Bioavailability_Ma/scaffold/train.jsonl",
+          "sha256": "f78ec5d7d8db97cf9e24ccd620790e327b777d4878be39678a6bb0fb41af6829"
+        },
+        "valid": {
+          "path": "data/conditioned_benchmark/Bioavailability_Ma/scaffold/valid.jsonl",
+          "sha256": "562d1d8ab71f3e1556c4f65e49372ad4a411ff4b0de2bcacc5ee1620603fd112"
+        },
+        "test": {
+          "path": "data/conditioned_benchmark/Bioavailability_Ma/scaffold/test.jsonl",
+          "sha256": "bcd47446f78038c84b58dc3e79e7e658e3d659ca381da22435d5ec321194e248"
+        }
+      }
+    },
+    {
+      "benchmark": "conditioned",
+      "task": "skin_reaction",
+      "splits": {
+        "train": {
+          "path": "data/conditioned_benchmark/Skin_Reaction/scaffold/train.jsonl",
+          "sha256": "402b1fd7dc05336bec1671a76a88519d48409518e64a97f0dece825aeeb6c5b0"
+        },
+        "valid": {
+          "path": "data/conditioned_benchmark/Skin_Reaction/scaffold/valid.jsonl",
+          "sha256": "fa673c9d2f33f18f6ec35e5e506fd13dd1c7c5120fb9006f8ad527d8db70e130"
+        },
+        "test": {
+          "path": "data/conditioned_benchmark/Skin_Reaction/scaffold/test.jsonl",
+          "sha256": "649c692e492a631bcfff89b154beeb81174e813128cebcc6190bc09b5dc33f11"
+        }
+      }
+    },
+    {
+      "benchmark": "conditioned",
+      "task": "ames",
+      "splits": {
+        "train": {
+          "path": "data/conditioned_benchmark/Ames/scaffold/train.jsonl",
+          "sha256": "faa0a5f8935e2fbe91099b81ff1d80d65e021617497df822613b5388cf3db493"
+        },
+        "valid": {
+          "path": "data/conditioned_benchmark/Ames/scaffold/valid.jsonl",
+          "sha256": "10985b3ccd3d337024a98cefa8a32ea2fa6ed2b4208d1f1e08afae471d78fc29"
+        },
+        "test": {
+          "path": "data/conditioned_benchmark/Ames/scaffold/test.jsonl",
+          "sha256": "c22ab6808c4c89ba8015987f2e5c0a5b93409f2f155bde123606cb01e86a9d0e"
+        }
+      }
+    },
+    {
+      "benchmark": "conditioned",
+      "task": "dili",
+      "splits": {
+        "train": {
+          "path": "data/conditioned_benchmark/DILI/scaffold/train.jsonl",
+          "sha256": "3231f2421f066030d583380fe39c4aed8756cfb30191ba0a605e1aa63ff2b076"
+        },
+        "valid": {
+          "path": "data/conditioned_benchmark/DILI/scaffold/valid.jsonl",
+          "sha256": "7b40decd8e312e73b8a269070ff4620fef4ab5ec350337a2e64a4587799ad96a"
+        },
+        "test": {
+          "path": "data/conditioned_benchmark/DILI/scaffold/test.jsonl",
+          "sha256": "e548bcefa7c10c9ee90ae546d0631d2cb47aa7fc227892455563c503b26b5f19"
+        }
+      }
+    },
+    {
+      "benchmark": "conditioned",
+      "task": "carcinogens",
+      "splits": {
+        "train": {
+          "path": "data/conditioned_benchmark/Carcinogens/scaffold/train.jsonl",
+          "sha256": "4fb1e3a9aa8edada3b250ada7d8c636440cbcc57c8f22051230c93f15a87ba6f"
+        },
+        "valid": {
+          "path": "data/conditioned_benchmark/Carcinogens/scaffold/valid.jsonl",
+          "sha256": "57a4f36ebebf4e5be8076d431b7293c812ccc0e59a00fdf4ec559144c0e3682a"
+        },
+        "test": {
+          "path": "data/conditioned_benchmark/Carcinogens/scaffold/test.jsonl",
+          "sha256": "b2ec17336315d3deb6c5a210cdff383be9151ee2434406c3a7eff5d633656520"
+        }
+      }
+    }
+  ]
+}
