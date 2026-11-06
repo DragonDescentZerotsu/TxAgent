@@ -13,6 +13,9 @@ paper benchmarks, with train-only examples, validation selection and final test
 evaluation. The [SFT contract and run guide](../../predict/baselines/TINKER_SFT.md)
 documents the frozen source manifest, TxGemma-style settings and differences,
 cost estimation, credentials, checkpoint resume and result artifacts.
+Both suites are complete; see the [12-task results](../../docs/results.md#new-supervised-label-baseline).
+Use `python -m predict.baselines.tinker_sft verify --output <run-root>` for an
+offline result audit, without running the training recipe or supplying credentials.
 
 ## Morgan KNN, MiniMol KNN and frozen-encoder head
 

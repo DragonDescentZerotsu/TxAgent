@@ -1,6 +1,7 @@
 """Scientific boundaries of the label-only SFT runner; no network requests."""
 import asyncio
 import random
+import sys
 from types import SimpleNamespace
 
 import numpy as np
@@ -22,9 +23,9 @@ def test_demonstrations_exclude_all_query_parent_rows():
     train = [{'uid': 'same_a'}, {'uid': 'same_b'}, {'uid': 'other_a'}, {'uid': 'other_b'}]
     keys = ['same', 'same', 'other_a', 'other_b']
     for kwargs in ({'rng': random.Random(42)}, {'similarities': [1.0, 0.99, 0.2, 0.8]}):
-        examples = sft.select_examples({}, train, keys, 'same', count=10, **kwargs)
+        examples = sft.select_examples(train, keys, 'same', count=10, **kwargs)
         assert {x['uid'] for x in examples} == {'other_a', 'other_b'}
-    examples = sft.select_examples({}, train, keys, 'same', count=1, similarities=[1, 1, .2, .8])
+    examples = sft.select_examples(train, keys, 'same', count=1, similarities=[1, 1, .2, .8])
     assert examples == [train[3]]
 
 
@@ -145,3 +146,66 @@ def test_resume_after_training_before_validation_does_not_repeat_updates(tmp_pat
     result = asyncio.run(sft.candidate(Service(), config, tmp_path, .1, asyncio.Semaphore(1)))
     assert len(updates) == 2
     assert len(result) == 1
+
+
+@pytest.mark.parametrize('damage', ['duplicate', 'unknown', 'label', 'condition', 'probability', 'nonfinite'])
+def test_invalid_cached_predictions_fail_before_inference(tmp_path, damage):
+    pytest.importorskip('tinker')
+    records = [dict(uid=str(i), label=i, condition=None, tokens=[1, 2]) for i in range(2)]
+    row = dict(records[0], logprob_A=-1., logprob_B=-2., probability=sft.probabilities([-1., -2.]))
+    if damage == 'unknown':
+        row['uid'] = 'unexpected'
+    elif damage in ('label', 'condition'):
+        row[damage] = 'changed'
+    elif damage == 'probability':
+        row['probability'] = .9
+    elif damage == 'nonfinite':
+        row['logprob_A'] = float('nan')
+    output = tmp_path / 'predictions.jsonl'
+    sft.write_jsonl_atomic(output, [row, row] if damage == 'duplicate' else [row])
+
+    class Sampler:
+        async def compute_logprobs_async(self, *args, **kwargs):
+            pytest.fail('Invalid cache must be rejected before scoring missing rows')
+
+    with pytest.raises(ValueError):
+        asyncio.run(sft.score(Sampler(), records, output, [35, 36], asyncio.Semaphore(1)))
+
+
+def test_completed_run_verifies_offline_without_rewriting_artifacts(tmp_path, monkeypatch):
+    tinker = pytest.importorskip('tinker')
+    monkeypatch.setattr(tinker, 'ServiceClient', lambda **kwargs: pytest.fail('Unexpected provider call'))
+    task = tmp_path / 'tdc/test_task'
+    records = [dict(uid=str(i), label=i, condition=None) for i in range(2)]
+    rows = [dict(r, logprob_A=a, logprob_B=b, probability=sft.probabilities([a, b]))
+            for r, (a, b) in zip(records, [(-.1, -2.), (-2., -.1)])]
+    scores = np.array([r['probability'] for r in rows])
+    threshold, _ = sft.choose_threshold([0, 1], scores, 'valid_macro_f1')
+    metrics = sft.evaluate_metrics([0, 1], scores, threshold)
+    trial = dict(learning_rate=.1, epoch=1, sampler_path='saved', state_path='saved',
+                 valid_bce=float(sft.log_loss([0, 1], scores, labels=[0, 1])), valid_metrics=metrics)
+    for split in ['valid', 'test']:
+        sft.write_jsonl_atomic(task / f'{split}.jsonl', records)
+    sft.write_jsonl_atomic(task / 'lr_0.1/epoch_1_valid.jsonl', rows)
+    sft.write_jsonl_atomic(task / 'test_predictions.jsonl', rows)
+    sft.write_json_atomic(task / 'lr_0.1/epoch_1.json', trial)
+    sft.write_json_atomic(task / 'selected.json', trial)
+    result = dict(benchmark='tdc', task='test_task', rows=2, selected=trial, test=metrics,
+                  test_fixed_0_5=sft.evaluate_metrics([0, 1], scores, .5))
+    sft.write_json_atomic(task / 'test_metrics.json', result)
+    sft.write_json_atomic(tmp_path / 'results.json', [result])
+    plan = dict(config=dict(epochs=1, learning_rates=[.1], prompt_sha256=sft.sha256_file(sft.PROMPT),
+                            profiles_sha256=sft.fingerprint(sft.profiles())),
+                datasets=[dict(benchmark='tdc', task='test_task', prepared_sha256={
+                    f'{s}.jsonl': sft.sha256_file(task / f'{s}.jsonl') for s in ['valid', 'test']})])
+    sft.write_json_atomic(tmp_path / 'plan.json', plan)
+    sft.write_json_atomic(tmp_path / 'status.json', dict(status='complete', updated=1))
+    before = {p: (p.read_bytes(), p.stat().st_mtime_ns) for p in tmp_path.rglob('*.json*')}
+    for command in ['verify', 'run']:
+        monkeypatch.setattr(sys, 'argv', ['tinker_sft', command, '--output', str(tmp_path)])
+        sft.main()
+    assert before == {p: (p.read_bytes(), p.stat().st_mtime_ns) for p in before}
+    result['test'] = dict(metrics, macro_f1=0.)
+    sft.write_json_atomic(task / 'test_metrics.json', result)
+    with pytest.raises(ValueError, match='Test metrics mismatch'):
+        sft.verify_results(tmp_path, plan)

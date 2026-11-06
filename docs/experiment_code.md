@@ -54,6 +54,7 @@ release merely because a candidate finished. This guide and the capability READM
 | MiniMol head | `predict/baselines/minimol/run_bioavailability_ma.py` | Frozen embeddings and train/valid/test → validation-selected ensemble and predictions for all six tasks |
 | Encoder / auxiliary training | `predict/baselines/minimol/run_multitask.py` | Main splits and filtered auxiliary targets → graph inputs, checkpoints and ensemble predictions |
 | RASAR | `predict/baselines/retrieval_features.py`, `retrieval_forest.py` | Main/auxiliary labels → shared nearest-neighbor features, validation-selected RF and predictions |
+| Supervised label SFT | `predict/baselines/tinker_sft.py` (`prepare/run/verify`), recipe `experiments/baselines/tinker_sft.sh` | Frozen paper splits → single-token DeepSeek LoRA training, validation selection, test probabilities and offline result verification; native Tinker SDK, [protocol](../predict/baselines/TINKER_SFT.md) |
 | Evidence and gold construction | `data/processing/` | Versioned source records and task rules → published data releases |
 | Selection and scoring | `optimization/` | Frozen candidates and objectives → reviewed scores or ordered physical evidence selections |
 | Result analysis | `analysis/`, [result index](results.md) | Saved predictions and source bindings → derived analyses and verified reports; `analysis.prediction.paper_results` exports frozen paper tables and figure values; `--figures` renders the three current manuscript PDFs |

@@ -1,9 +1,11 @@
 # TxGemma-style supervised label prediction
 
-`python -m predict.baselines.tinker_sft {prepare,run}` is the shared implementation.
+`python -m predict.baselines.tinker_sft {prepare,run,verify}` is the shared implementation.
 The concrete 12-task paper experiment is `experiments/baselines/tinker_sft.sh`.
 This trains **DeepSeek**, not TxGemma, and is not a reproduction of the published
 TxGemma checkpoint or its full 66-task training mixture.
+Both six-task suites completed on 2026-11-01; the maintained score table and
+completion record are in [results](../../docs/results.md#new-supervised-label-baseline).
 
 ## Scientific contract
 
@@ -80,6 +82,9 @@ bash experiments/baselines/tinker_sft.sh
 renders all prompts without truncation, saves token IDs and example UIDs, and
 estimates the complete sweep cost. Credentials are read at runtime from the
 specified existing file (or `TINKER_API_KEY`), never copied into the checkout.
+An explicitly supplied credential file must contain the key; it cannot silently
+fall back to another account. This renderer and historical price estimate support
+only the pinned model; the CLI rejects model substitutions.
 
 `run` verifies prepared hashes and exact model support. A process lock prevents
 duplicate launches. The recipe runs four tasks concurrently; up to 32 query pairs
@@ -90,7 +95,23 @@ Optimizer checkpoints are saved every 25 batches and at
 epoch boundaries. Resume restores optimizer state; interrupted unsaved batches
 may be recomputed and billed again. Completed validation predictions are reused.
 `selected.json` is written before test requests; its checkpoint and threshold
-are then frozen. Test predictions are resumable per query.
+are then frozen. Test predictions are resumable per query. Cached predictions
+must have unique expected IDs, matching labels/conditions and probabilities
+consistent with their finite A/B log probabilities before missing rows are scored.
+
+For an existing completed run, use the same command owner for an offline audit:
+
+```bash
+"$PYTHON" -m predict.baselines.tinker_sft verify \
+  --output outputs/predictions/tinker_sft/txgemma_style_label_v1/deepseek_v41_flash_1017_paper_20261031
+```
+
+`verify` checks prepared hashes, all validation predictions/BCE/thresholds,
+checkpoint selection, test predictions/metrics and the aggregate `results.json`.
+It requires neither credentials nor the Tinker service and does not change
+scientific outputs. `run` on a root containing `results.json` takes this same
+offline path, preserving completion timestamps and provider metadata. To create
+a new experiment, choose a new `RUN_NAME` or `OUTPUT_ROOT`; do not reuse a frozen run.
 
 Artifacts under the run root:
 
@@ -102,6 +123,14 @@ Artifacts under the run root:
   checkpoint locators and validation metrics per epoch.
 - `selected.json`, `test_predictions.jsonl`, `test_metrics.json`; after all
   tasks finish, the root `results.json` contains all 12 results.
+
+Keep datasets, checkpoints and prediction logs in this single run root; keep the
+isolated runtime outside the checkout. `source_snapshot.zip` and the implementation
+receipt bind the original experiment code (`8f0fcad6`), while later runner fixes
+are verified against those saved outputs. `execution_history/initial_serial_requests/`
+preserves the intentionally interrupted first attempt, including its cancellation
+trace; it is provenance, not a second active run. Billing snapshots dated before
+completion are partial usage estimates, not final charges or remaining balance.
 
 Intermediate checkpoint TTL is 30 days; selection removes the chosen sampling
 checkpoint's expiration so the final adapter remains available. Long-term offline

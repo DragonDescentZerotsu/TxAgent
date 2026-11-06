@@ -121,6 +121,9 @@ The [Tinker SFT baseline](baselines/TINKER_SFT.md) provides supervised A/B label
 prediction with train-only examples, validation selection and held-out test
 evaluation. Its [paper recipe](../experiments/baselines/tinker_sft.sh) explicitly
 pins the original paper splits, including the TDC seed-42 corrections.
+The same module's `verify --output <run-root>` audits saved validation selection
+and test results offline; [completed results](../docs/results.md#new-supervised-label-baseline)
+are recorded separately from the frozen paper comparison.
 
 New raw runs: `outputs/predictions/<harness>/<prompt>/<run-name>/<benchmark>/<task>/<split>/<profile>/`.
 Supply `--run-name semantic-mixed-top50` and optionally `--output-root PATH` to

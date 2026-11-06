@@ -1,6 +1,6 @@
 # 发布整合状态
 
-更新：2026-10-31。交接分支 `merge_release_v1`；双协议实现为 `13ffaf2c`。
+更新：2026-11-06。交接分支 `merge_release_v1`；双协议实现为 `13ffaf2c`。
 整合结构基于 `73bddf2e`，main 功能来源为快照 `41403cf4` 及已确认的修复。
 综合代码 smoke 基线为 `013ba960`，后续检索实跑及双协议验收见下文；完整复现依赖分发仍未完成。先由合作者在此分支检查代码、
 补齐依赖及待核对来源；确认交接完成后再正常合并到 main，当前不替换 main。
@@ -11,13 +11,18 @@
 [LLM 协议](../predict/prompts/README.md#frozen-paper-baseline)；分数、图表和来源见
 [结果入口](results.md)。这几处各自维护一份事实，本文不复制命令或结果表。
 
+Tinker SFT 维护复核（2026-11-06）：保持单一 Python 入口、Bash 配方和 prompt；
+同入口补齐离线 `verify`，已完成 run 重入不连接服务或改写结果状态。
+恢复前拒绝重复/错配预测及不一致概率；12 项离线测试与全量保存结果复核通过。
+原源码快照、初次中断记录和冻结结果保留，运行环境仍在仓库外。
+
 ## 当前验收清单
 
 | 项目 | 已完成 | 剩余工作与限制 |
 | --- | --- | --- |
 | main 论文 ML | 198 cells 保存结果核验、模型重放和有限重训，详见下表 | 精确 embedding、辅助源、MiniMol runtime/checkpoint 的完整分发及独立环境验收 |
 | main 论文 naive LLM | 108 cells、38,457 份冻结请求/响应核对；DeepSeek 两任务的 12 单元重检索实跑及断网恢复通过 | 完整执行输入的匿名分发；本轮未重跑其他任务或骨干 |
-| 新增 Tinker SFT baseline | 共用入口、两套六任务冻结输入、5 项离线合同/恢复检查及首轮训练→checkpoint→验证实跑通过；见 [SFT 协议](../predict/baselines/TINKER_SFT.md) | 2026-10-31 全量训练进行中；全部验证选参和测试完成后再纳入论文，不改写原 306 cells |
+| 新增 Tinker SFT baseline | 2026-11-01 两套六任务全部完成：120 个验证 checkpoints、4,273 条 test predictions，样本合同、验证选参及测试指标复算通过；见 [结果](results.md#new-supervised-label-baseline) 与 [SFT 协议](../predict/baselines/TINKER_SFT.md) | 单种子 DeepSeek TxGemma-style baseline；论文图表尚未纳入，不改写原 306 cells；远端 adapter 的长期离线导出及最终费用核对待完成 |
 | 已批准检索规则 | 默认共用普通 Murcko，保留按索引合同启用的 parent 细化；论文 baseline 可显式选择 legacy 协议 | 外部冻结排名缓存仍需按新规则重建；BBB v10 映射读取及相关 9 项 builder 验收按用户决定延至合作者交接 |
 | 论文输出及 Evidence 来源 | 表格与三张论文 PDF 已复现；五组消融由归档 TSV 绑定 | Ours 原始运行/预算、第六组消融协议和 Direct 10 分子/50 records 差异仍待核对，详见结果入口 |
 | 复现分发 | LLM 36 文件哈希、ML 保存目录清单及 transfer 模型本地缓存清点完成 | 清单不等于完整分发；先对应论文实际运行，再闭合模型/排序缓存依赖 |

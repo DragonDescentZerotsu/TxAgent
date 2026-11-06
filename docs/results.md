@@ -7,9 +7,34 @@ DeepSeek-V4.1-Flash-1017 adapters for the two frozen paper benchmarks. It follow
 the documented TxGemma-style label-prediction protocol and uses validation-only
 selection. Run artifacts live under
 `outputs/predictions/tinker_sft/txgemma_style_label_v1/deepseek_v41_flash_1017_paper_20261031/`.
-Only completed `test_metrics.json` files are results; prepared datasets and
-validation scores are not test results. The final `results.json` requires all
-12 tasks. This new experiment does not alter the 306 frozen cells below.
+Completed on 2026-11-01 at 02:20 EST: all 12 tasks, 120 validation checkpoints,
+and 4,273 test predictions (TDC 2,225; conditioned 2,048). The final `results.json`
+is present. An independent saved-output check verified complete unique query IDs,
+labels and conditions against prepared test records, recomputed Macro-F1/AUROC,
+and confirmed that each selected checkpoint minimizes validation BCE among its
+10 candidates. Classification thresholds come from validation Macro-F1.
+The 2026-11-06 maintenance review reran the shared offline `verify` command:
+all 120 validation prediction sets, BCE values, thresholds, selected checkpoints,
+test metrics and aggregate results agree. The [run guide](../predict/baselines/TINKER_SFT.md#run-and-resume)
+owns the verification command; no paid requests or retraining were needed.
+
+These are single-seed DeepSeek TxGemma-style SFT results, not results from the
+TxGemma model itself. Each table cell is **Macro-F1 / AUROC**; means weight the
+six tasks equally.
+
+| Task | TDC | Conditioned |
+| --- | --- | --- |
+| BBB | 0.8066 / 0.9209 | 0.6632 / 0.7717 |
+| Oral bioavailability | 0.6276 / 0.7233 | 0.7086 / 0.7620 |
+| Skin | 0.6215 / 0.6374 | 0.5021 / 0.5901 |
+| Ames | 0.7553 / 0.8539 | 0.6810 / 0.7711 |
+| DILI | 0.7527 / 0.9111 | 0.5895 / 0.7175 |
+| Carcinogens | 0.7737 / 0.8747 | 0.5893 / 0.6306 |
+| **Mean** | **0.7229 / 0.8202** | **0.6223 / 0.7072** |
+
+Full precision, selected learning rates/epochs and thresholds remain in the run
+artifacts. These results are documented separately; the frozen 306-cell comparison
+and manuscript figures have not been changed.
 
 ## Frozen paper comparison
 

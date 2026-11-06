@@ -54,7 +54,7 @@ def render_prompt(benchmark, task, row, examples):
         conditioned=benchmark == 'conditioned', query=row, examples=examples).strip()
 
 
-def select_examples(query, train, keys, query_key, rng=None, count=10, similarities=None):
+def select_examples(train, keys, query_key, rng=None, count=10, similarities=None):
     """Train examples only; exclude every row of the query's normalized parent."""
     eligible = [i for i, key in enumerate(keys) if key != query_key]
     if rng is not None:
@@ -130,12 +130,12 @@ def prepare(args):
                 records = []
                 for i, row in enumerate(rows):
                     if split == 'train':
-                        examples = select_examples(row, train, keys['train'], keys[split][i],
+                        examples = select_examples(train, keys['train'], keys[split][i],
                             rng=rng, count=rng.randint(1, 10)) if i in fewshot else []
                     else:
                         fp = generator.GetFingerprint(Chem.MolFromSmiles(row['drug']))
                         sim = DataStructs.BulkTanimotoSimilarity(fp, train_fp)
-                        examples = select_examples(row, train, keys['train'], keys[split][i], similarities=sim)
+                        examples = select_examples(train, keys['train'], keys[split][i], similarities=sim)
                     prompt = render_prompt(benchmark, task, row, examples)
                     tokens = renderer.build_generation_prompt([{'role': 'user', 'content': prompt}]).to_ints()
                     max_length = max(max_length, len(tokens) + 1)
@@ -204,11 +204,28 @@ def probabilities(logprobs):
     return math.exp(b - np.logaddexp(a, b))
 
 
+def read_predictions(records, output, *, complete=False):
+    """Reject incompatible cached results before scoring or reporting them."""
+    expected = {r['uid']: r for r in records}
+    existing = {}
+    for row in read_jsonl(output) if output.exists() else []:
+        uid = row['uid']
+        if uid not in expected or uid in existing:
+            raise ValueError(f'Unexpected or duplicate prediction ID: {output}: {uid}')
+        if any(row[k] != expected[uid][k] for k in ('label', 'condition')):
+            raise ValueError(f'Prediction label/condition mismatch: {output}: {uid}')
+        probability = probabilities([row['logprob_A'], row['logprob_B']])
+        if not math.isclose(row['probability'], probability, rel_tol=0, abs_tol=1e-12):
+            raise ValueError(f'Prediction probability mismatch: {output}: {uid}')
+        existing[uid] = row
+    if complete and len(existing) != len(records):
+        raise ValueError(f'Incomplete predictions: {output}')
+    return existing
+
+
 async def score(sampler, records, output, label_tokens, semaphore):
     import tinker
-    existing = {x['uid']: x for x in read_jsonl(output)} if output.exists() else {}
-    if not set(existing) <= {r['uid'] for r in records}:
-        raise ValueError(f'Unexpected prediction IDs: {output}')
+    existing = read_predictions(records, output)
     output.parent.mkdir(parents=True, exist_ok=True)
 
     async def one(record):
@@ -228,9 +245,46 @@ async def score(sampler, records, output, label_tokens, semaphore):
 
     await asyncio.gather(*(one(record) for record in records))
     ordered = [existing[r['uid']] for r in records]
-    if any(r['label'] != p['label'] for r, p in zip(records, ordered)):
-        raise ValueError('Prediction label mismatch')
     return np.asarray([x['probability'] for x in ordered])
+
+
+def verify_results(root, plan):
+    """Recompute saved validation selection and test metrics without provider calls."""
+    results = []
+    for dataset in plan['datasets']:
+        task_root = root / dataset['benchmark'] / dataset['task']
+        trials = []
+        valid = read_jsonl(task_root / 'valid.jsonl')
+        labels = [r['label'] for r in valid]
+        for lr in plan['config']['learning_rates']:
+            for epoch in range(1, plan['config']['epochs'] + 1):
+                out = task_root / f'lr_{lr:g}'
+                trial = read_json(out / f'epoch_{epoch}.json')
+                rows = read_predictions(valid, out / f'epoch_{epoch}_valid.jsonl', complete=True)
+                scores = np.asarray([rows[r['uid']]['probability'] for r in valid])
+                threshold, _ = choose_threshold(labels, scores, 'valid_macro_f1')
+                expected = dict(trial, learning_rate=lr, epoch=epoch,
+                    valid_bce=float(log_loss(labels, scores, labels=[0, 1])),
+                    valid_metrics=evaluate_metrics(labels, scores, threshold))
+                if trial != expected:
+                    raise ValueError(f'Validation metrics mismatch: {out}/epoch_{epoch}.json')
+                trials.append(trial)
+        selected = min(trials, key=lambda x: (x['valid_bce'], x['learning_rate'], x['epoch']))
+        if read_json(task_root / 'selected.json') != selected:
+            raise ValueError(f'Validation selection mismatch: {task_root}')
+        test = read_jsonl(task_root / 'test.jsonl')
+        rows = read_predictions(test, task_root / 'test_predictions.jsonl', complete=True)
+        scores = np.asarray([rows[r['uid']]['probability'] for r in test])
+        labels = [r['label'] for r in test]
+        result = dict(benchmark=dataset['benchmark'], task=dataset['task'], rows=len(test),
+                      selected=selected, test=evaluate_metrics(labels, scores, selected['valid_metrics']['threshold']),
+                      test_fixed_0_5=evaluate_metrics(labels, scores, 0.5))
+        if read_json(task_root / 'test_metrics.json') != result:
+            raise ValueError(f'Test metrics mismatch: {task_root}')
+        results.append(result)
+    if read_json(root / 'results.json') != results:
+        raise ValueError('Aggregate results mismatch')
+    return dict(tasks=len(results), test_predictions=sum(r['rows'] for r in results))
 
 
 def event(path, **fields):
@@ -307,6 +361,8 @@ async def run(args, plan):
     import tinker
 
     key = dotenv_values(args.env_file).get('TINKER_API_KEY') if args.env_file else None
+    if args.env_file and not key:
+        raise ValueError('Explicit --env-file must contain TINKER_API_KEY')
     auth = {'api_key': key} if key else {}
     service = tinker.ServiceClient(**auth, display_name=f'{args.output.name}:test',
                                   user_metadata={'run_name': args.output.name, 'purpose': 'test'})
@@ -362,11 +418,11 @@ async def run(args, plan):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command', choices=['prepare', 'run'])
+    parser.add_argument('command', choices=['prepare', 'run', 'verify'])
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--sources', type=Path)
     parser.add_argument('--source-root', type=Path)
-    parser.add_argument('--model', default=MODEL)
+    parser.add_argument('--model', choices=[MODEL], default=MODEL)
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--rank', type=int, default=32)
     parser.add_argument('--epochs', type=int, default=5)
@@ -381,8 +437,10 @@ def main():
         parser.error('epochs, rank, batch size and concurrency must be positive')
     if any(lr <= 0 or not math.isfinite(lr) for lr in args.learning_rates):
         parser.error('learning rates must be finite and positive')
-    if len(set(args.learning_rates)) != len(args.learning_rates):
-        parser.error('learning rates must be distinct')
+    if len({f'{lr:g}' for lr in args.learning_rates}) != len(args.learning_rates):
+        parser.error('learning rates must have distinct output directory names')
+    if not math.isfinite(args.max_estimated_usd) or args.max_estimated_usd <= 0:
+        parser.error('max estimated USD must be finite and positive')
     args.output.mkdir(parents=True, exist_ok=True)
     with (args.output / '.lock').open('w') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -393,6 +451,9 @@ def main():
         else:
             plan = read_json(args.output / 'plan.json')
             verify_prepared(args.output, plan)
+            if args.command == 'verify' or (args.output / 'results.json').exists():
+                print(json.dumps(verify_results(args.output, plan)), flush=True)
+                return
             if plan['cost_estimate_usd']['total_without_retries_or_storage'] > args.max_estimated_usd:
                 raise ValueError('Prepared token cost exceeds --max-estimated-usd')
             write_json_atomic(args.output / 'status.json', {'status': 'running', 'updated': time.time()})
