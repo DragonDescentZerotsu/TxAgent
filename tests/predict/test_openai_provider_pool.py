@@ -601,3 +601,38 @@ def test_pool_closes_owned_transports():
         client_factory=lambda spec: SimpleNamespace(client=SimpleNamespace(close=lambda: closed.append(spec.name))))
     pool.close()
     assert closed == ['a', 'b']
+
+
+def test_spend_ledger_closes_and_serializes_connections(monkeypatch, tmp_path):
+    real_connect = provider_pool.sqlite3.connect
+    active = 0
+    peak = 0
+    lock = threading.Lock()
+
+    class Connection(provider_pool.sqlite3.Connection):
+        def __init__(self, *args, **kwargs):
+            nonlocal active, peak
+            super().__init__(*args, **kwargs)
+            with lock:
+                active += 1
+                peak = max(peak, active)
+
+        def close(self):
+            nonlocal active
+            super().close()
+            with lock:
+                active -= 1
+
+    monkeypatch.setattr(provider_pool.sqlite3, 'connect',
+                        lambda *a, **kw: real_connect(*a, factory=Connection, **kw))
+    ledger = provider_pool._SpendLedger(provider_pool.SpendBudgetSpec(
+        ledger_path=str(tmp_path / 'concurrent.sqlite'), epoch='concurrent',
+        limit_usd=10, credential_env='TEST_KEY'))
+
+    def request(_):
+        ledger.settle(ledger.reserve('provider', .01), .001)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=32) as executor:
+        list(executor.map(request, range(96)))
+    assert ledger.status()['committed_usd'] == pytest.approx(.096)
+    assert active == 0 and peak == 1

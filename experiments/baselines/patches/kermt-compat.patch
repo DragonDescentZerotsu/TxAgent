@@ -1,0 +1,85 @@
+diff --git a/kermt/data/molgraph.py b/kermt/data/molgraph.py
+index e563c8e..fe489fb 100644
+--- a/kermt/data/molgraph.py
++++ b/kermt/data/molgraph.py
+@@ -48,17 +48,23 @@ from rdkit import Chem
+ 
+ from rdkit import RDLogger
+ RDLogger.DisableLog('rdApp.*')
+-import cuik_molmaker
+ import torch
+-from cuik_molmaker.mol_features import MoleculeFeaturizer
+ from descriptastorus.descriptors import rdDescriptors, rdNormalizedDescriptors
+ from kermt.util.features import FeatureRange, get_feature_range
+-from kermt.util._cuik_compat import (
+-    atom_onehot_feature_names_to_tensor,
+-    atom_float_feature_names_to_tensor,
+-    bond_feature_names_to_tensor,
+-    to_float_tensor,
+-)
++try:
++    import cuik_molmaker
++    from cuik_molmaker.mol_features import MoleculeFeaturizer
++    from kermt.util._cuik_compat import (
++        atom_onehot_feature_names_to_tensor,
++        atom_float_feature_names_to_tensor,
++        bond_feature_names_to_tensor,
++        to_float_tensor,
++    )
++except ModuleNotFoundError as error:
++    if not error.name.startswith("cuik_molmaker"):
++        raise
++    cuik_molmaker = None
++
+ 
+ # Atom feature sizes
+ MAX_ATOMIC_NUM = 100
+@@ -113,7 +119,7 @@ def onek_encoding_unk(value: int, choices: List[int]) -> List[int]:
+     """
+     encoding = [0] * (len(choices) + 1)
+     if min(choices) < 0:
+-        index = value
++        index = value if -len(encoding) <= value < len(encoding) else -1
+     else:
+         index = choices.index(value) if value in choices else -1
+     encoding[index] = 1
+@@ -158,6 +164,8 @@ class MolGraph:
+         self.rdkit_bond_idx = [] # mapping from bond index to rdkit bond index
+ 
+         # If use_cuikmolmaker_featurization is True, then compute_atom_bond_features is False
++        if args.use_cuikmolmaker_featurization and cuik_molmaker is None:
++            raise ImportError("cuik_molmaker is required for GPU featurization")
+         self.compute_atom_bond_features = not args.use_cuikmolmaker_featurization
+ 
+         # Convert smiles to molecule
+diff --git a/kermt/util/features.py b/kermt/util/features.py
+index a1cce65..379cf53 100644
+--- a/kermt/util/features.py
++++ b/kermt/util/features.py
+@@ -36,12 +36,7 @@
+ # SOFTWARE.
+ from dataclasses import dataclass
+ import numpy as np
+-import cuik_molmaker
+-from kermt.util._cuik_compat import (
+-    atom_onehot_feature_names_to_tensor,
+-    atom_float_feature_names_to_tensor,
+-    EMPTY_FLOAT_TENSOR,
+-)
++
+ 
+ 
+ @dataclass
+@@ -51,6 +46,12 @@ class FeatureRange:
+     end: int
+ 
+ def get_feature_range(atom_props_onehot, atom_props_float):
++    import cuik_molmaker
++    from kermt.util._cuik_compat import (
++        atom_onehot_feature_names_to_tensor,
++        atom_float_feature_names_to_tensor,
++        EMPTY_FLOAT_TENSOR,
++    )
+     """Get the feature ranges for atom properties"""
+     
+     smi = "CC(=O)O"  # Example molecule to compute feature ranges

@@ -123,6 +123,46 @@ def test_offline_cli_verifies_saved_batch_without_flat_runtime(tmp_path, capsys)
     with pytest.raises(ValueError, match='empty'): main(['--verify-paper-baseline', str(tmp_path)])
 
 
+def test_frozen_repetition_preserves_requests_but_never_predictions(tmp_path):
+    from predict.harnesses.branches import paper_baseline as runtime
+    from predict.utils.json import write_json_atomic, write_jsonl_atomic, sha256_file
+    source, target = tmp_path/'source', tmp_path/'repeat'
+    cohort = tmp_path/'test.jsonl'
+    write_jsonl_atomic(cohort, [dict(drug='CCO', Y=1)])
+    prepared, manifest, output = example()
+    manifest['generation'] = dict(temperature=0, reasoning_effort='omitted', thinking='provider_default')
+    manifest['inputs'] = {'bbb_martins': {'input': dict(path=str(cohort), sha256=sha256_file(cohort))}}
+    prepared.update(context_ready=True, manifest_hash=paper.content_hash(manifest),
+        query_hash=paper.content_hash(dict(benchmark_profile='', canonical_smiles='CCO', condition_group='')))
+    directory = source/'runs/bbb_martins/query_00000'
+    for path, value in [(source/'experiment_manifest.json', manifest), (directory/'prepared.json', prepared),
+                        (directory/'output.json', output), (directory/'evaluation.json', dict(label=1)),
+                        (source/'summary/bbb_martins/metrics.json', dict(n_total=1, n_successful=1, accuracy=1, macro_f1=.5))]:
+        write_json_atomic(path, value)
+    write_jsonl_atomic(source/'summary/bbb_martins/predictions.jsonl', [dict(index=0, label=1, pred_label=1)])
+    before = {p: p.read_bytes() for p in source.rglob('*') if p.is_file()}
+    runtime.repeat(tmp_path, source, target)
+    _, queries = runtime.validate_batch(target)
+    copied = json.loads((queries[0][2]/'prepared.json').read_text())
+    assert {k:v for k,v in copied.items() if k != 'manifest_hash'} == {k:v for k,v in prepared.items() if k != 'manifest_hash'}
+    assert not list(target.rglob('output.json'))
+    assert all(p.read_bytes() == content for p, content in before.items())
+    overridden = tmp_path/'low-effort'
+    runtime.repeat(tmp_path, source, overridden, reasoning_effort='low')
+    changed, _ = runtime.validate_batch(overridden)
+    assert changed['generation']['reasoning_effort'] == 'low'
+    assert changed['migration']['generation_overrides'] == dict(reasoning_effort='low')
+    changed['generation']['temperature'] = 1
+    write_json_atomic(overridden/'experiment_manifest.json', changed)
+    with pytest.raises(ValueError, match='contract changed: generation'):
+        runtime.validate_batch(overridden)
+    with pytest.raises(ValueError, match='new output'):
+        runtime.repeat(tmp_path, source, target)
+    cohort.write_text(cohort.read_text()+'\n')
+    with pytest.raises(ValueError, match='cohort changed'):
+        runtime.repeat(tmp_path, source, tmp_path/'bad')
+
+
 def test_neighbor_fill_exhausts_nearest_parent_and_is_order_invariant():
     from optimization.selection.record_budget import select_simple_records
     records = [dict(id=f'{m}{i}', molecule_id=m, group=f'L{i%2+2}', similarity=sim)

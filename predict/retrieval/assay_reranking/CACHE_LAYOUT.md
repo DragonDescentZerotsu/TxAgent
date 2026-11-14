@@ -56,7 +56,7 @@ recover candidates excluded when that cache was built.
 These runtime rules do not rebuild benchmark splits, restore candidates removed
 by heldout-L1 prefiltering, or regenerate frozen SQLite/UID releases. Existing
 caches retain their own contracts and candidate universes; the integration
-[acceptance status](../../../docs/release_refactor.md) records the validation limits.
+acceptance status (internal document; not distributed in Git) records the validation limits.
 
 `rebuild_policy` prepares immutable all-task successors using the shared builders.
 The recipe is `experiments/retrieval_cache/molecular_policy.sh`. Publication requires

@@ -34,4 +34,4 @@ python -m data.processing.evidence_library.publish_gold_level_mappings
 
 This requires its actual source files. The command is not a replacement for
 restoring a missing frozen mapping. For repository integration and unresolved
-input availability, see the [release status](../../../docs/release_refactor.md).
+input availability, see the release status (internal document; not distributed in Git).

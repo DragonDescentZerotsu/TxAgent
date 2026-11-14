@@ -1,0 +1,41 @@
+diff --git a/unimol_tools/unimol_tools/data/conformer.py b/unimol_tools/unimol_tools/data/conformer.py
+index e80f4e1..dd0c884 100644
+--- a/unimol_tools/unimol_tools/data/conformer.py
++++ b/unimol_tools/unimol_tools/data/conformer.py
+@@ -234,7 +234,13 @@ def inner_smi2coords(smi, seed=42, mode='fast', remove_hs=True, return_mol=False
+     assert len(atoms) > 0, 'No atoms in molecule: {}'.format(smi)
+     try:
+         # will random generate conformer with seed equal to -1. else fixed random seed.
+-        res = AllChem.EmbedMolecule(mol, randomSeed=seed)
++        embed_params = AllChem.ETKDGv3()
++        embed_params.randomSeed = seed
++        embed_params.timeout = 300
++        embed_params.trackFailures = True
++        res = AllChem.EmbedMolecule(mol, embed_params)
++        counts = embed_params.GetFailureCounts()
++        mol.SetBoolProp("_txagent_embedding_timeout", bool(counts[int(AllChem.EmbedFailureCauses.EXCEEDED_TIMEOUT)]))
+         if res == 0:
+             try:
+                 # some conformer can not use MMFF optimize
+@@ -260,6 +266,11 @@ def inner_smi2coords(smi, seed=42, mode='fast', remove_hs=True, return_mol=False
+     except:
+         print("Failed to generate conformer, replace with zeros.")
+         coordinates = np.zeros((len(atoms), 3))
++        if return_mol:
++            mol.RemoveAllConformers()
++            conformer = Chem.Conformer(mol.GetNumAtoms())
++            conformer.Set3D(False)
++            mol.AddConformer(conformer)
+ 
+     if return_mol:
+         return mol  # for unimolv2
+@@ -523,7 +534,8 @@ def mol2unimolv2(mol, max_atoms=128, remove_hs=True, **params):
+     :return: A batched data containing the molecular representation.
+     """
+ 
+-    mol = AllChem.RemoveAllHs(mol)
++    if any(atom.GetAtomicNum() != 1 for atom in mol.GetAtoms()):
++        mol = AllChem.RemoveAllHs(mol)
+     atoms = np.array([atom.GetSymbol() for atom in mol.GetAtoms()])
+     coordinates = mol.GetConformer().GetPositions().astype(np.float32)
+ 

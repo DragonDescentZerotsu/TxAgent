@@ -20,6 +20,16 @@ They retain their frozen contracts; there is no old-path symlink directory.
 
 ## Frozen paper baseline
 
+For independent inference repetitions, `--repeat-paper-baseline ORIGINAL_BATCH
+--source-root ORIGINAL_REPOSITORY --run-name NEW_NAME` verifies the completed
+source and copies its exact requests, evidence order, cached priors and evaluation
+labels into a fresh batch. It does not retrieve again or inherit predictions.
+Execute with `--run-paper-baseline` as below. Keep each repetition separate and
+record provider changes when reporting run-to-run variability.
+An explicitly requested `--repeat-reasoning-effort low` records a generation
+override in the new manifest; temperature and all other frozen parameters remain
+unchanged. Such runs must be distinguished from a source with omitted effort.
+
 `variants/paper_baseline_v1/` preserves the paper baseline system/user templates,
 six native task/output contracts and the two TDC overrides (Ames and Carcinogens).
 It retains task-specific prediction fields, confidence, supportive/contradictory
@@ -235,4 +245,4 @@ Historical matched Direct-3 LLM is outside the manuscript migration scope; k=3
 ML KNN and three-neighbor RASAR remain supported. This explicit paper mode leaves
 the default FINAL scheduler and named-cache contract intact. For completed smoke
 checks and remaining distribution/full-cohort limitations, see the
-[integration acceptance status](../../docs/release_refactor.md).
+integration acceptance status (internal document; not distributed in Git).

@@ -8,7 +8,7 @@ and Carcinogens; it does not support indexing new query molecules.
 
 This is a historical ranked-retrieval release, not the current FINAL default
 catalog or the main paper baseline's pickle indexes. See the
-[reproduction input map](../../../docs/results.md#reproduction-inputs-and-distribution)
+reproduction input map (internal document; not distributed in Git)
 before choosing an archive; restoring this release does not supply every paper dependency.
 
 Download every Release asset into one directory, then restore into a clone of

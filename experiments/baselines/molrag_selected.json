@@ -1,0 +1,14 @@
+{
+  "method": "MolRAG",
+  "selected_on": "2026-11-08",
+  "selection_reason": "User designated the latest evidence low-effort run with corrected parsing as the MolRAG reproduction.",
+  "protocol": "molrag_direct_evidence.v1",
+  "report": "outputs/analysis/baselines/molrag_evidence_low_reparsed_performance_20261107",
+  "results_sha256": "8ee5c31c87f056ea19b4e4acef1be4da0c7f63fb3ad8c8588719149ba9636d82",
+  "verification": "outputs/analysis/baselines/molrag_evidence_low_reparsed_performance_20261107/verification.json",
+  "verification_sha256": "28baa8d21784138b38fac02d5ca47d2219964898585c62a121087f109e8a76a8",
+  "costs": "outputs/analysis/baselines/molrag_evidence_low_final_performance_20261107/costs.json",
+  "source_study": "outputs/analysis/baselines/molrag_evidence_low_20261107",
+  "guide": "predict/baselines/MOLRAG.md",
+  "costs_sha256": "c0d23cf59d8e0ca0a67a2e838bcf8350f42cc4976ef1c42010bf714c1057a37b"
+}

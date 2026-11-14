@@ -1,0 +1,13 @@
+diff --git a/grover/data/molgraph.py b/grover/data/molgraph.py
+index dfe6b28..7e9cd96 100644
+--- a/grover/data/molgraph.py
++++ b/grover/data/molgraph.py
+@@ -63,7 +63,7 @@ def onek_encoding_unk(value: int, choices: List[int]) -> List[int]:
+     """
+     encoding = [0] * (len(choices) + 1)
+     if min(choices) < 0:
+-        index = value
++        index = value if -len(encoding) <= value < len(encoding) else -1
+     else:
+         index = choices.index(value) if value in choices else -1
+     encoding[index] = 1

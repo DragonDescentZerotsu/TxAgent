@@ -1,0 +1,14 @@
+{
+  "schema": "baseline_result_sources.v1",
+  "foundation_run": "outputs/predictions/foundation/paper_v1/seven_models_minimol_fixed_lambda_20261107",
+  "repeated_sources": {
+    "outputs/predictions/foundation/paper_v1/seven_models_minimol_fixed_lambda_20261107/repeated_runs": 378,
+    "outputs/analysis/baselines/minimol_repeated_runs_20261107": 54,
+    "outputs/analysis/baselines/rasar_repeated_runs_20261108": 72
+  },
+  "historical_export": "docs/paper",
+  "comparison_output": "outputs/analysis/baselines/ml_mean_comparison_20261108",
+  "comparison_export": "docs/baseline_means.csv",
+  "expected_single_cells": 72,
+  "scope": "Repository result documentation only; historical ensemble tables and manuscripts remain unchanged."
+}

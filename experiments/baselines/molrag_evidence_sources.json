@@ -1,0 +1,65 @@
+{
+  "release": "paper_naive_direct_pools_20260925_molrag_one_record_v1",
+  "datasets": [
+    {
+      "benchmark": "conditioned",
+      "task": "bbb_martins",
+      "batch": "outputs/paper/aligned_record_scaling_test_20260921/direct/runs/direct_fill_b50/bbb_martins"
+    },
+    {
+      "benchmark": "conditioned",
+      "task": "bioavailability_ma",
+      "batch": "outputs/paper/aligned_record_scaling_test_20260921/direct/runs/direct_fill_b50/bioavailability_ma"
+    },
+    {
+      "benchmark": "conditioned",
+      "task": "skin_reaction",
+      "batch": "outputs/paper/aligned_record_scaling_test_20260921/direct/runs/direct_fill_b50/skin_reaction"
+    },
+    {
+      "benchmark": "conditioned",
+      "task": "ames",
+      "batch": "outputs/paper/aligned_record_scaling_test_20260921/direct/runs/direct_fill_b50/ames"
+    },
+    {
+      "benchmark": "conditioned",
+      "task": "dili",
+      "batch": "outputs/paper/aligned_record_scaling_test_20260921/direct/runs/direct_fill_b50/dili"
+    },
+    {
+      "benchmark": "conditioned",
+      "task": "carcinogens",
+      "batch": "outputs/paper/aligned_record_scaling_test_20260921/direct/runs/direct_fill_b50/carcinogens"
+    },
+    {
+      "benchmark": "tdc",
+      "task": "bbb_martins",
+      "batch": "outputs/paper/tdc_scaffold_baselines_b50_20260918/llm/runs/direct_fill/bbb_martins"
+    },
+    {
+      "benchmark": "tdc",
+      "task": "bioavailability_ma",
+      "batch": "outputs/paper/tdc_scaffold_baselines_b50_20260918/llm/runs/direct_fill/bioavailability_ma"
+    },
+    {
+      "benchmark": "tdc",
+      "task": "skin_reaction",
+      "batch": "outputs/paper/tdc_seed42_neighbor_fill_20260924/deepseek/skin_reaction/runs/direct_fill/skin_reaction"
+    },
+    {
+      "benchmark": "tdc",
+      "task": "ames",
+      "batch": "outputs/paper/tdc_scaffold_baselines_b50_20260918/llm/runs/direct_fill/ames"
+    },
+    {
+      "benchmark": "tdc",
+      "task": "dili",
+      "batch": "outputs/paper/tdc_scaffold_baselines_b50_20260918/llm/runs/direct_fill/dili"
+    },
+    {
+      "benchmark": "tdc",
+      "task": "carcinogens",
+      "batch": "outputs/paper/tdc_seed42_neighbor_fill_20260924/deepseek/carcinogens/runs/direct_fill/carcinogens"
+    }
+  ]
+}

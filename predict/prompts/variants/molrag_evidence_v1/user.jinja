@@ -1,0 +1,28 @@
+Instruction: Predict {{ task.endpoint_name }}. YES means {{ task.positive_prediction }}; NO means {{ task.negative_prediction }}.
+{% if condition != 'no_reported_external_condition' %}Query condition: {{ condition }}.
+{% else %}No external condition is reported for this query.
+{% endif %}Input: {{ smiles }}
+Here are direct references for structurally similar molecules. Each molecule contributes one reference. A reference is either a TDC training-set label or a direct evidence record.
+{% for example in examples %}
+SMILES: {{ example.smiles }}
+Dice similarity: {{ '%.4f' | format(example.dice) }}
+{% if example.card.get('record_type') == 'dataset_label' %}Reference type: TDC training-set label
+Dataset: {{ example.card.dataset }}
+Label: {{ example.card.reported_value }}
+Label meaning and scope: {{ example.card.support_text }}
+{% else %}Reference type: direct evidence record
+Endpoint: {{ example.card.endpoint_type }}
+Reported value: {{ example.card.reported_value }}
+Reported units: {{ example.card.reported_units }}
+Assay context: {{ example.card.assay_context }}
+Species context: {{ example.card.species_context }}
+Qualifying conditions: {{ example.card.qualifying_conditions }}
+Evidence: {{ example.card.support_text }}
+{% endif %}{% endfor %}
+Based on these references and their structural similarities, answer the question STEP BY STEP.
+1. More similar molecules may have more similar properties. A high similarity is not itself a positive outcome.
+2. Attribute each observation to its tested molecule and reported experimental conditions. Assess whether it transfers to the query condition; missing conditions do not establish a match. A dataset label is not a detailed experiment. Missing information is not a negative outcome.
+Finally, summarize the answer. End with exactly:
+Question Answer: YES
+or
+Question Answer: NO

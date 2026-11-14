@@ -17,6 +17,52 @@ from predict.utils.response import call_with_json_validation, response_validatio
 REVISION = 'paper_baseline_retrieval.v1'
 
 
+def repeat(source_root, source_batch, target, *, reasoning_effort=None):
+    """Start independent inference from verified frozen requests, without retrieval."""
+    source_root, source_batch, target = map(lambda p: Path(p).resolve(), (source_root, source_batch, target))
+    if target.exists():
+        raise ValueError('Repetition requires a new output directory')
+    original = json.loads((source_batch/'experiment_manifest.json').read_text())
+    if original.get('migration'):
+        raise ValueError('Repeat the original paper batch; use bundle for migrated inputs')
+    verification = prompt.verify_batch(source_batch)
+    manifest = deepcopy(original)
+    indices = {}
+    for task, spec in original['inputs'].items():
+        path = source_root / spec['input']['path']
+        if sha256_file(path) != spec['input']['sha256']:
+            raise ValueError('Frozen repetition cohort changed')
+        indices[task] = list(range(len(read_jsonl(path))))
+        saved = read_jsonl(source_batch/'summary'/task/'predictions.jsonl')
+        if [row['index'] for row in saved] != indices[task]:
+            raise ValueError('Repetition requires the complete ordered source cohort')
+    manifest['migration'] = dict(version=REVISION, source_batch=str(source_batch),
+        source_root=str(source_root), source_manifest_sha256=verification['manifest_sha256'],
+        query_indices=indices, retrieval_protocol='legacy_paper',
+        scope='independent inference; exact frozen evidence, query prior and requests; no retrieval',
+        run_name=target.name)
+    if reasoning_effort is not None:
+        if reasoning_effort not in ('low', 'medium', 'high'):
+            raise ValueError('Invalid repetition reasoning effort')
+        manifest['migration']['generation_overrides'] = dict(reasoning_effort=reasoning_effort)
+        manifest['generation']['reasoning_effort'] = reasoning_effort
+    target.parent.mkdir(parents=True, exist_ok=True)
+    manifest_hash = prompt.content_hash(manifest)
+    with TemporaryDirectory(dir=target.parent, prefix='.paper-repeat-') as staging:
+        stage = Path(staging)/'batch'
+        write_json_atomic(stage/'experiment_manifest.json', manifest)
+        for task, chosen in indices.items():
+            for i in chosen:
+                relative = Path('runs')/task/f'query_{i:05d}'
+                prepared = json.loads((source_batch/relative/'prepared.json').read_text())
+                prepared['manifest_hash'] = manifest_hash
+                write_json_atomic(stage/relative/'prepared.json', prepared)
+                shutil.copyfile(source_batch/relative/'evaluation.json', stage/relative/'evaluation.json')
+        validate_batch(stage)
+        write_json_atomic(stage/'source_verification.json', verification)
+        stage.rename(target)
+
+
 def prepare(source_root, source_batch, target, indices=None, *, input_map=None, retrieval_protocol='murcko'):
     """Use frozen query/prior/config inputs; rebuild all eligible evidence before budgets."""
     from optimization.selection.record_budget import SIMPLE_POLICIES, select_simple_records
@@ -186,6 +232,8 @@ def run(argv):
     parser.add_argument('--prepare-paper-baseline', type=Path, metavar='SOURCE_BATCH')
     parser.add_argument('--run-paper-baseline', type=Path, metavar='PREPARED_BATCH')
     parser.add_argument('--bundle-paper-baseline', type=Path, metavar='PREPARED_BATCH')
+    parser.add_argument('--repeat-paper-baseline', type=Path, metavar='FROZEN_BATCH')
+    parser.add_argument('--repeat-reasoning-effort', choices=('low', 'medium', 'high'))
     parser.add_argument('--source-root', type=Path)
     parser.add_argument('--input-map', type=Path,
                         help='Preparation-only JSON mapping frozen input paths to relocated files; relative to this JSON')
@@ -200,12 +248,23 @@ def run(argv):
     parser.add_argument('--max-stage-requeues', type=int, default=0)
     parser.add_argument('--retry-delay-s', type=float, default=0)
     args = parser.parse_args(argv)
+    if args.repeat_reasoning_effort and not args.repeat_paper_baseline:
+        parser.error('--repeat-reasoning-effort requires --repeat-paper-baseline')
     if args.retrieval_protocol is not None and not args.prepare_paper_baseline:
         parser.error('--retrieval-protocol requires --prepare-paper-baseline; execution uses its manifest')
-    if sum(bool(value) for value in (args.prepare_paper_baseline, args.run_paper_baseline, args.bundle_paper_baseline)) != 1:
-        parser.error('choose preparation, bundling or execution')
+    if sum(bool(value) for value in (args.prepare_paper_baseline, args.run_paper_baseline, args.bundle_paper_baseline, args.repeat_paper_baseline)) != 1:
+        parser.error('choose preparation, repetition, bundling or execution')
     if not args.run_paper_baseline and (args.retry_race_width != 1 or args.max_stage_requeues or args.retry_delay_s):
         parser.error('retry controls require --run-paper-baseline')
+    if args.repeat_paper_baseline:
+        if (not args.source_root or not args.run_name or Path(args.run_name).name != args.run_name
+                or args.run_name in ('.', '..') or args.input_map or args.query_indices is not None
+                or args.provider_config or args.env_file):
+            parser.error('repetition requires --source-root and a new single-component --run-name')
+        target = Path('outputs/predictions/branches')/prompt.BUNDLE/args.run_name
+        repeat(args.source_root, args.repeat_paper_baseline, target, reasoning_effort=args.repeat_reasoning_effort)
+        print(target)
+        return 0
     if args.bundle_paper_baseline:
         if (not args.run_name or Path(args.run_name).name != args.run_name or args.run_name in ('.', '..')
                 or args.source_root or args.input_map or args.query_indices is not None or args.provider_config or args.env_file):
@@ -262,8 +321,12 @@ def validate_batch(root):
     if sha256_file(source/'experiment_manifest.json') != manifest['migration']['source_manifest_sha256']:
         raise ValueError('frozen source manifest changed')
     original = json.loads((source/'experiment_manifest.json').read_text())
+    overrides = manifest['migration'].get('generation_overrides', {})
+    if overrides and (set(overrides) != {'reasoning_effort'} or overrides['reasoning_effort'] not in ('low', 'medium', 'high')):
+        raise ValueError('Unsupported repetition generation override')
     for key in original:
-        if key != 'code' and manifest.get(key) != original[key]:
+        expected = {**original[key], **overrides} if key == 'generation' else original[key]
+        if key != 'code' and manifest.get(key) != expected:
             raise ValueError(f'frozen paper contract changed: {key}')
     if set(manifest['migration']['query_indices']) != set(manifest['inputs']):
         raise ValueError('prepared task set differs from the frozen inputs')

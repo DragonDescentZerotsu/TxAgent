@@ -50,10 +50,9 @@ def fit(args):
     ))
 
 
-def finalize(args):
+def validated_candidates(args, manifest, rows):
+    """Validate saved candidates once for ensemble or individual-seed evaluation."""
     feature_set = getattr(args, 'feature_set', 'direct_indirect')
-    manifest, features, rows = load_features(args.prepared, args.policy, feature_set,
-                                          data_dir=getattr(args, 'data_dir', None))
     candidates = []
     for path in sorted((args.output / 'candidates').glob('*/training.json')):
         receipt = json.loads(path.read_text())
@@ -70,14 +69,25 @@ def finalize(args):
             member['path'] = str(path.parent / Path(member['path']).name)
             if sha256_file(Path(member['path'])) != member['sha256']:
                 raise ValueError(f'Candidate model changed: {path}')
-        scores = np.load(score_path).mean(axis=0)
-        loss = float(log_loss([r['Y'] for r in rows['valid']], scores, labels=[0, 1]))
+        scores = np.load(score_path)
+        if scores.shape != (len(receipt['members']), len(rows['valid'])):
+            raise ValueError(f'Candidate seed/validation shape mismatch: {path}')
+        loss = float(log_loss([r['Y'] for r in rows['valid']], scores.mean(axis=0), labels=[0, 1]))
         if not np.isclose(loss, receipt['valid_bce']):
             raise ValueError(f'Candidate validation loss changed: {path}')
         candidates.append((loss, str(path.relative_to(args.output)), receipt, scores))
     if len(candidates) != args.expected_candidates:
         raise ValueError(f'Expected {args.expected_candidates} candidates, found {len(candidates)}')
+    return candidates
+
+
+def finalize(args):
+    feature_set = getattr(args, 'feature_set', 'direct_indirect')
+    manifest, features, rows = load_features(args.prepared, args.policy, feature_set,
+                                          data_dir=getattr(args, 'data_dir', None))
+    candidates = validated_candidates(args, manifest, rows)
     loss, path, winner, valid = min(candidates, key=lambda c: (c[0], c[1]))
+    valid = valid.mean(axis=0)
     threshold, _ = choose_threshold([r['Y'] for r in rows['valid']], valid, 'valid_macro_f1')
     selection = dict(candidate=path, candidate_sha256=sha256_file(args.output / path),
                      validation_bce=loss, threshold=threshold, test_used=False,

@@ -10,7 +10,7 @@ adapter and parent-disjoint indirect evidence. Its explicit paper mode rebuilds
 candidates from restored source batches and uses the shared model client. Choose
 `legacy_paper` for frozen-input reproduction; preparation defaults to the revised
 `murcko` rules. FINAL's default cache/prompt does not reproduce the paper baseline.
-See [paper results and migration limits](../docs/results.md) and the
+See paper results and migration limits (internal document; not distributed in Git) and the
 [paper preparation, execution and offline verification](prompts/README.md#frozen-paper-baseline).
 
 Live trace publication requires an explicit `TXAGENT_LIVE_PAGES_REPO` Git URL or
@@ -117,12 +117,18 @@ the shared Morgan KNN, MiniMol KNN and MiniMol head commands. Its
 [settings and output contract](baselines/minimol/README.md#paper-baseline-recipe)
 apply to supplied task splits, including Oral; there is no separate Oral runner.
 
+The [MolRAG reproduction](baselines/MOLRAG.md) uses the historical naive direct
+source pools, four-shot Sim-CoT and low effort. Its selected scores include the
+offline answer-parser correction. `bash experiments/baselines/molrag.sh NEW_DIR`
+recomputes the three-model results without API calls; shared `molrag` and
+`molrag_evidence` Python commands own inference/scoring and source export.
+
 The [Tinker SFT baseline](baselines/TINKER_SFT.md) provides supervised A/B label
 prediction with train-only examples, validation selection and held-out test
 evaluation. Its [paper recipe](../experiments/baselines/tinker_sft.sh) explicitly
 pins the original paper splits, including the TDC seed-42 corrections.
 The same module's `verify --output <run-root>` audits saved validation selection
-and test results offline; [completed results](../docs/results.md#new-supervised-label-baseline)
+and test results offline; completed results (internal document; not distributed in Git)
 are recorded separately from the frozen paper comparison.
 
 New raw runs: `outputs/predictions/<harness>/<prompt>/<run-name>/<benchmark>/<task>/<split>/<profile>/`.
@@ -140,7 +146,7 @@ To inventory an authorized relocation, run
 repeat with `--apply` to use that reviewed map. `--classifications JSON` supplies
 explicit identities for unresolved folders. Unknown identities and unresolved
 name collisions stay in place. Moves preserve run UIDs and frozen payload bytes.
-See the [migration report](../docs/look/prediction_output_migration.md) for the
+See the migration report (internal document; not distributed in Git) for the
 completed moves and remaining manual classifications.
 
 Resume checks the currently requested query prior against the saved validated
@@ -153,12 +159,12 @@ receipt without repeating schema validation or computing a prior-validation hash
 Missing or failed receipts are rejected. Historical priors need a one-time receipt
 backfill before reuse; prompt and response content must be preserved.
 Derived reports/TSVs/provenance: `outputs/analysis/<domain>/<study-id>/`.
-See [../docs/finalize.md](../docs/finalize.md) for publication and
-[../docs/results.md](../docs/results.md) for selected scores and caveats.
+See ../docs/finalize.md (internal document; not distributed in Git) for publication and
+../docs/results.md (internal document; not distributed in Git) for selected scores and caveats.
 Historical assets and relocation metadata live in [../archive/](../archive/).
 
 Manual evidence uses `--uids` with one query/level or `--uids-file` with a UID TSV
-or optimizer manifest. See [the selection contract and recipes](../docs/experiment_code.md#physical-uid-selections).
+or optimizer manifest. See the selection contract and recipes (internal document; not distributed in Git).
 BBB L2+ evidence excludes prediction-only records by default. The shared task
 predicate retains measured experimental assays and mixed experimental/predicted
 records. Automatic ranked panels skip excluded records before applying limits;
@@ -192,3 +198,11 @@ set this variable to their existing directory or copy the files to the default l
 Inputs are resolved using the named releases, explicit CLI roots and local `inputs/` snapshots. Paths and experiment fingerprints are not saved as scientific identity. Query UIDs and named versions must agree before reuse; unknown old identities stay empty and cannot silently authorize inference. The metadata-only migration command is `python -m predict.harnesses.branches.migrate_manifests --report /tmp/manifest-migration.jsonl`; review its dry run, then repeat with `--apply`. The same report lets an interrupted migration resume. It includes readable FINAL arms and excludes `final/git_bundle/`.
 
 A query override with the same artifact identity inherits the batch's local input snapshot. Overrides that change the input identity or explicitly specify a local format retain their own resolution.
+
+## Frozen baseline repetitions
+
+Use the [baseline recipe index](../experiments/baselines/README.md#frozen-llm-repetitions)
+for independent inference on exact saved requests. Naive uses
+`--repeat-paper-baseline`; MolRAG uses `python -m predict.baselines.molrag repeat`.
+`python -m analysis.prediction.llm_repeats` is the offline verification and
+mean/SD entry point. Completed run statistics do not require inference.

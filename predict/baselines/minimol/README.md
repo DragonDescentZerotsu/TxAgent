@@ -12,9 +12,21 @@
   indirect auxiliary targets, using `indirect_data.py` and `finetune_runtime.py`.
 
 The integration status, current result sources and verification boundaries are
-maintained in [发布整合状态](../../../docs/release_refactor.md).
+maintained in 发布整合状态 (internal document; not distributed in Git).
 
 ## Paper baseline recipe
+
+The historical recipe below produces the retained ensemble report. The primary
+completed reliability report (54 cells / 270 seeds) instead evaluates each saved seed independently,
+including its auxiliary lambda and threshold selection on validation only.
+`predict.baselines.repeated_runs` replays existing frozen-head members and all
+saved fine-tuning candidates without retraining. Results report mean ± sample
+SD and a Student t 95% CI conditional on the fixed split. See the
+[foundation/repeated-run contract](../FOUNDATION_MODELS.md) for the shared
+unified ML mean report and exact runtime requirements. Its MiniMol source is
+`outputs/analysis/baselines/minimol_repeated_runs_20261107/`. Mean per-seed F1
+is distinct from F1 of averaged probabilities; old ensemble values remain in
+the frozen paper export and a separate column of the new comparison.
 
 Run from the repository root with the frozen splits for the selected task/pool:
 

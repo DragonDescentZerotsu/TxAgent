@@ -92,7 +92,8 @@ class GraphRows(torch.utils.data.Dataset):
 
 def collate_graphs(items):
     graphs, *values = zip(*items)
-    return (Batch.from_data_list(list(graphs)), *(torch.stack(v) for v in values))
+    batch = torch.stack(graphs) if isinstance(graphs[0], torch.Tensor) else Batch.from_data_list(list(graphs))
+    return (batch, *(torch.stack(v) for v in values))
 
 
 def auxiliary_loss(logits, targets, binary):

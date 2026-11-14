@@ -1,0 +1,368 @@
+{
+  "schema": "foundation_paper_sources.v1",
+  "release": "paper_frozen_20260925",
+  "source_table": "outputs/paper/llm_vs_standard_baselines_20260924/ml_appendix.csv",
+  "source_table_sha256": "7336791a202e45d665ded9c7375f25b5d06516e6431231e68844191b75a8cb05",
+  "datasets": [
+    {
+      "benchmark": "conditioned",
+      "training_pool": "conditioned_train",
+      "task": "bbb_martins",
+      "prepared": "outputs/paper/minimol_indirect_assay_20260920/bbb_martins/prepared",
+      "prepared_sha256": "1e77c6c9f187964d143342b83a43d56d205f2d0cf1baaf04a3d80e9f158abe92",
+      "data_sha256": "38ad05e32dc3d4af387af7e967171254a029a426a8e40884f9944fdb7a23561e",
+      "data_dir": "data/conditioned_benchmark/BBB_Martins/scaffold",
+      "split_sizes": {
+        "train": 3053,
+        "valid": 397,
+        "test": 393
+      },
+      "inputs": {
+        "data/conditioned_benchmark/BBB_Martins/scaffold/train.jsonl": "f1a00fcf943303d73b0ba4eec04b88fc53bf68847a3849869b11be319489ff43",
+        "data/conditioned_benchmark/BBB_Martins/scaffold/valid.jsonl": "acef8e37518581e166b16454681607ab50d9b45e63b4494f4a803902dacae187",
+        "data/conditioned_benchmark/BBB_Martins/scaffold/test.jsonl": "ba340d019c4f49a4708e93ffc4388771efc8d11dbb3158bf7c06a311cf290088"
+      },
+      "condition_count": 9
+    },
+    {
+      "benchmark": "conditioned",
+      "training_pool": "conditioned_train",
+      "task": "bioavailability_ma",
+      "prepared": "outputs/paper/minimol_indirect_assay_20260920/bioavailability_ma/prepared",
+      "prepared_sha256": "3e8b31076afe83b6c75099c73bb2bb04e0f85fab1754c9e9eca18f1dacecbb6e",
+      "data_sha256": "605c407901f81ca6d96c4aa3a36628cff28edf68cd981a41d0efbfeda36686b8",
+      "data_dir": "data/conditioned_benchmark/Bioavailability_Ma/scaffold",
+      "split_sizes": {
+        "train": 1956,
+        "valid": 262,
+        "test": 269
+      },
+      "inputs": {
+        "data/conditioned_benchmark/Bioavailability_Ma/scaffold/train.jsonl": "f78ec5d7d8db97cf9e24ccd620790e327b777d4878be39678a6bb0fb41af6829",
+        "data/conditioned_benchmark/Bioavailability_Ma/scaffold/valid.jsonl": "562d1d8ab71f3e1556c4f65e49372ad4a411ff4b0de2bcacc5ee1620603fd112",
+        "data/conditioned_benchmark/Bioavailability_Ma/scaffold/test.jsonl": "bcd47446f78038c84b58dc3e79e7e658e3d659ca381da22435d5ec321194e248"
+      },
+      "condition_count": 8
+    },
+    {
+      "benchmark": "conditioned",
+      "training_pool": "conditioned_train",
+      "task": "skin_reaction",
+      "prepared": "outputs/paper/skin_indirect_level_mapped_20260925/conditioned/prepared",
+      "prepared_sha256": "23d546c4ec050a19e4cee65296c13120e38b3435750547518997d999f2301567",
+      "data_sha256": "684934dd40c2e37bfb5f83f9c61c4c1c4c8df15053079246322f40eae0fe7cca",
+      "data_dir": "data/conditioned_benchmark/Skin_Reaction/scaffold",
+      "split_sizes": {
+        "train": 1941,
+        "valid": 239,
+        "test": 241
+      },
+      "inputs": {
+        "data/conditioned_benchmark/Skin_Reaction/scaffold/train.jsonl": "402b1fd7dc05336bec1671a76a88519d48409518e64a97f0dece825aeeb6c5b0",
+        "data/conditioned_benchmark/Skin_Reaction/scaffold/valid.jsonl": "fa673c9d2f33f18f6ec35e5e506fd13dd1c7c5120fb9006f8ad527d8db70e130",
+        "data/conditioned_benchmark/Skin_Reaction/scaffold/test.jsonl": "649c692e492a631bcfff89b154beeb81174e813128cebcc6190bc09b5dc33f11"
+      },
+      "condition_count": 2
+    },
+    {
+      "benchmark": "conditioned",
+      "training_pool": "conditioned_train",
+      "task": "ames",
+      "prepared": "outputs/paper/minimol_indirect_assay_20260922/ames/prepared",
+      "prepared_sha256": "6d2a01b3469bb5a26dd0be51b4b98fd55c7bc9d2bafccf7b07818a4bb24124c1",
+      "data_sha256": "c19723f3fc81fe725fbe57f1648dd66aeca447504e93d38b8822e59ba1455bf2",
+      "data_dir": "data/conditioned_benchmark/Ames/scaffold",
+      "split_sizes": {
+        "train": 1926,
+        "valid": 274,
+        "test": 274
+      },
+      "inputs": {
+        "data/conditioned_benchmark/Ames/scaffold/train.jsonl": "faa0a5f8935e2fbe91099b81ff1d80d65e021617497df822613b5388cf3db493",
+        "data/conditioned_benchmark/Ames/scaffold/valid.jsonl": "10985b3ccd3d337024a98cefa8a32ea2fa6ed2b4208d1f1e08afae471d78fc29",
+        "data/conditioned_benchmark/Ames/scaffold/test.jsonl": "c22ab6808c4c89ba8015987f2e5c0a5b93409f2f155bde123606cb01e86a9d0e"
+      },
+      "condition_count": 73
+    },
+    {
+      "benchmark": "conditioned",
+      "training_pool": "conditioned_train",
+      "task": "dili",
+      "prepared": "outputs/paper/minimol_indirect_assay_20260922/dili/prepared",
+      "prepared_sha256": "40615019713b140ab32172f2a6d49e477fed63e0f7e5d7d01b80fb06e7fdc54d",
+      "data_sha256": "47d09cbdf90fff4a3431091679f2e2773aa20809493df359ed5055523f3168e2",
+      "data_dir": "data/conditioned_benchmark/DILI/scaffold",
+      "split_sizes": {
+        "train": 3220,
+        "valid": 402,
+        "test": 402
+      },
+      "inputs": {
+        "data/conditioned_benchmark/DILI/scaffold/train.jsonl": "3231f2421f066030d583380fe39c4aed8756cfb30191ba0a605e1aa63ff2b076",
+        "data/conditioned_benchmark/DILI/scaffold/valid.jsonl": "7b40decd8e312e73b8a269070ff4620fef4ab5ec350337a2e64a4587799ad96a",
+        "data/conditioned_benchmark/DILI/scaffold/test.jsonl": "e548bcefa7c10c9ee90ae546d0631d2cb47aa7fc227892455563c503b26b5f19"
+      },
+      "condition_count": 38
+    },
+    {
+      "benchmark": "conditioned",
+      "training_pool": "conditioned_train",
+      "task": "carcinogens",
+      "prepared": "outputs/paper/minimol_indirect_assay_20260922/carcinogens/prepared",
+      "prepared_sha256": "ffc43aff0bdcad0fe68be200e04af9092ecb6a9e840c0647addb2fcfdc25cf15",
+      "data_sha256": "acde09379d596c83c1b6ad06816a4d16f0c5303a32ff959815792b0657c15a57",
+      "data_dir": "data/conditioned_benchmark/Carcinogens/scaffold",
+      "split_sizes": {
+        "train": 3754,
+        "valid": 469,
+        "test": 469
+      },
+      "inputs": {
+        "data/conditioned_benchmark/Carcinogens/scaffold/train.jsonl": "4fb1e3a9aa8edada3b250ada7d8c636440cbcc57c8f22051230c93f15a87ba6f",
+        "data/conditioned_benchmark/Carcinogens/scaffold/valid.jsonl": "57a4f36ebebf4e5be8076d431b7293c812ccc0e59a00fdf4ec559144c0e3682a",
+        "data/conditioned_benchmark/Carcinogens/scaffold/test.jsonl": "b2ec17336315d3deb6c5a210cdff383be9151ee2434406c3a7eff5d633656520"
+      },
+      "condition_count": 5
+    },
+    {
+      "benchmark": "tdc",
+      "training_pool": "tdc_only",
+      "task": "bbb_martins",
+      "prepared": "outputs/paper/tdc_minimol_indirect_assay_20260922/tdc_only/bbb_martins/prepared",
+      "prepared_sha256": "4e91489496d13be0edab2f50e2f57803dd8cb5bd5d83e2b8b2699b66dd7914bc",
+      "data_sha256": "5c88b6512e613e86d4c3359594021a731a8badfaec32b07c8f93da4327e06143",
+      "data_dir": "data/tdc_benchmark/bbb_martins/scaffold",
+      "split_sizes": {
+        "train": 1421,
+        "valid": 203,
+        "test": 406
+      },
+      "inputs": {
+        "data/tdc_benchmark/bbb_martins/scaffold/train.jsonl": "88a932d3e814f1757bc25c7dd741076155f14446f86049c0c3ecd9996998494b",
+        "data/tdc_benchmark/bbb_martins/scaffold/valid.jsonl": "5ab31f79dba6bd3c9c0ca83c901ad5372d4a6b5a7edc8f8018b1eba460249218",
+        "data/tdc_benchmark/bbb_martins/scaffold/test.jsonl": "40d1226f882f903f4a4b4fb9365cf05c90c30eff694730e0de346351874d8388"
+      },
+      "condition_count": 0
+    },
+    {
+      "benchmark": "tdc",
+      "training_pool": "tdc_only",
+      "task": "bioavailability_ma",
+      "prepared": "outputs/paper/tdc_minimol_indirect_assay_20260922/tdc_only/bioavailability_ma/prepared",
+      "prepared_sha256": "02c8971531a9af39419a16303933b3e985ea05e46c2ad4dd48b7aa8e58654e44",
+      "data_sha256": "f099559319971d5be1aeda664a59c25b3e9ba3efbb34df141b11aacb0c37d09c",
+      "data_dir": "data/tdc_benchmark/bioavailability_ma/scaffold",
+      "split_sizes": {
+        "train": 448,
+        "valid": 64,
+        "test": 128
+      },
+      "inputs": {
+        "data/tdc_benchmark/bioavailability_ma/scaffold/train.jsonl": "1ab668221431856a1bc9238aa4f7d313b98ff9cb79b890f50cc69e6af0c48335",
+        "data/tdc_benchmark/bioavailability_ma/scaffold/valid.jsonl": "aeb87d241a1a8655b835c4d4a054b9fa94c36eab3bbf1f1f4fe6f884081dec67",
+        "data/tdc_benchmark/bioavailability_ma/scaffold/test.jsonl": "5eb2f3bbc5268c33fb2d958b09362a3dfdb4db75858b595dd2f3b21fe5074457"
+      },
+      "condition_count": 0
+    },
+    {
+      "benchmark": "tdc",
+      "training_pool": "tdc_only",
+      "task": "skin_reaction",
+      "prepared": "outputs/paper/skin_indirect_level_mapped_20260925/tdc_only/prepared",
+      "prepared_sha256": "6ab58be6d39b6bab5b215ece5b1be2f0563f4c5bede7e8a931ee6bb52ae8a7db",
+      "data_sha256": "f2e17b94412ae063f238e81db638a1041cdec3fcd78f195132a0e267e2821afa",
+      "data_dir": "outputs/paper/skin_tdc_joseph_split_20260924/tdc_only/data",
+      "split_sizes": {
+        "train": 282,
+        "valid": 40,
+        "test": 82
+      },
+      "inputs": {
+        "outputs/paper/skin_tdc_joseph_split_20260924/tdc_only/data/train.jsonl": "b7330ade0f3b3c4a2b73e61fe96d030ee2084500d1da58bf5ea7a22672dfb87c",
+        "outputs/paper/skin_tdc_joseph_split_20260924/tdc_only/data/valid.jsonl": "4c319667c95bb56d0b68d7b9bc5019c2ad52d1001e91978d0aa6e957fe53e796",
+        "outputs/paper/skin_tdc_joseph_split_20260924/tdc_only/data/test.jsonl": "6b5354f18ee6ab4721ada0cd69af7c9a75f5262982c335fb5d507ec6fe122f6f"
+      },
+      "condition_count": 0
+    },
+    {
+      "benchmark": "tdc",
+      "training_pool": "tdc_only",
+      "task": "ames",
+      "prepared": "outputs/paper/tdc_minimol_indirect_assay_20260922/tdc_only/ames/prepared",
+      "prepared_sha256": "6ebadd6a25032897ef5cbc73409faacf8d0feb21df25d149a20e09fd640fbb4e",
+      "data_sha256": "e61dd4fdf3b89ca7086d5006119dccc72bc9ede682fbd1b1ce9180678a09e8de",
+      "data_dir": "data/tdc_benchmark/ames/scaffold",
+      "split_sizes": {
+        "train": 5093,
+        "valid": 728,
+        "test": 1457
+      },
+      "inputs": {
+        "data/tdc_benchmark/ames/scaffold/train.jsonl": "380fe7966afff5b21c2283106a2348ba2ea7bc59b03e6bb3e169c1888fd549b4",
+        "data/tdc_benchmark/ames/scaffold/valid.jsonl": "27262dfd66e7c733dc2cf08bab66e2b90c4faeae373e646e0974ef9947bccae0",
+        "data/tdc_benchmark/ames/scaffold/test.jsonl": "427bdc74b135204ee8c6f59192aed98570d15eb8dea9a67f6723a58b77ee20ee"
+      },
+      "condition_count": 0
+    },
+    {
+      "benchmark": "tdc",
+      "training_pool": "tdc_only",
+      "task": "dili",
+      "prepared": "outputs/paper/tdc_minimol_indirect_assay_20260922/tdc_only/dili/prepared",
+      "prepared_sha256": "7f17db3cb4ab4a9c647c901218e24f8536a11fd63c835fcd706759e3b2084ae2",
+      "data_sha256": "60183ce14e214429f9bc3f2ff939f234377eabf29e874f8578d78d4f5bacb3c8",
+      "data_dir": "data/tdc_benchmark/dili/scaffold",
+      "split_sizes": {
+        "train": 325,
+        "valid": 54,
+        "test": 96
+      },
+      "inputs": {
+        "data/tdc_benchmark/dili/scaffold/train.jsonl": "63adc6bc4c7503f0be116c33ae8fac76f277030811f0dc723f42968adef643b0",
+        "data/tdc_benchmark/dili/scaffold/valid.jsonl": "0c399a321030fcd948365037005f1fefe6bd050ab97af0e468160510f615b1f0",
+        "data/tdc_benchmark/dili/scaffold/test.jsonl": "32315845a9d992a97355d1729f4bfe5e39c7635fda022950be52dfb43d4ca244"
+      },
+      "condition_count": 0
+    },
+    {
+      "benchmark": "tdc",
+      "training_pool": "tdc_only",
+      "task": "carcinogens",
+      "prepared": "outputs/paper/carcinogens_tdc_joseph_split_20260924/tdc_only/prepared",
+      "prepared_sha256": "82bde02c183af5279fb758b2855307f79e81276cc050f36033edb29c4f09584e",
+      "data_sha256": "7073312f7aeb038d6d7cbc93bd21faf36809d97a3ecbe3066e06f98f0a074795",
+      "data_dir": "outputs/paper/carcinogens_tdc_joseph_split_20260924/tdc_only/data",
+      "split_sizes": {
+        "train": 196,
+        "valid": 28,
+        "test": 56
+      },
+      "inputs": {
+        "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_tdc_joseph_split_20260924/tdc_only/data/train.jsonl": "37b708d6b34c70ac4ca396baf44f1bf1d64c87f743993e08e1fe69eae8badb4d",
+        "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_tdc_joseph_split_20260924/tdc_only/data/valid.jsonl": "a2f490575b0601bf5ace4b53906cac06882f88615fc23803468b1a2e5b45bac9",
+        "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_tdc_joseph_split_20260924/tdc_only/data/test.jsonl": "82a2f3ce63c6f77d520439251da70a4df70dabdfc140a61385ffbae9b0cc1d08"
+      },
+      "condition_count": 0
+    },
+    {
+      "benchmark": "tdc",
+      "training_pool": "mixed",
+      "task": "bbb_martins",
+      "prepared": "outputs/paper/tdc_minimol_indirect_assay_20260922/mixed/bbb_martins/prepared",
+      "prepared_sha256": "39524fb6b83d18dbb1e05135cd60fc64ed6087def4ac8df28cb84e9d17109224",
+      "data_sha256": "a15261a1a54449100c3b4184629028c5996a1a6a161af36e802a12f07e170401",
+      "data_dir": "data/tdc_starling_mixed_20260919/bbb_martins/scaffold",
+      "split_sizes": {
+        "train": 3710,
+        "valid": 203,
+        "test": 406
+      },
+      "inputs": {
+        "data/tdc_starling_mixed_20260919/bbb_martins/scaffold/train.jsonl": "4cf0201f603de16c33db970743f34e4d84f15e8f008caa694c94071700cdbb87",
+        "data/tdc_starling_mixed_20260919/bbb_martins/scaffold/valid.jsonl": "1725531b01fc38b14437fa0c2ddcdcf3a507bf0fb0e9835c8141c12ade836607",
+        "data/tdc_starling_mixed_20260919/bbb_martins/scaffold/test.jsonl": "5fb950e5000672af29b6f518d1e842faeb5f52030d1423375cc55d23e63bfef5"
+      },
+      "condition_count": 10
+    },
+    {
+      "benchmark": "tdc",
+      "training_pool": "mixed",
+      "task": "bioavailability_ma",
+      "prepared": "outputs/paper/tdc_minimol_indirect_assay_20260922/mixed/bioavailability_ma/prepared",
+      "prepared_sha256": "74bb0d4f13a4fa18ea16c106e652d8c53c2b78bde27521ca71a69f3d304f3c4f",
+      "data_sha256": "0f45640ee80adb71a355f3395cae9d34c1a9b6443055d64fdd287e1c654f62f2",
+      "data_dir": "data/tdc_starling_mixed_20260919/bioavailability_ma/scaffold",
+      "split_sizes": {
+        "train": 1969,
+        "valid": 64,
+        "test": 128
+      },
+      "inputs": {
+        "data/tdc_starling_mixed_20260919/bioavailability_ma/scaffold/train.jsonl": "7a88a3ce5ea3517908df9d8639ee9013b0855407877a01a3e8b97c7eff7c89bb",
+        "data/tdc_starling_mixed_20260919/bioavailability_ma/scaffold/valid.jsonl": "5a57833ace05fa9a21ad2c1d73512a56d40394d3b8888c347846b384de55b846",
+        "data/tdc_starling_mixed_20260919/bioavailability_ma/scaffold/test.jsonl": "7e3cf6ada23c2126aaaf9d475b56c3daa81d9d2a6416a229df2275a77816e7c7"
+      },
+      "condition_count": 9
+    },
+    {
+      "benchmark": "tdc",
+      "training_pool": "mixed",
+      "task": "skin_reaction",
+      "prepared": "outputs/paper/skin_indirect_level_mapped_20260925/mixed/prepared",
+      "prepared_sha256": "bde14cfaa58437efb585db6cb819068a43b47339ff972cb390ac6497c62a1dbd",
+      "data_sha256": "bd18d16932f9d30ed65d3911a87b53f236a93401e11bffe6ac0dfe9843c39709",
+      "data_dir": "outputs/paper/skin_tdc_joseph_split_20260924/mixed/data",
+      "split_sizes": {
+        "train": 1997,
+        "valid": 40,
+        "test": 82
+      },
+      "inputs": {
+        "outputs/paper/skin_tdc_joseph_split_20260924/mixed/data/train.jsonl": "25da1661c13aa42fdff5f763ad7976dfce1674dc9c094039111082c6e20d5204",
+        "outputs/paper/skin_tdc_joseph_split_20260924/mixed/data/valid.jsonl": "e2de9c2f6df44da38a09d3b58bc75fe31232507e6b745747e3beef0d47ceeadf",
+        "outputs/paper/skin_tdc_joseph_split_20260924/mixed/data/test.jsonl": "10540e14d19391f51720b61b8c18ba2b2ad1a370b9daf967508fd6961a8a0ce8"
+      },
+      "condition_count": 3
+    },
+    {
+      "benchmark": "tdc",
+      "training_pool": "mixed",
+      "task": "ames",
+      "prepared": "outputs/paper/tdc_minimol_indirect_assay_20260922/mixed/ames/prepared",
+      "prepared_sha256": "e74afa95db760643d4d9ac551d548c825cb26542d799feef185ea0a1d8c35967",
+      "data_sha256": "715044e5adf387fe37d527d1792ea8f04fffb210229c274882f9c0b363734df6",
+      "data_dir": "data/tdc_starling_mixed_20260919/ames/scaffold",
+      "split_sizes": {
+        "train": 6487,
+        "valid": 728,
+        "test": 1457
+      },
+      "inputs": {
+        "data/tdc_starling_mixed_20260919/ames/scaffold/train.jsonl": "6c76bfb7d4f7caeb914e9da72ddc16767c062b8f23983ff52f4a64156a4605e3",
+        "data/tdc_starling_mixed_20260919/ames/scaffold/valid.jsonl": "99e99c0996682fd8c2c5f1c67300a6b8c9e8936a19532a28d7a3d2fe701c49d6",
+        "data/tdc_starling_mixed_20260919/ames/scaffold/test.jsonl": "004c4717db8683a741ff1a507d953bbcbba05944ceea206b0880575fa79bcbb5"
+      },
+      "condition_count": 67
+    },
+    {
+      "benchmark": "tdc",
+      "training_pool": "mixed",
+      "task": "dili",
+      "prepared": "outputs/paper/tdc_minimol_indirect_assay_20260922/mixed/dili/prepared",
+      "prepared_sha256": "109f405b1555d5ff98f6881886fe951348162cdf1312b6756ea6d1148a169773",
+      "data_sha256": "9883255d71499c1822d5e70495ea77d1af440855f35b2eedfef47fe6bd48e980",
+      "data_dir": "data/tdc_starling_mixed_20260919/dili/scaffold",
+      "split_sizes": {
+        "train": 2807,
+        "valid": 54,
+        "test": 96
+      },
+      "inputs": {
+        "data/tdc_starling_mixed_20260919/dili/scaffold/train.jsonl": "0eeb19f4b737221c746effb75ae13cce813753279189d288c759a53ebc707907",
+        "data/tdc_starling_mixed_20260919/dili/scaffold/valid.jsonl": "e8568a8ea2be221ea2cb79f25fc9945a34b1123d03d934815846802c8e5a6f11",
+        "data/tdc_starling_mixed_20260919/dili/scaffold/test.jsonl": "d4f96515d1ef56b41f6f63cf3e0dbbfc9fa212bd8aae003303f4f53e9c907965"
+      },
+      "condition_count": 34
+    },
+    {
+      "benchmark": "tdc",
+      "training_pool": "mixed",
+      "task": "carcinogens",
+      "prepared": "outputs/paper/carcinogens_tdc_joseph_split_20260924/mixed/prepared",
+      "prepared_sha256": "52b89ca848b57d0f32f87741c61fa1befc43070119685ec60a55d6cb17e664c2",
+      "data_sha256": "b5fe217e87a0b4e201ed2ca168ff267a77997e381000c6948fc2bd836aa463c4",
+      "data_dir": "outputs/paper/carcinogens_tdc_joseph_split_20260924/mixed/data",
+      "split_sizes": {
+        "train": 3762,
+        "valid": 28,
+        "test": 56
+      },
+      "inputs": {
+        "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_tdc_joseph_split_20260924/mixed/data/train.jsonl": "9816afc3a8ba258d4fb978ece6995b5cab2d9340a05dc6c22f9ddca67e009932",
+        "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_tdc_joseph_split_20260924/mixed/data/valid.jsonl": "d9e2aac139f6f7838c473bf37d24d9ad878068b731769f683a51b36aa3162898",
+        "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_tdc_joseph_split_20260924/mixed/data/test.jsonl": "aaf81c35df1564f5c9e56df4af4c9c3ed244f25cbe4a3f1e19285f15ea8bccdb"
+      },
+      "condition_count": 6
+    }
+  ]
+}

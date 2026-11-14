@@ -295,10 +295,22 @@ def choose_threshold(y_true: list[int], y_score: np.ndarray, strategy: str) -> t
     thresholds = [0.5]
     thresholds.extend(candidates)
     thresholds.extend((a + b) / 2 for a, b in zip(candidates, candidates[1:]))
+    scores = None
+    if set(y_true) == {0, 1}:
+        # Evaluate the unchanged threshold list using cumulative confusion counts.
+        # Casting preserves NumPy's original float32 array/scalar comparisons.
+        order = np.argsort(y_score)
+        positive = np.r_[0, np.cumsum(np.asarray(y_true)[order])]
+        cuts = np.searchsorted(y_score[order], np.asarray(thresholds, dtype=y_score.dtype), side="left")
+        tp = positive[-1] - positive[cuts]
+        fp = len(y_true) - cuts - tp
+        fn = positive[-1] - tp
+        tn = len(y_true) - positive[-1] - fp
+        scores = ((2.0 * tp) / (2 * tp + fp + fn) + (2.0 * tn) / (2 * tn + fp + fn)) / 2
     best_threshold = 0.5
     best_score = -1.0
-    for threshold in thresholds:
-        score = float(f1_score(y_true, y_score >= threshold, average="macro"))
+    for index, threshold in enumerate(thresholds):
+        score = float(scores[index]) if scores is not None else float(f1_score(y_true, y_score >= threshold, average="macro"))
         if score > best_score or (score == best_score and abs(threshold - 0.5) < abs(best_threshold - 0.5)):
             best_threshold = float(threshold)
             best_score = score

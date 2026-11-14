@@ -175,3 +175,7 @@ CLAUDE.md
 # Local Python package build products.
 /build/
 *.egg-info/
+
+# Internal documentation and local runtime logs are not publication inputs.
+/docs/
+/logs/

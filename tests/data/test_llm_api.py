@@ -20,6 +20,20 @@ def isolated_provider_credentials(monkeypatch):
             monkeypatch.delenv(name, raising=False)
 
 
+def test_local_endpoint_uses_explicit_credential_and_fails_closed(monkeypatch, tmp_path):
+    key = 'local-test-credential-123456789'
+    monkeypatch.setenv('TEST_LOCAL_ENDPOINT_KEY', key)
+    assert resolve_api_key('local', env_file=None) == ('EMPTY', '')
+    assert resolve_api_key('local', env_file=None, credential_env='TEST_LOCAL_ENDPOINT_KEY') == (key, 'TEST_LOCAL_ENDPOINT_KEY')
+    missing = tmp_path / 'missing.env'
+    assert resolve_api_key('local', env_file=missing, credential_env='TEST_LOCAL_ENDPOINT_KEY') == (key, 'TEST_LOCAL_ENDPOINT_KEY')
+    monkeypatch.delenv('TEST_LOCAL_ENDPOINT_KEY')
+    with pytest.raises(RuntimeError, match='missing local credential'):
+        resolve_api_key('local', env_file=None, credential_env='TEST_LOCAL_ENDPOINT_KEY')
+    with pytest.raises(FileNotFoundError):
+        resolve_api_key('local', env_file=missing, credential_env='TEST_LOCAL_ENDPOINT_KEY')
+
+
 def test_dotenv_provider_aliases_are_loaded_without_mutating_environment(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

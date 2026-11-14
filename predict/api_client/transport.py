@@ -130,11 +130,12 @@ def resolve_api_key(
     credential_env: str | None = None,
 ) -> tuple[str, str]:
     """Return the selected secret and its exact variable name, or fail closed."""
-    if provider == "local":
+    if provider == "local" and not credential_env:
         return "EMPTY", ""
     names = (credential_env,) if credential_env else PROVIDER_CREDENTIALS[provider]
-    file_values = read_env_file(env_file) if env_file is not None else {}
-    for source in (os.environ, file_values):
+    for source in (os.environ, None):
+        if source is None:
+            source = read_env_file(env_file) if env_file is not None else {}
         for name in names:
             value = source.get(name)
             if not value:

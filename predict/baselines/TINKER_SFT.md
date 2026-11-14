@@ -5,7 +5,7 @@ The concrete 12-task paper experiment is `experiments/baselines/tinker_sft.sh`.
 This trains **DeepSeek**, not TxGemma, and is not a reproduction of the published
 TxGemma checkpoint or its full 66-task training mixture.
 Both six-task suites completed on 2026-11-01; the maintained score table and
-completion record are in [results](../../docs/results.md#new-supervised-label-baseline).
+completion record are in results (internal document; not distributed in Git).
 
 ## Scientific contract
 

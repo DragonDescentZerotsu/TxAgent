@@ -8,6 +8,7 @@ variable, concurrency budget, health state, and trace provenance.
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from contextlib import contextmanager
 import asyncio
 from functools import partial
 from types import SimpleNamespace
@@ -608,6 +609,7 @@ class _SpendLedger:
 
     def __init__(self, spec: SpendBudgetSpec):
         self.spec = spec
+        self._connection_lock = threading.Lock()
         self.path = Path(spec.ledger_path)
         self.alert_path = self.path.with_suffix(self.path.suffix + ".alert.json")
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -646,11 +648,19 @@ class _SpendLedger:
                 raise ValueError("spend budget epoch metadata is incompatible")
             connection.commit()
 
-    def _connection(self) -> sqlite3.Connection:
-        connection = sqlite3.connect(self.path, timeout=60)
-        connection.execute("PRAGMA busy_timeout=60000")
-        connection.execute("PRAGMA synchronous=FULL")
-        return connection
+    @contextmanager
+    def _connection(self):
+        # Serialize this launcher's short transactions; SQLite still coordinates
+        # other launchers. Explicit close releases file handles and NFS locks.
+        with self._connection_lock:
+            connection = sqlite3.connect(self.path, timeout=60)
+            try:
+                connection.execute("PRAGMA busy_timeout=60000")
+                connection.execute("PRAGMA synchronous=FULL")
+                with connection:
+                    yield connection
+            finally:
+                connection.close()
 
     @staticmethod
     def _totals(connection: sqlite3.Connection, epoch: str) -> tuple[int, int]:

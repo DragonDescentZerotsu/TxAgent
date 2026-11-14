@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import random
 from pathlib import Path
 import time
 
@@ -22,11 +23,12 @@ from predict.utils.json import sha256_file, write_json_atomic
 
 
 class MultiTaskModel(nn.Module):
-    def __init__(self, conditions: int, buckets: int, hidden_dim: int, depth: int):
+    def __init__(self, conditions: int, buckets: int, hidden_dim: int, depth: int, encoder=None):
         super().__init__()
-        self.encoder = MiniMolEncoder()
-        self.head = TaskHead(input_dim=512 + conditions, hidden_dim=hidden_dim, depth=depth)
-        self.auxiliary = nn.Linear(512, buckets) if buckets else None
+        self.encoder = encoder if encoder is not None else MiniMolEncoder()
+        width = getattr(self.encoder, "output_dim", 512)
+        self.head = TaskHead(input_dim=width + conditions, hidden_dim=hidden_dim, depth=depth)
+        self.auxiliary = nn.Linear(width, buckets) if buckets else None
 
     def main_logits(self, embeddings, conditions):
         return self.head(torch.cat((embeddings, conditions), dim=-1)).squeeze(-1)
@@ -46,18 +48,27 @@ def predict(model, batches, device):
     model.eval()
     logits, labels = [], []
     for graph, conditions, target in batches:
-        embeddings = model.encoder(graph.to(device, non_blocking=True))
-        output = model.main_logits(embeddings, conditions.to(device, non_blocking=True))
+        with torch.autocast(device_type=torch.device(device).type, dtype=torch.bfloat16,
+                            enabled=getattr(model, "precision", "fp32") == "bf16"):
+            embeddings = model.encoder(graph.to(getattr(model.encoder, "input_device", device), non_blocking=True))
+            output = model.main_logits(embeddings, conditions.to(device, non_blocking=True))
         logits.append(output.float().cpu())
         labels.append(target)
     logits, labels = torch.cat(logits), torch.cat(labels)
     return logits.sigmoid().numpy(), float(nn.functional.binary_cross_entropy_with_logits(logits, labels))
 
 
-def load_prepared(root, *, with_graphs=True):
+def load_prepared(root, *, with_graphs=True, encoder="minimol"):
     manifest = json.loads((root / "manifest.json").read_text())
-    if sha256_file(root / "data.pt") != manifest["data_sha256"]:
+    data_path = root / "data.pt"
+    if encoder != "minimol":
+        from predict.baselines.foundation_cache import cached_input
+        data_path = cached_input(data_path, manifest["data_sha256"])
+    if sha256_file(data_path) != manifest["data_sha256"]:
         raise ValueError("Prepared target cache hash changed")
+    if encoder != "minimol":
+        data = torch.load(data_path, weights_only=False)
+        return data, torch.arange(len(data["smiles"]))
     graph_receipt = json.loads((root / "graphs.json").read_text())
     if graph_receipt["data_sha256"] != manifest["data_sha256"]:
         raise ValueError("Graph and target caches are from different inputs")
@@ -113,10 +124,18 @@ def train(args):
     torch.set_num_threads(args.threads)
     torch.backends.cuda.matmul.allow_tf32 = True
     torch.backends.cudnn.allow_tf32 = True
-    data, graphs = load_prepared(args.prepared)
+    data, graphs = load_prepared(args.prepared, encoder=getattr(args, "encoder", "minimol"))
     device = torch.device(args.device)
+    encoder = None
+    frozen = getattr(args, "frozen", False)
+    if getattr(args, "encoder", "minimol") != "minimol":
+        from predict.baselines.foundation_models import FoundationEncoder
+        encoder = FoundationEncoder(args.encoder, args.runtime_root, args.feature_cache, data["smiles"], frozen=frozen)
+        # Some official checkpoint loaders restore their pretraining RNG state.
+        set_seed(args.seed)
     model = MultiTaskModel(len(data["conditions"]), len(data["buckets"]) if args.aux_weight else 0,
-                           args.hidden_dim, args.depth).to(device)
+                           args.hidden_dim, args.depth, encoder=encoder).to(device)
+    model.precision = getattr(args, "precision", "fp32")
     # Initialization is identical across aux weights for a given seed.
     generator = torch.Generator().manual_seed(args.seed)
     train_loader = loader(graphs, data["splits"]["train"], args.batch_size, workers=args.workers, shuffle=True)
@@ -147,34 +166,64 @@ def train(args):
     history, best_loss, best_epoch = [], float("inf"), 0
     gradient_receipt = {}
     started = time.monotonic()
-    for epoch in range(1, args.epochs + 1):
+    config = {k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()}
+    binding = dict(args=config, prepared_sha256=sha256_file(args.prepared / "manifest.json"))
+    if encoder is not None:
+        binding["features_sha256"] = sha256_file(args.feature_cache / "receipt.json")
+    resume_path = args.output / "resume.pt"
+    first_epoch = 1
+    if resume_path.exists():
+        saved = torch.load(resume_path, map_location="cpu", weights_only=False)
+        previous = dict(saved["binding"], args={k: v for k, v in saved["binding"]["args"].items() if k != "output"})
+        requested = dict(binding, args={k: v for k, v in binding["args"].items() if k != "output"})
+        if previous != requested:
+            raise ValueError("Resume configuration or frozen inputs changed")
+        model.load_state_dict(saved["model"])
+        optimizer.load_state_dict(saved["optimizer"])
+        scheduler.load_state_dict(saved["scheduler"])
+        history, best_loss, best_epoch = saved["history"], saved["best_loss"], saved["best_epoch"]
+        gradient_receipt = saved["gradient_receipt"]
+        first_epoch = saved["epoch"] + 1
+        random.setstate(saved["python_rng"])
+        np.random.set_state(saved["numpy_rng"])
+        torch.set_rng_state(saved["torch_rng"])
+        generator.set_state(saved["loader_rng"])
+        if auxiliary_loader is not None:
+            auxiliary_loader.sampler.generator.set_state(saved["auxiliary_rng"])
+        if device.type == "cuda":
+            torch.cuda.set_rng_state(saved["cuda_rng"], device)
+        del saved
+    for epoch in range(first_epoch, args.epochs + 1):
         epoch_start = time.monotonic()
         model.train()
         totals = np.zeros(2)
         aux_iterator = iter(auxiliary_loader) if auxiliary_loader is not None else None
         for graph, conditions, labels in train_loader:
             optimizer.zero_grad(set_to_none=True)
-            graph = graph.to(device, non_blocking=True)
-            main_embeddings = model.encoder(graph)
-            logits = model.main_logits(main_embeddings, conditions.to(device, non_blocking=True))
-            main_loss = nn.functional.binary_cross_entropy_with_logits(logits, labels.to(device, non_blocking=True))
+            graph = graph.to(getattr(model.encoder, "input_device", device), non_blocking=True)
+            with torch.autocast(device_type=device.type, dtype=torch.bfloat16, enabled=model.precision == "bf16"):
+                main_embeddings = model.encoder(graph)
+                logits = model.main_logits(main_embeddings, conditions.to(device, non_blocking=True))
+                main_loss = nn.functional.binary_cross_entropy_with_logits(logits.float(), labels.to(device, non_blocking=True))
             # Release main activations before auxiliary forward, keeping gradients accumulated.
             main_loss.backward()
             aux_loss = torch.zeros((), device=device)
             if aux_iterator is not None:
                 aux_graph, buckets, targets, binary = next(aux_iterator)
-                embeddings = model.encoder(aux_graph.to(device, non_blocking=True))
-                aux_logits = model.auxiliary(embeddings).gather(1, buckets.to(device)[:, None]).squeeze(1)
-                aux_loss = auxiliary_loss(aux_logits, targets.to(device), binary.to(device))
+                with torch.autocast(device_type=device.type, dtype=torch.bfloat16, enabled=model.precision == "bf16"):
+                    embeddings = model.encoder(aux_graph.to(getattr(model.encoder, "input_device", device), non_blocking=True))
+                    aux_logits = model.auxiliary(embeddings).gather(1, buckets.to(device)[:, None]).squeeze(1)
+                    aux_loss = auxiliary_loss(aux_logits.float(), targets.to(device), binary.to(device))
                 (args.aux_weight * aux_loss).backward()
             if not torch.isfinite(main_loss + aux_loss):
                 raise FloatingPointError("Nonfinite loss")
-            if not gradient_receipt:
+            if not gradient_receipt and not frozen:
                 nonzero = sum(p.grad is not None and bool(p.grad.abs().sum() > 0) for p in model.encoder.parameters())
                 if not nonzero:
                     raise RuntimeError("Encoder gradients are disconnected")
                 gradient_receipt = dict(encoder_parameters_with_nonzero_gradient=nonzero)
-            torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0, error_if_nonfinite=True)
+            if not frozen:
+                torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0, error_if_nonfinite=True)
             optimizer.step()
             totals += [main_loss.detach().item(), aux_loss.detach().item()]
         scheduler.step()
@@ -184,14 +233,26 @@ def train(args):
             checkpoint = dict(state_dict={k: v.detach().cpu() for k, v in model.state_dict().items()},
                               args={k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
                               epoch=epoch, valid_bce=valid_bce,
-                              prepared_sha256=sha256_file(args.prepared / "manifest.json"))
+                              prepared_sha256=binding["prepared_sha256"], binding=binding)
             np.save(args.output / "valid_scores.npy", scores)
             checkpoint["valid_scores_sha256"] = sha256_file(args.output / "valid_scores.npy")
-            torch.save(checkpoint, args.output / "best.pt")
+            torch.save(checkpoint, args.output / "best.tmp")
+            (args.output / "best.tmp").replace(args.output / "best.pt")
         row = dict(epoch=epoch, train_bce=float(totals[0] / len(train_loader)),
                    auxiliary_loss=float(totals[1] / len(train_loader)), valid_bce=valid_bce,
                    seconds=time.monotonic() - epoch_start, best_epoch=best_epoch)
         history.append(row)
+        # Epoch-boundary resume preserves sampler and dropout randomness.
+        saved = dict(binding=binding, epoch=epoch, model=model.state_dict(),
+                     optimizer=optimizer.state_dict(), scheduler=scheduler.state_dict(),
+                     history=history, best_loss=best_loss, best_epoch=best_epoch,
+                     gradient_receipt=gradient_receipt, python_rng=random.getstate(),
+                     numpy_rng=np.random.get_state(), torch_rng=torch.get_rng_state(),
+                     loader_rng=generator.get_state(),
+                     auxiliary_rng=auxiliary_loader.sampler.generator.get_state() if auxiliary_loader else None,
+                     cuda_rng=torch.cuda.get_rng_state(device) if device.type == "cuda" else None)
+        torch.save(saved, args.output / "resume.tmp")
+        (args.output / "resume.tmp").replace(resume_path)
         write_json_atomic(args.output / "progress.json", dict(history=history, best_epoch=best_epoch))
         print(json.dumps(row), flush=True)
     write_json_atomic(args.output / "training.json", dict(
@@ -201,6 +262,7 @@ def train(args):
         checkpoint_sha256=sha256_file(args.output / "best.pt"),
         test_used=False,
     ))
+    resume_path.unlink(missing_ok=True)
 
 
 def ensemble_bce(labels, scores):
@@ -208,7 +270,8 @@ def ensemble_bce(labels, scores):
     return float(-(labels * np.log(p) + (1 - labels) * np.log(1 - p)).mean())
 
 
-def validated_member(path, *, prepared_sha256, seed, weight, labels):
+def validated_member(path, *, prepared_sha256, seed, weight, labels, features_sha256=None, encoder="minimol", frozen=False,
+                     allow_bce_replay=False):
     """Check every candidate before validation selection, including non-winners."""
     receipt = json.loads((path / "training.json").read_text())
     digest = sha256_file(path / "best.pt")
@@ -216,6 +279,10 @@ def validated_member(path, *, prepared_sha256, seed, weight, labels):
         raise ValueError(f"Checkpoint changed: {path}")
     checkpoint = torch.load(path / "best.pt", map_location="cpu", weights_only=False)
     config = checkpoint["args"]
+    if features_sha256 is not None:
+        if (checkpoint.get("binding", {}).get("features_sha256") != features_sha256
+                or config.get("encoder") != encoder or config.get("frozen") != frozen):
+            raise ValueError(f"Checkpoint encoder/feature/setting mismatch: {path}")
     if checkpoint["prepared_sha256"] != prepared_sha256:
         raise ValueError(f"Checkpoint input manifest mismatch: {path}")
     if config["seed"] != seed or config["aux_weight"] != weight:
@@ -231,16 +298,22 @@ def validated_member(path, *, prepared_sha256, seed, weight, labels):
         raise ValueError(f"Validation scores changed: {path}")
     if scores.shape != labels.shape or not np.isfinite(scores).all() or np.any((scores < 0) | (scores > 1)):
         raise ValueError(f"Invalid validation probabilities: {path}")
-    # Legacy checkpoints precede the score hash; bind their scores to saved BCE.
-    if not np.isclose(ensemble_bce(labels, scores), checkpoint["valid_bce"], rtol=1e-4, atol=1e-5):
+    if not np.isclose(best["valid_bce"], checkpoint["valid_bce"], rtol=1e-6, atol=1e-7):
+        raise ValueError(f"Checkpoint BCE disagrees with training history: {path}")
+    # Float32 sigmoid can round to 1, losing the information needed to recover
+    # logit BCE. Only hash-bound scores may defer this check to model replay.
+    replay = not np.isclose(ensemble_bce(labels, scores), checkpoint["valid_bce"], rtol=1e-4, atol=1e-5)
+    if replay and not (allow_bce_replay and "valid_scores_sha256" in checkpoint):
         raise ValueError(f"Validation scores do not match checkpoint BCE: {path}")
     return dict(path=path, config=config, scores=scores, checkpoint_sha256=digest,
-                valid_scores_sha256=score_hash)
+                valid_scores_sha256=score_hash, validation_replay_required=bool(replay),
+                checkpoint_validation_bce=checkpoint["valid_bce"])
 
 
-def evaluation_inputs(prepared, members, threshold):
+def evaluation_inputs(prepared, members, threshold, *, feature_cache=None):
     return dict(prepared_sha256=sha256_file(prepared / "manifest.json"),
-                graph_sha256=json.loads((prepared / "graphs.json").read_text())["graph_sha256"],
+                graph_sha256=(sha256_file(feature_cache / "receipt.json") if feature_cache else
+                              json.loads((prepared / "graphs.json").read_text())["graph_sha256"]),
                 checkpoint_sha256=[m["checkpoint_sha256"] for m in members],
                 valid_scores_sha256=[m["valid_scores_sha256"] for m in members], threshold=threshold)
 
@@ -262,15 +335,19 @@ def reusable_evaluation(output, inputs):
 def finalize(args):
     """Choose auxiliary lambda on ensemble validation BCE, then evaluate only winners."""
     torch.set_num_threads(args.threads)
-    data, graphs = load_prepared(args.prepared, with_graphs=False)
+    encoder_name = getattr(args, "encoder", "minimol")
+    frozen = getattr(args, "frozen", False)
+    data, graphs = load_prepared(args.prepared, with_graphs=False, encoder=encoder_name)
     labels = data["splits"]["valid"]["labels"].numpy()
     candidates, runs, signatures = {}, {}, set()
     prepared_sha256 = sha256_file(args.prepared / "manifest.json")
     indirect_only = getattr(args, "indirect_only", False)
-    for weight in ([] if indirect_only else [0.0]) + args.aux_weights:
+    for weight in ([] if indirect_only else [0.0]) + ([] if frozen else args.aux_weights):
         root = args.output / f"aux_{weight:g}"
+        binding = (dict(features_sha256=sha256_file(args.feature_cache / "receipt.json"),
+                        encoder=encoder_name, frozen=frozen) if encoder_name != "minimol" else {})
         members = [validated_member(root / f"seed_{s}", prepared_sha256=prepared_sha256,
-                                    seed=s, weight=weight, labels=labels) for s in args.seeds]
+                                    seed=s, weight=weight, labels=labels, **binding) for s in args.seeds]
         runs[weight] = members
         for member in members:
             signatures.add(tuple(member["config"][k] for k in
@@ -280,18 +357,20 @@ def finalize(args):
             candidates[weight] = ensemble_bce(labels, scores)
     if len(signatures) != 1:
         raise ValueError("Candidate runs differ in training parameters beyond seed/auxiliary weight")
-    chosen = min(candidates, key=lambda weight: (candidates[weight], weight))
+    chosen = min(candidates, key=lambda weight: (candidates[weight], weight)) if candidates else 0.0
     selection = dict(criterion="minimum ensemble validation BCE", candidates=candidates,
                      seeds=args.seeds, selected_aux_weight=chosen, test_used=False)
     write_json_atomic(args.output / "selection.json", selection)
-    evaluations = ([] if indirect_only else [("finetuned", 0.0)]) + [("indirect", chosen)]
+    evaluations = ([("frozen", 0.0)] if frozen else
+                   ([] if indirect_only else [("finetuned", 0.0)]) + [("indirect", chosen)])
     for name, weight in evaluations:
         members = runs[weight]
         paths = [m["path"] for m in members]
         valid = np.mean([m["scores"] for m in members], axis=0)
         threshold, _ = choose_threshold(labels.tolist(), valid, "valid_macro_f1")
         out = args.output / name
-        inputs = evaluation_inputs(args.prepared, members, threshold)
+        inputs = evaluation_inputs(args.prepared, members, threshold,
+                                   feature_cache=args.feature_cache if encoder_name != "minimol" else None)
         cached = reusable_evaluation(out, inputs)
         if cached is not None:
             cached["selection"] = selection
@@ -305,9 +384,15 @@ def finalize(args):
         for path in paths:
             checkpoint = torch.load(path / "best.pt", map_location="cpu", weights_only=False)
             config = checkpoint["args"]
+            encoder = None
+            if encoder_name != "minimol":
+                from predict.baselines.foundation_models import FoundationEncoder
+                encoder = FoundationEncoder(encoder_name, args.runtime_root, args.feature_cache,
+                                            data["smiles"], frozen=frozen)
             model = MultiTaskModel(len(data["conditions"]), len(data["buckets"]) if weight else 0,
-                                   config["hidden_dim"], config["depth"])
+                                   config["hidden_dim"], config["depth"], encoder=encoder)
             model.load_state_dict(checkpoint["state_dict"])
+            model.precision = config.get("precision", "fp32")
             model.to(args.device)
             test_scores.append(predict(model, test_loader, args.device)[0])
             del model, checkpoint
@@ -362,7 +447,16 @@ def main():
     parser.add_argument("--workers", type=int, default=2)
     parser.add_argument("--threads", type=int, default=2)
     parser.add_argument("--device", default="cuda")
+    parser.add_argument("--encoder", default="minimol")
+    parser.add_argument("--runtime-root", type=Path)
+    parser.add_argument("--feature-cache", type=Path)
+    parser.add_argument("--frozen", action="store_true")
+    parser.add_argument("--precision", choices=("fp32", "bf16"), default=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.encoder != "minimol" and (args.runtime_root is None or args.feature_cache is None):
+        parser.error("Foundation encoders require --runtime-root and --feature-cache")
+    if args.frozen and (args.encoder == "minimol" or args.aux_weight):
+        parser.error("--frozen requires a foundation encoder and zero auxiliary weight")
     if args.phase == "prepare" and (args.data_dir is None or args.auxiliary is None):
         parser.error("prepare requires --data-dir and --auxiliary")
     if args.phase != "prepare" and args.output is None:
